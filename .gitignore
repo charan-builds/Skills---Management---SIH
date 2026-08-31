@@ -1,0 +1,46 @@
+# Python virtual environment
+venv/
+.venv/
+env/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+pytest.log
+
+# Node.js dependencies & builds
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+!*.env.example
+
+# Firebase Service Account Credentials & Private Keys
+Backend/firebase/*.json
+*service-account*.json
+*firebase-adminsdk*.json
+*.pem
+*.key
+*.p8
+*.p12
+
+# OS & Log files
+.DS_Store
+Thumbs.db
+*.log
+
+# IDE & Editor files
+.vscode/
+.idea/
+
+Backend/firebase/*.json
+*.env
+.env.*
+!.env.example

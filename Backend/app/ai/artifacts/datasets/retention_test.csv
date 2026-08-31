@@ -1,0 +1,11 @@
+trainee_id,programme_id,district,avg_skill_score,total_assessments,latest_salary,retained_6m
+T107,P003,Guntur,0.0,0,20000.0,1.0
+T115,P003,Visakhapatnam,0.0,0,19000.0,1.0
+T124,P002,Krishna,0.0,0,18000.0,1.0
+T130,P003,Krishna,0.0,0,16000.0,1.0
+T131,P001,Chennai,0.0,0,21000.0,1.0
+T132,P003,Guntur,0.0,0,9000.0,1.0
+T133,P003,Hyderabad,0.0,0,27000.0,1.0
+T143,P002,Chennai,0.0,0,11000.0,1.0
+T146,P001,Visakhapatnam,0.0,0,27000.0,1.0
+T151,P003,Hyderabad,0.0,0,17000.0,1.0
