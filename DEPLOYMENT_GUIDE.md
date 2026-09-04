@@ -68,28 +68,44 @@ If setting the Vercel Root Directory to `Frontend`:
 The backend can be deployed to any containerized service (Google Cloud Run, AWS App Runner, Render, Railway, DigitalOcean App Platform):
 
 ### Docker Deployment
-A production `Dockerfile` is provided in the repository root:
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-COPY . .
-WORKDIR /app/Backend
-EXPOSE 8001
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8001"]
+A production multi-stage `Dockerfile` is provided in the repository root. It
+builds the React client and serves it with the FastAPI application:
+```bash
+docker build -t sii-backend .
+docker run --rm -p 8001:10000 \
+  -e CORS_ORIGINS=https://your-frontend.vercel.app \
+  sii-backend
 ```
+
+This starts the self-contained demo configuration. The image listens on port
+`10000` by default. To use another internal port, set both `PORT` and the
+container side of the `-p` mapping. For production, configure the environment
+variables below in the deployment platform’s secret manager before deploying;
+do not pass Firebase credentials or `SECRET_KEY` through a shell command.
+`Backend/Dockerfile` is also available for an API-only image; build it with the
+backend folder as the build context: `docker build -f Backend/Dockerfile -t sii-api Backend`.
 
 ### Environment Variables
 Configure the following in your container / host environment:
 | Variable | Description | Example / Default |
 | :--- | :--- | :--- |
 | `ENVIRONMENT` | Deployment stage | `production` |
-| `PORT` | Listening server port | `8001` |
-| `HOST` | Listening interface | `0.0.0.0` |
-| `CORS_ORIGINS` | Comma-separated allowed frontend origins | `https://your-frontend.vercel.app,http://localhost:5173` |
-| `ENABLE_DEMO_MODE` | Ensures fallback resilience when external DB is offline | `true` |
-| `FIREBASE_SERVICE_ACCOUNT_PATH` | Path to Firebase credentials JSON | `firebase/service-account.json` |
+| `PORT` | Listening server port | `10000` |
+| `CORS_ORIGINS` | Comma-separated exact frontend origins; no trailing slash | `https://your-frontend.vercel.app,http://localhost:5173` |
+| `CORS_ALLOW_ORIGIN_REGEX` | Optional, narrowly scoped regex for owned preview domains | `https://your-project-[a-z0-9-]+\.vercel\.app` |
+| `ENABLE_DEMO_MODE` | Use the bundled local dataset and prevent Firebase writes | `true` for demo; `false` for Firebase-backed production |
+| `SECRET_KEY` | Required, non-placeholder signing secret when `ENVIRONMENT=production` | securely generated value |
+| `FIREBASE_SERVICE_ACCOUNT_PATH` | Path to Firebase credentials JSON | `firebase/credentials.json` |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Service account JSON supplied by a secret manager | optional alternative to a file |
+
+### Production authentication
+
+The bundled email/password and OTP-like sign-in experience is for demo mode
+only. With `ENABLE_DEMO_MODE=false`, protected API routes accept Firebase ID
+tokens and require role claims (`admin`, `employer`, or `trainee`; employers
+also need an `organization_id` claim). Integrate Firebase Web Authentication or
+your organization’s identity-provider client before exposing the bundled login
+page in a production deployment.
 
 ---
 
@@ -140,5 +156,6 @@ npm run dev
 - [x] **SPA Route Rewrites**: Both root `vercel.json` and `Frontend/vercel.json` rewrite direct routes to `/index.html`.
 - [x] **High-Contrast Theme**: Native dark OS schemes prevented via `color-scheme: light !important` in `index.css`.
 - [x] **Defensive Data Handling**: All portals implement safe fallbacks to prevent white/blank screens.
-- [x] **CORS Configuration**: FastAPI allows production domains and Vercel preview domains via regex.
-- [x] **Production Bundle**: `npm run build` generates optimized, error-free client distribution in `dist/`.
+- [x] **CORS Configuration**: Production browser origins are explicitly configured with `CORS_ORIGINS`; optional preview-domain regexes are opt-in.
+- [x] **Production Bundle**: `npm run build` generates the client distribution in `dist/`.
+- [ ] **Production Identity Provider**: Firebase Web Authentication / SSO sign-in and role-claim provisioning are configured for the deployed frontend.

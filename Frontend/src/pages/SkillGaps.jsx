@@ -15,7 +15,6 @@ import {
   Layers,
   FileCheck,
   BarChart3,
-  ExternalLink,
   Briefcase,
   Users,
   GraduationCap,

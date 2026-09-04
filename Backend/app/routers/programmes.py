@@ -1,13 +1,13 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
 from app.firebase.repository import FirestoreRepository
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_admin_user
 from app.schemas.programme import ProgrammeCreate, ProgrammeResponse, ProgrammeSummaryResponse
 
 router = APIRouter(
     prefix="/api/programmes",
     tags=["Programmes"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(get_admin_user)]
 )
 
 @router.get("", response_model=List[ProgrammeSummaryResponse])

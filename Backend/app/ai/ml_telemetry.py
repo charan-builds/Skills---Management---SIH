@@ -10,6 +10,7 @@ try:
 except ImportError:
     db = None
 
+from app.core.config import settings
 from app.ai.ml_inference import FORBIDDEN_LEAKAGE_FEATURES
 from app.ai.synthetic import generate_synthetic_dataset
 
@@ -79,15 +80,17 @@ def log_prediction_telemetry(
     if "trajectory" in data:
         telemetry_event["trajectory_category"] = data["trajectory"].get("qualitative_category")
         
-    # Attempt to write to Firestore, fallback to local list if db is not configured
+    # Demo sessions must remain local even if Firebase credentials are available.
+    # Production telemetry falls back to process memory on a transient write failure.
     try:
-        if db is not None:
+        if not settings.ENABLE_DEMO_MODE and db is not None:
             db.collection("ai_inference_logs").document(inference_id).set(telemetry_event)
         else:
             _LOCAL_TELEMETRY_LOG.append(telemetry_event)
     except Exception as e:
         logger.error(f"Failed to log telemetry for {inference_id}: {str(e)}")
-        # Do not raise exception! Telemetry must not break inference.
+        _LOCAL_TELEMETRY_LOG.append(telemetry_event)
+        # Do not raise: telemetry must not break inference.
         
     return inference_id
 
@@ -96,7 +99,7 @@ def get_telemetry_dataframe() -> pd.DataFrame:
     """Retrieves recent telemetry logs for drift calculation."""
     logs = []
     try:
-        if db is not None:
+        if not settings.ENABLE_DEMO_MODE and db is not None:
             # For drift, grab up to last 1000 logs
             query = db.collection("ai_inference_logs").order_by("timestamp", direction="DESCENDING").limit(1000)
             for doc in query.stream():

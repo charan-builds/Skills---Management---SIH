@@ -1,4 +1,6 @@
 import os
+import logging
+from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -6,26 +8,41 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from app.firebase.config import db
-from app.auth.dependencies import get_current_user
-from app.core.config import BASE_DIR
+from app.auth.dependencies import get_admin_user, get_current_user
+from app.core.config import BASE_DIR, settings
 
 # Import Routers
 from app.routers import programmes, trainees, employers, analytics, interventions, auth, skills, jobs, trainee_portal
 from app.ai.api import router as ai_router
+
+logger = logging.getLogger(__name__)
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Validate deployment-only requirements before accepting requests."""
+    settings.validate_runtime_configuration(firebase_available=db is not None)
+    yield
+
+
 app = FastAPI(
     title="Skilling Impact Intelligence API",
     description="Backend API for tracking skilling outcomes and employment impact.",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan,
 )
 
 # Configure CORS to allow frontend communication
 cors_origins_env = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173")
 allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+# A regex is opt-in because credentials + a broad origin regex can unintentionally
+# authorize arbitrary preview domains. Set this only for domains you control.
+allowed_origin_regex = os.getenv("CORS_ALLOW_ORIGIN_REGEX") or None
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_origin_regex=r"https://.*(\.vercel\.app|\.ngrok-free\.app|\.ngrok\.app|\.ngrok\.io)",  # Support Vercel & ngrok dynamic tunnels
+    allow_origin_regex=allowed_origin_regex,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["*"],
@@ -35,6 +52,7 @@ app.add_middleware(
 app.include_router(programmes.router)
 app.include_router(trainees.router)
 app.include_router(auth.router)
+app.include_router(auth.router, prefix="/api")  # Also support /api/auth prefix
 app.include_router(employers.router)
 app.include_router(analytics.router)
 app.include_router(interventions.router)
@@ -63,15 +81,27 @@ def protected_route(current_user: dict = Depends(get_current_user)):
     }
 
 @app.get("/firebase-test")
-def firebase_test():
-    test_ref = db.collection("system").document("test")
-    test_ref.set({
-        "message": "Firebase connection successful"
-    })
-    return {
-        "status": "success",
-        "message": "Data written to Firebase"
-    }
+def firebase_test(_current_user: dict = Depends(get_admin_user)):
+    if settings.ENABLE_DEMO_MODE or db is None:
+        return {
+            "status": "demo_mode",
+            "message": "Firebase writes are disabled in Demo Mode. Running with the local JSON data store."
+        }
+    try:
+        test_ref = db.collection("system").document("test")
+        test_ref.set({
+            "message": "Firebase connection successful"
+        })
+        return {
+            "status": "success",
+            "message": "Data written to Firebase"
+        }
+    except Exception as e:
+        logger.exception("Firebase connectivity check failed")
+        return {
+            "status": "error",
+            "message": "Firebase connectivity check failed. Review server logs for details."
+        }
 
 
 # Check for Frontend/dist in multiple possible locations
@@ -101,7 +131,8 @@ if frontend_dist:
             or full_path.startswith("auth")
             or full_path in ["docs", "redoc", "openapi.json", "health", "firebase-test"]
         ):
-            return None
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Endpoint not found")
         file_path = frontend_dist / full_path
         if file_path.exists() and file_path.is_file():
             return FileResponse(str(file_path))

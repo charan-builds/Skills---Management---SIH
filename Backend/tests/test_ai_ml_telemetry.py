@@ -13,7 +13,7 @@ from app.auth.dependencies import get_current_user
 app.dependency_overrides[get_current_user] = lambda: {"uid": "test_user"}
 client = TestClient(app)
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 from app.ai.service import AIService
 
 @pytest.fixture(autouse=True)
@@ -85,6 +85,25 @@ def test_log_prediction_telemetry_execution():
     assert log_entry["prediction_version"] == "v1.0"
     assert log_entry["employment_probability"] == 0.8
     assert log_entry["trajectory_category"] == "HIGH POTENTIAL"
+
+
+def test_demo_telemetry_never_writes_firestore(monkeypatch):
+    """A configured Firebase client must not receive bundled-demo activity."""
+    import app.ai.ml_telemetry as telemetry
+    from app.core.config import settings
+
+    firestore_mock = MagicMock()
+    monkeypatch.setattr(telemetry, "db", firestore_mock)
+    monkeypatch.setattr(settings, "ENABLE_DEMO_MODE", True)
+
+    log_prediction_telemetry(
+        "/test/demo",
+        {"programme_id": "PROG_001", "avg_skill_score": 75.0},
+        {"employment": {"probability": 0.8, "prediction": 1}},
+    )
+
+    firestore_mock.collection.assert_not_called()
+    assert len(_LOCAL_TELEMETRY_LOG) == 1
 
 
 def test_insufficient_data_guards_for_drift():

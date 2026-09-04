@@ -61,6 +61,6 @@ def test_analytics_dashboard_no_pii(mock_db_with_real_trainee):
     assert data["stats"][1]["value"] == "100%" # Employment Rate
     # Retention: The mock trainee has no valid start_date in employment_history,
     # so the RetentionIntelligenceEngine correctly reports insufficient evidence.
-    assert data["stats"][2]["value"] == "None" # 6M Retention
+    assert data["stats"][2]["value"] is None # 6M Retention
     
     app.dependency_overrides = {}

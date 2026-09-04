@@ -8,7 +8,6 @@ import {
   RefreshCw,
   KeyRound,
   Sparkles,
-  ExternalLink,
   ShieldCheck,
   Server,
   SlidersHorizontal
@@ -20,30 +19,40 @@ export default function EmployerIntegrations() {
 
   const [integrations, setIntegrations] = useState([]);
   const [apiConfig, setApiConfig] = useState({
-    api_base_url: "https://api.workforce-intelligence.internal/v1",
-    client_id: "CLIENT_TECHFLOW_PROD_8849",
-    api_key: "sk_live_9984****************************",
-    webhook_url: "https://techflowsolutions.demo/webhooks/talent-sync",
-    environment: "Production Demo",
-    status: "Verified & Connected"
+    api_base_url: "",
+    client_id: "",
+    api_key: "",
+    webhook_url: "",
+    environment: ""
   });
 
   const [loading, setLoading] = useState(true);
   const [syncingId, setSyncingId] = useState(null);
   const [testResult, setTestResult] = useState(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
 
   const fetchIntegrations = async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/integrations`);
-      if (res.ok) {
-        const data = await res.json();
-        setIntegrations(data.integrations || []);
-        if (data.api_config) setApiConfig(data.api_config);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to load integrations.");
+      setIntegrations(data.integrations || []);
+      setApiConfig({
+        api_base_url: "",
+        client_id: "",
+        api_key: "",
+        webhook_url: "",
+        environment: "",
+        ...(data.api_config || {}),
+        api_key: ""
+      });
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to load integrations.");
     } finally {
       setLoading(false);
     }
@@ -55,44 +64,58 @@ export default function EmployerIntegrations() {
 
   const handleSync = async (integrationId) => {
     setSyncingId(integrationId);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/integrations/${integrationId}/sync`, {
         method: "POST"
       });
-      if (res.ok) {
-        setTimeout(() => {
-          setSyncingId(null);
-          fetchIntegrations();
-        }, 800);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Synchronization failed.");
+      await fetchIntegrations();
     } catch (err) {
       console.error(err);
+      setError(err.message || "Synchronization failed.");
+    } finally {
       setSyncingId(null);
     }
   };
 
-  const handleTestConnection = () => {
+  const handleTestConnection = async () => {
     setTestResult("testing");
-    setTimeout(() => {
-      setTestResult("success");
-      setTimeout(() => setTestResult(null), 4000);
-    }, 900);
+    setError("");
+    try {
+      const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/integrations/validate`, {
+        method: "POST"
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Configuration validation failed.");
+      setTestResult({ type: "valid", message: data.message });
+    } catch (err) {
+      console.error(err);
+      setTestResult({ type: "error", message: err.message || "Configuration validation failed." });
+    }
   };
 
   const handleSaveConfig = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setError("");
+    setSaveSuccess(false);
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/integrations/config`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(apiConfig)
       });
-      if (res.ok) {
-        setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 4000);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to save configuration.");
+      setApiConfig((current) => ({ ...current, ...(data.config || {}), api_key: "" }));
+      setSaveSuccess(true);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to save configuration.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -206,7 +229,18 @@ export default function EmployerIntegrations() {
               );
             })}
           </div>
+          {integrations.length === 0 && (
+            <p style={{ color: '#64748b', margin: '0.75rem 0 0' }}>
+              No connector provider is configured for this organization.
+            </p>
+          )}
         </div>
+
+        {error && (
+          <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1.25rem' }}>
+            {error}
+          </div>
+        )}
 
         {/* API CREDENTIALS CONFIGURATION CARD */}
         <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '2rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
@@ -249,11 +283,13 @@ export default function EmployerIntegrations() {
               </div>
 
               <div>
-                <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>API Key (Masked for Security)</label>
+                  <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>Set New API Key (write-only)</label>
                 <input
-                  type="text"
+                  type="password"
                   value={apiConfig.api_key || ""}
                   onChange={(e) => setApiConfig({ ...apiConfig, api_key: e.target.value })}
+                  placeholder={apiConfig.api_key_configured ? "A key is already configured" : "Leave blank unless replacing the key"}
+                  autoComplete="new-password"
                   style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem', fontFamily: 'monospace' }}
                 />
               </div>
@@ -274,9 +310,14 @@ export default function EmployerIntegrations() {
                 {testResult === "testing" && (
                   <span style={{ fontSize: '0.85rem', color: '#2563eb', fontWeight: 600 }}>Pinging API Gateway endpoint...</span>
                 )}
-                {testResult === "success" && (
+                {testResult?.type === "valid" && (
                   <span style={{ fontSize: '0.85rem', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <CheckCircle2 size={16} /> Connection Verified (HTTP 200 OK)
+                    <CheckCircle2 size={16} /> {testResult.message}
+                  </span>
+                )}
+                {testResult?.type === "error" && (
+                  <span role="alert" style={{ fontSize: '0.85rem', color: '#b91c1c', fontWeight: 700 }}>
+                    {testResult.message}
                   </span>
                 )}
               </div>
@@ -285,16 +326,18 @@ export default function EmployerIntegrations() {
                 <button
                   type="button"
                   onClick={handleTestConnection}
+                  disabled={testResult === "testing"}
                   style={{ padding: '0.65rem 1.25rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, color: '#0f172a', cursor: 'pointer' }}
                 >
-                  Test Connection
+                  {testResult === "testing" ? "Validating..." : "Validate Configuration"}
                 </button>
 
                 <button
                   type="submit"
+                  disabled={saving}
                   style={{ padding: '0.65rem 1.5rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}
                 >
-                  Save Configuration
+                  {saving ? "Saving..." : "Save Configuration"}
                 </button>
               </div>
             </div>

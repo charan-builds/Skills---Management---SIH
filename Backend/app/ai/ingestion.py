@@ -1,7 +1,6 @@
 import pandas as pd
 from typing import List, Dict, Any
 from app.firebase.repository import FirestoreRepository
-from app.firebase.config import db
 import numpy as np
 
 # Loader Functions
@@ -24,8 +23,13 @@ def load_employer_feedback() -> List[Dict[str, Any]]:
     return FirestoreRepository.get_employer_feedback()
 
 def load_employer_verifications() -> List[Dict[str, Any]]:
-    docs = db.collection("employer_verifications").stream()
-    return [doc.to_dict() for doc in docs]
+    # Verification data is optional for the analytics feature set. In demo mode,
+    # it lives in the same in-memory dataset as the rest of the application.
+    from app.core.config import settings
+
+    if settings.ENABLE_DEMO_MODE:
+        return FirestoreRepository._load_local_demo_data().get("employer_verifications", [])
+    return FirestoreRepository.get_pending_verifications()
 
 def load_interventions() -> List[Dict[str, Any]]:
     return FirestoreRepository.get_interventions()

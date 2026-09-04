@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Clock,
   Search,
-  ExternalLink,
   X,
   Sparkles,
   Building,
@@ -37,6 +36,7 @@ export default function EmployerVerifyOutcomes() {
   });
 
   const [notification, setNotification] = useState(null);
+  const [error, setError] = useState("");
 
   const organizationName = localStorage.getItem("organizationName") || "TechFlow Solutions";
   const organizationId = localStorage.getItem("organizationId") || "EMP-DEMO-001";
@@ -49,14 +49,15 @@ export default function EmployerVerifyOutcomes() {
 
   const fetchOutcomes = async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/outcomes`);
-      if (res.ok) {
-        const data = await res.json();
-        setOutcomes(data || []);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to load outcome records.");
+      setOutcomes(data || []);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to load outcome records.");
     } finally {
       setLoading(false);
     }
@@ -67,12 +68,12 @@ export default function EmployerVerifyOutcomes() {
     setFormData({
       employment_status: trainee.employment_status || "Employed",
       employment_type: trainee.employment_type || "Full-time",
-      joining_date: trainee.joining_date || "2025-01-15",
-      salary: trainee.salary || 50000,
-      job_role: trainee.job_role || "Cybersecurity Analyst",
-      retention_6m: trainee.retention_6m || "Retained (Verified)",
-      retention_12m: trainee.retention_12m || "On Track (Active)",
-      employer_remarks: trainee.employer_remarks || "Confirmed placement and active employment."
+      joining_date: trainee.joining_date || "",
+      salary: Number(trainee.salary) || 0,
+      job_role: trainee.job_role || "",
+      retention_6m: trainee.retention_6m || "Not recorded",
+      retention_12m: trainee.retention_12m || "Not recorded",
+      employer_remarks: trainee.employer_remarks || ""
     });
     setModalOpen(true);
   };
@@ -88,12 +89,17 @@ export default function EmployerVerifyOutcomes() {
   const handleSave = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/outcomes/${selectedTrainee.trainee_id}/verify`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
       });
+      if (!res.ok) {
+        const failure = await res.json();
+        throw new Error(failure.detail || "Unable to save the outcome.");
+      }
       
       if (res.ok) {
         const updated = await res.json();
@@ -104,12 +110,13 @@ export default function EmployerVerifyOutcomes() {
       }
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to save the outcome.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const verifiedCount = outcomes.filter(o => o.verification_status === "Verified").length;
+  const verifiedCount = outcomes.filter(o => (o.verification_status || "").toLowerCase().includes("attested")).length;
 
   if (loading) {
     return (
@@ -127,6 +134,11 @@ export default function EmployerVerifyOutcomes() {
       <EmployerNav />
 
       <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '0 1.5rem 3rem 1.5rem' }}>
+        {error && (
+          <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
+            {error}
+          </div>
+        )}
         
         {/* Back Button */}
         <button

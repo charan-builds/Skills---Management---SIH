@@ -3,14 +3,14 @@ from typing import List, Dict, Optional
 import datetime
 from collections import Counter
 from app.firebase.repository import FirestoreRepository
-from app.auth.dependencies import get_current_user
+from app.auth.dependencies import get_admin_user
 from app.schemas.analytics import DashboardResponse, SkillGapResponse, StatCard, AlertNotification, SkillComparison, CourseGap, CauseCard
 from app.ai.retention_intelligence import RetentionIntelligenceEngine
 
 router = APIRouter(
     prefix="/api/analytics",
     tags=["Analytics"],
-    dependencies=[Depends(get_current_user)]
+    dependencies=[Depends(get_admin_user)]
 )
 
 @router.get("/dashboard", response_model=DashboardResponse)
@@ -185,7 +185,14 @@ def get_dashboard(
 
 
 @router.get("/skill-gaps", response_model=SkillGapResponse)
-def get_skill_gaps(programme_id: str):
+def get_skill_gaps(programme_id: Optional[str] = Query(None)):
+    if not programme_id:
+        all_progs = FirestoreRepository.get_programmes()
+        if all_progs:
+            programme_id = all_progs[0]["id"]
+        else:
+            programme_id = "PROG-DEMO-001"
+            
     # Fetch programme info
     prog = FirestoreRepository.get_programme(programme_id)
     if not prog:

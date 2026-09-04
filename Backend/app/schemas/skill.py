@@ -15,13 +15,13 @@ class SkillMasterResponse(SkillMasterBase):
     created_at: Optional[datetime] = None
 
 class SkillAssessmentBase(BaseModel):
-    assessment_id: str
+    assessment_id: Optional[str] = None
     trainee_id: str
     skill_id: str
     skill_name: str
     proficiency_score: int = Field(ge=0, le=100) # 0-100 score
     assessment_type: str = "project" # test, project, interview, practical
-    assessment_date: str # YYYY-MM-DD
+    assessment_date: Optional[str] = None # YYYY-MM-DD
     assessor: Optional[str] = "Automated Assessment Engine"
     is_synthetic: bool = False
 

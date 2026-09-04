@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Dict, Any, List
-from app.auth.dependencies import get_current_user, get_admin_user
+from app.auth.dependencies import ensure_trainee_access, get_current_user, get_admin_user
 from app.ai.service import AIService
 from pydantic import BaseModel
 
@@ -37,13 +37,19 @@ def get_programme_curriculum(programme_id: str):
     data = AIService.get_programme_curriculum(programme_id)
     return {"status": "success", "data": data}
 
-@router.get("/trainees/{trainee_id}/skills", dependencies=[Depends(get_current_user)])
-def get_trainee_skills(trainee_id: str):
+@router.get("/trainees/{trainee_id}/skills")
+def get_trainee_skills(trainee_id: str, current_user: dict = Depends(get_current_user)):
+    ensure_trainee_access(trainee_id, current_user)
     data = AIService.get_trainee_skills(trainee_id)
     return {"status": "success", "data": data}
 
-@router.get("/trainees/{trainee_id}/jobs/{job_id}/match", dependencies=[Depends(get_current_user)])
-def get_trainee_job_match(trainee_id: str, job_id: str):
+@router.get("/trainees/{trainee_id}/jobs/{job_id}/match")
+def get_trainee_job_match(
+    trainee_id: str,
+    job_id: str,
+    current_user: dict = Depends(get_current_user),
+):
+    ensure_trainee_access(trainee_id, current_user)
     data = AIService.get_trainee_job_match(trainee_id, job_id)
     return {"status": "success", "data": data}
 

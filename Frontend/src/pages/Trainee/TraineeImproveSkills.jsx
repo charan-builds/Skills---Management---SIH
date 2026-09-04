@@ -22,6 +22,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
 
   const [skillsData, setSkillsData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Interactive Assessment Modal State
   const [showAssessmentModal, setShowAssessmentModal] = useState(false);
@@ -35,14 +36,15 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
 
   const fetchSkillsData = async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/skills-growth`);
-      if (res.ok) {
-        const data = await res.json();
-        setSkillsData(data);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to load your skill-growth plan.");
+      setSkillsData(data);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to load your skill-growth plan.");
     } finally {
       setLoading(false);
     }
@@ -61,12 +63,17 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
   };
 
   const handleAssessmentSubmit = async () => {
-    const score = 92;
-    setAssessmentScore(score);
-    setAssessmentSubmitted(true);
-    
+    const correctAnswers = { q1: "a", q2: "a", q3: "a" };
+    const answerKeys = Object.keys(correctAnswers);
+    if (!answerKeys.every((key) => assessmentAnswers[key])) {
+      setError("Answer all assessment questions before submitting.");
+      return;
+    }
+    const correctCount = answerKeys.filter((key) => assessmentAnswers[key] === correctAnswers[key]).length;
+    const score = Math.round((correctCount / answerKeys.length) * 100);
+    setError("");
     try {
-      await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/assessment/submit`, {
+      const res = await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/assessment/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -74,10 +81,15 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
           score: score
         })
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to submit the assessment.");
+      setAssessmentScore(score);
+      setAssessmentSubmitted(true);
       fetchSkillsData();
       if (onSkillUpdated) onSkillUpdated();
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to submit the assessment.");
     }
   };
 
@@ -85,18 +97,19 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
     return <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>Loading Skill Growth Plan...</div>;
   }
 
-  if (!skillsData) return null;
+  if (!skillsData) return <div role="alert" style={{ padding: '1rem', color: '#b91c1c' }}>{error || "No skill-growth data is available."}</div>;
 
   const plan = skillsData.skill_growth_plan || {
-    current_readiness: 95,
-    target_role: "Cybersecurity Analyst",
-    target_readiness: 98,
-    skills_remaining: 2,
-    estimated_effort: "16 hours"
+    current_readiness: null,
+    target_role: "Not recorded",
+    target_readiness: null,
+    skills_remaining: 0,
+    estimated_effort: "Not available"
   };
 
   return (
     <div style={{ maxWidth: '1280px' }}>
+      {error && <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>{error}</div>}
       
       {/* Page Title */}
       <div style={{ marginBottom: '2rem' }}>
@@ -117,20 +130,20 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
           
           <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Current Readiness</span>
-            <h4 style={{ margin: '0.35rem 0 0 0', fontSize: '1.6rem', fontWeight: 800, color: '#16a34a' }}>{plan.current_readiness}%</h4>
-            <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}>Strong Technical Base</span>
+            <h4 style={{ margin: '0.35rem 0 0 0', fontSize: '1.6rem', fontWeight: 800, color: '#16a34a' }}>{plan.current_readiness ?? "Not scored"}{plan.current_readiness == null ? "" : "%"}</h4>
+            <span style={{ fontSize: '0.8rem', color: '#16a34a', fontWeight: 600 }}>{plan.current_readiness == null ? "Assessment evidence required" : "Recorded readiness score"}</span>
           </div>
 
           <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Target Role Readiness</span>
-            <h4 style={{ margin: '0.35rem 0 0 0', fontSize: '1.6rem', fontWeight: 800, color: '#2563eb' }}>{plan.target_readiness}%</h4>
+            <h4 style={{ margin: '0.35rem 0 0 0', fontSize: '1.6rem', fontWeight: 800, color: '#2563eb' }}>{plan.target_readiness ?? "Not scored"}{plan.target_readiness == null ? "" : "%"}</h4>
             <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 600 }}>Target: {plan.target_role}</span>
           </div>
 
           <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Skills Remaining</span>
             <h4 style={{ margin: '0.35rem 0 0 0', fontSize: '1.6rem', fontWeight: 800, color: '#f59e0b' }}>{plan.skills_remaining} Gaps</h4>
-            <span style={{ fontSize: '0.8rem', color: '#b45309', fontWeight: 600 }}>Communication & SIEM</span>
+            <span style={{ fontSize: '0.8rem', color: '#b45309', fontWeight: 600 }}>Based on recorded vacancy requirements</span>
           </div>
 
           <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
@@ -150,7 +163,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
             <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>Comparative assessment of your current proficiency vs employer requirements for {plan.target_role}.</p>
           </div>
           <span style={{ background: '#eff6ff', color: '#1d4ed8', fontSize: '0.8rem', fontWeight: 600, padding: '4px 10px', borderRadius: '12px' }}>
-            6 Core Competencies Analyzed
+            {skillsData.skill_gaps?.length || 0} Recorded Competencies
           </span>
         </div>
 
@@ -168,6 +181,8 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
             </thead>
             <tbody>
               {skillsData.skill_gaps?.map((row, idx) => {
+                const hasCurrentScore = Number.isFinite(Number(row.current));
+                const hasTargetScore = Number.isFinite(Number(row.target));
                 let badgeBg = '#f1f5f9';
                 let badgeColor = '#475569';
                 if (row.priority === 'Strong') {
@@ -189,16 +204,16 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
                     <td style={{ padding: '1rem' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <div style={{ flex: 1, height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                          <div style={{ width: `${row.current}%`, height: '100%', background: row.current >= 80 ? '#16a34a' : (row.current >= 60 ? '#f59e0b' : '#ef4444') }}></div>
+                          <div style={{ width: `${hasCurrentScore ? row.current : 0}%`, height: '100%', background: !hasCurrentScore ? '#94a3b8' : (row.current >= 80 ? '#16a34a' : (row.current >= 60 ? '#f59e0b' : '#ef4444')) }}></div>
                         </div>
-                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155', minWidth: '35px' }}>{row.current}%</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155', minWidth: '35px' }}>{hasCurrentScore ? `${row.current}%` : "Not assessed"}</span>
                       </div>
                     </td>
                     <td style={{ padding: '1rem', fontWeight: 600, color: '#475569' }}>
-                      {row.target}%
+                      {hasTargetScore ? `${row.target}%` : "Not recorded"}
                     </td>
                     <td style={{ padding: '1rem', fontWeight: 700, color: row.gap === 0 ? '#16a34a' : '#b45309' }}>
-                      {row.gap === 0 ? "0% (Met)" : `${row.gap}%`}
+                      {Number.isFinite(Number(row.gap)) ? (row.gap === 0 ? "0% (Met)" : `${row.gap}%`) : "Not assessed"}
                     </td>
                     <td style={{ padding: '1rem' }}>
                       <span style={{ background: badgeBg, color: badgeColor, padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
@@ -206,7 +221,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
                       </span>
                     </td>
                     <td style={{ padding: '1rem', textAlign: 'right' }}>
-                      {row.gap > 0 ? (
+                      {Number.isFinite(Number(row.gap)) && row.gap > 0 ? (
                         <button
                           onClick={() => {
                             if (row.skill.includes('Communication')) handleStartAssessment("Communication Assessment");
@@ -218,13 +233,16 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
                         </button>
                       ) : (
                         <span style={{ color: '#16a34a', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.85rem', fontWeight: 600 }}>
-                          <CheckCircle2 size={15} /> Verified
+                          <CheckCircle2 size={15} /> Recorded
                         </span>
                       )}
                     </td>
                   </tr>
                 );
               })}
+              {!skillsData.skill_gaps?.length && (
+                <tr><td colSpan="6" style={{ padding: '1rem', color: '#64748b' }}>No active vacancy requirements are available for a skill-gap comparison.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -272,6 +290,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
               </button>
             </div>
           ))}
+          {!skillsData.ai_recommendations?.length && <p style={{ color: '#64748b', margin: 0 }}>No learning recommendation is available from recorded data.</p>}
         </div>
       </div>
 
@@ -308,6 +327,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
                 </button>
               </div>
             ))}
+            {!skillsData.course_catalog?.length && <p style={{ color: '#64748b', margin: 0 }}>No course provider is configured for this plan.</p>}
           </div>
         </div>
 
@@ -315,7 +335,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
         <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
             <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}>Benchmark Assessments</h3>
-            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Verified scores</span>
+            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Recorded scores</span>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
@@ -324,7 +344,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
                 <div>
                   <strong style={{ fontSize: '0.95rem', color: '#0f172a', display: 'block', marginBottom: '0.2rem' }}>{name}</strong>
                   <span style={{ fontSize: '0.8rem', color: item.completed ? '#16a34a' : '#64748b' }}>
-                    {item.completed ? `Score: ${item.score}% (Completed & Verified)` : item.impact}
+                    {item.completed ? `Score: ${item.score}% (Completed)` : item.impact}
                   </span>
                 </div>
 
@@ -345,13 +365,14 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
                 )}
               </div>
             ))}
+            {Object.keys(skillsData.assessments || {}).length === 0 && <p style={{ color: '#64748b', margin: 0 }}>No assessment result is recorded.</p>}
           </div>
         </div>
 
       </div>
 
       {/* VISUAL SKILL ROADMAP */}
-      <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+      {skillsData.mode !== "production" && <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
         <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}>Career Progression Roadmap</h3>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', padding: '1rem 0' }}>
           
@@ -390,10 +411,10 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
           </div>
 
         </div>
-      </div>
+      </div>}
 
       {/* ===================== INTERACTIVE ASSESSMENT MODAL ===================== */}
-      {showAssessmentModal && (
+      {showAssessmentModal && skillsData.mode !== "production" && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '650px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column' }}>
             
@@ -478,10 +499,10 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
                   </div>
                   <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem', fontWeight: 700, color: '#0f172a' }}>Assessment Completed!</h3>
                   <p style={{ margin: '0 0 1.5rem 0', fontSize: '1.15rem', color: '#16a34a', fontWeight: 800 }}>
-                    Score: {assessmentScore}% — Verified Competency
+                    Score: {assessmentScore}% — Recorded Demo Result
                   </p>
                   <p style={{ color: '#475569', fontSize: '0.95rem', marginBottom: '2rem' }}>
-                    Your skill gap for <strong>Communication</strong> has been closed, and Career Readiness updated.
+                    The result has been recorded in the demo profile for <strong>Communication</strong>.
                   </p>
                   <button
                     onClick={() => setShowAssessmentModal(false)}
@@ -498,7 +519,7 @@ export default function TraineeImproveSkills({ onSkillUpdated }) {
       )}
 
       {/* ===================== DEMO COURSE PLAYER MODAL ===================== */}
-      {activeCourseModal && (
+      {activeCourseModal && skillsData.mode !== "production" && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '650px', padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
