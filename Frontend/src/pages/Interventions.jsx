@@ -1,26 +1,42 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Play,
-  TrendingUp,
-  Target,
-  Clock3,
-  IndianRupee,
-  Sparkles,
   GitBranch,
-  CheckCircle2,
-  AlertTriangle,
   Zap,
-  Check,
-  RotateCcw,
-  SlidersHorizontal,
-  Layers
+  Check
 } from "lucide-react";
+import { API_BASE } from "../utils/config";
+import { fetchAuth } from "../utils/authFetch";
 import { adminIntelligenceData } from "../utils/adminData";
 
 export default function Interventions() {
-  const [programmes] = useState(adminIntelligenceData.programmes);
+  const [programmes, setProgrammes] = useState(adminIntelligenceData.programmes);
   const [selectedProgramme, setSelectedProgramme] = useState("P001");
   const [selectedSkill, setSelectedSkill] = useState("Python");
+  
+  useEffect(() => {
+    async function loadProgrammes() {
+      try {
+        const res = await fetchAuth(`${API_BASE}/api/programmes`);
+        if (res.ok) {
+          const liveData = await res.json();
+          const merged = adminIntelligenceData.programmes.map(mockProg => {
+            const liveProg = liveData.find(p => p.id === mockProg.id);
+            return liveProg ? { ...mockProg, name: liveProg.name, enrolled: liveProg.trainees } : mockProg;
+          });
+          liveData.forEach(liveProg => {
+            if (!merged.find(p => p.id === liveProg.id)) {
+              merged.push({ id: liveProg.id, name: liveProg.name, enrolled: liveProg.trainees });
+            }
+          });
+          setProgrammes(merged);
+        }
+      } catch (err) {
+        console.error("Failed to load programmes:", err);
+      }
+    }
+    loadProgrammes();
+  }, []);
   const [increaseAmount, setIncreaseAmount] = useState(15);
   const [simulating, setSimulating] = useState(false);
   const [simulationResult, setSimulationResult] = useState({

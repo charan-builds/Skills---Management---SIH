@@ -1,29 +1,17 @@
-import { API_BASE } from '../utils/config';
-import { fetchAuth } from '../utils/authFetch';
 import { useState, useEffect } from "react";
 import {
-  Users,
-  BriefcaseBusiness,
   TrendingUp,
-  Award,
-  AlertTriangle,
   ArrowRight,
   Bell,
-  CheckCircle2,
-  X,
   Sparkles,
-  ListChecks,
-  LineChart,
   HelpCircle,
   FileDown,
-  Building,
-  Target,
-  ArrowUpRight,
   Check,
-  RotateCcw,
   Zap
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE } from "../utils/config";
+import { fetchAuth } from "../utils/authFetch";
 import { adminIntelligenceData } from "../utils/adminData";
 
 export default function Dashboard() {
@@ -39,17 +27,65 @@ export default function Dashboard() {
   const [cohort, setCohort] = useState("All Cohorts");
 
   const [kpis, setKpis] = useState(adminIntelligenceData.overview_kpis);
-  const [funnel] = useState(adminIntelligenceData.trainee_funnel);
-  const [programmes] = useState(adminIntelligenceData.programmes);
-  const [insights] = useState(adminIntelligenceData.ai_programme_insights);
+  const [funnel, setFunnel] = useState(adminIntelligenceData.trainee_funnel);
+  const [programmes, setProgrammes] = useState(adminIntelligenceData.programmes);
+  const [insights, setInsights] = useState(adminIntelligenceData.ai_programme_insights);
   const [actions, setActions] = useState(adminIntelligenceData.action_center_items);
+  const [notifications, setNotifications] = useState(adminIntelligenceData.notifications || []);
 
-  const [notifications] = useState([
-    { id: 1, title: "12 Outcome Verifications Pending", message: "Employers have submitted new hiring and 3-month retention checkpoints.", type: "warning", path: "/outcomes" },
-    { id: 2, title: "Machine Learning Demand Surge (+38%)", message: "8 partner employers opened new requisitions in Hyderabad & Nalgonda.", type: "info", path: "/skill-gaps" },
-    { id: 3, title: "Cybersecurity Cohort Certified", message: "80 trainees completed benchmark examinations with 83% average score.", type: "success", path: "/programmes" },
-    { id: 4, title: "Communication Gap Flagged", message: "62% of technical interview feedback highlighted communication as an improvement area.", type: "warning", path: "/interventions" }
-  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadDashboard() {
+      try {
+        const [dashRes, traineesRes] = await Promise.all([
+          fetchAuth(`${API_BASE}/api/analytics/dashboard`),
+          fetchAuth(`${API_BASE}/api/trainees`)
+        ]);
+        
+        if (dashRes.ok) {
+          const dashData = await dashRes.json();
+          if (dashData.stats) {
+            setKpis(dashData.stats.map(s => ({
+              title: s.title,
+              value: s.value || "N/A",
+              previous: "-",
+              change: "-",
+              trend: "flat",
+              tooltip: ""
+            })));
+          }
+          if (dashData.notifications) {
+            setNotifications(dashData.notifications.map((n, i) => ({
+              id: i,
+              title: n.title,
+              message: n.message,
+              type: n.type === "Critical" ? "error" : "warning",
+              path: "/outcomes"
+            })));
+          }
+        }
+        
+        if (traineesRes.ok) {
+          const trainees = await traineesRes.json();
+          const total = trainees.length;
+          const certified = trainees.filter(t => t.status === "Certified").length;
+          const employed = trainees.filter(t => t.outcome === "Employed" || t.outcome === "Self-Employed").length;
+          
+          setFunnel([
+            { stage: "Enrolled", count: total, percentage: 100, color: "#2563eb" },
+            { stage: "Certified", count: certified, percentage: total ? Math.round((certified/total)*100) : 0, color: "#60a5fa" },
+            { stage: "Hired / Placed", count: employed, percentage: total ? Math.round((employed/total)*100) : 0, color: "#16a34a" }
+          ]);
+        }
+      } catch (error) {
+        console.error("Dashboard fetch error:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDashboard();
+  }, []);
 
   const handleAdoptAction = (actionId) => {
     setAdoptedActions(prev => ({

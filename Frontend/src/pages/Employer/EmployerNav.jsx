@@ -1,14 +1,9 @@
-import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  BriefcaseBusiness,
   Users,
   CheckCircle2,
   Building,
-  Radio,
-  SlidersHorizontal,
   LogOut,
-  Sparkles,
   LayoutDashboard,
   Layers
 } from "lucide-react";

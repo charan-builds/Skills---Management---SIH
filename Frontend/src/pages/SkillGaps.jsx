@@ -1,34 +1,54 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Target,
   Sparkles,
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle2,
-  ListChecks,
-  ArrowRight,
   Zap,
   Check,
   Search,
-  RotateCcw,
-  SlidersHorizontal,
-  Layers,
-  FileCheck,
-  BarChart3,
-  ExternalLink,
-  Briefcase,
-  Users,
-  GraduationCap,
-  Info
+  RotateCcw
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../utils/config";
+import { fetchAuth } from "../utils/authFetch";
 import { adminIntelligenceData } from "../utils/adminData";
 
 export default function SkillGaps() {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
+  const [liveSkills, setLiveSkills] = useState(null);
+
+  useEffect(() => {
+    async function loadSkillGaps() {
+      try {
+        const res = await fetchAuth(`${API_BASE}/api/ai/skill-gaps/summary`);
+        if (res.ok) {
+          const data = await res.json();
+          // Map backend response: { skill_name, taught_by_programmes, demanded_by_employers, gap_score, priority }
+          const mapped = data.map(s => ({
+            skill: s.skill_name,
+            category: "General", // Placeholder
+            supply: s.taught_by_programmes,
+            demand: s.demanded_by_employers,
+            gap: s.gap_score,
+            avg_proficiency: 75, // Mock fallback
+            relevance: "High", // Mock fallback
+            priority: s.priority,
+            trend: "+10% YoY" // Mock fallback
+          }));
+          setLiveSkills(mapped.length > 0 ? mapped : null);
+        }
+      } catch (err) {
+        console.error("Failed to load skill gaps:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSkillGaps();
+  }, []);
+
   // Fail-safe data fallbacks
-  const rawSkills = adminIntelligenceData?.skill_intelligence || [
+  const rawSkills = useMemo(() => liveSkills || adminIntelligenceData?.skill_intelligence || [
     {
       skill: "Python",
       category: "Programming & Automation",
@@ -106,7 +126,7 @@ export default function SkillGaps() {
       priority: "Moderate",
       trend: "+10% YoY"
     }
-  ];
+  ], [adminIntelligenceData]);
 
   // Rich metadata mapping for skills
   const skillMetadata = {

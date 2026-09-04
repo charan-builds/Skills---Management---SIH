@@ -4,9 +4,7 @@ import {
   GraduationCap,
   BarChart3,
   Target,
-  Lightbulb,
   GitBranch,
-  TrendingUp,
   Settings,
   LineChart,
 } from "lucide-react";

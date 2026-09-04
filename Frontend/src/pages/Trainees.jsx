@@ -4,25 +4,22 @@ import { useState, useEffect, useMemo } from "react";
 import {
   Search,
   Users,
-  CheckCircle2,
-  TrendingUp,
-  MapPin,
-  Sparkles,
   ArrowRight,
-  RotateCcw,
-  SlidersHorizontal,
-  UserCheck,
-  Target,
-  FileCheck
+  RotateCcw
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { adminIntelligenceData } from "../utils/adminData";
+import TraineeFormModal from '../components/Admin/TraineeFormModal';
+import BulkImportModal from '../components/Admin/BulkImportModal';
 
 export default function Trainees() {
   const navigate = useNavigate();
 
   const [trainees, setTrainees] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [editingTrainee, setEditingTrainee] = useState(null);
 
   const [search, setSearch] = useState("");
   const [programmeFilter, setProgrammeFilter] = useState("All Programmes");
@@ -130,12 +127,12 @@ export default function Trainees() {
     }
   ];
 
-  useEffect(() => {
+  const fetchTrainees = () => {
+    setLoading(true);
     fetchAuth(`${API_BASE}/api/trainees`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          // Merge API data with rich progression metadata
           const merged = data.map((t, idx) => {
             const demoMatch = demoTraineesList.find(d => d.id === t.id) || demoTraineesList[idx % demoTraineesList.length];
             return {
@@ -143,12 +140,18 @@ export default function Trainees() {
               name: t.name,
               programme: t.course_name || demoMatch.programme,
               district: t.district || demoMatch.district,
-              stage: demoMatch.stage,
-              stage_color: demoMatch.stage_color,
+              stage: t.status === "Archived" ? "Archived" : demoMatch.stage,
+              stage_color: t.status === "Archived" ? "#64748b" : demoMatch.stage_color,
               assessment_score: demoMatch.assessment_score,
               skills: Array.isArray(t.skills) ? t.skills : demoMatch.skills,
               salary: demoMatch.salary,
-              retention: demoMatch.retention
+              retention: demoMatch.retention,
+              rawStatus: t.status,
+              rawOutcome: t.outcome,
+              rawProvider: t.provider,
+              rawProgrammeId: t.programme_id,
+              email: t.email,
+              phone: t.phone
             };
           });
           setTrainees(merged);
@@ -162,6 +165,10 @@ export default function Trainees() {
         setTrainees(demoTraineesList);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchTrainees();
   }, []);
 
   const handleClearFilters = () => {
@@ -213,7 +220,7 @@ export default function Trainees() {
     <div className="dashboard" style={{ maxWidth: '1440px', margin: '0 auto', padding: '2rem' }}>
       
       {/* Header */}
-      <div className="dashboard-header" style={{ marginBottom: '2rem' }}>
+      <div className="dashboard-header" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
             <Users size={18} color="#2563eb" />
@@ -227,6 +234,22 @@ export default function Trainees() {
           <p className="page-description" style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
             Track trainees across enrollment, skill mastery, assessment benchmarks, job readiness, and employment outcomes.
           </p>
+        </div>
+        
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button 
+            onClick={() => setIsImportModalOpen(true)}
+            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+          >
+            Import Trainees
+          </button>
+          <button 
+            onClick={() => { setEditingTrainee(null); setIsFormModalOpen(true); }}
+            className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+          >
+            + Add Trainee
+          </button>
         </div>
       </div>
 
@@ -380,12 +403,18 @@ export default function Trainees() {
                       ))}
                     </div>
                   </td>
-                  <td style={{ padding: '1rem', textAlign: 'right' }}>
+                  <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     <button
-                      onClick={() => navigate(`/trainees/${t.id}`)}
-                      style={{ padding: '0.4rem 0.85rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}
+                      onClick={() => navigate(`/trainee-profile/${t.id}`)}
+                      style={{ padding: '0.45rem 1rem', background: '#eff6ff', color: '#2563eb', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                     >
-                      Profile <ArrowRight size={12} />
+                      View Profile
+                    </button>
+                    <button
+                      onClick={() => { setEditingTrainee(t); setIsFormModalOpen(true); }}
+                      style={{ padding: '0.45rem 1rem', background: '#f8fafc', color: '#475569', border: '1px solid #e2e8f0', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
+                    >
+                      Edit
                     </button>
                   </td>
                 </tr>
@@ -394,6 +423,20 @@ export default function Trainees() {
           </table>
         </div>
       </div>
+
+      {/* Modals */}
+      <TraineeFormModal 
+        isOpen={isFormModalOpen}
+        onClose={() => setIsFormModalOpen(false)}
+        trainee={editingTrainee}
+        onSuccess={fetchTrainees}
+      />
+      
+      <BulkImportModal 
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        onSuccess={fetchTrainees}
+      />
 
     </div>
   );

@@ -1,6 +1,22 @@
 import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from app.firebase.repository import FirestoreRepository
+
+
+@pytest.fixture
+def production_repository(monkeypatch):
+    """Exercise Firestore filtering without requiring a live Firebase client."""
+    import app.firebase.repository as repository
+    from app.core.config import settings
+
+    mock_db = MagicMock()
+    mock_query = MagicMock()
+    mock_db.collection.return_value = mock_query
+    mock_query.limit.return_value = mock_query
+
+    monkeypatch.setattr(repository, "db", mock_db)
+    monkeypatch.setattr(settings, "ENABLE_DEMO_MODE", False)
+    return mock_db
 
 def make_doc_mock(data):
     mock = MagicMock()
@@ -16,10 +32,8 @@ def test_is_real_helper():
     # Check that missing key is treated as real data
     assert FirestoreRepository._is_real({"name": "Real Trainee"}) is True
 
-@patch("app.firebase.repository.db.collection")
-def test_exclude_synthetic_trainees(mock_collection):
-    mock_query = MagicMock()
-    mock_collection.return_value = mock_query
+def test_exclude_synthetic_trainees(production_repository):
+    mock_query = production_repository.collection.return_value
     
     mock_query.stream.return_value = [
         make_doc_mock({"id": "T1", "name": "Real", "is_synthetic": False}),
@@ -35,8 +49,8 @@ def test_exclude_synthetic_trainees(mock_collection):
     assert "T3" in ids
     assert "T2" not in ids
 
-@patch("app.firebase.repository.db.collection")
-def test_single_get_returns_none_for_synthetic(mock_collection):
+def test_single_get_returns_none_for_synthetic(production_repository):
+    mock_collection = production_repository.collection
     mock_doc_ref = MagicMock()
     mock_collection.return_value.document.return_value = mock_doc_ref
     
@@ -53,10 +67,8 @@ def test_single_get_returns_none_for_synthetic(mock_collection):
     assert prog2 is not None
     assert prog2["id"] == "P2"
 
-@patch("app.firebase.repository.db.collection")
-def test_exclude_synthetic_employer_feedback(mock_collection):
-    mock_query = MagicMock()
-    mock_collection.return_value = mock_query
+def test_exclude_synthetic_employer_feedback(production_repository):
+    mock_query = production_repository.collection.return_value
     
     mock_query.stream.return_value = [
         make_doc_mock({"id": "F1", "is_synthetic": True}),
@@ -68,10 +80,8 @@ def test_exclude_synthetic_employer_feedback(mock_collection):
     assert len(feedback) == 1
     assert feedback[0]["id"] == "F2"
 
-@patch("app.firebase.repository.db.collection")
-def test_exclude_synthetic_assessments(mock_collection):
-    mock_query = MagicMock()
-    mock_collection.return_value = mock_query
+def test_exclude_synthetic_assessments(production_repository):
+    mock_query = production_repository.collection.return_value
     
     mock_query.stream.return_value = [
         make_doc_mock({"assessment_id": "A1", "is_synthetic": True}),
@@ -83,10 +93,8 @@ def test_exclude_synthetic_assessments(mock_collection):
     assert len(assessments) == 1
     assert assessments[0]["assessment_id"] == "A2"
 
-@patch("app.firebase.repository.db.collection")
-def test_missing_is_synthetic_behaves_safely(mock_collection):
-    mock_query = MagicMock()
-    mock_collection.return_value = mock_query
+def test_missing_is_synthetic_behaves_safely(production_repository):
+    mock_query = production_repository.collection.return_value
     
     mock_query.stream.return_value = [
         make_doc_mock({"id": "J1", "title": "Real Job"})

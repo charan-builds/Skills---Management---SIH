@@ -2,14 +2,12 @@ import { useState, useEffect } from "react";
 import { API_BASE } from '../../utils/config';
 import { fetchAuth } from '../../utils/authFetch';
 import {
-  GraduationCap,
   Target,
   Award,
   BookOpen,
   CheckCircle2,
   Clock,
   TrendingUp,
-  AlertCircle,
   Sparkles,
   ArrowRight,
   Play

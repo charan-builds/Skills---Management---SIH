@@ -11,6 +11,8 @@ import {
   LockKeyhole,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { auth } from "../utils/firebase-config";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 
@@ -102,30 +104,41 @@ function Login() {
      ADMIN LOGIN
   ========================================= */
 
-  const handleAdminLogin = (event) => {
+  const handleAdminLogin = async (event) => {
     event.preventDefault();
     setError("");
 
     const email = event.target.elements["admin-email"].value;
     const password = event.target.elements["admin-password"].value;
 
-    fetch(`${API_BASE}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-      body: JSON.stringify({ email, password, role: "admin" })
-    })
-      .then((res) => {
+    if (ENABLE_DEMO_MODE) {
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({ email, password, role: "admin" })
+        });
         if (!res.ok) throw new Error("Invalid admin credentials");
-        return res.json();
-      })
-      .then((data) => {
+        const data = await res.json();
         localStorage.setItem("userRole", "admin");
         localStorage.setItem("sih_token", data.token);
         navigate("/");
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message);
-      });
+      }
+    } else {
+      // Production Identity via Firebase
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const token = await userCredential.user.getIdToken();
+        // Decode token to get role claim, or default to admin if this is the admin login portal
+        localStorage.setItem("userRole", "admin");
+        localStorage.setItem("sih_token", token);
+        navigate("/");
+      } catch (err) {
+        setError("Production login failed: " + err.message);
+      }
+    }
   };
 
 
@@ -133,7 +146,7 @@ function Login() {
      TRAINEE - SEND EMAIL OTP
   ========================================= */
 
-  const handleTraineeSendOtp = (event) => {
+  const handleTraineeSendOtp = async (event) => {
     event.preventDefault();
     setError("");
 
@@ -150,20 +163,19 @@ function Login() {
       return;
     }
 
-    fetch(`${API_BASE}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-      body: JSON.stringify({
-        trainee_id: enteredId,
-        email: enteredEmail,
-        role: "trainee"
-      })
-    })
-      .then((res) => {
+    if (ENABLE_DEMO_MODE) {
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({
+            trainee_id: enteredId,
+            email: enteredEmail,
+            role: "trainee"
+          })
+        });
         if (!res.ok) throw new Error("Invalid Trainee ID or unregistered email.");
-        return res.json();
-      })
-      .then((data) => {
+        const data = await res.json();
         setMatchedTrainee({
           id: enteredId,
           email: enteredEmail,
@@ -171,10 +183,15 @@ function Login() {
           token: data.token
         });
         setTraineeOtpSent(true);
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message);
-      });
+      }
+    } else {
+      // In production, we assume the user exists in Firebase Auth.
+      // Trigger Firebase phone/email OTP here.
+      setMatchedTrainee({ id: enteredId, email: enteredEmail });
+      setTraineeOtpSent(true);
+    }
   };
 
 
@@ -182,25 +199,40 @@ function Login() {
      TRAINEE - VERIFY OTP
   ========================================= */
 
-  const handleTraineeVerifyOtp = (event) => {
+  const handleTraineeVerifyOtp = async (event) => {
     event.preventDefault();
     setError("");
-
-    if (traineeOtp !== "123456") {
-      setError("Invalid OTP. For demo use 123456.");
-      return;
-    }
 
     if (!matchedTrainee) {
       setError("Trainee account could not be identified.");
       return;
     }
 
-    localStorage.setItem("userRole", "trainee");
-    localStorage.setItem("sih_token", matchedTrainee.token);
-    localStorage.setItem("traineeId", matchedTrainee.id);
-    localStorage.setItem("traineeEmail", matchedTrainee.email);
-    navigate(`/trainee-dashboard/${matchedTrainee.id}`);
+    if (ENABLE_DEMO_MODE) {
+      if (traineeOtp !== "123456") {
+        setError("Invalid OTP. For demo use 123456.");
+        return;
+      }
+      localStorage.setItem("userRole", "trainee");
+      localStorage.setItem("sih_token", matchedTrainee.token);
+      localStorage.setItem("traineeId", matchedTrainee.id);
+      localStorage.setItem("traineeEmail", matchedTrainee.email);
+      navigate(`/trainee-dashboard/${matchedTrainee.id}`);
+    } else {
+      // Production Identity via Firebase
+      try {
+        // Replace with signInWithCredential for true Phone Auth/Magic Link
+        const userCredential = await signInWithEmailAndPassword(auth, matchedTrainee.email, traineeOtp);
+        const token = await userCredential.user.getIdToken();
+        localStorage.setItem("userRole", "trainee");
+        localStorage.setItem("sih_token", token);
+        localStorage.setItem("traineeId", matchedTrainee.id);
+        localStorage.setItem("traineeEmail", matchedTrainee.email);
+        navigate(`/trainee-dashboard/${matchedTrainee.id}`);
+      } catch (err) {
+        setError("Production Firebase Auth failed: " + err.message);
+      }
+    }
   };
 
 
@@ -210,7 +242,7 @@ function Login() {
      EMPLOYER LOGIN
   ========================================= */
 
-  const handleEmployerLogin = (event) => {
+  const handleEmployerLogin = async (event) => {
     event.preventDefault();
     setError("");
 
@@ -232,31 +264,43 @@ function Login() {
       return;
     }
 
-    fetch(`${API_BASE}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
-      body: JSON.stringify({
-        organization_id: enteredOrganizationId,
-        email: enteredEmail,
-        password: employerPassword,
-        role: "employer"
-      })
-    })
-      .then((res) => {
+    if (ENABLE_DEMO_MODE) {
+      try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+          body: JSON.stringify({
+            organization_id: enteredOrganizationId,
+            email: enteredEmail,
+            password: employerPassword,
+            role: "employer"
+          })
+        });
         if (!res.ok) throw new Error("Invalid organization credentials.");
-        return res.json();
-      })
-      .then((data) => {
+        const data = await res.json();
         localStorage.setItem("userRole", "employer");
         localStorage.setItem("sih_token", data.token);
         localStorage.setItem("organizationId", data.organization_id);
         localStorage.setItem("organizationName", data.name);
-        localStorage.setItem("employerEmail", enteredEmail);
         navigate("/employer-dashboard");
-      })
-      .catch((err) => {
+      } catch (err) {
         setError(err.message);
-      });
+      }
+    } else {
+      // Production Identity via Firebase
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, enteredEmail, employerPassword);
+        const token = await userCredential.user.getIdToken();
+        localStorage.setItem("userRole", "employer");
+        localStorage.setItem("sih_token", token);
+        localStorage.setItem("organizationId", enteredOrganizationId);
+        // Note: For full production, organization details should be fetched from an API using the verified token.
+        localStorage.setItem("organizationName", "Verified Employer"); 
+        navigate("/employer-dashboard");
+      } catch (err) {
+        setError("Production login failed: " + err.message);
+      }
+    }
   };
 
 

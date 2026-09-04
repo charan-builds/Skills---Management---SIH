@@ -5,13 +5,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   MapPin,
-  Target,
   ArrowRight,
-  BriefcaseBusiness,
-  CheckCircle2,
-  Sparkles,
-  UserCheck,
-  TrendingUp
+  BriefcaseBusiness
 } from "lucide-react";
 import EmployerNav from "./Employer/EmployerNav";
 

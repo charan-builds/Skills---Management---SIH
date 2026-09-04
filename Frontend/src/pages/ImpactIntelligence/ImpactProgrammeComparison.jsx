@@ -1,4 +1,3 @@
-import React from "react";
 import { List } from "lucide-react";
 
 export default function ImpactProgrammeComparison({ programmesData }) {

@@ -4,20 +4,14 @@ import { useState, useEffect } from "react";
 import {
   BriefcaseBusiness,
   Users,
-  UserCheck,
   ClipboardCheck,
-  Target,
   ArrowRight,
   TrendingUp,
   Bookmark,
   MapPin,
   Sparkles,
   CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  BrainCircuit,
-  Award,
-  Layers
+  BrainCircuit
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EmployerNav from "./Employer/EmployerNav";

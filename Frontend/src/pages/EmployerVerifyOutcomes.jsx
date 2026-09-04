@@ -3,17 +3,7 @@ import { fetchAuth } from '../utils/authFetch';
 import { useState, useEffect } from "react";
 import {
   ArrowLeft,
-  CheckCircle,
-  CheckCircle2,
-  Clock,
-  Search,
-  ExternalLink,
-  X,
-  Sparkles,
-  Building,
-  UserCheck,
-  TrendingUp,
-  AlertCircle
+  CheckCircle2
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EmployerNav from "./Employer/EmployerNav";
@@ -44,23 +34,23 @@ export default function EmployerVerifyOutcomes() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const fetchOutcomes = async () => {
+      setLoading(true);
+      try {
+        const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/outcomes`);
+        if (res.ok) {
+          const data = await res.json();
+          setOutcomes(data || []);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchOutcomes();
   }, [organizationId]);
-
-  const fetchOutcomes = async () => {
-    setLoading(true);
-    try {
-      const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/outcomes`);
-      if (res.ok) {
-        const data = await res.json();
-        setOutcomes(data || []);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const openReviewModal = (trainee) => {
     setSelectedTrainee(trainee);

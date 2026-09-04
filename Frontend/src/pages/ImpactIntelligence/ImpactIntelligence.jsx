@@ -1,7 +1,7 @@
 import { API_BASE } from '../../utils/config';
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { fetchAuth } from "../../utils/authFetch";
-import { AlertCircle, FileBarChart, Filter } from "lucide-react";
+import { AlertCircle, Filter } from "lucide-react";
 import "./ImpactIntelligence.css";
 
 // Sub-components

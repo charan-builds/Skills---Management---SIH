@@ -1,21 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BriefcaseBusiness,
-  TrendingUp,
-  Award,
   CheckCircle2,
-  AlertTriangle,
-  Clock3,
-  IndianRupee,
-  Building,
-  Check,
-  ShieldCheck,
-  RotateCcw,
-  Search,
-  SlidersHorizontal,
-  FileCheck,
-  ArrowRight
+  ShieldCheck
 } from "lucide-react";
+import { API_BASE } from "../utils/config";
+import { fetchAuth } from "../utils/authFetch";
 import { adminIntelligenceData } from "../utils/adminData";
 
 export default function Outcomes() {
@@ -24,6 +14,43 @@ export default function Outcomes() {
   const [verifyStatus, setVerifyStatus] = useState("Verified");
   const [verifyRemarks, setVerifyRemarks] = useState("Verified against employer PF/HRMS record.");
   const [verifySuccess, setVerifySuccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadOutcomes() {
+      try {
+        const res = await fetchAuth(`${API_BASE}/api/trainees`);
+        if (res.ok) {
+          const trainees = await res.json();
+          const mapped = trainees.map(t => {
+            const latestJob = t.employment_history && t.employment_history.length > 0 ? t.employment_history[t.employment_history.length - 1] : {};
+            return {
+              trainee_id: t.id,
+              trainee_name: t.name,
+              programme: t.programme_id,
+              employer: latestJob.employer_name || "Looking for work",
+              role: latestJob.role || "Trainee",
+              salary: latestJob.salary ? `₹${latestJob.salary} / mo` : "N/A",
+              joining_date: latestJob.start_date || "N/A",
+              verification_status: t.outcome === "Employed" || t.outcome === "Self-Employed" ? "Verified" : "Pending",
+              retention_3m: "Pending",
+              retention_6m: "Pending",
+              retention_12m: "Pending",
+              last_updated: t.updated_at || "Recently"
+            };
+          });
+          if (mapped.length > 0) {
+            setVerificationList(mapped);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load outcomes:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadOutcomes();
+  }, []);
 
   const [statusFilter, setStatusFilter] = useState("All");
   const [search, setSearch] = useState("");

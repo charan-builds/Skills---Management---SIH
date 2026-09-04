@@ -13,11 +13,7 @@ import {
   Mail,
   FileText,
   Sparkles,
-  BarChart2,
-  X,
-  Building,
-  Calendar,
-  AlertCircle
+  BarChart2
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import EmployerNav from "./Employer/EmployerNav";

@@ -3,16 +3,7 @@ import { fetchAuth } from '../utils/authFetch';
 import { useState, useEffect } from "react";
 import {
   Building,
-  MapPin,
-  Mail,
-  Phone,
-  Globe,
-  BriefcaseBusiness,
   Save,
-  CheckCircle2,
-  Sparkles,
-  Layers,
-  SlidersHorizontal,
   X,
   Plus
 } from "lucide-react";

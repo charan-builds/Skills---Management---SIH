@@ -3,12 +3,9 @@ import {
   Settings as SettingsIcon,
   User,
   Bell,
-  Database,
-  ShieldCheck,
   CheckCircle2,
   Save,
-  Server,
-  Sparkles
+  Server
 } from "lucide-react";
 
 export default function Settings() {

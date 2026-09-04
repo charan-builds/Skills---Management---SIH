@@ -1,6 +1,6 @@
 import { API_BASE } from '../utils/config';
 import { fetchAuth } from '../utils/authFetch';
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AlertCircle, Target, Users, BookOpen, Layers } from "lucide-react";
 import "./SkillGapDashboard.css";
 

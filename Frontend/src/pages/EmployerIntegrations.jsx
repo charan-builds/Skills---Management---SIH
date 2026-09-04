@@ -3,15 +3,9 @@ import { fetchAuth } from '../utils/authFetch';
 import { useState, useEffect } from "react";
 import {
   Layers,
-  Radio,
   CheckCircle2,
   RefreshCw,
-  KeyRound,
-  Sparkles,
-  ExternalLink,
-  ShieldCheck,
-  Server,
-  SlidersHorizontal
+  KeyRound
 } from "lucide-react";
 import EmployerNav from "./Employer/EmployerNav";
 

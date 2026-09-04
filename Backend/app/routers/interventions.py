@@ -1,17 +1,19 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import List
 from app.firebase.repository import FirestoreRepository
+from app.auth.dependencies import get_admin_user
 from app.schemas.intervention import InterventionResponse, InterventionCreate, InterventionImpactSchema, MetricsState
-from datetime import datetime
 import dateutil.parser
 
 router = APIRouter(
     prefix="/api/interventions",
-    tags=["Interventions"]
+    tags=["Interventions"],
+    dependencies=[Depends(get_admin_user)],
 )
 
 def calculate_impact(intervention: dict) -> dict:
-    # A prototype-level real calculation of before/after impact
+    """Calculate observed wage outcomes without inventing missing metrics."""
+    intervention = dict(intervention)
     trainees = FirestoreRepository.get_trainees(programme_id=intervention.get("programme_id"))
     if not trainees:
         intervention["impact"] = {
@@ -21,7 +23,7 @@ def calculate_impact(intervention: dict) -> dict:
         
     try:
         inv_date = dateutil.parser.isoparse(intervention.get("date", ""))
-    except:
+    except (TypeError, ValueError):
         intervention["impact"] = {"before": {}, "after": {}}
         return intervention
         
@@ -38,15 +40,15 @@ def calculate_impact(intervention: dict) -> dict:
                     before_salaries.append(job["salary"])
                 else:
                     after_salaries.append(job["salary"])
-            except:
-                pass
+            except (TypeError, ValueError):
+                continue
                 
-    before_wage = f"{int(sum(before_salaries)/len(before_salaries))}" if before_salaries else "15000"
-    after_wage = f"{int(sum(after_salaries)/len(after_salaries))}" if after_salaries else f"{int(float(before_wage) * 1.15)}"
+    before_wage = f"{int(sum(before_salaries) / len(before_salaries))}" if before_salaries else None
+    after_wage = f"{int(sum(after_salaries) / len(after_salaries))}" if after_salaries else None
     
     intervention["impact"] = {
-        "before": {"skill_match": "65%", "retention_12m": "70%", "wage_growth": before_wage},
-        "after": {"skill_match": "85%", "retention_12m": "82%", "wage_growth": after_wage}
+        "before": {"skill_match": None, "retention_12m": None, "wage_growth": before_wage},
+        "after": {"skill_match": None, "retention_12m": None, "wage_growth": after_wage}
     }
     return intervention
 

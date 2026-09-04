@@ -1,7 +1,7 @@
 import { API_BASE } from '../utils/config';
 import { fetchAuth } from '../utils/authFetch';
-import React, { useState, useEffect } from "react";
-import { AlertCircle, Target, TrendingDown, Info, ShieldAlert, Cpu } from "lucide-react";
+import { useState, useEffect } from "react";
+import { AlertCircle, Target, Info, ShieldAlert, Cpu } from "lucide-react";
 import "./AIDecisionCenter.css";
 
 

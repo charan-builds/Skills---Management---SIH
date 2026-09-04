@@ -63,9 +63,11 @@ VITE_API_BASE_URL=http://localhost:8001
 
 ### Backend (`Backend/.env`)
 ```env
+ENVIRONMENT=development
 ENABLE_DEMO_MODE=true
 CORS_ORIGINS=http://localhost:5173
-FIREBASE_SERVICE_ACCOUNT_PATH=firebase/service-account.json
+# SECRET_KEY=required-only-when-ENVIRONMENT-is-production
+# FIREBASE_SERVICE_ACCOUNT_PATH=firebase/credentials.json
 ```
 
 See `Frontend/.env.example` and `Backend/.env.example` for complete templates.
@@ -80,13 +82,24 @@ See `Frontend/.env.example` and `Backend/.env.example` for complete templates.
 3. Build command, output directory, and SPA rewrites are auto-configured via `vercel.json`
 4. Set `VITE_API_BASE_URL` in Vercel environment settings
 
-### Backend (Cloud Run / Railway / Render)
+### Backend demo (Cloud Run / Railway / Render)
 ```bash
 docker build -t sii-backend .
-docker run -p 8001:8001 sii-backend
+docker run --rm -p 8001:10000 sii-backend
 ```
 
-Set `CORS_ORIGINS` to your Vercel frontend URL.
+The root image listens on port `10000` by default. To use a different internal
+port, set both `PORT` and the container side of the `-p` mapping.
+
+For a production datastore deployment, configure the host’s secret manager with
+`ENVIRONMENT=production`, `ENABLE_DEMO_MODE=false`, a strong non-placeholder
+`SECRET_KEY`, Firebase credentials (`FIREBASE_SERVICE_ACCOUNT_JSON` or a
+mounted `firebase/credentials.json` file), and `CORS_ORIGINS` set to the exact
+Vercel frontend URL. Set `VITE_ENABLE_DEMO_MODE=false` for the frontend build.
+
+The bundled demo credentials are intentionally disabled outside demo mode.
+Production users must sign in through a Firebase Web Authentication or SSO
+client that supplies Firebase ID tokens with the required role claims.
 
 ---
 

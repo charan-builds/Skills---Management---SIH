@@ -1,18 +1,109 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 from datetime import datetime
+from copy import deepcopy
 from app.firebase.repository import FirestoreRepository
+from app.auth.dependencies import ensure_trainee_access, get_current_user
+from app.core.config import settings
+
+def require_portal_access(
+    trainee_id: str, current_user: dict = Depends(get_current_user)
+) -> dict:
+    ensure_trainee_access(trainee_id, current_user)
+    return current_user
+
 
 router = APIRouter(
     prefix="/api/trainee-portal",
-    tags=["Trainee Portal"]
+    tags=["Trainee Portal"],
+    dependencies=[Depends(require_portal_access)],
 )
 
 # In-memory prototype state for trainee profiles, applications, saved jobs, and assessments
 demo_trainee_state: Dict[str, Dict[str, Any]] = {}
 
+
+def _production_default_trainee_state(trainee_id: str, trainee_data: Dict[str, Any]) -> Dict[str, Any]:
+    """Create a conservative portal view from persisted trainee data.
+
+    Production must not give a real trainee the demo person's qualifications,
+    applications, score, or contact details merely because no portal state exists.
+    """
+    raw_skills = trainee_data.get("skills") or []
+    skills = [
+        skill if isinstance(skill, dict) else {"name": str(skill), "level": None, "category": "Recorded", "primary": False}
+        for skill in raw_skills
+        if (skill.get("name") if isinstance(skill, dict) else str(skill).strip())
+    ]
+    history = trainee_data.get("employment_history") or []
+    experience = [
+        {
+            "id": item.get("id") or f"employment_{index}",
+            "role": item.get("role") or "Not recorded",
+            "company": item.get("employer_name") or "Not recorded",
+            "period": " – ".join(filter(None, [item.get("start_date"), item.get("end_date")])),
+            "responsibilities": item.get("description") or "",
+        }
+        for index, item in enumerate(history)
+        if isinstance(item, dict)
+    ]
+    certifications = [
+        {
+            "id": item.get("id") or item.get("credential_id") or f"cert_{index}",
+            "name": item.get("name") or "Unnamed certification",
+            "issuer": item.get("issuing_body") or item.get("issuer") or "Not recorded",
+            "date": item.get("date") or "Not recorded",
+            "credential_id": item.get("credential_id") or item.get("id") or "Not recorded",
+            "status": item.get("status") or "Recorded",
+        }
+        for index, item in enumerate(trainee_data.get("certifications") or [])
+        if isinstance(item, dict)
+    ]
+    assessments = {
+        str(item.get("module") or item.get("skill_name") or f"Assessment {index + 1}"): {
+            "name": str(item.get("module") or item.get("skill_name") or f"Assessment {index + 1}"),
+            "completed": item.get("score") is not None or item.get("proficiency_score") is not None,
+            "score": item.get("score", item.get("proficiency_score")),
+            "impact": "Recorded assessment",
+        }
+        for index, item in enumerate(trainee_data.get("assessments") or [])
+        if isinstance(item, dict)
+    }
+    preferences = trainee_data.get("career_preferences") if isinstance(trainee_data.get("career_preferences"), dict) else {}
+    return {
+        "personal_info": {
+            "name": trainee_data.get("name") or "",
+            "email": trainee_data.get("email") or "",
+            "phone": trainee_data.get("phone") or "",
+            "location": trainee_data.get("district") or "",
+            "career_goal": preferences.get("career_goal") or "",
+            "target_role": preferences.get("target_role") or "",
+            "current_role": "",
+            "work_mode": preferences.get("work_mode") or "",
+            "expected_salary": preferences.get("expected_salary") or "",
+            "resume_name": trainee_data.get("resume_name") or "",
+        },
+        "education": trainee_data.get("education") or [],
+        "skills": skills,
+        "experience": experience,
+        "certifications": certifications,
+        "career_preferences": {
+            "target_roles": preferences.get("target_roles") or [],
+            "preferred_locations": preferences.get("preferred_locations") or [],
+            "expected_salary": preferences.get("expected_salary") or "",
+            "employment_preference": preferences.get("employment_preference") or "",
+            "work_mode": preferences.get("work_mode") or "",
+        },
+        "saved_jobs": [],
+        "applications": [],
+        "assessments": assessments,
+        "readiness_boost": 0,
+    }
+
 def get_default_trainee_state(trainee_id: str, trainee_data: Optional[Dict[str, Any]] = None):
+    if trainee_data and not settings.ENABLE_DEMO_MODE:
+        return _production_default_trainee_state(trainee_id, trainee_data)
     name = trainee_data.get("name", "Priya Gupta") if trainee_data else "Priya Gupta"
     
     return {
@@ -144,8 +235,21 @@ def get_default_trainee_state(trainee_id: str, trainee_data: Optional[Dict[str, 
 def get_trainee_state(trainee_id: str) -> Dict[str, Any]:
     if trainee_id not in demo_trainee_state:
         trainee = FirestoreRepository.get_trainee(trainee_id)
-        demo_trainee_state[trainee_id] = get_default_trainee_state(trainee_id, trainee)
+        if not trainee:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trainee not found")
+        persisted_state = trainee.get("portal_state") if isinstance(trainee.get("portal_state"), dict) else None
+        demo_trainee_state[trainee_id] = (
+            deepcopy(persisted_state)
+            if persisted_state and not settings.ENABLE_DEMO_MODE
+            else get_default_trainee_state(trainee_id, trainee)
+        )
     return demo_trainee_state[trainee_id]
+
+
+def persist_trainee_state(trainee_id: str, state: Dict[str, Any]) -> None:
+    """Persist portal changes outside the explicitly session-only demo mode."""
+    if not settings.ENABLE_DEMO_MODE:
+        FirestoreRepository.update_trainee(trainee_id, {"portal_state": state})
 
 
 # Pydantic Request Models
@@ -303,6 +407,181 @@ DEMO_JOBS_CATALOG = [
 ]
 
 
+def _name_from_skill(value: Any) -> str:
+    if isinstance(value, str):
+        return value.strip()
+    if isinstance(value, dict):
+        return str(value.get("skill_name") or value.get("name") or value.get("skill_id") or "").strip()
+    return ""
+
+
+def get_portal_jobs() -> List[Dict[str, Any]]:
+    """Return demo fixtures only in demo mode, otherwise normalize persisted jobs."""
+    if settings.ENABLE_DEMO_MODE:
+        return deepcopy(DEMO_JOBS_CATALOG)
+    jobs: List[Dict[str, Any]] = []
+    for job in FirestoreRepository.get_jobs():
+        if str(job.get("status", "Active")).casefold() != "active":
+            continue
+        minimum, maximum = job.get("min_salary"), job.get("max_salary")
+        if minimum is not None and maximum is not None:
+            salary_range = f"₹{float(minimum):,.0f}–₹{float(maximum):,.0f}"
+        elif minimum is not None:
+            salary_range = f"From ₹{float(minimum):,.0f}"
+        elif maximum is not None:
+            salary_range = f"Up to ₹{float(maximum):,.0f}"
+        else:
+            salary_range = ""
+        jobs.append(
+            {
+                "id": job.get("id"),
+                "role": job.get("role") or job.get("title") or "Untitled vacancy",
+                "company": job.get("employer_name") or "",
+                "location": job.get("location") or "",
+                "work_mode": job.get("work_mode") or "",
+                "salary_range": salary_range,
+                "experience_req": job.get("experience_required") or "",
+                "openings": job.get("openings") or 0,
+                "deadline": job.get("deadline") or "",
+                "required_skills": [
+                    name for item in job.get("skills_required") or [] if (name := _name_from_skill(item))
+                ],
+                "preferred_skills": [
+                    name for item in job.get("preferred_skills") or [] if (name := _name_from_skill(item))
+                ],
+                "description": job.get("description") or "",
+                "responsibilities": job.get("responsibilities") or [],
+            }
+        )
+    return jobs
+
+
+def calculate_portal_job_match(state: Dict[str, Any], job: Dict[str, Any]) -> Dict[str, Any]:
+    current_skills = {
+        (_name_from_skill(skill)).casefold()
+        for skill in state.get("skills") or []
+        if _name_from_skill(skill)
+    }
+    required_skills = job.get("required_skills") or []
+    matched = [skill for skill in required_skills if skill.casefold() in current_skills]
+    missing = [skill for skill in required_skills if skill.casefold() not in current_skills]
+    return {
+        "match_percentage": round((len(matched) / len(required_skills)) * 100) if required_skills else 0,
+        "matched_skills": matched,
+        "missing_skills": missing,
+    }
+
+
+def _portal_job_results(state: Dict[str, Any]) -> List[Dict[str, Any]]:
+    results = []
+    for job in get_portal_jobs():
+        comparison = calculate_portal_job_match(state, job)
+        matched_count = len(comparison["matched_skills"])
+        requirement_count = len(job.get("required_skills") or [])
+        results.append(
+            {
+                "job": job,
+                **comparison,
+                "is_saved": job.get("id") in state.get("saved_jobs", []),
+                "reasoning": (
+                    f"{matched_count} of {requirement_count} recorded required skills align with this vacancy."
+                    if requirement_count
+                    else "The vacancy does not include skill requirements."
+                ),
+            }
+        )
+    return sorted(results, key=lambda item: item["match_percentage"], reverse=True)
+
+
+def _recorded_skill_level(state: Dict[str, Any], skill_name: str) -> Optional[int]:
+    for skill in state.get("skills") or []:
+        if _name_from_skill(skill).casefold() != skill_name.casefold():
+            continue
+        if isinstance(skill, dict) and isinstance(skill.get("level"), (int, float)):
+            return max(0, min(100, int(skill["level"])))
+    return None
+
+
+def _production_skill_gaps(state: Dict[str, Any], top_job: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    if not top_job:
+        return []
+    gaps = []
+    for skill in top_job.get("required_skills") or []:
+        current = _recorded_skill_level(state, skill)
+        if current is None:
+            gaps.append({"skill": skill, "current": None, "target": None, "gap": None, "priority": "Not assessed", "status": "Not assessed"})
+        else:
+            gaps.append({"skill": skill, "current": current, "target": None, "gap": None, "priority": "Recorded", "status": "Recorded"})
+    return gaps
+
+
+def _production_dashboard_response(state: Dict[str, Any]) -> Dict[str, Any]:
+    job_results = _portal_job_results(state)
+    top_match = job_results[0] if job_results else None
+    gaps = _production_skill_gaps(state, top_match.get("job") if top_match else None)
+    checklist = [
+        {"item": "Personal Information", "completed": bool(state["personal_info"].get("name") and state["personal_info"].get("email"))},
+        {"item": "Education Qualifications", "completed": bool(state.get("education"))},
+        {"item": "Skills & Competencies", "completed": bool(state.get("skills"))},
+        {"item": "Verified Certifications", "completed": bool(state.get("certifications"))},
+        {"item": "Internship / Work Experience", "completed": bool(state.get("experience"))},
+    ]
+    completed_count = sum(item["completed"] for item in checklist)
+    top_job = top_match.get("job") if top_match else None
+    missing = top_match.get("missing_skills", []) if top_match else []
+    target_role = state["personal_info"].get("target_role") or (top_job or {}).get("role") or "Not recorded"
+    insights = []
+    if top_match:
+        insights.append(
+            f"Your recorded skills match {top_match['match_percentage']}% of the requirements for {top_job.get('role')}.")
+        if missing:
+            insights.append(f"Skills not yet recorded for that vacancy: {', '.join(missing)}.")
+    else:
+        insights.append("No active vacancies are available for a role-specific skill comparison.")
+    return {
+        "mode": "production",
+        "personal_info": state["personal_info"], "education": state["education"], "skills": state["skills"],
+        "experience": state["experience"], "certifications": state["certifications"],
+        "career_preferences": state["career_preferences"],
+        "profile_completeness": round((completed_count / len(checklist)) * 100), "profile_checklist": checklist,
+        "readiness": {"overall": None, "technical_skills": None, "job_readiness": top_match["match_percentage"] if top_match else None, "experience": None, "certification": None},
+        "target_role_metrics": {
+            "role": target_role, "match": top_match["match_percentage"] if top_match else None,
+            "critical_skill_gap": missing[0] if missing else "Not recorded", "active_applications": len(state.get("applications", [])),
+            "shortlisted_applications": sum(item.get("status") == "Shortlisted" for item in state.get("applications", [])),
+            "interview_applications": sum(item.get("status") == "Interview" for item in state.get("applications", [])),
+            "next_milestone": "Record an assessment result" if missing else "No next milestone is recorded",
+        },
+        "ai_insights": insights,
+        "recommended_next_steps": [
+            {"step": 1, "title": "Record assessment evidence", "why": "Role matching uses recorded skills and assessments.", "action": "Update Profile", "action_route": "/trainee/profile"},
+            {"step": 2, "title": "Explore active vacancies", "why": "Review current requirements before applying.", "action": "Explore Opportunities", "action_route": "/trainee/jobs"},
+        ],
+        "recommended_jobs": job_results[:3], "all_jobs": job_results, "skill_gap_analysis": gaps, "assessments": state.get("assessments", {}),
+    }
+
+
+def _production_skill_growth_response(state: Dict[str, Any]) -> Dict[str, Any]:
+    job_results = _portal_job_results(state)
+    top_match = job_results[0] if job_results else None
+    top_job = top_match.get("job") if top_match else None
+    gaps = _production_skill_gaps(state, top_job)
+    return {
+        "mode": "production",
+        "skill_growth_plan": {
+            "current_readiness": None,
+            "target_role": (top_job or {}).get("role") or state["personal_info"].get("target_role") or "Not recorded",
+            "target_readiness": top_match["match_percentage"] if top_match else None,
+            "skills_remaining": sum(item["status"] == "Not assessed" for item in gaps),
+            "estimated_effort": "Not available",
+        },
+        "skill_gaps": gaps,
+        "ai_recommendations": [],
+        "course_catalog": [],
+        "assessments": state.get("assessments", {}),
+    }
+
+
 @router.get("/{trainee_id}/profile")
 def get_full_profile(trainee_id: str):
     state = get_trainee_state(trainee_id)
@@ -331,6 +610,7 @@ def update_full_profile(trainee_id: str, data: FullProfileUpdate):
         state["certifications"] = data.certifications
     if data.career_preferences is not None:
         state["career_preferences"].update(data.career_preferences)
+    persist_trainee_state(trainee_id, state)
     return {"status": "success", "message": "Profile updated successfully", "profile": state}
 
 
@@ -346,6 +626,7 @@ def add_skill(trainee_id: str, data: SkillPayload):
             "category": data.category or "Technical",
             "primary": False
         })
+    persist_trainee_state(trainee_id, state)
     return {"status": "success", "skills": state["skills"]}
 
 
@@ -357,12 +638,18 @@ def remove_skill(trainee_id: str, data: SkillPayload):
         s for s in state["skills"]
         if (s["name"].lower() if isinstance(s, dict) else s.lower()) != target_name
     ]
+    persist_trainee_state(trainee_id, state)
     return {"status": "success", "skills": state["skills"]}
 
 
 @router.post("/{trainee_id}/assessment/submit")
 def submit_assessment(trainee_id: str, data: AssessmentSubmitPayload):
     state = get_trainee_state(trainee_id)
+    if not settings.ENABLE_DEMO_MODE:
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED,
+            detail="Assessment scoring requires a configured assessment provider in production.",
+        )
     state["assessments"][data.assessment_name] = {
         "name": data.assessment_name,
         "completed": True,
@@ -375,6 +662,7 @@ def submit_assessment(trainee_id: str, data: AssessmentSubmitPayload):
         if "communication" not in existing:
             state["skills"].append({"name": "Communication", "level": data.score, "category": "Soft Skills", "primary": True})
     state["readiness_boost"] += 5
+    persist_trainee_state(trainee_id, state)
     return {
         "status": "success",
         "message": f"Assessment '{data.assessment_name}' completed with score {data.score}%",
@@ -386,10 +674,12 @@ def submit_assessment(trainee_id: str, data: AssessmentSubmitPayload):
 def get_trainee_dashboard(trainee_id: str):
     trainee = FirestoreRepository.get_trainee(trainee_id)
     if not trainee:
-        trainee = {"id": trainee_id, "name": "Priya Gupta", "status": "Certified", "outcome": "Employed"}
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trainee not found")
 
     state = get_trainee_state(trainee_id)
-    
+    if not settings.ENABLE_DEMO_MODE:
+        return _production_dashboard_response(state)
+
     # Calculate Profile Completeness
     checklist = [
         {"item": "Personal Information", "completed": bool(state["personal_info"].get("name") and state["personal_info"].get("email"))},
@@ -514,6 +804,12 @@ def get_trainee_dashboard(trainee_id: str):
 @router.get("/{trainee_id}/jobs")
 def get_jobs_page_data(trainee_id: str):
     state = get_trainee_state(trainee_id)
+    if not settings.ENABLE_DEMO_MODE:
+        return {
+            "jobs": _portal_job_results(state),
+            "saved_job_ids": state.get("saved_jobs", []),
+            "target_role": state["personal_info"].get("target_role") or "Not recorded",
+        }
     current_skills_set = set(
         (s["name"].lower() if isinstance(s, dict) else s.lower()) for s in state["skills"]
     )
@@ -547,18 +843,23 @@ def get_jobs_page_data(trainee_id: str):
 @router.post("/{trainee_id}/jobs/save")
 def toggle_save_job(trainee_id: str, data: SaveJobPayload):
     state = get_trainee_state(trainee_id)
+    if not any(job.get("id") == data.job_id for job in get_portal_jobs()):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
     if data.job_id in state["saved_jobs"]:
         state["saved_jobs"].remove(data.job_id)
         is_saved = False
     else:
         state["saved_jobs"].append(data.job_id)
         is_saved = True
+    persist_trainee_state(trainee_id, state)
     return {"status": "success", "is_saved": is_saved, "saved_jobs": state["saved_jobs"]}
 
 
 @router.get("/{trainee_id}/skills-growth")
 def get_skills_growth_data(trainee_id: str):
     state = get_trainee_state(trainee_id)
+    if not settings.ENABLE_DEMO_MODE:
+        return _production_skill_growth_response(state)
     current_skills_set = set(
         (s["name"].lower() if isinstance(s, dict) else s.lower()) for s in state["skills"]
     )
@@ -678,6 +979,9 @@ def get_applications(trainee_id: str):
 @router.post("/{trainee_id}/apply")
 def apply_for_job(trainee_id: str, data: ApplicationCreate):
     state = get_trainee_state(trainee_id)
+    known_job = next((job for job in get_portal_jobs() if job.get("id") == data.job_id), None)
+    if not known_job:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
     for app in state["applications"]:
         if app.get("job_id") == data.job_id:
             return {"status": "already_applied", "message": "You have already applied to this position."}
@@ -685,18 +989,19 @@ def apply_for_job(trainee_id: str, data: ApplicationCreate):
     new_app = {
         "id": f"app_{len(state['applications']) + 1}",
         "job_id": data.job_id,
-        "role": data.role,
-        "company": data.company,
-        "location": data.location,
-        "work_mode": data.work_mode,
-        "salary_range": data.salary_range,
+        "role": known_job.get("role") or data.role,
+        "company": known_job.get("company") or data.company,
+        "location": known_job.get("location") or data.location,
+        "work_mode": known_job.get("work_mode") or data.work_mode,
+        "salary_range": known_job.get("salary_range") or data.salary_range,
         "match_percentage": data.match_percentage,
         "status": "Applied",
         "applied_date": datetime.now().strftime("%d %b %Y"),
         "next_step": "Under employer screening review",
-        "notes": "Application submitted with verified demo resume."
+        "notes": "Application recorded through the trainee portal."
     }
     state["applications"].insert(0, new_app)
+    persist_trainee_state(trainee_id, state)
     return {"status": "success", "message": "Application submitted successfully!", "application": new_app}
 
 
@@ -704,4 +1009,5 @@ def apply_for_job(trainee_id: str, data: ApplicationCreate):
 def withdraw_application(trainee_id: str, data: WithdrawApplication):
     state = get_trainee_state(trainee_id)
     state["applications"] = [a for a in state["applications"] if a.get("id") != data.application_id and a.get("job_id") != data.application_id]
+    persist_trainee_state(trainee_id, state)
     return {"status": "success", "message": "Application withdrawn successfully", "applications": state["applications"]}

@@ -1,23 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Search,
-  Users,
-  BriefcaseBusiness,
-  TrendingUp,
-  Award,
   ArrowRight,
-  Sparkles,
   Layers,
-  CheckCircle2,
-  AlertTriangle,
-  RotateCcw,
-  SlidersHorizontal,
-  ArrowUpDown,
-  Building,
-  Target,
-  FileCheck
+  RotateCcw
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { API_BASE } from "../utils/config";
+import { fetchAuth } from "../utils/authFetch";
 import { adminIntelligenceData } from "../utils/adminData";
 
 export default function Programmes() {
@@ -29,8 +19,69 @@ export default function Programmes() {
   const [sortBy, setSortBy] = useState("employment_desc");
   const [viewMode, setViewMode] = useState("cards"); // "cards", "table", "compare"
   const [compareList, setCompareList] = useState(["P001", "P003"]);
+  
+  const [loading, setLoading] = useState(true);
+  const [allProgrammes, setAllProgrammes] = useState(adminIntelligenceData.programmes);
 
-  const allProgrammes = adminIntelligenceData.programmes;
+  useEffect(() => {
+    async function loadProgrammes() {
+      try {
+        const res = await fetchAuth(`${API_BASE}/api/programmes`);
+        if (res.ok) {
+          const liveData = await res.json();
+          // Merge live data with static fallbacks to preserve UI
+          const merged = adminIntelligenceData.programmes.map(mockProg => {
+            const liveProg = liveData.find(p => p.id === mockProg.id);
+            if (liveProg) {
+              return {
+                ...mockProg,
+                name: liveProg.name,
+                provider: liveProg.provider,
+                enrolled: liveProg.trainees,
+                employment_rate: parseInt(liveProg.employment) || 0,
+                retention_12m: parseInt(liveProg.retention) || 0,
+                status: liveProg.status
+              };
+            }
+            return mockProg;
+          });
+          
+          // Also append any new programmes from DB not in static mocks
+          liveData.forEach(liveProg => {
+            if (!merged.find(p => p.id === liveProg.id)) {
+              merged.push({
+                id: liveProg.id,
+                name: liveProg.name,
+                provider: liveProg.provider,
+                district: "Various",
+                enrolled: liveProg.trainees,
+                completion_rate: 0,
+                certification_rate: 0,
+                avg_assessment_score: 0,
+                avg_skill_gain: "+0%",
+                job_readiness_rate: 0,
+                employment_rate: parseInt(liveProg.employment) || 0,
+                retention_12m: parseInt(liveProg.retention) || 0,
+                demand_level: "Medium",
+                health_status: "Fair",
+                top_skills: [],
+                missing_skills: [],
+                hiring_employers: 0,
+                avg_starting_salary: "TBD"
+              });
+            }
+          });
+          
+          setAllProgrammes(merged);
+        }
+      } catch (err) {
+        console.error("Failed to fetch programmes:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProgrammes();
+  }, []);
 
   const toggleCompare = (progId) => {
     if (compareList.includes(progId)) {

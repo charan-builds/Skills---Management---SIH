@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Target,
   AlertCircle,
@@ -9,11 +8,8 @@ import {
   BriefcaseBusiness,
   GraduationCap,
   UserCog,
-  CheckCircle2,
-  ArrowRight,
   MapPin,
-  Building,
-  DollarSign
+  Building
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 

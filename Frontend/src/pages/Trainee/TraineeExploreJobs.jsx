@@ -3,7 +3,6 @@ import { API_BASE } from '../../utils/config';
 import { fetchAuth } from '../../utils/authFetch';
 import {
   Search,
-  Filter,
   MapPin,
   Building,
   DollarSign,
@@ -15,7 +14,6 @@ import {
   Clock,
   Send,
   Sparkles,
-  Check,
   FileText
 } from "lucide-react";
 import { useParams } from "react-router-dom";

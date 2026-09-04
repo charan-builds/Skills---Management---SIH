@@ -48,9 +48,9 @@ def test_future_6m_outcome(mock_get_trainees, mock_feedback):
     
     resp = get_dashboard(district=None, course=None, provider=None)
     
-    # Should ignore the future date completely, resulting in None
+    # Should ignore the future date completely, resulting in a null rate.
     retention_dict = {item["checkpoint"]: item["rate"] for item in resp.retention}
-    assert retention_dict["6 Months"] == "None"
+    assert retention_dict["6 Months"] is None
 
 @patch("app.routers.analytics.FirestoreRepository.get_employer_feedback")
 @patch("app.routers.analytics.FirestoreRepository.get_trainees")
@@ -65,7 +65,7 @@ def test_missing_date(mock_get_trainees, mock_feedback):
     
     resp = get_dashboard(district=None, course=None, provider=None)
     retention_dict = {item["checkpoint"]: item["rate"] for item in resp.retention}
-    assert retention_dict["6 Months"] == "None"
+    assert retention_dict["6 Months"] is None
 
 @patch("app.routers.analytics.FirestoreRepository.get_employer_feedback")
 @patch("app.routers.analytics.FirestoreRepository.get_trainees")
@@ -104,4 +104,4 @@ def test_invalid_placement_dates(mock_get_trainees, mock_feedback):
     
     # The negative duration should be caught and discarded by RetentionIntelligenceEngine
     retention_dict = {item["checkpoint"]: item["rate"] for item in resp.retention}
-    assert retention_dict["6 Months"] == "None"
+    assert retention_dict["6 Months"] is None

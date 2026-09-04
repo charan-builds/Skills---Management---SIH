@@ -1,4 +1,3 @@
-import React from "react";
 
 export default function ImpactExecutiveSummary({ dashboardData }) {
   if (!dashboardData) return null;

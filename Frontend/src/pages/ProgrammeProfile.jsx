@@ -1,29 +1,77 @@
-import { API_BASE } from '../utils/config';
-import { fetchAuth } from '../utils/authFetch';
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  GraduationCap,
-  Users,
-  BriefcaseBusiness,
-  TrendingUp,
-  CheckCircle2,
   ArrowLeft,
   Sparkles,
-  Award,
-  Layers,
-  BarChart3,
-  Building,
-  Target,
   ArrowRight
 } from "lucide-react";
+import { API_BASE } from "../utils/config";
+import { fetchAuth } from "../utils/authFetch";
 import { adminIntelligenceData } from "../utils/adminData";
 
 export default function ProgrammeProfile() {
   const navigate = useNavigate();
-  const { programmeId } = useParams();
+  const { programmeId: id } = useParams();
+  const [programme, setProgramme] = useState(
+    adminIntelligenceData.programmes.find((p) => p.id === id)
+  );
+  const [loading, setLoading] = useState(true);
 
-  const prog = adminIntelligenceData.programmes.find(p => p.id === programmeId) || adminIntelligenceData.programmes[0];
+  useEffect(() => {
+    async function loadProgramme() {
+      try {
+        const res = await fetchAuth(`${API_BASE}/api/programmes/${id}`);
+        if (res.ok) {
+          const liveData = await res.json();
+          setProgramme(prev => {
+            if (prev) {
+              return {
+                ...prev,
+                name: liveData.name,
+                provider: liveData.provider,
+                enrolled: liveData.trainees,
+                employment_rate: parseInt(liveData.employment) || 0,
+                retention_12m: parseInt(liveData.retention) || 0,
+                status: liveData.status
+              };
+            }
+            // If it's a new programme not in static data
+            return {
+              id: liveData.id,
+              name: liveData.name,
+              provider: liveData.provider,
+              district: "Various",
+              enrolled: liveData.trainees,
+              completion_rate: 0,
+              certification_rate: 0,
+              avg_assessment_score: 0,
+              avg_skill_gain: "+0%",
+              job_readiness_rate: 0,
+              employment_rate: parseInt(liveData.employment) || 0,
+              retention_12m: parseInt(liveData.retention) || 0,
+              demand_level: "Medium",
+              health_status: "Fair",
+              top_skills: [],
+              missing_skills: [],
+              hiring_employers: 0,
+              avg_starting_salary: "TBD"
+            };
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load programme:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProgramme();
+  }, [id]);
+
+  if (loading && !programme) {
+    return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading Programme Details...</div>;
+  }
+
+  const prog = programme || adminIntelligenceData.programmes[0];
 
   return (
     <div className="dashboard" style={{ maxWidth: '1440px', margin: '0 auto', padding: '2rem' }}>

@@ -2,16 +2,11 @@ import { useState, useEffect } from "react";
 import { API_BASE } from '../../utils/config';
 import { fetchAuth } from '../../utils/authFetch';
 import {
-  User,
-  GraduationCap,
-  BriefcaseBusiness,
-  Award,
   Plus,
   Trash2,
   Check,
   X,
   FileText,
-  Upload,
   Sparkles,
   Save
 } from "lucide-react";

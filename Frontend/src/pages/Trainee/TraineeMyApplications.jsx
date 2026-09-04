@@ -4,15 +4,12 @@ import { fetchAuth } from '../../utils/authFetch';
 import {
   FileText,
   CheckCircle2,
-  Clock,
   Building,
   MapPin,
   Calendar,
-  AlertCircle,
   Sparkles,
   Trash2,
-  Eye,
-  ArrowRight
+  Eye
 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 

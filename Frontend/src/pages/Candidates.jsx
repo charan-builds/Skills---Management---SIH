@@ -4,18 +4,13 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Search,
   MapPin,
-  Target,
   ArrowRight,
-  SlidersHorizontal,
   UserRound,
   Sparkles,
   Bookmark,
   Mail,
   CheckCircle2,
-  X,
-  RotateCcw,
-  ArrowUpDown,
-  Filter
+  RotateCcw
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import EmployerNav from "./Employer/EmployerNav";
@@ -42,8 +37,9 @@ export default function Candidates() {
   const [shortlistedMap, setShortlistedMap] = useState({});
   const [contactedMap, setContactedMap] = useState({});
 
-  const fetchCandidates = () => {
-    setLoading(true);
+  useEffect(() => {
+    const fetchCandidates = () => {
+      setLoading(true);
     fetchAuth(`${API_BASE}/api/employers/${organizationId}/candidates`)
       .then((res) => res.json())
       .then((data) => {
@@ -62,9 +58,8 @@ export default function Candidates() {
         console.error(err);
         setLoading(false);
       });
-  };
+    };
 
-  useEffect(() => {
     fetchCandidates();
   }, [organizationId]);
 
