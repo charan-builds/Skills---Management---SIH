@@ -19,16 +19,24 @@ import EmployerNav from "./Employer/EmployerNav";
 export default function EmployerDashboard() {
   const [data, setData] = useState({ dashboard: null, candidates: [], jobs: [] });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const organizationName = localStorage.getItem("organizationName") || "TechFlow Solutions";
   const organizationId = localStorage.getItem("organizationId") || "EMP-DEMO-001";
   const navigate = useNavigate();
 
   useEffect(() => {
+    const readResponse = async (response) => {
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.detail || "Unable to load employer dashboard data.");
+      return body;
+    };
+
+    setError("");
     Promise.all([
-      fetchAuth(`${API_BASE}/api/employers/${organizationId}/dashboard`).then(res => res.json()),
-      fetchAuth(`${API_BASE}/api/employers/${organizationId}/recommended-candidates`).then(res => res.json()),
-      fetchAuth(`${API_BASE}/api/employers/${organizationId}/active-vacancies`).then(res => res.json())
+      fetchAuth(`${API_BASE}/api/employers/${organizationId}/dashboard`).then(readResponse),
+      fetchAuth(`${API_BASE}/api/employers/${organizationId}/recommended-candidates`).then(readResponse),
+      fetchAuth(`${API_BASE}/api/employers/${organizationId}/active-vacancies`).then(readResponse)
     ]).then(([dashData, candData, jobsData]) => {
       setData({
         dashboard: dashData,
@@ -38,6 +46,7 @@ export default function EmployerDashboard() {
       setLoading(false);
     }).catch(err => {
       console.error(err);
+      setError(err.message || "Unable to load employer dashboard data.");
       setLoading(false);
     });
   }, [organizationId]);
@@ -54,27 +63,25 @@ export default function EmployerDashboard() {
   }
 
   const funnel = dashboard?.recruitment_funnel || {
-    sourced: 45,
-    matched: 24,
-    shortlisted: 6,
-    contacted_interview: 4,
-    hired: 3,
-    retention_rate: "100%"
+    sourced: 0, matched: 0, shortlisted: 0, contacted_interview: 0, hired: 0, retention_rate: "Not recorded"
   };
-
-  const skillIntel = dashboard?.skill_intelligence || [
-    { skill: "Python", demand: "High", supply: 12, gap: "Moderate", coverage: 150 },
-    { skill: "Machine Learning", demand: "Very High", supply: 7, gap: "High", coverage: 70 },
-    { skill: "SQL", demand: "High", supply: 14, gap: "Low", coverage: 175 },
-    { skill: "Power BI", demand: "Medium", supply: 5, gap: "Moderate", coverage: 62 },
-    { skill: "Cybersecurity", demand: "High", supply: 4, gap: "High", coverage: 80 }
-  ];
+  const skillIntel = dashboard?.skill_intelligence || [];
+  const percentOf = (part, whole) => whole > 0 ? `${Math.round((part / whole) * 100)}%` : "Not recorded";
+  const selectionRate = dashboard?.recruitment_outcome?.selection_rate ?? percentOf(funnel.hired, funnel.matched);
+  const matchRate = percentOf(funnel.matched, funnel.sourced);
+  const shortlistRate = percentOf(funnel.shortlisted, funnel.matched);
+  const contactRate = percentOf(funnel.contacted_interview, funnel.shortlisted);
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
       <EmployerNav />
 
       <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '0 1.5rem 3rem 1.5rem' }}>
+        {error && (
+          <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
+            {error}
+          </div>
+        )}
         
         {/* Welcome Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
@@ -120,7 +127,7 @@ export default function EmployerDashboard() {
               </div>
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.open_vacancies ?? 4}
+              {dashboard?.open_vacancies ?? 0}
             </h2>
             <small style={{ color: '#2563eb', fontWeight: 600 }}>Active hiring requisitions</small>
           </div>
@@ -133,7 +140,7 @@ export default function EmployerDashboard() {
               </div>
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.available_candidates ?? 17}
+              {dashboard?.available_candidates ?? 0}
             </h2>
             <small style={{ color: '#16a34a', fontWeight: 600 }}>Verified certified talent pool</small>
           </div>
@@ -146,7 +153,7 @@ export default function EmployerDashboard() {
               </div>
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.shortlisted_candidates ?? 6}
+              {dashboard?.shortlisted_candidates ?? 0}
             </h2>
             <small style={{ color: '#b45309', fontWeight: 600 }}>Currently in evaluation pipeline</small>
           </div>
@@ -159,9 +166,9 @@ export default function EmployerDashboard() {
               </div>
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.hired_trainees ?? 3}
+              {dashboard?.hired_trainees ?? 0}
             </h2>
-            <small style={{ color: '#7c3aed', fontWeight: 600 }}>100% 12-month retention verified</small>
+            <small style={{ color: '#7c3aed', fontWeight: 600 }}>Recorded employer outcome data</small>
           </div>
 
         </div>
@@ -174,7 +181,7 @@ export default function EmployerDashboard() {
               <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>End-to-end conversion from workforce talent discovery to verified retention.</p>
             </div>
             <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 700 }}>
-              75% Selection Rate
+              {selectionRate} Selection Rate
             </span>
           </div>
 
@@ -189,25 +196,25 @@ export default function EmployerDashboard() {
             <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #2563eb' }}>
               <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 600 }}>2. Matched (65%+)</span>
               <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>{funnel.matched}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#2563eb' }}>53% Match Rate</span>
+              <span style={{ fontSize: '0.75rem', color: '#2563eb' }}>{matchRate} Match Rate</span>
             </div>
 
             <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #f59e0b' }}>
               <span style={{ fontSize: '0.8rem', color: '#b45309', fontWeight: 600 }}>3. Shortlisted</span>
               <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>{funnel.shortlisted}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#b45309' }}>25% of Matched</span>
+              <span style={{ fontSize: '0.75rem', color: '#b45309' }}>{shortlistRate} of Matched</span>
             </div>
 
             <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #8b5cf6' }}>
               <span style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: 600 }}>4. Interviews</span>
               <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>{funnel.contacted_interview}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#7c3aed' }}>67% Conversion</span>
+              <span style={{ fontSize: '0.75rem', color: '#7c3aed' }}>{contactRate} of Shortlisted</span>
             </div>
 
             <div style={{ background: '#f0fdf4', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #16a34a' }}>
               <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 700 }}>5. Hired Trainees</span>
               <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#15803d' }}>{funnel.hired}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 600 }}>100% 12M Retention</span>
+              <span style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 600 }}>{funnel.retention_rate}</span>
             </div>
 
           </div>
@@ -252,7 +259,7 @@ export default function EmployerDashboard() {
                       <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, display: 'inline-block', marginBottom: '0.2rem' }}>
                         {cand.match_percentage}% Match
                       </span>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Job Fit: {cand.job_match || cand.match_percentage - 3}%</div>
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Job Fit: {cand.job_match ?? cand.match_percentage ?? 0}%</div>
                     </div>
                   </div>
 
@@ -287,6 +294,7 @@ export default function EmployerDashboard() {
                   </div>
                 </div>
               ))}
+              {candidates.length === 0 && <p style={{ color: '#64748b', margin: 0 }}>No candidates are available for recommendation.</p>}
             </div>
           </div>
 
@@ -318,7 +326,7 @@ export default function EmployerDashboard() {
 
                     <div style={{ textAlign: 'right' }}>
                       <span style={{ background: '#f0fdf4', color: '#16a34a', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
-                        {job.matching_candidates || 4} Matched
+                        {job.matching_candidates ?? 0} Matched
                       </span>
                     </div>
                   </div>
@@ -337,6 +345,7 @@ export default function EmployerDashboard() {
                   </div>
                 </div>
               ))}
+              {jobs.length === 0 && <p style={{ color: '#64748b', margin: 0 }}>No active vacancies are recorded for this organization.</p>}
             </div>
           </div>
 
@@ -388,6 +397,9 @@ export default function EmployerDashboard() {
                       </td>
                     </tr>
                   ))}
+                  {skillIntel.length === 0 && (
+                    <tr><td colSpan="5" style={{ padding: '0.75rem 0.5rem', color: '#64748b' }}>No active vacancy skill data is available.</td></tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -400,21 +412,21 @@ export default function EmployerDashboard() {
                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #2563eb' }}>
                   <strong style={{ fontSize: '0.85rem', color: '#1e40af', display: 'block', marginBottom: '0.25rem' }}>Training Partnership Recommendation</strong>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: '#475569', lineHeight: 1.4 }}>
-                    {dashboard?.ai_insights?.training_recommendation || "Machine Learning and Cybersecurity talent pools have the highest hiring demand. Partner with state programs for specialized training."}
+                    {dashboard?.ai_insights?.training_recommendation || "No training recommendation is available from recorded vacancy data."}
                   </p>
                 </div>
 
                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #16a34a' }}>
                   <strong style={{ fontSize: '0.85rem', color: '#15803d', display: 'block', marginBottom: '0.25rem' }}>AI Hiring Trend</strong>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: '#475569', lineHeight: 1.4 }}>
-                    {dashboard?.ai_insights?.ai_hiring_insight || "Candidates possessing Python + Linux fundamentals demonstrate a 92% placement success rate and 100% 12-month retention."}
+                    {dashboard?.ai_insights?.ai_hiring_insight || "No hiring trend is available from recorded data."}
                   </p>
                 </div>
 
                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', borderLeft: '4px solid #f59e0b' }}>
                   <strong style={{ fontSize: '0.85rem', color: '#b45309', display: 'block', marginBottom: '0.25rem' }}>Skill Gap Mitigation</strong>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: '#475569', lineHeight: 1.4 }}>
-                    {dashboard?.ai_insights?.skill_gap_alert || "Power BI & Statistics are the most frequent gaps in your applicant pool. Consider candidates with strong SQL and provide self-paced Power BI upskilling."}
+                    {dashboard?.ai_insights?.skill_gap_alert || "No skill-gap alert is available from recorded data."}
                   </p>
                 </div>
 
@@ -435,17 +447,17 @@ export default function EmployerDashboard() {
             <div>
               <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase' }}>RECRUITMENT OUTCOMES</span>
               <h3 style={{ margin: '0.2rem 0 0.5rem 0', fontSize: '1.3rem', fontWeight: 800, color: '#0f172a' }}>
-                {dashboard?.recruitment_outcome?.hired ?? 3} Placements Verified
+                {dashboard?.recruitment_outcome?.hired ?? 0} Recorded Placements
               </h3>
               <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', color: '#475569', lineHeight: 1.4 }}>
-                Your organization has successfully recruited trained candidates from state skilling academies.
+                This summary is calculated from outcomes recorded for your organization.
               </p>
               <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem' }}>
-                <span>Selection Rate: <strong>{dashboard?.recruitment_outcome?.selection_rate ?? "75%"}</strong></span>
+                <span>Selection Rate: <strong>{selectionRate}</strong></span>
                 <span>•</span>
-                <span>Avg Match: <strong>{dashboard?.recruitment_outcome?.avg_skill_match ?? "92%"}</strong></span>
+                <span>Avg Match: <strong>{dashboard?.recruitment_outcome?.avg_skill_match ?? "Not recorded"}</strong></span>
                 <span>•</span>
-                <span>Retention: <strong style={{ color: '#16a34a' }}>{dashboard?.recruitment_outcome?.retention ?? "100%"}</strong></span>
+                <span>Retention: <strong style={{ color: '#16a34a' }}>{dashboard?.recruitment_outcome?.retention ?? "Not recorded"}</strong></span>
               </div>
             </div>
           </div>

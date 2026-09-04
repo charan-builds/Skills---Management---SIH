@@ -32,6 +32,8 @@ export default function EmployerCandidateProfile() {
   const [showSkillAnalysisModal, setShowSkillAnalysisModal] = useState(false);
   const [contactSuccess, setContactSuccess] = useState(false);
   const [contactMessage, setContactMessage] = useState("Hello, we reviewed your profile on the Skilling Intelligence Portal and would like to invite you for an initial technical interview.");
+  const [actionError, setActionError] = useState("");
+  const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -52,26 +54,40 @@ export default function EmployerCandidateProfile() {
   }, [candidateId, organizationId]);
 
   const handleToggleShortlist = async () => {
+    if (!candidate?.recommended_job_id) {
+      setActionError("No active vacancy is available to shortlist this candidate against.");
+      return;
+    }
+    setActionLoading(true);
+    setActionError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/shortlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ trainee_id: candidateId, job_id: "JOB-DEMO-007" })
+        body: JSON.stringify({ trainee_id: candidateId, job_id: candidate.recommended_job_id })
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to update shortlist.");
       setShortlisted(data.shortlisted);
     } catch (err) {
       console.error(err);
+      setActionError(err.message || "Unable to update shortlist.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
   const handleSendContact = async () => {
+    setActionLoading(true);
+    setActionError("");
     try {
-      await fetchAuth(`${API_BASE}/api/employers/${organizationId}/contact`, {
+      const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ trainee_id: candidateId, message: contactMessage })
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to record the contact request.");
       setContactSuccess(true);
       setTimeout(() => {
         setContactSuccess(false);
@@ -79,6 +95,9 @@ export default function EmployerCandidateProfile() {
       }, 2000);
     } catch (err) {
       console.error(err);
+      setActionError(err.message || "Unable to record the contact request.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -104,13 +123,19 @@ export default function EmployerCandidateProfile() {
     );
   }
 
-  const matchVal = Number(candidate.match) || 94;
+  const parsedMatch = Number(candidate.match);
+  const matchVal = Number.isFinite(parsedMatch) ? parsedMatch : 0;
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
       <EmployerNav />
 
       <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '0 1.5rem 3rem 1.5rem' }}>
+        {actionError && (
+          <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
+            {actionError}
+          </div>
+        )}
         
         {/* Back Button */}
         <button
@@ -125,13 +150,13 @@ export default function EmployerCandidateProfile() {
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#2563eb', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 800 }}>
-              {candidate.initials || "PG"}
+              {candidate.initials || "?"}
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.25rem' }}>
                 <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>{candidate.name}</h1>
                 <span style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.75rem', fontWeight: 700, padding: '3px 8px', borderRadius: '12px' }}>
-                  ✓ {candidate.trainingStatus || "Certified"}
+                  {candidate.trainingStatus || "Training status not recorded"}
                 </span>
               </div>
               <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b' }}>
@@ -158,6 +183,7 @@ export default function EmployerCandidateProfile() {
 
             <button
               onClick={handleToggleShortlist}
+              disabled={actionLoading || !candidate.recommended_job_id}
               style={{ padding: '0.6rem 1.15rem', background: shortlisted ? '#fef3c7' : '#ffffff', border: shortlisted ? '1px solid #fde68a' : '1px solid #cbd5e1', color: shortlisted ? '#b45309' : '#0f172a', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
             >
               <Bookmark size={15} fill={shortlisted ? "#b45309" : "none"} />
@@ -166,6 +192,7 @@ export default function EmployerCandidateProfile() {
 
             <button
               onClick={() => setShowContactModal(true)}
+              disabled={actionLoading}
               style={{ padding: '0.6rem 1.25rem', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: '0 2px 6px rgba(37,99,235,0.25)' }}
             >
               <Mail size={15} /> Contact Candidate
@@ -188,7 +215,7 @@ export default function EmployerCandidateProfile() {
                   <h3 style={{ margin: '0.2rem 0 0 0', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Role Match & Gap Analysis</h3>
                 </div>
                 <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 800 }}>
-                  {matchVal}% Strong Match
+                  {matchVal}% Role Match
                 </span>
               </div>
 
@@ -201,7 +228,7 @@ export default function EmployerCandidateProfile() {
               <div style={{ background: '#eff6ff', padding: '1rem 1.25rem', borderRadius: '8px', borderLeft: '4px solid #2563eb', marginBottom: '1.5rem' }}>
                 <strong style={{ fontSize: '0.85rem', color: '#1e40af', display: 'block', marginBottom: '0.35rem' }}>AI Matching Rationale:</strong>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: '#1e3a8a', lineHeight: 1.45 }}>
-                  {candidate.ai_recommendation?.summary || `${candidate.name} is a high-confidence match for your enterprise technical requirements.`}
+                  {candidate.ai_recommendation?.summary || "No role-specific matching rationale has been recorded."}
                 </p>
               </div>
 
@@ -209,7 +236,7 @@ export default function EmployerCandidateProfile() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
                   <strong style={{ fontSize: '0.8rem', color: '#16a34a', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
-                    ✓ Strong Verified Matches
+                    ✓ Recorded matching skills
                   </strong>
                   <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.85rem', color: '#334155', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
                     {candidate.ai_recommendation?.strengths?.map((str, idx) => (
@@ -285,20 +312,21 @@ export default function EmployerCandidateProfile() {
             {/* Skill Proficiencies */}
             <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
               <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Target size={18} color="#2563eb" /> Verified Skill Proficiencies
+                <Target size={18} color="#2563eb" /> Recorded Skill Evidence
               </h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {candidate.skills?.map((s, idx) => {
-                  const prof = s.proficiency || 80;
+                  const rawProficiency = Number(s.proficiency);
+                  const prof = Number.isFinite(rawProficiency) ? Math.max(0, Math.min(100, rawProficiency)) : null;
                   return (
                     <div key={idx}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem', fontSize: '0.85rem' }}>
                         <span style={{ fontWeight: 600, color: '#0f172a' }}>{s.name}</span>
-                        <span style={{ fontWeight: 700, color: prof >= 80 ? '#16a34a' : (prof >= 60 ? '#f59e0b' : '#dc2626') }}>{prof}%</span>
+                        <span style={{ fontWeight: 700, color: prof === null ? '#64748b' : (prof >= 80 ? '#16a34a' : (prof >= 60 ? '#f59e0b' : '#dc2626')) }}>{prof === null ? "Not assessed" : `${prof}%`}</span>
                       </div>
                       <div style={{ height: '6px', background: '#f1f5f9', borderRadius: '3px', overflow: 'hidden' }}>
-                        <div style={{ width: `${prof}%`, height: '100%', background: prof >= 80 ? '#16a34a' : (prof >= 60 ? '#f59e0b' : '#dc2626') }}></div>
+                        <div style={{ width: `${prof ?? 0}%`, height: '100%', background: prof === null ? '#94a3b8' : (prof >= 80 ? '#16a34a' : (prof >= 60 ? '#f59e0b' : '#dc2626')) }}></div>
                       </div>
                     </div>
                   );
@@ -326,7 +354,7 @@ export default function EmployerCandidateProfile() {
             {/* Certifications */}
             <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
               <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Award size={18} color="#2563eb" /> Verified Certifications
+                <Award size={18} color="#2563eb" /> Recorded Certifications
               </h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
@@ -334,7 +362,7 @@ export default function EmployerCandidateProfile() {
                   <div key={idx} style={{ padding: '0.85rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                     <strong style={{ fontSize: '0.9rem', color: '#0f172a', display: 'block' }}>{cert.name}</strong>
                     <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{cert.issuer} • {cert.date}</span>
-                    <div style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700, marginTop: '2px' }}>ID: {cert.id} (Verified)</div>
+                    {cert.id && <div style={{ fontSize: '0.75rem', color: '#475569', fontWeight: 700, marginTop: '2px' }}>ID: {cert.id}</div>}
                   </div>
                 ))}
               </div>
@@ -364,7 +392,7 @@ export default function EmployerCandidateProfile() {
           <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '650px', maxHeight: '90vh', overflowY: 'auto', padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
               <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase' }}>VERIFIED CANDIDATE RESUME</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase' }}>CANDIDATE PROFILE SUMMARY</span>
                 <h3 style={{ margin: '0.2rem 0 0 0', fontSize: '1.3rem', fontWeight: 700, color: '#0f172a' }}>{candidate.name} — Curriculum Vitae</h3>
                 <span style={{ fontSize: '0.85rem', color: '#64748b' }}>{candidate.traineeId} • {candidate.programme}</span>
               </div>
@@ -374,17 +402,17 @@ export default function EmployerCandidateProfile() {
             <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '0.9rem', lineHeight: 1.6, color: '#334155' }}>
               <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>Executive Summary</h4>
               <p style={{ margin: '0 0 1rem 0' }}>
-                Certified {candidate.programme} professional with hands-on project experience in Linux administration, vulnerability remediation, and automated threat detection pipelines.
+                {candidate.ai_recommendation?.summary || "No verified resume summary has been recorded for this candidate."}
               </p>
 
-              <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>Verified Education</h4>
+              <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>Recorded Education</h4>
               <p style={{ margin: '0 0 1rem 0' }}>
-                Bachelor of Technology in Computer Science (CGPA 8.6) — State Technical Board (2021–2025).
+                {candidate.education?.length ? "See the recorded education section in this profile." : "No education record has been provided."}
               </p>
 
               <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>Core Competencies</h4>
               <p style={{ margin: 0 }}>
-                Linux Administration (90%), Python Automation (82%), Cybersecurity Fundamentals (88%), SQL Security (78%), Problem Solving (85%).
+                {candidate.skills?.length ? candidate.skills.map((skill) => skill.name).join(", ") : "No skill record has been provided."}
               </p>
             </div>
 
@@ -415,13 +443,13 @@ export default function EmployerCandidateProfile() {
                 <strong>Candidate:</strong> {candidate.name} ({candidate.traineeId})
               </p>
               <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#334155' }}>
-                <strong>Hiring Vacancy:</strong> Cybersecurity Analyst (JOB-DEMO-007)
+                <strong>Hiring Vacancy:</strong> {candidate.target_role || "No active vacancy"} {candidate.recommended_job_id ? `(${candidate.recommended_job_id})` : ""}
               </p>
               <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', color: '#334155' }}>
                 <strong>Calculated Match:</strong> <span style={{ color: '#16a34a', fontWeight: 700 }}>{matchVal}% Alignment</span>
               </p>
               <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>
-                Status: All core security requisites met. 2 minor gap skills (Cloud Security, SIEM) are bridgeable with 16 hours micro-learning.
+                {candidate.ai_recommendation?.summary || "No role-specific analysis is available."}
               </p>
             </div>
 
@@ -453,22 +481,22 @@ export default function EmployerCandidateProfile() {
                 <div style={{ width: '54px', height: '54px', borderRadius: '50%', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
                   <CheckCircle2 size={32} />
                 </div>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', fontSize: '1.15rem' }}>Introduction Request Sent!</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', fontSize: '1.15rem' }}>Contact Request Recorded</h4>
                 <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
-                  Candidate {candidate.name} has been notified via verified portal channels.
+                  Configure a delivery provider before treating this request as an external message.
                 </p>
               </div>
             ) : (
               <>
                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
-                  <p style={{ margin: '0 0 0.4rem 0', color: '#334155' }}><strong>Email:</strong> {candidate.email} (Masked)</p>
-                  <p style={{ margin: '0 0 0.4rem 0', color: '#334155' }}><strong>Phone:</strong> {candidate.phone} (Verified State Record)</p>
-                  <p style={{ margin: 0, color: '#334155' }}><strong>Availability:</strong> Immediate Joining</p>
+                  <p style={{ margin: '0 0 0.4rem 0', color: '#334155' }}><strong>Email:</strong> {candidate.email || "Not provided"}</p>
+                  <p style={{ margin: '0 0 0.4rem 0', color: '#334155' }}><strong>Phone:</strong> {candidate.phone || "Not provided"}</p>
+                  <p style={{ margin: 0, color: '#334155' }}><strong>Availability:</strong> {candidate.availability || "Not recorded"}</p>
                 </div>
 
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>
-                    Invitation Note
+                    Contact note
                   </label>
                   <textarea
                     value={contactMessage}
@@ -488,7 +516,7 @@ export default function EmployerCandidateProfile() {
                     onClick={handleSendContact}
                     style={{ padding: '0.65rem 1.5rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}
                   >
-                    Send Introduction
+                    Record Contact Request
                   </button>
                 </div>
               </>

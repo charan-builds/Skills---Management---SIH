@@ -33,18 +33,21 @@ export default function EmployerProfile() {
 
   const [loading, setLoading] = useState(true);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
   const [newSkill, setNewSkill] = useState("");
 
   const fetchProfile = async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/profile`);
-      if (res.ok) {
-        const data = await res.json();
-        setProfile(data);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to load organization profile.");
+      setProfile(data);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to load organization profile.");
     } finally {
       setLoading(false);
     }
@@ -56,19 +59,25 @@ export default function EmployerProfile() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    setSaving(true);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/profile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profile)
       });
-      if (res.ok) {
-        setSaveSuccess(true);
-        localStorage.setItem("organizationName", profile.name);
-        setTimeout(() => setSaveSuccess(false), 4000);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to save organization profile.");
+      setProfile(data.profile || profile);
+      setSaveSuccess(true);
+      localStorage.setItem("organizationName", (data.profile || profile).name || "");
+      setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to save organization profile.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -115,6 +124,11 @@ export default function EmployerProfile() {
       <EmployerNav />
 
       <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 1.5rem 3rem 1.5rem' }}>
+        {error && (
+          <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
+            {error}
+          </div>
+        )}
         
         {/* Header & Save Notification */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -182,7 +196,7 @@ export default function EmployerProfile() {
               <div>
                 <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>Company Headcount</label>
                 <select
-                  value={profile.company_size || "250–500 Employees"}
+                  value={profile.company_size || ""}
                   onChange={(e) => setProfile({ ...profile, company_size: e.target.value })}
                   style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                 >
@@ -299,7 +313,7 @@ export default function EmployerProfile() {
                 <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>Default Salary Budget Range</label>
                 <input
                   type="text"
-                  value={profile.hiring_preferences?.salary_budget_range || "₹4.5–7.5 LPA"}
+                  value={profile.hiring_preferences?.salary_budget_range || ""}
                   onChange={(e) => setProfile({ ...profile, hiring_preferences: { ...profile.hiring_preferences, salary_budget_range: e.target.value } })}
                   style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                 />
@@ -308,7 +322,7 @@ export default function EmployerProfile() {
               <div>
                 <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>Preferred Work Mode</label>
                 <select
-                  value={profile.hiring_preferences?.work_mode || "Hybrid / On-site"}
+                  value={profile.hiring_preferences?.work_mode || ""}
                   onChange={(e) => setProfile({ ...profile, hiring_preferences: { ...profile.hiring_preferences, work_mode: e.target.value } })}
                   style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                 >
@@ -324,6 +338,7 @@ export default function EmployerProfile() {
           <div style={{ display: 'flex', gap: '1rem', paddingBottom: '3rem' }}>
             <button
               type="submit"
+              disabled={saving}
               style={{
                 background: '#2563eb',
                 color: 'white',
@@ -339,7 +354,7 @@ export default function EmployerProfile() {
                 gap: '0.5rem'
               }}
             >
-              <Save size={18} /> Save Organization Profile
+              <Save size={18} /> {saving ? "Saving..." : "Save Organization Profile"}
             </button>
           </div>
 

@@ -29,19 +29,22 @@ export default function TraineeDashboard({ defaultTab }) {
   const [activeTab, setActiveTab] = useState(getInitialTab());
   const [portalData, setPortalData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Modals for job details and quick assessment on overview
   const [selectedJob, setSelectedJob] = useState(null);
+  const [toastMsg, setToastMsg] = useState("");
 
   const fetchPortalData = async () => {
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/dashboard`);
-      if (res.ok) {
-        const data = await res.json();
-        setPortalData(data);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to load trainee portal data.");
+      setPortalData(data);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to load trainee portal data.");
     } finally {
       setLoading(false);
     }
@@ -56,6 +59,7 @@ export default function TraineeDashboard({ defaultTab }) {
   }, [location.pathname, defaultTab]);
 
   const handleApplyFromOverview = async (job, matchPercentage) => {
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/apply`, {
         method: "POST",
@@ -70,10 +74,13 @@ export default function TraineeDashboard({ defaultTab }) {
         })
       });
       const data = await res.json();
-      alert(data.message || "Application submitted successfully!");
+      if (!res.ok) throw new Error(data.detail || "Unable to submit application.");
+      setToastMsg(data.message || "Application submitted successfully!");
+      setTimeout(() => setToastMsg(""), 4000);
       fetchPortalData();
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to submit application.");
     }
   };
 
@@ -90,6 +97,27 @@ export default function TraineeDashboard({ defaultTab }) {
 
   return (
     <TraineeLayout activeTab={activeTab} onTabChange={setActiveTab} portalData={portalData}>
+      {error && <div role="alert" style={{ margin: '1rem', background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem' }}>{error}</div>}
+      {toastMsg && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 9999,
+          background: '#16a34a',
+          color: '#ffffff',
+          padding: '0.85rem 1.25rem',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          <span>✓</span>
+          <span>{toastMsg}</span>
+        </div>
+      )}
       
       {activeTab === 'overview' && (
         <TraineeOverview

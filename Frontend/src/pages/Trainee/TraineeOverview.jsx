@@ -11,7 +11,6 @@ import {
   MapPin,
   Building
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 export default function TraineeOverview({
   portalData,
@@ -20,19 +19,20 @@ export default function TraineeOverview({
   onApplyJob,
   onStartAssessment
 }) {
-  const navigate = useNavigate();
-
   if (!portalData) return null;
 
-  const readiness = portalData.readiness || { overall: 95, technical_skills: 86, job_readiness: 78, experience: 74, certification: 100 };
-  const targetMetrics = portalData.target_role_metrics || {
-    role: "Cybersecurity Analyst",
-    match: 92,
-    critical_skill_gap: "Communication",
-    active_applications: 3,
-    shortlisted_applications: 2,
-    next_milestone: "Complete Communication assessment (+8% potential)"
+  const isProduction = portalData.mode === "production";
+  const readiness = portalData.readiness || {};
+  const targetMetrics = portalData.target_role_metrics || {};
+  const normalisePercent = (value) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? Math.max(0, Math.min(100, numeric)) : null;
   };
+  const percentLabel = (value) => {
+    const score = normalisePercent(value);
+    return score === null ? "Not scored" : `${score}%`;
+  };
+  const overallScore = normalisePercent(readiness.overall);
 
   return (
     <div style={{ maxWidth: '1280px' }}>
@@ -49,11 +49,13 @@ export default function TraineeOverview({
                 <h3 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}>Career Readiness</h3>
               </div>
               <span style={{ fontSize: '1.75rem', fontWeight: 800, color: '#16a34a' }}>
-                {readiness.overall}%
+                {percentLabel(readiness.overall)}
               </span>
             </div>
             <p style={{ margin: '0 0 1.5rem 0', color: '#475569', fontSize: '0.95rem', lineHeight: 1.5 }}>
-              <strong>Strong foundation</strong> — 2 skills away from maximizing readiness for your next target role.
+              {overallScore === null
+                ? "A readiness score will appear when verified assessment evidence is available."
+                : "This score is calculated from the recorded profile and role-matching evidence."}
             </p>
           </div>
           
@@ -61,40 +63,40 @@ export default function TraineeOverview({
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.35rem', color: '#334155' }}>
                 <span>Technical Skills</span>
-                <strong>{readiness.technical_skills}%</strong>
+                <strong>{percentLabel(readiness.technical_skills)}</strong>
               </div>
               <div style={{ height: '7px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${readiness.technical_skills}%`, height: '100%', background: '#2563eb' }}></div>
+                <div style={{ width: `${normalisePercent(readiness.technical_skills) ?? 0}%`, height: '100%', background: '#2563eb' }}></div>
               </div>
             </div>
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.35rem', color: '#334155' }}>
                 <span>Job Readiness</span>
-                <strong>{readiness.job_readiness}%</strong>
+                <strong>{percentLabel(readiness.job_readiness)}</strong>
               </div>
               <div style={{ height: '7px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${readiness.job_readiness}%`, height: '100%', background: '#f59e0b' }}></div>
+                <div style={{ width: `${normalisePercent(readiness.job_readiness) ?? 0}%`, height: '100%', background: '#f59e0b' }}></div>
               </div>
             </div>
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.35rem', color: '#334155' }}>
                 <span>Experience</span>
-                <strong>{readiness.experience}%</strong>
+                <strong>{percentLabel(readiness.experience)}</strong>
               </div>
               <div style={{ height: '7px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${readiness.experience}%`, height: '100%', background: '#3b82f6' }}></div>
+                <div style={{ width: `${normalisePercent(readiness.experience) ?? 0}%`, height: '100%', background: '#3b82f6' }}></div>
               </div>
             </div>
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.35rem', color: '#334155' }}>
                 <span>Certification</span>
-                <strong>{readiness.certification}%</strong>
+                <strong>{percentLabel(readiness.certification)}</strong>
               </div>
               <div style={{ height: '7px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${readiness.certification}%`, height: '100%', background: '#16a34a' }}></div>
+                <div style={{ width: `${normalisePercent(readiness.certification) ?? 0}%`, height: '100%', background: '#16a34a' }}></div>
               </div>
             </div>
           </div>
@@ -110,8 +112,8 @@ export default function TraineeOverview({
               <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Target Role</span>
             </div>
             <div>
-              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{targetMetrics.role}</h4>
-              <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 600, color: '#16a34a' }}>Match: {targetMetrics.match}%</p>
+              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{targetMetrics.role || "Not recorded"}</h4>
+              <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 600, color: '#16a34a' }}>Match: {percentLabel(targetMetrics.match)}</p>
             </div>
           </div>
 
@@ -122,8 +124,8 @@ export default function TraineeOverview({
               <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Top Skill Gap</span>
             </div>
             <div>
-              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{targetMetrics.critical_skill_gap}</h4>
-              <p style={{ margin: 0, fontSize: '0.85rem', color: '#b45309', fontWeight: 600 }}>High Priority Gap</p>
+              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{targetMetrics.critical_skill_gap || "No gap assessment available"}</h4>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#b45309', fontWeight: 600 }}>Recorded gap evidence</p>
             </div>
           </div>
 
@@ -134,8 +136,8 @@ export default function TraineeOverview({
               <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Applications</span>
             </div>
             <div>
-              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{targetMetrics.active_applications} Active</h4>
-              <p style={{ margin: 0, fontSize: '0.85rem', color: '#16a34a', fontWeight: 600 }}>{targetMetrics.shortlisted_applications} Shortlisted</p>
+              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#0f172a' }}>{targetMetrics.active_applications ?? 0} Active</h4>
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#16a34a', fontWeight: 600 }}>{targetMetrics.shortlisted_applications ?? 0} Shortlisted</p>
             </div>
           </div>
 
@@ -146,8 +148,8 @@ export default function TraineeOverview({
               <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Next Milestone</span>
             </div>
             <div>
-              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>Take Assessment</h4>
-              <p style={{ margin: 0, fontSize: '0.8rem', color: '#7c3aed', fontWeight: 600 }}>+8% readiness potential</p>
+              <h4 style={{ margin: '0 0 0.25rem 0', fontSize: '0.95rem', fontWeight: 700, color: '#0f172a' }}>{targetMetrics.next_milestone || "No next milestone recorded"}</h4>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: '#7c3aed', fontWeight: 600 }}>Based on recorded data</p>
             </div>
           </div>
 
@@ -193,8 +195,8 @@ export default function TraineeOverview({
       <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)', borderRadius: '14px', padding: '1.75rem 2rem', color: 'white', marginBottom: '2.5rem', boxShadow: '0 4px 12px rgba(30,58,138,0.15)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
           <Lightbulb size={22} color="#fbbf24" />
-          <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, letterSpacing: '0.5px' }}>AI CAREER ANALYSIS & INSIGHTS</h4>
-          <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '10px', marginLeft: 'auto', fontWeight: 500 }}>Demo Career Intelligence</span>
+          <h4 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 700, letterSpacing: '0.5px' }}>CAREER INSIGHTS</h4>
+          <span style={{ fontSize: '0.75rem', background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '10px', marginLeft: 'auto', fontWeight: 500 }}>{isProduction ? "Recorded data" : "Demo scenario data"}</span>
         </div>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginBottom: '1.5rem' }}>
@@ -204,13 +206,16 @@ export default function TraineeOverview({
               <span>{insight}</span>
             </div>
           ))}
+          {!portalData.ai_insights?.length && (
+            <p style={{ margin: 0, fontSize: '0.95rem', lineHeight: 1.4, opacity: 0.95 }}>No career insights are available from the recorded profile yet.</p>
+          )}
         </div>
 
         {/* Recommended Next Steps Grid */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.15)', paddingTop: '1.25rem' }}>
           <p style={{ fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: '#93c5fd', margin: '0 0 0.75rem 0' }}>Recommended Next Steps</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-            {portalData.recommended_next_steps?.map((step, idx) => (
+          {portalData.recommended_next_steps?.map((step, idx) => (
               <div key={idx} style={{ background: 'rgba(255,255,255,0.08)', borderRadius: '10px', padding: '1rem', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
                   <span style={{ width: '20px', height: '20px', borderRadius: '50%', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 700 }}>{step.step}</span>
@@ -300,6 +305,9 @@ export default function TraineeOverview({
               </div>
             </div>
           ))}
+          {!portalData.recommended_next_steps?.length && (
+            <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>No next steps are available from the recorded profile yet.</p>
+          )}
         </div>
       </div>
 

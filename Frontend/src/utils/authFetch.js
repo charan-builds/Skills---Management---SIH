@@ -17,7 +17,7 @@ export const fetchAuth = async (url, options = {}) => {
     localStorage.removeItem("organizationId");
     localStorage.removeItem("organizationName");
     localStorage.removeItem("employerEmail");
-    window.location.href = "/";
+    window.location.href = "/login";
   }
   
   return response;

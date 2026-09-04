@@ -21,6 +21,7 @@ export default function Candidates() {
 
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Search & Filter States
   const [search, setSearch] = useState("");
@@ -40,8 +41,13 @@ export default function Candidates() {
   useEffect(() => {
     const fetchCandidates = () => {
       setLoading(true);
+      setError("");
     fetchAuth(`${API_BASE}/api/employers/${organizationId}/candidates`)
-      .then((res) => res.json())
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Unable to load candidates.");
+        return data;
+      })
       .then((data) => {
         setCandidates(data || []);
         const sMap = {};
@@ -56,6 +62,7 @@ export default function Candidates() {
       })
       .catch((err) => {
         console.error(err);
+        setError(err.message || "Unable to load candidates.");
         setLoading(false);
       });
     };
@@ -63,31 +70,42 @@ export default function Candidates() {
     fetchCandidates();
   }, [organizationId]);
 
-  const handleToggleShortlist = async (candId) => {
+  const handleToggleShortlist = async (candidate) => {
+    const candId = candidate.id;
+    if (!candidate.recommended_job_id) {
+      setError("No active vacancy is available to shortlist this candidate against.");
+      return;
+    }
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/shortlist`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ trainee_id: candId, job_id: "JOB-DEMO-001A" })
+        body: JSON.stringify({ trainee_id: candId, job_id: candidate.recommended_job_id })
       });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to update shortlist.");
       setShortlistedMap(prev => ({
         ...prev,
         [candId]: data.shortlisted
       }));
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to update shortlist.");
     }
   };
 
   const handleSendContact = async () => {
     if (!contactModalCand) return;
+    setError("");
     try {
-      await fetchAuth(`${API_BASE}/api/employers/${organizationId}/contact`, {
+      const res = await fetchAuth(`${API_BASE}/api/employers/${organizationId}/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ trainee_id: contactModalCand.id, message: contactNote })
       });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to record the contact request.");
       setContactedMap(prev => ({ ...prev, [contactModalCand.id]: true }));
       setContactSuccess(true);
       setTimeout(() => {
@@ -96,6 +114,7 @@ export default function Candidates() {
       }, 2000);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to record the contact request.");
     }
   };
 
@@ -162,7 +181,6 @@ export default function Candidates() {
   const uniqueLocations = [...new Set(candidates.map(c => c.location ? c.location.split(',')[0].trim() : null).filter(Boolean))].sort();
 
   // Metrics
-  const totalCount = candidates.length;
   const strongMatchesCount = candidates.filter(c => (c.match || 0) >= 90).length;
   const shortlistedCount = Object.values(shortlistedMap).filter(Boolean).length;
   const contactedCount = Object.values(contactedMap).filter(Boolean).length;
@@ -183,6 +201,11 @@ export default function Candidates() {
       <EmployerNav />
 
       <div style={{ maxWidth: '1360px', margin: '0 auto', padding: '0 1.5rem 3rem 1.5rem' }}>
+        {error && (
+          <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
+            {error}
+          </div>
+        )}
         
         {/* Page Title */}
         <div style={{ marginBottom: '2rem' }}>
@@ -196,7 +219,7 @@ export default function Candidates() {
             Candidate Talent Pool
           </h1>
           <p style={{ color: '#64748b', margin: 0, fontSize: '0.95rem' }}>
-            Filter certified candidates, analyze AI skill alignment, and initiate recruitment outreach.
+            Filter available candidates, review recorded skill alignment, and record recruitment outreach requests.
           </p>
         </div>
 
@@ -219,7 +242,7 @@ export default function Candidates() {
           </div>
 
           <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.25rem', boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Contacted</span>
+            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Contact Requests</span>
             <h3 style={{ margin: '0.35rem 0 0 0', fontSize: '1.6rem', fontWeight: 800, color: '#2563eb' }}>{contactedCount}</h3>
           </div>
 
@@ -410,7 +433,8 @@ export default function Candidates() {
             {filteredCandidates.map((cand) => {
               const isShortlisted = Boolean(shortlistedMap[cand.id]);
               const isContacted = Boolean(contactedMap[cand.id]);
-              const matchVal = Number(cand.match) || 85;
+              const parsedMatch = Number(cand.match);
+              const matchVal = Number.isFinite(parsedMatch) ? parsedMatch : 0;
 
               return (
                 <div
@@ -452,9 +476,9 @@ export default function Candidates() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.8rem', color: '#64748b', marginBottom: '0.85rem' }}>
                       <span><MapPin size={12} style={{ verticalAlign: 'middle', marginRight: '2px' }} /> {cand.location}</span>
                       <span>•</span>
-                      <span>{cand.experience || "Fresher / Certified"}</span>
+                      <span>{cand.experience || "Experience not recorded"}</span>
                       <span>•</span>
-                      <span style={{ color: '#16a34a', fontWeight: 700 }}>✓ {cand.status || "Certified"}</span>
+                      <span style={{ color: '#16a34a', fontWeight: 700 }}>{cand.status || "Status not recorded"}</span>
                     </div>
 
                     {/* Skill Tags */}
@@ -489,7 +513,8 @@ export default function Candidates() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid #f1f5f9', paddingTop: '1rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
-                        onClick={() => handleToggleShortlist(cand.id)}
+                        onClick={() => handleToggleShortlist(cand)}
+                        disabled={!cand.recommended_job_id}
                         style={{
                           padding: '0.45rem 0.85rem',
                           background: isShortlisted ? '#fef3c7' : '#ffffff',
@@ -525,7 +550,7 @@ export default function Candidates() {
                         }}
                       >
                         <Mail size={13} />
-                        {isContacted ? "Contacted ✓" : "Contact"}
+                        {isContacted ? "Contact Requested" : "Contact"}
                       </button>
                     </div>
 
@@ -588,22 +613,22 @@ export default function Candidates() {
                 <div style={{ width: '54px', height: '54px', borderRadius: '50%', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
                   <CheckCircle2 size={32} />
                 </div>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', fontSize: '1.15rem' }}>Introduction Request Sent!</h4>
+                <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', fontSize: '1.15rem' }}>Contact Request Recorded</h4>
                 <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
-                  The candidate and placement coordinator have been notified through the portal.
+                  Configure a delivery provider before treating this request as an external message.
                 </p>
               </div>
             ) : (
               <>
                 <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
-                  <p style={{ margin: '0 0 0.4rem 0', color: '#334155' }}><strong>Email:</strong> {contactModalCand.id.toLowerCase()}@example.com (Masked)</p>
-                  <p style={{ margin: '0 0 0.4rem 0', color: '#334155' }}><strong>Phone:</strong> +91 98*** ***** (Verified State Portal Record)</p>
-                  <p style={{ margin: 0, color: '#334155' }}><strong>Availability:</strong> Immediate Joining / 2 Weeks Notice</p>
+                  <p style={{ margin: 0, color: '#334155' }}>
+                    Candidate contact details are not shown here. This action only records an outreach request until a delivery provider is configured.
+                  </p>
                 </div>
 
                 <div style={{ marginBottom: '1.5rem' }}>
                   <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>
-                    Introductory Message / Interview Invitation
+                    Contact note
                   </label>
                   <textarea
                     value={contactNote}
@@ -623,7 +648,7 @@ export default function Candidates() {
                     onClick={handleSendContact}
                     style={{ padding: '0.65rem 1.5rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}
                   >
-                    Send Introduction
+                    Record Contact Request
                   </button>
                 </div>
               </>

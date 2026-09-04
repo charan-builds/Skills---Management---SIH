@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { API_BASE } from '../../utils/config';
-import { fetchAuth } from '../../utils/authFetch';
 
 export default function TraineeFormModal({ isOpen, onClose, trainee, onSuccess }) {
   const [formData, setFormData] = useState({

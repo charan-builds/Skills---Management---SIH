@@ -10,7 +10,6 @@ import {
   Bookmark,
   CheckCircle2,
   AlertCircle,
-  ArrowRight,
   Clock,
   Send,
   Sparkles,
@@ -25,6 +24,7 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
   const [jobsData, setJobsData] = useState([]);
   const [savedJobs, setSavedJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Filters
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,20 +37,20 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
   const [selectedJob, setSelectedJob] = useState(null);
   const [applyingJob, setApplyingJob] = useState(null);
   const [coverNote, setCoverNote] = useState("");
-  const [selectedResume, setSelectedResume] = useState("Priya_Gupta_Cybersecurity_Resume.pdf");
   const [appSubmitted, setAppSubmitted] = useState(false);
 
   const fetchJobs = async () => {
     setLoading(true);
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/jobs`);
-      if (res.ok) {
-        const data = await res.json();
-        setJobsData(data.jobs || []);
-        setSavedJobs(data.saved_job_ids || []);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to load jobs.");
+      setJobsData(data.jobs || []);
+      setSavedJobs(data.saved_job_ids || []);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to load jobs.");
     } finally {
       setLoading(false);
     }
@@ -62,23 +62,25 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
 
   const handleToggleSave = async (jobId, e) => {
     if (e) e.stopPropagation();
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/jobs/save`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ job_id: jobId })
       });
-      if (res.ok) {
-        const data = await res.json();
-        setSavedJobs(data.saved_jobs || []);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to update saved jobs.");
+      setSavedJobs(data.saved_jobs || []);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to update saved jobs.");
     }
   };
 
   const handleConfirmApply = async () => {
     if (!applyingJob) return;
+    setError("");
     try {
       const res = await fetchAuth(`${API_BASE}/api/trainee-portal/${traineeId}/apply`, {
         method: "POST",
@@ -94,18 +96,19 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
           cover_note: coverNote
         })
       });
-      if (res.ok) {
-        setAppSubmitted(true);
-        if (onApplySuccess) onApplySuccess();
-        setTimeout(() => {
-          setAppSubmitted(false);
-          setApplyingJob(null);
-          setSelectedJob(null);
-          setCoverNote("");
-        }, 2000);
-      }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || "Unable to submit application.");
+      setAppSubmitted(true);
+      if (onApplySuccess) onApplySuccess();
+      setTimeout(() => {
+        setAppSubmitted(false);
+        setApplyingJob(null);
+        setSelectedJob(null);
+        setCoverNote("");
+      }, 2000);
     } catch (err) {
       console.error(err);
+      setError(err.message || "Unable to submit application.");
     }
   };
 
@@ -114,11 +117,11 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
     const job = item.job;
     const q = searchQuery.toLowerCase();
     const matchesSearch = !q ||
-      job.role.toLowerCase().includes(q) ||
-      job.company.toLowerCase().includes(q) ||
-      job.required_skills.some(s => s.toLowerCase().includes(q));
+      (job.role || "").toLowerCase().includes(q) ||
+      (job.company || "").toLowerCase().includes(q) ||
+      (job.required_skills || []).some(s => s.toLowerCase().includes(q));
 
-    const matchesLocation = locationFilter === "All" || job.location.toLowerCase() === locationFilter.toLowerCase();
+    const matchesLocation = locationFilter === "All" || (job.location || "").toLowerCase() === locationFilter.toLowerCase();
     const matchesWorkMode = workModeFilter === "All" || (job.work_mode && job.work_mode.toLowerCase() === workModeFilter.toLowerCase());
     const matchesMatch = matchFilter === "All" || (matchFilter === "90" && item.match_percentage >= 90) || (matchFilter === "80" && item.match_percentage >= 80);
 
@@ -131,6 +134,11 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
 
   return (
     <div style={{ maxWidth: '1280px' }}>
+      {error && (
+        <div role="alert" style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#b91c1c', borderRadius: '8px', padding: '0.85rem 1rem', marginBottom: '1rem' }}>
+          {error}
+        </div>
+      )}
       
       {/* Page Title */}
       <div style={{ marginBottom: '2rem' }}>
@@ -205,7 +213,7 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
       {/* RESULTS HEADER */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
         <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0f172a', margin: 0 }}>
-          {filteredJobs.length} Verified {filteredJobs.length === 1 ? "Opportunity" : "Opportunities"}
+          {filteredJobs.length} {filteredJobs.length === 1 ? "Available Opportunity" : "Available Opportunities"}
         </h3>
         <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
           Sorted by AI Skill Match Score
@@ -265,11 +273,11 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
                       <DollarSign size={14} color="#16a34a" /> {item.job.salary_range}
                     </span>
                     <span>•</span>
-                    <span style={{ background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>{item.job.work_mode || "Hybrid"}</span>
+                    <span style={{ background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px', fontSize: '0.8rem' }}>{item.job.work_mode || "Not specified"}</span>
                     <span>•</span>
-                    <span>{item.job.openings || 2} Openings</span>
+                    <span>{item.job.openings ?? "Openings not specified"}</span>
                     <span>•</span>
-                    <span style={{ color: '#b45309', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Clock size={12}/> Apply by {item.job.deadline || "15 Sep 2026"}</span>
+                    <span style={{ color: '#b45309', display: 'flex', alignItems: 'center', gap: '0.25rem' }}><Clock size={12}/> Apply by {item.job.deadline || "Not specified"}</span>
                   </div>
 
                   {/* AI Reasoning box */}
@@ -402,17 +410,9 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
               {selectedJob.missing_skills.length > 0 && (
                 <div style={{ background: '#eff6ff', padding: '1.25rem', borderRadius: '10px', border: '1px solid #bfdbfe', marginBottom: '2rem' }}>
                   <h4 style={{ margin: '0 0 0.5rem 0', color: '#1e40af', fontSize: '0.9rem', fontWeight: 700 }}>How to Improve Your Match</h4>
-                  <ol style={{ margin: '0 0 1rem 0', paddingLeft: '1.25rem', fontSize: '0.85rem', color: '#1e3a8a', lineHeight: 1.5 }}>
-                    <li>Complete SIEM Fundamentals module</li>
-                    <li>Take Communication for Technical Roles assessment</li>
-                    <li>Verify Linux incident triage project</li>
-                  </ol>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', borderTop: '1px solid #dbeafe', paddingTop: '0.75rem' }}>
-                    <span style={{ fontSize: '0.85rem', color: '#475569', fontWeight: 600 }}>Estimated Match Improvement:</span>
-                    <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0f172a' }}>{selectedJob.match_percentage}%</span>
-                    <ArrowRight size={16} color="#94a3b8" />
-                    <span style={{ fontSize: '1.1rem', fontWeight: 800, color: '#16a34a' }}>97% Target Match</span>
-                  </div>
+                  <p style={{ margin: 0, fontSize: '0.85rem', color: '#1e3a8a', lineHeight: 1.5 }}>
+                    Build evidence for the listed gaps and review the vacancy requirements before applying. The portal does not estimate a future match score.
+                  </p>
                 </div>
               )}
 
@@ -460,16 +460,11 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
                   <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1.5rem' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                       <FileText size={18} color="#2563eb" />
-                      <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>Select Resume</strong>
+                      <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>Resume attachment</strong>
                     </div>
-                    <select
-                      value={selectedResume}
-                      onChange={e => setSelectedResume(e.target.value)}
-                      style={{ width: '100%', padding: '0.6rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }}
-                    >
-                      <option value="Priya_Gupta_Cybersecurity_Resume.pdf">Priya_Gupta_Cybersecurity_Resume.pdf (Primary Verified Resume)</option>
-                      <option value="Priya_Gupta_General_CV.pdf">Priya_Gupta_General_CV.pdf</option>
-                    </select>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569', lineHeight: 1.45 }}>
+                      This deployment records the application but does not yet support document attachments.
+                    </p>
                   </div>
 
                   <div style={{ marginBottom: '1.5rem' }}>
@@ -506,7 +501,7 @@ export default function TraineeExploreJobs({ onApplySuccess }) {
                   </div>
                   <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.3rem', fontWeight: 700, color: '#0f172a' }}>Application Submitted!</h3>
                   <p style={{ color: '#64748b', fontSize: '0.95rem', margin: 0 }}>
-                    Your application for <strong>{applyingJob.job.role}</strong> at <strong>{applyingJob.job.company}</strong> has been forwarded for employer review.
+                    Your application for <strong>{applyingJob.job.role}</strong> at <strong>{applyingJob.job.company}</strong> has been recorded for employer review.
                   </p>
                 </div>
               )}

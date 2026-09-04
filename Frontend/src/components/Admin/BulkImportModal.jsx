@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { X, Upload, Download, FileText, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { API_BASE } from '../../utils/config';
-import { fetchAuth } from '../../utils/authFetch';
 
 export default function BulkImportModal({ isOpen, onClose, onSuccess }) {
   const [file, setFile] = useState(null);

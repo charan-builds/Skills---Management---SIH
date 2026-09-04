@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { API_BASE } from '../../utils/config';
 import { fetchAuth } from '../../utils/authFetch';
 import {
@@ -18,6 +18,8 @@ export default function TraineeProfileSettings({ onProfileUpdated }) {
 
   const [loading, setLoading] = useState(true);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
+  const [previewResumeModal, setPreviewResumeModal] = useState(false);
+  const fileInputRef = useRef(null);
 
   const [profile, setProfile] = useState({
     personal_info: {
@@ -525,16 +527,36 @@ export default function TraineeProfileSettings({ onProfileUpdated }) {
             </div>
 
             <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept=".pdf,.doc,.docx"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setProfile(prev => ({
+                      ...prev,
+                      personal_info: {
+                        ...prev.personal_info,
+                        resume_name: file.name
+                      }
+                    }));
+                    setSaveSuccessMsg(`✓ Selected new resume: ${file.name}. Click "Save All Changes" to persist.`);
+                    setTimeout(() => setSaveSuccessMsg(""), 5000);
+                  }
+                }}
+              />
               <button
                 type="button"
-                onClick={() => alert("Viewing verified demo resume for Priya Gupta.")}
+                onClick={() => setPreviewResumeModal(true)}
                 style={{ padding: '0.45rem 0.85rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, color: '#0f172a', cursor: 'pointer' }}
               >
                 View
               </button>
               <button
                 type="button"
-                onClick={() => alert("Resume replacement dialog (Demo mode: current resume is locked for verified demo presentation).")}
+                onClick={() => fileInputRef.current && fileInputRef.current.click()}
                 style={{ padding: '0.45rem 0.85rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, color: '#2563eb', cursor: 'pointer' }}
               >
                 Replace
@@ -542,6 +564,84 @@ export default function TraineeProfileSettings({ onProfileUpdated }) {
             </div>
           </div>
         </div>
+
+        {/* RESUME PREVIEW MODAL */}
+        {previewResumeModal && (
+          <div style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10000,
+            padding: '1.5rem'
+          }}>
+            <div style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              maxWidth: '650px',
+              width: '100%',
+              padding: '2rem',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+              border: '1px solid #e2e8f0',
+              position: 'relative'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <FileText size={24} color="#2563eb" />
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Verified Candidate Resume</h3>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>{profile.personal_info.resume_name || "Priya_Gupta_Cybersecurity_Resume.pdf"}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPreviewResumeModal(false)}
+                  style={{ background: '#f1f5f9', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Candidate Name</span>
+                    <p style={{ margin: '0.25rem 0 0 0', fontWeight: 700, color: '#0f172a' }}>{profile.personal_info.name}</p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Target Role</span>
+                    <p style={{ margin: '0.25rem 0 0 0', fontWeight: 700, color: '#2563eb' }}>{profile.personal_info.target_role || "Cybersecurity Analyst"}</p>
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Verified Skills ({profile.skills?.length || 0})</span>
+                    <p style={{ margin: '0.25rem 0 0 0', fontSize: '0.85rem', color: '#334155' }}>
+                      {profile.skills?.map(s => (typeof s === 'string' ? s : s.name)).slice(0, 5).join(', ')}...
+                    </p>
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Status</span>
+                    <p style={{ margin: '0.25rem 0 0 0', fontWeight: 600, color: '#16a34a' }}>✓ Verified Document</p>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setPreviewResumeModal(false)}
+                  style={{ padding: '0.65rem 1.5rem', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}
+                >
+                  Close Preview
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* SUBMIT BUTTON */}
         <div style={{ display: 'flex', gap: '1rem', paddingBottom: '3rem' }}>

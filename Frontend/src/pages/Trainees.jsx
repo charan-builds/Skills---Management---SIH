@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from "react";
 import {
   Search,
   Users,
-  ArrowRight,
   RotateCcw
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";

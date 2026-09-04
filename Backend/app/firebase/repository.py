@@ -227,7 +227,6 @@ class FirestoreRepository:
             
         return created_data
 
-
     @staticmethod
     def update_trainee(trainee_id: str, update_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         from app.core.config import settings
