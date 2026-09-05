@@ -30,6 +30,9 @@ app = FastAPI(
     description="Backend API for tracking skilling outcomes and employment impact.",
     version="1.0.0",
     lifespan=lifespan,
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
 )
 
 # Configure CORS to allow frontend communication
@@ -125,10 +128,13 @@ if frontend_dist:
 
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
-        # Don't intercept API routes, auth routes, or swagger documentation
+        # Don't intercept API routes, auth routes, docs, or system endpoints
         if (
             full_path.startswith("api")
             or full_path.startswith("auth")
+            or full_path.startswith("docs")
+            or full_path.startswith("redoc")
+            or full_path.startswith("openapi.json")
             or full_path in ["docs", "redoc", "openapi.json", "health", "firebase-test"]
         ):
             from fastapi import HTTPException
@@ -144,4 +150,3 @@ else:
         return {
             "message": "Skilling Impact Intelligence API is running"
         }
-
