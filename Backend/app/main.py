@@ -40,7 +40,10 @@ cors_origins_env = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://local
 allowed_origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
 # A regex is opt-in because credentials + a broad origin regex can unintentionally
 # authorize arbitrary preview domains. Set this only for domains you control.
-allowed_origin_regex = os.getenv("CORS_ALLOW_ORIGIN_REGEX") or None
+allowed_origin_regex = os.getenv(
+    "CORS_ALLOW_ORIGIN_REGEX",
+    r"https://skilling-impact-intelligence-[a-zA-Z0-9-]+\.vercel\.app"
+)
 
 app.add_middleware(
     CORSMiddleware,
