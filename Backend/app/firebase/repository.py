@@ -100,7 +100,8 @@ class FirestoreRepository:
         district: Optional[str] = None,
         programme_id: Optional[str] = None,
         course_name: Optional[str] = None,
-        outcome: Optional[str] = None
+        outcome: Optional[str] = None,
+        cohort: Optional[str] = None
     ) -> List[Dict[str, Any]]:
         from app.core.config import settings
         if settings.ENABLE_DEMO_MODE:
@@ -111,6 +112,8 @@ class FirestoreRepository:
                 trainees = [t for t in trainees if t.get("programme_id") == programme_id]
             if course_name and course_name != "All Courses":
                 trainees = [t for t in trainees if t.get("course_name") == course_name]
+            if cohort and cohort != "All Cohorts":
+                trainees = [t for t in trainees if t.get("cohort") == cohort]
             if outcome and outcome != "All Status" and outcome != "All Outcomes":
                 trainees = [t for t in trainees if t.get("outcome") == outcome]
             if search:
@@ -132,6 +135,8 @@ class FirestoreRepository:
                 query = query.where("programme_id", "==", programme_id)
             if course_name and course_name != "All Courses":
                 query = query.where("course_name", "==", course_name)
+            if cohort and cohort != "All Cohorts":
+                query = query.where("cohort", "==", cohort)
             if outcome and outcome != "All Status" and outcome != "All Outcomes":
                 query = query.where("outcome", "==", outcome)
                 

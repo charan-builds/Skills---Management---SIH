@@ -17,12 +17,14 @@ router = APIRouter(
 def get_dashboard(
     district: Optional[str] = Query(None),
     course: Optional[str] = Query(None),
-    provider: Optional[str] = Query(None)
+    provider: Optional[str] = Query(None),
+    cohort: Optional[str] = Query(None)
 ):
     # Fetch trainees with filters
     trainees = FirestoreRepository.get_trainees(
         district=district,
-        course_name=course
+        course_name=course,
+        cohort=cohort
     )
     
     # Filter by provider if specified

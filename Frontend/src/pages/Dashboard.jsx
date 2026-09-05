@@ -37,10 +37,27 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadDashboard() {
+      setLoading(true);
       try {
+        const dParam = district === "All Districts" ? "" : district;
+        const cParam = course === "All Programmes" ? "" : course;
+        const coParam = cohort === "All Cohorts" ? "" : cohort;
+        
+        const params = new URLSearchParams();
+        if (dParam) params.append("district", dParam);
+        if (cParam) params.append("course", cParam);
+        if (coParam) params.append("cohort", coParam);
+        const qStr = params.toString() ? `?${params.toString()}` : "";
+
+        const tParams = new URLSearchParams();
+        if (dParam) tParams.append("district", dParam);
+        if (cParam) tParams.append("course_name", cParam);
+        if (coParam) tParams.append("cohort", coParam);
+        const tStr = tParams.toString() ? `?${tParams.toString()}` : "";
+
         const [dashRes, traineesRes] = await Promise.all([
-          fetchAuth(`${API_BASE}/api/analytics/dashboard`),
-          fetchAuth(`${API_BASE}/api/trainees`)
+          fetchAuth(`${API_BASE}/api/analytics/dashboard${qStr}`),
+          fetchAuth(`${API_BASE}/api/trainees${tStr}`)
         ]);
         
         if (dashRes.ok) {
@@ -85,7 +102,7 @@ export default function Dashboard() {
       }
     }
     loadDashboard();
-  }, []);
+  }, [district, course, cohort]);
 
   const handleAdoptAction = (actionId) => {
     setAdoptedActions(prev => ({

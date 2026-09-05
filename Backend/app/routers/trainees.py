@@ -18,13 +18,15 @@ def get_trainees(
     course_name: Optional[str] = Query(None, description="Filter by course name"),
     outcome: Optional[str] = Query(None, description="Filter by current outcome status"),
     search: Optional[str] = Query(None, description="Search by name, ID or course"),
+    cohort: Optional[str] = Query(None, description="Filter by cohort"),
     _current_user: dict = Depends(get_admin_user),
 ):
     return FirestoreRepository.get_trainees(
         district=district,
         course_name=course_name,
         outcome=outcome,
-        search=search
+        search=search,
+        cohort=cohort
     )
 
 @router.get("/{id}", response_model=TraineeBase)
