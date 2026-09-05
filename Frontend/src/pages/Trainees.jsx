@@ -404,7 +404,7 @@ export default function Trainees() {
                   </td>
                   <td style={{ padding: '1rem', textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     <button
-                      onClick={() => navigate(`/trainee-profile/${t.id}`)}
+                      onClick={() => navigate(`/trainees/${t.id}`)}
                       style={{ padding: '0.45rem 1rem', background: '#eff6ff', color: '#2563eb', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer' }}
                     >
                       View Profile
