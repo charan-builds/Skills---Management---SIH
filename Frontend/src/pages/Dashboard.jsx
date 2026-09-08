@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [insights, setInsights] = useState(adminIntelligenceData.ai_programme_insights);
   const [actions, setActions] = useState(adminIntelligenceData.action_center_items);
   const [notifications, setNotifications] = useState(adminIntelligenceData.notifications || []);
+  const [pendingFollowups, setPendingFollowups] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -55,11 +56,17 @@ export default function Dashboard() {
         if (coParam) tParams.append("cohort", coParam);
         const tStr = tParams.toString() ? `?${tParams.toString()}` : "";
 
-        const [dashRes, traineesRes] = await Promise.all([
+        const [dashRes, traineesRes, followUpsRes] = await Promise.all([
           fetchAuth(`${API_BASE}/api/analytics/dashboard${qStr}`),
-          fetchAuth(`${API_BASE}/api/trainees${tStr}`)
+          fetchAuth(`${API_BASE}/api/trainees${tStr}`),
+          fetchAuth(`${API_BASE}/api/admin/follow-ups/pending`)
         ]);
         
+        if (followUpsRes.ok) {
+          const fuData = await followUpsRes.json();
+          setPendingFollowups(fuData || []);
+        }
+
         if (dashRes.ok) {
           const dashData = await dashRes.json();
           if (dashData.stats) {
@@ -395,6 +402,43 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Pending Follow-Ups Section */}
+        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <div>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f59e0b', textTransform: 'uppercase' }}>ESCALATIONS</span>
+              <h3 style={{ margin: '0.2rem 0 0 0', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Pending Follow-Ups</h3>
+            </div>
+            <span style={{ background: '#fef3c7', color: '#b45309', padding: '2px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
+              {pendingFollowups.length} Pending
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxHeight: '400px', overflowY: 'auto' }}>
+            {pendingFollowups.length === 0 ? (
+              <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b' }}>No pending follow-ups right now.</p>
+            ) : (
+              pendingFollowups.map((fu) => (
+                <div key={fu.id} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <strong style={{ fontSize: '0.9rem', color: '#0f172a' }}>Trainee ID: {fu.trainee_id}</strong>
+                    <span style={{ background: '#e0e7ff', color: '#4338ca', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 700 }}>
+                      Stage: {fu.current_stage}
+                    </span>
+                  </div>
+                  <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.8rem', color: '#64748b' }}>
+                    Triggered: {new Date(fu.triggered_at).toLocaleDateString()} <br/>
+                    Due: {fu.next_due_at ? new Date(fu.next_due_at).toLocaleDateString() : 'N/A'}
+                  </p>
+                  <Link to={`/trainees/${fu.trainee_id}`} style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 600, textDecoration: 'none' }}>
+                    View Trainee Profile →
+                  </Link>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

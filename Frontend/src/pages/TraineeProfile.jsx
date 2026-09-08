@@ -18,6 +18,7 @@ function TraineeProfile() {
 
   const [trainee, setTrainee] = useState(null);
   const [timeline, setTimeline] = useState([]);
+  const [followups, setFollowups] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +27,11 @@ function TraineeProfile() {
       .then((data) => {
         setTrainee(data);
         setTimeline(data.outcomes_timeline || []);
+        return fetchAuth(`${API_BASE}/api/trainees/${traineeId}/follow-ups`);
+      })
+      .then((res) => res.json())
+      .then((fuData) => {
+        setFollowups(fuData || []);
         setLoading(false);
       })
       .catch((err) => {
@@ -116,6 +122,53 @@ function TraineeProfile() {
             <span>Current Outcome</span>
             <strong>{trainee.outcome}</strong>
           </div>
+        </div>
+      </div>
+
+      {/* Follow-Ups */}
+      <div className="profile-section">
+        <div className="profile-section-header">
+          <div>
+            <p className="page-label">FOLLOW-UPS</p>
+            <h2>Escalation & Tracking</h2>
+          </div>
+        </div>
+
+        <div className="data-table-container">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Status</th>
+                <th>Triggered At</th>
+                <th>Next Due</th>
+                <th>Resolved At</th>
+              </tr>
+            </thead>
+            <tbody>
+              {followups.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center", padding: "2rem" }}>
+                    No follow-ups recorded.
+                  </td>
+                </tr>
+              ) : (
+                followups.map((fu) => (
+                  <tr key={fu.id}>
+                    <td><strong>{fu.current_stage}</strong></td>
+                    <td>
+                      <span className={`status-badge ${fu.status === "RESOLVED" ? "success" : fu.status === "UNRESOLVED" ? "error" : "warning"}`}>
+                        {fu.status}
+                      </span>
+                    </td>
+                    <td>{new Date(fu.triggered_at).toLocaleDateString()}</td>
+                    <td>{fu.next_due_at ? new Date(fu.next_due_at).toLocaleDateString() : "-"}</td>
+                    <td>{fu.resolved_at ? new Date(fu.resolved_at).toLocaleDateString() : "-"}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

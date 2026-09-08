@@ -66,6 +66,9 @@ app.include_router(skills.router)
 app.include_router(jobs.router)
 app.include_router(ai_router)
 app.include_router(trainee_portal.router)
+from app.routers import cron, followups
+app.include_router(cron.router, prefix="/api/cron", tags=["Cron"])
+app.include_router(followups.router)
 
 @app.get("/api/status")
 @app.get("/health")

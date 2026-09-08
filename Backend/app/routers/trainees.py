@@ -78,7 +78,7 @@ def add_employment(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Trainee with ID {id} not found"
         )
-        
+
     # If the employment is not self-employed and end_date is null, let's trigger an employer verification entry
     if employment.employment_type in ["Employed", "Apprentice"] and employment.employer_name != "Self-Employed":
         from app.schemas.employer import EmployerVerificationCreate
@@ -90,7 +90,7 @@ def add_employment(
             salary=employment.salary
         )
         FirestoreRepository.create_verification(verify_data)
-        
+
     return updated_trainee
 
 @router.post("/{id}/followup", response_model=TraineeBase)
@@ -195,3 +195,14 @@ def update_trainee_endpoint(
             detail=f"Trainee with ID {id} not found"
         )
     return updated
+
+
+@router.get("/{id}/follow-ups")
+def get_trainee_follow_ups(id: str, current_user = Depends(get_current_user)):
+    from app.firebase.repository import FirestoreRepository
+
+    # Only allow Admin or the Trainee themselves
+    if current_user.get("role") != "admin" and current_user.get("uid") != id:
+        raise HTTPException(status_code=403, detail="Not authorized to view these follow-ups")
+
+    return FirestoreRepository.get_trainee_follow_ups(id)

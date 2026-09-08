@@ -1035,3 +1035,108 @@ class FirestoreRepository:
             "skills_analysis": analysis,
             "recommendations": recommendations or ["Candidate meets key baseline requirements for this role."]
         }
+
+    # --- Follow-Ups (Phase 2C) ---
+    @staticmethod
+    def get_pending_follow_ups() -> List[Dict[str, Any]]:
+        from app.core.config import settings
+        if settings.ENABLE_DEMO_MODE:
+            return [f for f in FirestoreRepository._load_local_demo_data().get("follow_ups", []) if f.get("status") == "PENDING"]
+        if db:
+            docs = db.collection("follow_ups").where("status", "==", "PENDING").stream()
+            return [doc.to_dict() for doc in docs]
+        return []
+
+    @staticmethod
+    def get_follow_up(id: str) -> Optional[Dict[str, Any]]:
+        from app.core.config import settings
+        if settings.ENABLE_DEMO_MODE:
+            return next((f for f in FirestoreRepository._load_local_demo_data().get("follow_ups", []) if f.get("id") == id), None)
+        if db:
+            doc = db.collection("follow_ups").document(id).get()
+            return doc.to_dict() if doc.exists else None
+        return None
+
+    @staticmethod
+    def create_follow_up(data: Dict[str, Any]) -> Dict[str, Any]:
+        from app.core.config import settings
+        if settings.ENABLE_DEMO_MODE:
+            FirestoreRepository._load_local_demo_data().setdefault("follow_ups", []).append(data)
+        elif db:
+            db.collection("follow_ups").document(data["id"]).set(data)
+        return data
+
+    @staticmethod
+    def update_follow_up(id: str, updates: Dict[str, Any]) -> bool:
+        from app.core.config import settings
+        from datetime import datetime
+        now = datetime.utcnow().isoformat() + "Z"
+        updates["updated_at"] = now
+        if settings.ENABLE_DEMO_MODE:
+            for f in FirestoreRepository._load_local_demo_data().get("follow_ups", []):
+                if f.get("id") == id:
+                    f.update(updates)
+                    return True
+            return False
+        if db:
+            doc = db.collection("follow_ups").document(id)
+            if doc.get().exists:
+                doc.update(updates)
+                return True
+        return False
+
+    @staticmethod
+    def get_trainee_follow_ups(trainee_id: str) -> List[Dict[str, Any]]:
+        from app.core.config import settings
+        if settings.ENABLE_DEMO_MODE:
+            return [f for f in FirestoreRepository._load_local_demo_data().get("follow_ups", []) if f.get("trainee_id") == trainee_id]
+        if db:
+            docs = db.collection("follow_ups").where("trainee_id", "==", trainee_id).stream()
+            return [doc.to_dict() for doc in docs]
+        return []
+
+    @staticmethod
+    def create_follow_up_attempt(attempt: Dict[str, Any]) -> Dict[str, Any]:
+        from app.core.config import settings
+        import uuid
+        if not attempt.get("id"):
+            attempt["id"] = f"att_{uuid.uuid4().hex[:8]}"
+
+        idemp = attempt.get("idempotency_key")
+        if settings.ENABLE_DEMO_MODE:
+            attempts = FirestoreRepository._load_local_demo_data().setdefault("follow_up_attempts", [])
+            for a in attempts:
+                if a.get("idempotency_key") == idemp:
+                    return a
+            attempts.append(attempt)
+            return attempt
+        if db:
+            existing = list(db.collection("follow_up_attempts").where("idempotency_key", "==", idemp).limit(1).stream())
+            if existing:
+                return existing[0].to_dict()
+            db.collection("follow_up_attempts").document(attempt["id"]).set(attempt)
+            return attempt
+        return {}
+
+    @staticmethod
+    def get_follow_up_attempts(follow_up_id: str) -> List[Dict[str, Any]]:
+        from app.core.config import settings
+        if settings.ENABLE_DEMO_MODE:
+            return [a for a in FirestoreRepository._load_local_demo_data().get("follow_up_attempts", []) if a.get("follow_up_id") == follow_up_id]
+        if db:
+            docs = db.collection("follow_up_attempts").where("follow_up_id", "==", follow_up_id).stream()
+            return [doc.to_dict() for doc in docs]
+        return []
+
+    @staticmethod
+    def get_follow_ups() -> List[Dict[str, Any]]:
+        return FirestoreRepository.get_pending_follow_ups()
+
+    @staticmethod
+    def create_or_update_follow_up(data: Dict[str, Any]) -> Dict[str, Any]:
+        existing = FirestoreRepository.get_follow_up(data["id"])
+        if existing:
+            FirestoreRepository.update_follow_up(data["id"], data)
+        else:
+            FirestoreRepository.create_follow_up(data)
+        return data
