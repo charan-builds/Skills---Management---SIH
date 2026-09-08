@@ -4,7 +4,7 @@ import hashlib
 import uuid
 from app.firebase.config import db
 from app.schemas.programme import ProgrammeCreate
-from app.schemas.trainee import TraineeCreate, TraineeEmploymentCreate, TraineeFollowupSubmit
+from app.schemas.trainee import TraineeCreate, TraineeEmploymentCreate, TraineeFollowupSubmit, TraineeConsentUpdate
 from app.schemas.employer import EmployerVerificationCreate, EmployerFeedbackCreate
 from app.schemas.intervention import InterventionCreate
 
@@ -127,7 +127,7 @@ class FirestoreRepository:
             return trainees
         try:
             query = db.collection("trainees")
-            
+
             # Simple Firestore filters
             if district and district != "All Districts":
                 query = query.where("district", "==", district)
@@ -139,10 +139,10 @@ class FirestoreRepository:
                 query = query.where("cohort", "==", cohort)
             if outcome and outcome != "All Status" and outcome != "All Outcomes":
                 query = query.where("outcome", "==", outcome)
-                
+
             docs = query.limit(100).stream()
             trainees = [doc.to_dict() for doc in docs if FirestoreRepository._should_include(doc.to_dict())]
-            
+
             # Apply search filter client-side since Firestore doesn't support complex substring search natively
             if search:
                 search_lower = search.lower()
@@ -152,7 +152,7 @@ class FirestoreRepository:
                        search_lower in t.get("id", "").lower() or
                        search_lower in t.get("course_name", "").lower()
                 ]
-                
+
             return trainees
         except Exception as e:
             print(f"Exception in get_trainees: {e}")
@@ -202,7 +202,7 @@ class FirestoreRepository:
         from app.core.config import settings
         created_data = []
         now = datetime.utcnow().isoformat() + "Z"
-        
+
         if settings.ENABLE_DEMO_MODE:
             demo_data = FirestoreRepository._load_local_demo_data()
             trainees_list = demo_data.setdefault("trainees", [])
@@ -229,7 +229,7 @@ class FirestoreRepository:
                 raise
         else:
             raise RuntimeError("No datastore is configured for trainees")
-            
+
         return created_data
 
     @staticmethod
@@ -264,8 +264,10 @@ class FirestoreRepository:
         from app.core.config import settings
         new_emp = emp.model_dump()
         new_emp["id"] = f"emp_{uuid.uuid4().hex[:8]}"
-        new_emp["verified"] = False
-        new_outcome = emp.employment_type
+        new_emp["timestamp"] = datetime.utcnow().isoformat() + "Z"
+
+        # Determine status to update (we still keep outcome field updated to cache it optionally)
+        new_outcome = emp.status
 
         updated_doc = None
         if settings.ENABLE_DEMO_MODE:
@@ -297,6 +299,45 @@ class FirestoreRepository:
                 raise
         else:
             raise RuntimeError("No datastore is configured for trainees")
+
+        return updated_doc
+
+    @staticmethod
+    def add_trainee_consent(trainee_id: str, consent: TraineeConsentUpdate) -> Optional[Dict[str, Any]]:
+        from app.core.config import settings
+        new_consent = consent.model_dump()
+        new_consent["effective_timestamp"] = datetime.utcnow().isoformat() + "Z"
+        new_consent["version"] = "1.0"
+
+        updated_doc = None
+        if settings.ENABLE_DEMO_MODE:
+            demo_data = FirestoreRepository._load_local_demo_data()
+            for t in demo_data.get("trainees", []):
+                if t.get("id") == trainee_id:
+                    t.setdefault("consent_history", []).append(new_consent)
+                    t["updated_at"] = datetime.utcnow().isoformat() + "Z"
+                    updated_doc = dict(t)
+                    break
+        elif db:
+            try:
+                doc_ref = db.collection("trainees").document(trainee_id)
+                doc = doc_ref.get()
+                if doc.exists:
+                    trainee_data = doc.to_dict()
+                    consent_list = trainee_data.get("consent_history", [])
+                    consent_list.append(new_consent)
+                    doc_ref.update({
+                        "consent_history": consent_list,
+                        "updated_at": datetime.utcnow().isoformat() + "Z"
+                    })
+                    updated_doc = doc_ref.get().to_dict()
+            except Exception as e:
+                print(f"Firestore error in add_trainee_consent: {e}")
+                raise
+        else:
+            raise RuntimeError("No datastore is configured for trainees")
+
+        return updated_doc
 
         return updated_doc
 
@@ -591,8 +632,8 @@ class FirestoreRepository:
                     employer_name = verification_data.get("employer_name")
                     role = verification_data.get("role")
                     for entry in trainee.get("employment_history", []):
-                        if entry.get("employer_name") == employer_name and entry.get("role") == role:
-                            entry["verified"] = True
+                        if entry.get("employer") == employer_name and entry.get("role") == role:
+                            entry["verification_state"] = "EMPLOYER_VERIFIED"
                     for checkpoint in trainee.get("outcomes_timeline", []):
                         if checkpoint.get("employer_or_activity") == employer_name:
                             checkpoint["verification_status"] = "Verified"
@@ -609,38 +650,38 @@ class FirestoreRepository:
             "status": status,
             "updated_at": now
         })
-        
+
         verification_data = doc_ref.get().to_dict()
         trainee_id = verification_data.get("trainee_id")
         employer_name = verification_data.get("employer_name")
         role = verification_data.get("role")
-        
+
         # If approved, update verification status in Trainee's history and timeline
         if status == "Approved" and trainee_id:
             trainee_ref = db.collection("trainees").document(trainee_id)
             t_doc = trainee_ref.get()
             if t_doc.exists:
                 t_data = t_doc.to_dict()
-                
+
                 # Update employment history
                 hist = t_data.get("employment_history", [])
                 for entry in hist:
-                    if entry.get("employer_name") == employer_name and entry.get("role") == role:
-                        entry["verified"] = True
-                        
+                    if entry.get("employer") == employer_name and entry.get("role") == role:
+                        entry["verification_state"] = "EMPLOYER_VERIFIED"
+
                 # Update timeline verification status
                 timeline = t_data.get("outcomes_timeline", [])
                 for chk in timeline:
                     if chk.get("employer_or_activity") == employer_name:
                         chk["verification_status"] = "Verified"
                         chk["status"] = "Recorded"
-                        
+
                 trainee_ref.update({
                     "employment_history": hist,
                     "outcomes_timeline": timeline,
                     "updated_at": now
                 })
-                
+
         return verification_data
 
     # --- Employer Feedback ---
@@ -879,7 +920,7 @@ class FirestoreRepository:
                 if j.get("id") == job_id:
                     return j
             return None
-            
+
         doc = db.collection("jobs").document(job_id).get()
         data = doc.to_dict() if doc.exists else None
 

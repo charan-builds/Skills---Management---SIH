@@ -3,7 +3,8 @@ from typing import List, Optional
 from app.firebase.repository import FirestoreRepository
 from app.auth.dependencies import ensure_trainee_access, get_admin_user, get_current_user
 from app.schemas.trainee import (
-    TraineeCreate, TraineeBase, TraineeEmploymentCreate, TraineeFollowupSubmit, TraineeUpdate
+    TraineeCreate, TraineeBase, TraineeEmploymentCreate, TraineeFollowupSubmit, TraineeUpdate,
+    EmploymentHistorySchema, ConsentRecordSchema, TraineeConsentUpdate
 )
 
 router = APIRouter(
@@ -106,6 +107,71 @@ def submit_followup(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Trainee with ID {id} not found"
         )
+    return updated_trainee
+
+@router.get("/{id}/outcome-history", response_model=List[EmploymentHistorySchema])
+def get_outcome_history(id: str, current_user: dict = Depends(get_current_user)):
+    ensure_trainee_access(id, current_user)
+    trainee = FirestoreRepository.get_trainee(id)
+    if not trainee:
+        raise HTTPException(status_code=404, detail="Trainee not found")
+    return trainee.get("employment_history", [])
+
+@router.get("/{id}/outcome-current", response_model=Optional[EmploymentHistorySchema])
+def get_current_outcome(id: str, current_user: dict = Depends(get_current_user)):
+    ensure_trainee_access(id, current_user)
+    trainee = FirestoreRepository.get_trainee(id)
+    if not trainee:
+        raise HTTPException(status_code=404, detail="Trainee not found")
+    t_model = TraineeBase(**trainee)
+    return t_model.current_outcome
+
+@router.post("/{id}/outcome", response_model=TraineeBase)
+def add_outcome(
+    id: str,
+    employment: TraineeEmploymentCreate,
+    current_user: dict = Depends(get_current_user),
+):
+    ensure_trainee_access(id, current_user)
+    updated_trainee = FirestoreRepository.add_trainee_employment(id, employment)
+    if not updated_trainee:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Trainee with ID {id} not found"
+        )
+
+    # Trigger employer verification entry for specific statuses
+    if employment.status in ["EMPLOYED", "APPRENTICESHIP"] and employment.employer and employment.employer.lower() != "self-employed":
+        from app.schemas.employer import EmployerVerificationCreate
+        verify_data = EmployerVerificationCreate(
+            trainee_id=id,
+            employer_email="hr@employer.com",
+            employer_name=employment.employer,
+            role=employment.role or "Unknown",
+            salary=float(employment.salary) if employment.salary else 0.0
+        )
+        FirestoreRepository.create_verification(verify_data)
+
+    return updated_trainee
+
+@router.get("/{id}/consent-history", response_model=List[ConsentRecordSchema])
+def get_consent_history(id: str, current_user: dict = Depends(get_current_user)):
+    ensure_trainee_access(id, current_user)
+    trainee = FirestoreRepository.get_trainee(id)
+    if not trainee:
+        raise HTTPException(status_code=404, detail="Trainee not found")
+    return trainee.get("consent_history", [])
+
+@router.post("/{id}/consent", response_model=TraineeBase)
+def update_consent(
+    id: str,
+    consent: TraineeConsentUpdate,
+    current_user: dict = Depends(get_current_user),
+):
+    ensure_trainee_access(id, current_user)
+    updated_trainee = FirestoreRepository.add_trainee_consent(id, consent)
+    if not updated_trainee:
+        raise HTTPException(status_code=404, detail="Trainee not found")
     return updated_trainee
 
 @router.patch("/{id}", response_model=TraineeBase)

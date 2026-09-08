@@ -62,18 +62,18 @@ def test_get_trainee_by_id():
 def test_add_trainee_employment():
     # Post new employment history for trainee TR-DEMO-1001
     payload = {
-        "employer_name": "Test Employer LLC",
+        "status": "EMPLOYED",
+        "employer": "Test Employer LLC",
         "role": "Software Developer",
-        "start_date": "2025-08-01",
         "salary": 24000.0,
-        "employment_type": "Employed",
-        "job_relevance": "High"
+        "joining_date": "2025-08-01",
+        "verification_state": "SELF_REPORTED"
     }
-    response = client.post("/api/trainees/TR-DEMO-1001/employment", json=payload)
+    response = client.post("/api/trainees/TR-DEMO-1001/outcome", json=payload)
     assert response.status_code == 200
     data = response.json()
-    assert data["outcome"] == "Employed"
-    
+    assert data["outcome"] == "EMPLOYED"
+
     # Confirm verification request was created in DB
     v_response = client.get("/api/employers/verifications/pending")
     assert v_response.status_code == 200
@@ -95,7 +95,7 @@ def test_submit_followup():
     response = client.post("/api/trainees/TR-DEMO-1001/followup", json=payload)
     assert response.status_code == 200
     data = response.json()
-    
+
     # Verify the timeline checkpoint status is updated
     timeline = data["outcomes_timeline"]
     chk = [c for c in timeline if c["checkpoint"] == "12 Month Follow-up"]
@@ -110,26 +110,27 @@ def test_employer_verification_flow():
     assert len(verifications) > 0
     target_v = verifications[0]
     v_id = target_v["id"]
-    
+
     # Approve verification
     payload = {"approve": True}
     response = client.post(f"/api/employers/verifications/{v_id}", json=payload)
     assert response.status_code == 200
     assert response.json()["status"] == "Approved"
-    
+
     # Fetch trainee profile to verify it's updated as verified
     t_id = target_v["trainee_id"]
     t_response = client.get(f"/api/trainees/{t_id}")
     t_data = t_response.json()
-    
+
     # Check verification status in history
     found_verified_job = False
     for job in t_data["employment_history"]:
-        if job["employer_name"] == target_v["employer_name"] and job["role"] == target_v["role"]:
-            assert job["verified"] == True
+        if job.get("employer") == target_v["employer_name"] and job.get("role") == target_v["role"]:
+            assert job["verification_state"] == "EMPLOYER_VERIFIED"
             found_verified_job = True
             break
-    assert found_verified_job
+
+    assert found_verified_job, "Verified job not found in trainee's employment history"
 
 def test_submit_employer_feedback():
     payload = {
@@ -152,7 +153,7 @@ def test_interventions():
     g_response = client.get("/api/interventions")
     assert g_response.status_code == 200
     initial_len = len(g_response.json())
-    
+
     # Create intervention
     payload = {
         "title": "Introduce Docker module",
@@ -162,7 +163,7 @@ def test_interventions():
     }
     c_response = client.post("/api/interventions", json=payload)
     assert c_response.status_code == 201
-    
+
     # Get again
     g_response_after = client.get("/api/interventions")
     assert len(g_response_after.json()) == initial_len + 1

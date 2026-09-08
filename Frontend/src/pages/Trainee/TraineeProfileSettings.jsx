@@ -481,7 +481,51 @@ export default function TraineeProfileSettings({ onProfileUpdated }) {
           )}
         </div>
 
-
+        {/* 7. DATA SHARING CONSENT */}
+        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', marginBottom: '2rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', margin: '0 0 1.25rem 0', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
+            Data Sharing Consent
+          </h3>
+          <p style={{ color: '#64748b', fontSize: '0.9rem', marginBottom: '1rem' }}>
+            Government programs and partner employers may use your data to improve training programs.
+          </p>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <button
+              type="button"
+              onClick={async () => {
+                await fetchAuth(`${API_BASE}/api/trainees/${traineeId}/consent`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    consent_status: 'GIVEN',
+                    source: 'TRAINEE_PORTAL'
+                  })
+                });
+                alert('Consent Given!');
+              }}
+              style={{ background: '#2563eb', color: 'white', padding: '0.65rem 1.15rem', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 700 }}
+            >
+              Give Consent
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                await fetchAuth(`${API_BASE}/api/trainees/${traineeId}/consent`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    consent_status: 'REVOKED',
+                    source: 'TRAINEE_PORTAL'
+                  })
+                });
+                alert('Consent Revoked!');
+              }}
+              style={{ background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', padding: '0.65rem 1.15rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 700 }}
+            >
+              Revoke Consent
+            </button>
+          </div>
+        </div>
 
         {/* SUBMIT BUTTON */}
         <div style={{ display: 'flex', gap: '1rem', paddingBottom: '3rem' }}>

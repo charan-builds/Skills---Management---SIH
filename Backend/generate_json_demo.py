@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timedelta
 import json
 
-DISTRICTS = ["Hyderabad", "Ranga Reddy", "Medchal", "Warangal", "Nizamabad", "Karimnagar", 
+DISTRICTS = ["Hyderabad", "Ranga Reddy", "Medchal", "Warangal", "Nizamabad", "Karimnagar",
              "Khammam", "Mahabubnagar", "Nalgonda", "Adilabad", "Suryapet", "Siddipet",
              "Jagtial", "Mancherial", "Yadadri", "Sangareddy"]
 
@@ -62,7 +62,7 @@ def generate_data():
         "employer_feedback": [],
         "interventions": []
     }
-    
+
     # Programmes
     for prog in PROGRAMMES:
         db_json["programmes"].append({
@@ -78,7 +78,7 @@ def generate_data():
             "is_synthetic": True,
             "created_at": datetime.now().isoformat()
         })
-        
+
     # Employers & Jobs
     for emp in EMPLOYERS:
         db_json["employers"].append({
@@ -88,7 +88,7 @@ def generate_data():
             "location": random.choice(DISTRICTS),
             "is_synthetic": True
         })
-        
+
     for job in JOB_ROLES:
         db_json["jobs"].append(job)
         if random.random() > 0.5:
@@ -105,7 +105,7 @@ def generate_data():
     for i in range(250):
         t_id = auth_trainee_id if i == 0 else f"TR-DEMO-{1000+i}"
         prog = random.choice(PROGRAMMES)
-        
+
         outcome_roll = random.random()
         status = "Certified"
         if outcome_roll < 0.1:
@@ -119,11 +119,11 @@ def generate_data():
                 outcome = "Seeking Employment"
             else:
                 outcome = "Employed"
-                
+
         acquired_skills = []
         if status != "Dropped":
             acquired_skills = random.sample(prog["skills_taught"], k=max(2, int(len(prog["skills_taught"]) * random.uniform(0.6, 1.0))))
-            
+
         emp_hist = []
         if outcome == "Employed":
             if random.random() < 0.8:
@@ -133,34 +133,92 @@ def generate_data():
             else:
                 emp_name = "External Corp"
                 job_title = "Analyst"
-                
-            salary = str(random.randint(15000, 45000))
+
+            salary = float(random.randint(15000, 45000))
             start_date = datetime.now() - timedelta(days=random.randint(30, 400))
+
+            # Phase 2B schema
             emp_hist.append({
                 "id": f"emp_{random.randint(10000, 99999)}",
-                "employer_name": emp_name,
+                "status": "EMPLOYED",
+                "employer": emp_name,
                 "role": job_title,
                 "salary": salary,
-                "start_date": start_date.strftime("%Y-%m-%d"),
-                "status": "Active" if random.random() < 0.8 else "Left"
+                "joining_date": start_date.strftime("%Y-%m-%d"),
+                "timestamp": (start_date + timedelta(days=1)).isoformat() + "Z",
+                "verification_state": "EMPLOYER_VERIFIED" if random.random() < 0.5 else "SELF_REPORTED"
             })
-            
+
+            if random.random() < 0.2:
+                # Add multiple records
+                emp_hist.append({
+                    "id": f"emp_{random.randint(10000, 99999)}",
+                    "status": "SEEKING_EMPLOYMENT",
+                    "employer": None,
+                    "role": None,
+                    "salary": None,
+                    "joining_date": None,
+                    "timestamp": (start_date - timedelta(days=60)).isoformat() + "Z",
+                    "verification_state": "SELF_REPORTED"
+                })
+        elif outcome == "Seeking Employment":
+            emp_hist.append({
+                "id": f"emp_{random.randint(10000, 99999)}",
+                "status": "SEEKING_EMPLOYMENT",
+                "employer": None,
+                "role": None,
+                "salary": None,
+                "joining_date": None,
+                "timestamp": datetime.now().isoformat() + "Z",
+                "verification_state": "SELF_REPORTED"
+            })
+
+        consent_hist = []
+        consent_roll = random.random()
+        if consent_roll < 0.7:
+            consent_hist.append({
+                "status": "GIVEN",
+                "effective_timestamp": (datetime.now() - timedelta(days=30)).isoformat() + "Z",
+                "version": "1.0",
+                "source": "TraineePortal"
+            })
+        elif consent_roll < 0.9:
+            consent_hist.append({
+                "status": "GIVEN",
+                "effective_timestamp": (datetime.now() - timedelta(days=60)).isoformat() + "Z",
+                "version": "1.0",
+                "source": "TraineePortal"
+            })
+            consent_hist.append({
+                "status": "REVOKED",
+                "effective_timestamp": (datetime.now() - timedelta(days=10)).isoformat() + "Z",
+                "version": "1.0",
+                "source": "TraineePortal"
+            })
+        else:
+            consent_hist.append({
+                "status": "NOT_GIVEN",
+                "effective_timestamp": (datetime.now() - timedelta(days=5)).isoformat() + "Z",
+                "version": "1.0",
+                "source": "TraineePortal"
+            })
+
         assessments = [
             {"module": "Core Concepts", "score": random.randint(60, 95)},
             {"module": "Practical Lab", "score": random.randint(55, 95)},
             {"module": "Final Project", "score": random.randint(65, 98)}
         ]
-        
+
         timeline = []
         if outcome == "Employed" and emp_hist:
-            days_since = (datetime.now() - datetime.strptime(emp_hist[0]["start_date"], "%Y-%m-%d")).days
+            days_since = (datetime.now() - datetime.strptime(emp_hist[0]["joining_date"] or datetime.now().strftime("%Y-%m-%d"), "%Y-%m-%d")).days
             if days_since > 90:
                 timeline.append({"checkpoint": "3 Months", "status": "Retained", "date": datetime.now().isoformat(), "description": "Checked status"})
             if days_since > 180:
-                timeline.append({"checkpoint": "6 Months", "status": "Retained" if emp_hist[0]["status"] == "Active" else "Dropped", "date": datetime.now().isoformat(), "description": "Checked status"})
+                timeline.append({"checkpoint": "6 Months", "status": "Retained", "date": datetime.now().isoformat(), "description": "Checked status"})
             if days_since > 365:
-                timeline.append({"checkpoint": "12 Months", "status": "Retained" if emp_hist[0]["status"] == "Active" else "Dropped", "date": datetime.now().isoformat(), "description": "Checked status"})
-                
+                timeline.append({"checkpoint": "12 Months", "status": "Retained", "date": datetime.now().isoformat(), "description": "Checked status"})
+
         db_json["trainees"].append({
             "id": t_id,
             "name": f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}",
@@ -174,14 +232,15 @@ def generate_data():
             "outcome": outcome,
             "skills": acquired_skills,
             "employment_history": emp_hist,
+            "consent_history": consent_hist,
             "assessments": assessments,
             "outcomes_timeline": timeline,
             "is_synthetic": True,
             "created_at": datetime.now().isoformat()
         })
-        
 
-            
+
+
     with open("demo_data.json", "w") as f:
         json.dump(db_json, f, indent=2)
     print("Generated demo_data.json successfully!")

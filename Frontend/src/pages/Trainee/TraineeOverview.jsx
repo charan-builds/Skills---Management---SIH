@@ -6,12 +6,28 @@ import {
   Lightbulb,
   UserCog
 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { API_BASE } from "../../utils/config";
+import { fetchAuth } from "../../utils/authFetch";
 
 export default function TraineeOverview({
   portalData,
   onNavigateTab,
   onStartAssessment
 }) {
+  const [outcomeHistory, setOutcomeHistory] = useState([]);
+
+  useEffect(() => {
+    if (portalData?.profile?.id) {
+      fetchAuth(`${API_BASE}/api/trainees/${portalData.profile.id}/outcome-history`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) setOutcomeHistory(data);
+        })
+        .catch(console.error);
+    }
+  }, [portalData]);
+
   if (!portalData) return null;
 
   const isProduction = portalData.mode === "production";
@@ -157,7 +173,31 @@ export default function TraineeOverview({
         </button>
       </div>
 
-      {/* SECTION 3: AI Career Analysis & Insights Banner */}
+      {/* SECTION 3: Outcome History */}
+      <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', marginBottom: '2.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', margin: '0 0 1.25rem 0' }}>
+          Employment Outcome History
+        </h3>
+        {outcomeHistory.length === 0 ? (
+          <p style={{ color: '#64748b', fontSize: '0.9rem' }}>No outcome history recorded.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {outcomeHistory.map((outcome, idx) => (
+              <div key={idx} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                  <strong style={{ color: '#0f172a' }}>{outcome.status}</strong>
+                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{new Date(outcome.timestamp).toLocaleDateString()}</span>
+                </div>
+                {outcome.employer && <div style={{ fontSize: '0.9rem', color: '#475569' }}>Employer: {outcome.employer}</div>}
+                {outcome.role && <div style={{ fontSize: '0.9rem', color: '#475569' }}>Role: {outcome.role}</div>}
+                <div style={{ fontSize: '0.8rem', color: '#16a34a', marginTop: '0.5rem', fontWeight: 600 }}>{outcome.verification_state}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* SECTION 4: AI Career Analysis & Insights Banner */}
       <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)', borderRadius: '14px', padding: '1.75rem 2rem', color: 'white', marginBottom: '2.5rem', boxShadow: '0 4px 12px rgba(30,58,138,0.15)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '1rem' }}>
           <Lightbulb size={22} color="#fbbf24" />
