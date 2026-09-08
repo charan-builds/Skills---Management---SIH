@@ -8,7 +8,7 @@ export const adminIntelligenceData = {
       previous: "450",
       change: "+11.1%",
       trend: "up",
-      tooltip: "Total candidates enrolled across all state skilling programmes."
+      tooltip: "Total Trainees enrolled across all state skilling programmes."
     },
     {
       title: "Active Trainees",
@@ -24,7 +24,7 @@ export const adminIntelligenceData = {
       previous: "340",
       change: "+11.8%",
       trend: "up",
-      tooltip: "Candidates who passed benchmark examinations and earned state certification."
+      tooltip: "Trainees who passed benchmark examinations and earned state certification."
     },
     {
       title: "Training Completion Rate",
@@ -56,7 +56,7 @@ export const adminIntelligenceData = {
       previous: "72%",
       change: "+6.0%",
       trend: "up",
-      tooltip: "Percentage of certified job-ready candidates successfully placed."
+      tooltip: "Percentage of certified job-ready Trainees successfully placed."
     },
     {
       title: "3M Retention",
@@ -89,8 +89,6 @@ export const adminIntelligenceData = {
     { stage: "Completed Training", count: 430, percentage: 86, color: "#3b82f6" },
     { stage: "Certified", count: 380, percentage: 76, color: "#60a5fa" },
     { stage: "Job-Ready (80%+)", count: 290, percentage: 58, color: "#f59e0b" },
-    { stage: "Applications Submitted", count: 210, percentage: 42, color: "#8b5cf6" },
-    { stage: "Shortlisted / Interviews", count: 120, percentage: 24, color: "#a855f7" },
     { stage: "Hired / Placed", count: 80, percentage: 16, color: "#16a34a" },
     { stage: "Retained (6M+)", count: 68, percentage: 13.6, color: "#15803d" }
   ],
@@ -294,7 +292,7 @@ export const adminIntelligenceData = {
       title: "Communication as Primary Placement Barrier",
       category: "Competency Gap",
       priority: "High",
-      summary: "Technical communication is the most frequent missing competency flagged by interviewers (62% of rejected candidates).",
+      summary: "Technical communication is the most frequent missing competency flagged by interviewers (62% of rejected Trainees).",
       why: "Trainees excel at coding challenges but struggle in stakeholder incident reporting and verbal problem decomposition.",
       recommendation: "Embed weekly mock client briefings and structured stakeholder reporting assessments into all core curricula.",
       expected_impact: "Projected 15% increase in technical interview-to-offer conversion rate."
@@ -304,8 +302,8 @@ export const adminIntelligenceData = {
       title: "Strong Placement Synergy in Python + SQL",
       category: "High-Performing Pattern",
       priority: "Medium",
-      summary: "Candidates certified in both Python and SQL demonstrate a 92% placement success rate and 89% 12-month retention.",
-      why: "Enterprise analytics teams require hybrid candidates capable of both ETL scripting and relational database querying.",
+      summary: "Trainees certified in both Python and SQL demonstrate a 92% placement success rate and 89% 12-month retention.",
+      why: "Enterprise analytics teams require hybrid Trainees capable of both ETL scripting and relational database querying.",
       recommendation: "Maintain mandatory joint certification benchmarks for Data Analytics and Full Stack cohorts.",
       expected_impact: "Protects high baseline employment rate (78%+)."
     },
@@ -328,7 +326,7 @@ export const adminIntelligenceData = {
       priority: "High Priority",
       programme: "AI & Machine Learning Associate",
       district: "Nalgonda & Hyderabad",
-      evidence: "38% demand supply gap; 8 partner employers requesting ML candidates.",
+      evidence: "38% demand supply gap; 8 partner employers requesting ML Trainees.",
       suggested_action: "Approve 40 additional training seats and sponsor GPU cloud lab credits.",
       status: "Pending Review"
     },

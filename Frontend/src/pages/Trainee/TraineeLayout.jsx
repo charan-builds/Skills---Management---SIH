@@ -1,8 +1,5 @@
 import {
   LayoutDashboard,
-  BriefcaseBusiness,
-  GraduationCap,
-  FileText,
   UserCog,
   LogOut,
   Sparkles,
@@ -23,9 +20,6 @@ export default function TraineeLayout({ activeTab, onTabChange, children, portal
 
   const navItems = [
     { id: 'overview', label: 'Overview & Insights', icon: LayoutDashboard, route: `/trainee-dashboard/${traineeId}` },
-    { id: 'jobs', label: 'Explore Jobs', icon: BriefcaseBusiness, route: `/trainee/jobs` },
-    { id: 'skills', label: 'Improve Skills', icon: GraduationCap, route: `/trainee/skills` },
-    { id: 'applications', label: 'My Applications', icon: FileText, route: `/trainee/applications` },
     { id: 'profile', label: 'Profile & Settings', icon: UserCog, route: `/trainee/profile` },
   ];
 
@@ -39,7 +33,7 @@ export default function TraineeLayout({ activeTab, onTabChange, children, portal
     }
   };
 
-  const completeness = portalData?.profile_completeness || 88;
+
   const userName = portalData?.personal_info?.name || "Priya Gupta";
   const userInitials = userName.split(" ").map(n => n[0]).join("");
 
@@ -85,29 +79,11 @@ export default function TraineeLayout({ activeTab, onTabChange, children, portal
               >
                 <Icon size={19} color={isSelected ? '#2563eb' : '#64748b'} />
                 <span>{item.label}</span>
-                {item.id === 'applications' && portalData?.target_role_metrics?.active_applications > 0 && (
-                  <span style={{ marginLeft: 'auto', background: '#3b82f6', color: 'white', fontSize: '0.75rem', padding: '2px 8px', borderRadius: '10px', fontWeight: 700 }}>
-                    {portalData.target_role_metrics.active_applications}
-                  </span>
-                )}
               </button>
             );
           })}
         </nav>
 
-        {/* Profile Completeness Widget */}
-        <div style={{ background: '#f8fafc', borderRadius: '12px', padding: '1rem 1.15rem', marginBottom: '1.5rem', border: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155' }}>Profile Completeness</span>
-            <strong style={{ fontSize: '0.85rem', color: '#2563eb' }}>{completeness}%</strong>
-          </div>
-          <div style={{ height: '7px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-            <div style={{ width: `${completeness}%`, height: '100%', background: '#2563eb', transition: 'width 0.3s ease' }}></div>
-          </div>
-          <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', color: '#64748b' }}>
-            {completeness >= 100 ? "✓ Profile fully optimized" : "Complete all fields for top matching"}
-          </p>
-        </div>
 
         {/* Logout Button */}
         <div>

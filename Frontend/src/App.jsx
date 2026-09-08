@@ -36,9 +36,7 @@ import Settings from "./pages/Settings";
 import ImpactIntelligence from "./pages/ImpactIntelligence/ImpactIntelligence";
 
 import EmployerDashboard from "./pages/EmployerDashboard";
-import Candidates from "./pages/Candidates";
-import EmployerCandidateProfile from "./pages/EmployerCandidateProfile";
-import JobCandidates from "./pages/JobCandidates";
+
 import EmployerVerifyOutcomes from "./pages/EmployerVerifyOutcomes";
 import EmployerProfile from "./pages/EmployerProfile";
 import EmployerIntegrations from "./pages/EmployerIntegrations";
@@ -306,59 +304,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/trainee/jobs"
-          element={
-            <ProtectedRoute role="trainee">
-              <TraineeDashboard defaultTab="jobs" />
-            </ProtectedRoute>
-          }
-        />
 
-        <Route
-          path="/trainee/jobs/:traineeId"
-          element={
-            <ProtectedRoute role="trainee">
-              <TraineeDashboard defaultTab="jobs" />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/trainee/skills"
-          element={
-            <ProtectedRoute role="trainee">
-              <TraineeDashboard defaultTab="skills" />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/trainee/skills/:traineeId"
-          element={
-            <ProtectedRoute role="trainee">
-              <TraineeDashboard defaultTab="skills" />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/trainee/applications"
-          element={
-            <ProtectedRoute role="trainee">
-              <TraineeDashboard defaultTab="applications" />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/trainee/applications/:traineeId"
-          element={
-            <ProtectedRoute role="trainee">
-              <TraineeDashboard defaultTab="applications" />
-            </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/trainee/profile"
@@ -406,34 +352,7 @@ function App() {
           }
         />
 
-        <Route
-          path="/employer/jobs/:jobId"
-          element={
-            <ProtectedRoute role="employer">
-              <JobCandidates />
-            </ProtectedRoute>
-          }
-        />
 
-
-        <Route
-          path="/employer/candidates"
-          element={
-            <ProtectedRoute role="employer">
-              <Candidates />
-            </ProtectedRoute>
-          }
-        />
-
-
-        <Route
-          path="/employer/candidates/:candidateId"
-          element={
-            <ProtectedRoute role="employer">
-              <EmployerCandidateProfile />
-            </ProtectedRoute>
-          }
-        />
 
         <Route
           path="/employer/verify-outcomes"

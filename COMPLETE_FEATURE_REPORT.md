@@ -1,5 +1,5 @@
 # Skilling Impact Intelligence
-## Complete Product & Feature Architecture Report
+## [ARCHIVED / HISTORICAL] Complete Product & Feature Architecture Report
 
 ---
 

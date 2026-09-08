@@ -72,16 +72,6 @@ def _trainee_skill_names(trainee: Dict[str, Any]) -> List[str]:
     return _skill_names(trainee.get("skills") or [])
 
 
-def _match_candidate_to_job(trainee: Dict[str, Any], job: Dict[str, Any]) -> Dict[str, Any]:
-    required = _job_skill_names(job)
-    available = {skill.casefold() for skill in _trainee_skill_names(trainee)}
-    matched = [skill for skill in required if skill.casefold() in available]
-    missing = [skill for skill in required if skill.casefold() not in available]
-    return {
-        "score": round((len(matched) / len(required)) * 100) if required else 0,
-        "matched_skills": matched,
-        "missing_skills": missing,
-    }
 
 
 def _organization_jobs(org_id: str) -> List[Dict[str, Any]]:
@@ -92,80 +82,7 @@ def _organization_jobs(org_id: str) -> List[Dict[str, Any]]:
     ]
 
 
-# Demo-only interaction state. Production uses repository-backed Firestore data.
-demo_shortlists: set[tuple[str, str, str]] = set()
-demo_contacts: set[tuple[str, str]] = set()
 
-
-def _interaction_state(org_id: str) -> Dict[str, set]:
-    if settings.ENABLE_DEMO_MODE:
-        return {
-            "shortlists": {(trainee_id, job_id) for oid, trainee_id, job_id in demo_shortlists if oid == org_id},
-            "contacts": {trainee_id for oid, trainee_id in demo_contacts if oid == org_id},
-        }
-    return FirestoreRepository.get_employer_candidate_interactions(org_id)
-
-
-def _experience_summary(trainee: Dict[str, Any]) -> str:
-    history = trainee.get("employment_history") or []
-    if not history:
-        return "No recorded work history"
-    return "1 recorded role" if len(history) == 1 else f"{len(history)} recorded roles"
-
-
-def _candidate_record(
-    trainee: Dict[str, Any], jobs: List[Dict[str, Any]], interactions: Dict[str, set]
-) -> Dict[str, Any]:
-    matches = [(_match_candidate_to_job(trainee, job), job) for job in jobs]
-    match, job = max(
-        matches,
-        key=lambda item: item[0]["score"],
-        default=({"score": 0, "matched_skills": [], "missing_skills": []}, None),
-    )
-    programme = trainee.get("programme_name") or trainee.get("course_name") or ""
-    trainee_id = str(trainee.get("id", ""))
-    target_role = (job or {}).get("role") or (job or {}).get("title") or None
-    reasoning = (
-        f"{len(match['matched_skills'])} of {len(_job_skill_names(job))} recorded required skills match {target_role}."
-        if job
-        else "No active vacancy is available for a role-specific match calculation."
-    )
-    return {
-        "id": trainee_id,
-        "trainee_id": trainee_id,
-        "name": trainee.get("name") or "Unnamed candidate",
-        "programme": programme,
-        "location": trainee.get("district") or "",
-        "district": trainee.get("district") or "",
-        "skills": _trainee_skill_names(trainee),
-        "match": match["score"],
-        "match_percentage": match["score"],
-        "job_match": match["score"],
-        "recommended_job_id": (job or {}).get("id"),
-        "target_role": target_role,
-        "matched_skills": match["matched_skills"],
-        "missing_skills": match["missing_skills"],
-        "strengths": match["matched_skills"],
-        "experience": _experience_summary(trainee),
-        "status": trainee.get("status") or "Not recorded",
-        "certification_status": trainee.get("status") or "Not recorded",
-        "readiness": "Match calculated" if job else "Awaiting vacancy",
-        "recommendation": "Strong match" if match["score"] >= 75 else "Review skill gaps",
-        "reasoning": reasoning,
-        "is_shortlisted": any(item[0] == trainee_id for item in interactions["shortlists"]),
-        "is_contacted": trainee_id in interactions["contacts"],
-    }
-
-
-def _candidate_records(org_id: str) -> List[Dict[str, Any]]:
-    jobs = _organization_jobs(org_id)
-    interactions = _interaction_state(org_id)
-    candidates = [
-        _candidate_record(trainee, jobs, interactions)
-        for trainee in FirestoreRepository.get_trainees()
-        if trainee.get("id")
-    ]
-    return sorted(candidates, key=lambda candidate: (-candidate["match"], candidate["name"].casefold()))
 
 
 def _retention_status(trainee: Dict[str, Any], employer_name: str, milestone: str) -> str:
@@ -246,14 +163,7 @@ def _format_salary_range(job: Dict[str, Any]) -> Optional[str]:
     return f"₹{minimum:,.0f}–₹{maximum:,.0f}"
 
 
-class ShortlistRequest(BaseModel):
-    trainee_id: str
-    job_id: str
 
-
-class ContactRequest(BaseModel):
-    trainee_id: str
-    message: Optional[str] = None
 
 
 class OrgProfileUpdate(BaseModel):
@@ -316,15 +226,8 @@ def get_employers(_current_user: dict = Depends(get_admin_user)):
 def get_employer_dashboard(org_id: str, _current_user: dict = Depends(get_organization_user)):
     employer = _organization_or_404(org_id)
     jobs = _organization_jobs(org_id)
-    candidates = _candidate_records(org_id)
-    interactions = _interaction_state(org_id)
     outcomes = _employer_outcomes(org_id, employer)
-    matched_count = sum(candidate["match"] >= 65 for candidate in candidates)
-    shortlisted_count = len(interactions["shortlists"])
-    contacted_count = len(interactions["contacts"])
     hired_count = len(outcomes)
-    avg_match = round(sum(candidate["match"] for candidate in candidates) / len(candidates)) if candidates else None
-    selection_rate = round((hired_count / matched_count) * 100) if matched_count else None
 
     demand = Counter(skill for job in jobs for skill in _job_skill_names(job))
     supply = Counter(skill for candidate in FirestoreRepository.get_trainees() for skill in _trainee_skill_names(candidate))
@@ -349,26 +252,17 @@ def get_employer_dashboard(org_id: str, _current_user: dict = Depends(get_organi
     )
     return {
         "open_vacancies": len(jobs),
-        "available_candidates": len(candidates),
-        "shortlisted_candidates": shortlisted_count,
         "hired_trainees": hired_count,
         "recruitment_funnel": {
-            "sourced": len(candidates), "matched": matched_count, "shortlisted": shortlisted_count,
-            "contacted_interview": contacted_count, "hired": hired_count, "retention_rate": "Not recorded",
+            "hired": hired_count, "retention_rate": "Not recorded",
         },
         "recruitment_outcome": {
             "hired": hired_count,
-            "selection_rate": f"{selection_rate}%" if selection_rate is not None else "Not recorded",
-            "avg_skill_match": f"{avg_match}%" if avg_match is not None else "Not recorded",
             "retention": "Not recorded",
         },
         "skill_intelligence": skill_intelligence,
         "ai_insights": {
             "training_recommendation": training_recommendation,
-            "ai_hiring_insight": (
-                f"{matched_count} of {len(candidates)} candidates meet the 65% recorded-skill threshold."
-                if jobs else "Create an active vacancy to calculate candidate matching."
-            ),
             "skill_gap_alert": (
                 f"{top_gap['skill']} is the largest current recorded skill gap."
                 if top_gap else "No current high skill gap is available from active vacancy data."
@@ -380,125 +274,15 @@ def get_employer_dashboard(org_id: str, _current_user: dict = Depends(get_organi
 @router.get("/{org_id}/active-vacancies")
 def get_active_vacancies(org_id: str, _current_user: dict = Depends(get_organization_user)):
     _organization_or_404(org_id)
-    trainees = FirestoreRepository.get_trainees()
     vacancies: List[Dict[str, Any]] = []
     for job in _organization_jobs(org_id):
         vacancy = dict(job)
-        vacancy["matching_candidates"] = sum(_match_candidate_to_job(trainee, vacancy)["score"] >= 65 for trainee in trainees)
         vacancy["salary_range"] = vacancy.get("salary_range") or _format_salary_range(vacancy)
         vacancies.append(vacancy)
     return vacancies
 
 
-@router.get("/{org_id}/recommended-candidates")
-def get_recommended_candidates(org_id: str, _current_user: dict = Depends(get_organization_user)):
-    _organization_or_404(org_id)
-    return _candidate_records(org_id)[:20]
 
-
-@router.get("/{org_id}/candidates")
-def get_all_employer_candidates(org_id: str, _current_user: dict = Depends(get_organization_user)):
-    _organization_or_404(org_id)
-    return _candidate_records(org_id)
-
-
-@router.get("/{org_id}/candidates/{candidate_id}")
-def get_employer_candidate_profile(
-    org_id: str, candidate_id: str, _current_user: dict = Depends(get_organization_user)
-):
-    _organization_or_404(org_id)
-    trainee = FirestoreRepository.get_trainee(candidate_id)
-    if not trainee:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate not found")
-    summary = next((candidate for candidate in _candidate_records(org_id) if candidate["id"] == candidate_id), None)
-    if summary is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate not found")
-    assessments = {
-        _skill_name(assessment): assessment.get("proficiency_score")
-        for assessment in FirestoreRepository.get_trainee_assessments(candidate_id)
-        if isinstance(assessment, dict) and _skill_name(assessment)
-    }
-    skills = [
-        {"name": skill, "proficiency": assessments.get(skill), "status": "Assessed" if assessments.get(skill) is not None else "Not assessed"}
-        for skill in _trainee_skill_names(trainee)
-    ]
-    experience = [
-        {
-            "role": item.get("role") or "Not recorded", "company": item.get("employer_name") or "Not recorded",
-            "period": " – ".join(filter(None, [item.get("start_date"), item.get("end_date")])),
-            "description": item.get("description") or "No description recorded.",
-        }
-        for item in trainee.get("employment_history") or []
-    ]
-    certifications = [
-        {
-            "name": certificate.get("name") or "Unnamed certification",
-            "issuer": certificate.get("issuing_body") or certificate.get("issuer") or "Not recorded",
-            "date": certificate.get("date") or "Not recorded",
-            "id": certificate.get("id") or certificate.get("credential_id") or "Not recorded",
-        }
-        for certificate in trainee.get("certifications") or []
-        if isinstance(certificate, dict)
-    ]
-    missing = summary["missing_skills"]
-    return {
-        "id": candidate_id, "traineeId": candidate_id, "name": summary["name"],
-        "initials": "".join(part[:1].upper() for part in summary["name"].split()) or "?",
-        "email": trainee.get("email"), "phone": trainee.get("phone"), "programme": summary["programme"],
-        "location": summary["location"], "readiness": summary["readiness"], "trainingStatus": summary["status"],
-        "outcome": trainee.get("outcome") or "Not recorded", "match": summary["match"],
-        "job_match": summary["job_match"], "recommended_job_id": summary["recommended_job_id"], "target_role": summary["target_role"],
-        "education": trainee.get("education") or [], "experience": experience, "certifications": certifications,
-        "skills": skills, "projects": trainee.get("projects") or [],
-        "eligibleRoles": [
-            job.get("role") or job.get("title") for job in _organization_jobs(org_id)
-            if _match_candidate_to_job(trainee, job)["score"] >= 65
-        ],
-        "ai_recommendation": {
-            "summary": summary["reasoning"], "strengths": summary["matched_skills"], "skill_gaps": missing,
-            "intervention_recommendation": f"Prioritize training in {', '.join(missing)}." if missing else "No role-specific skill gap is recorded for the selected vacancy.",
-        },
-        "is_shortlisted": summary["is_shortlisted"], "is_contacted": summary["is_contacted"],
-    }
-
-
-@router.post("/{org_id}/shortlist")
-def shortlist_candidate(org_id: str, req: ShortlistRequest, _current_user: dict = Depends(get_organization_user)):
-    _organization_or_404(org_id)
-    if not FirestoreRepository.get_trainee(req.trainee_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate not found")
-    job = FirestoreRepository.get_job(req.job_id)
-    if not job or job.get("employer_id") != org_id:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Organization vacancy not found")
-    if settings.ENABLE_DEMO_MODE:
-        key = (org_id, req.trainee_id, req.job_id)
-        if key in demo_shortlists:
-            demo_shortlists.remove(key)
-            shortlisted = False
-        else:
-            demo_shortlists.add(key)
-            shortlisted = True
-    else:
-        shortlisted = FirestoreRepository.toggle_employer_shortlist(org_id, req.trainee_id, req.job_id)
-    return {"status": "success", "shortlisted": shortlisted, "message": "Candidate shortlisted" if shortlisted else "Candidate removed from shortlist"}
-
-
-@router.post("/{org_id}/contact")
-def contact_candidate(org_id: str, req: ContactRequest, _current_user: dict = Depends(get_organization_user)):
-    _organization_or_404(org_id)
-    if not FirestoreRepository.get_trainee(req.trainee_id):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate not found")
-    if settings.ENABLE_DEMO_MODE:
-        demo_contacts.add((org_id, req.trainee_id))
-    else:
-        FirestoreRepository.record_employer_candidate_contact(org_id, req.trainee_id, req.message)
-    return {"status": "success", "message": "Contact request recorded. Configure a delivery provider to send external messages."}
-
-
-@router.get("/{org_id}/shortlisted")
-def get_shortlisted(org_id: str, _current_user: dict = Depends(get_organization_user)):
-    _organization_or_404(org_id)
-    return [{"trainee_id": trainee_id, "job_id": job_id} for trainee_id, job_id in _interaction_state(org_id)["shortlists"]]
 
 
 @router.get("/{org_id}/outcomes", response_model=List[EmployerOutcomeResponse])

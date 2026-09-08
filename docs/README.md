@@ -1,4 +1,5 @@
-# Skilling Impact Intelligence - Documentation
+# Skilling Impact Intelligence
+## [ARCHIVED / HISTORICAL] Documentation Hub
 
 Welcome to the comprehensive technical and product documentation for the **Skilling Impact Intelligence** platform.
 

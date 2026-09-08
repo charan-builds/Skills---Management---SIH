@@ -26,7 +26,7 @@ export default function Trainees() {
   const [stageFilter, setStageFilter] = useState("All Stages");
   const [sortBy, setSortBy] = useState("score_desc");
 
-  // Fallback demo candidates if API is slow/partial
+  // Fallback demo trainees if API is slow/partial
   const demoTraineesList = [
     {
       id: "T102",
@@ -109,8 +109,8 @@ export default function Trainees() {
       stage_color: "#2563eb",
       assessment_score: 85,
       skills: ["Linux", "Network Security", "Cryptography"],
-      salary: "In Interviewing",
-      retention: "Shortlisted"
+      salary: "Seeking ₹4.0 LPA",
+      retention: "Ready for Placement"
     },
     {
       id: "TR-DEMO-1007",
@@ -121,8 +121,8 @@ export default function Trainees() {
       stage_color: "#2563eb",
       assessment_score: 81,
       skills: ["JavaScript", "React", "Node.js", "MongoDB"],
-      salary: "In Interviewing",
-      retention: "Applied"
+      salary: "Seeking ₹3.5 LPA",
+      retention: "Ready for Placement"
     }
   ];
 
@@ -287,7 +287,7 @@ export default function Trainees() {
           <Search size={16} color="#64748b" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
-            placeholder="Search candidate name, ID, or skill..."
+            placeholder="Search trainee name, ID, or skill..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             style={{ width: '100%', padding: '0.55rem 0.75rem 0.55rem 2.25rem', background: '#ffffff', color: '#0f172a', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 500 }}
@@ -341,7 +341,7 @@ export default function Trainees() {
           >
             <option value="score_desc">Highest Assessment Score</option>
             <option value="score_asc">Lowest Assessment Score</option>
-            <option value="name_asc">Candidate Name (A-Z)</option>
+            <option value="name_asc">Trainee Name (A-Z)</option>
           </select>
         </div>
 
@@ -359,7 +359,7 @@ export default function Trainees() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
           <div>
             <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.25rem', fontWeight: 700, color: '#0f172a' }}>Trainee Registry & Skill Profile</h3>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem' }}>Showing {filteredTrainees.length} registered candidate records with validated assessments.</p>
+            <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem' }}>Showing {filteredTrainees.length} registered trainee records with validated assessments.</p>
           </div>
         </div>
 
@@ -367,7 +367,7 @@ export default function Trainees() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
             <thead>
               <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#475569', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>Candidate & ID</th>
+                <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>Trainee & ID</th>
                 <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>Programme</th>
                 <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>District</th>
                 <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>Progression Stage</th>

@@ -21,8 +21,8 @@
 | Portal | Purpose | Demo Login |
 | :--- | :--- | :--- |
 | **Admin** | Programme analytics, skill-gap intelligence, employment outcomes, what-if policy simulator | `admin@sih.gov.in` / `admin123` |
-| **Employer** | AI candidate matching, talent pool search, shortlisting, outreach, outcome verification | Org ID: `EMP-DEMO-001` / `demo123` |
-| **Trainee** | Career readiness, explore jobs, improve skills (interactive quizzes), applications, profile | Trainee ID: `T102` / `demo123` |
+| **Employer** | Outcome verification | Org ID: `EMP-DEMO-001` / `demo123` |
+| **Trainee** | Career readiness, profile | Trainee ID: `T102` / `demo123` |
 
 ---
 

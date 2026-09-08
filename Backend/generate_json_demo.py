@@ -68,6 +68,11 @@ def generate_data():
         db_json["programmes"].append({
             "id": prog["id"],
             "name": prog["name"],
+            "provider": "State Skilling Agency",
+            "status": "Active",
+            "trainees": random.randint(100, 500),
+            "employment": random.randint(50, 90),
+            "retention": random.randint(60, 95),
             "skills_taught": prog["skills_taught"],
             "districts": random.sample(DISTRICTS, k=3),
             "is_synthetic": True,
@@ -132,7 +137,8 @@ def generate_data():
             salary = str(random.randint(15000, 45000))
             start_date = datetime.now() - timedelta(days=random.randint(30, 400))
             emp_hist.append({
-                "employer": emp_name,
+                "id": f"emp_{random.randint(10000, 99999)}",
+                "employer_name": emp_name,
                 "role": job_title,
                 "salary": salary,
                 "start_date": start_date.strftime("%Y-%m-%d"),
@@ -149,18 +155,21 @@ def generate_data():
         if outcome == "Employed" and emp_hist:
             days_since = (datetime.now() - datetime.strptime(emp_hist[0]["start_date"], "%Y-%m-%d")).days
             if days_since > 90:
-                timeline.append({"checkpoint": "3 Months", "status": "Retained"})
+                timeline.append({"checkpoint": "3 Months", "status": "Retained", "date": datetime.now().isoformat(), "description": "Checked status"})
             if days_since > 180:
-                timeline.append({"checkpoint": "6 Months", "status": "Retained" if emp_hist[0]["status"] == "Active" else "Dropped"})
+                timeline.append({"checkpoint": "6 Months", "status": "Retained" if emp_hist[0]["status"] == "Active" else "Dropped", "date": datetime.now().isoformat(), "description": "Checked status"})
             if days_since > 365:
-                timeline.append({"checkpoint": "12 Months", "status": "Retained" if emp_hist[0]["status"] == "Active" else "Dropped"})
+                timeline.append({"checkpoint": "12 Months", "status": "Retained" if emp_hist[0]["status"] == "Active" else "Dropped", "date": datetime.now().isoformat(), "description": "Checked status"})
                 
         db_json["trainees"].append({
             "id": t_id,
             "name": f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)}",
             "email": f"demo{i}@example.com" if i > 0 else "rahul.kumar@example.com",
+            "phone": "+91-9876543210",
             "district": random.choice(DISTRICTS),
             "programme_id": prog["id"],
+            "course_name": prog["name"],
+            "provider": "State Skilling Agency",
             "status": status,
             "outcome": outcome,
             "skills": acquired_skills,
@@ -171,15 +180,7 @@ def generate_data():
             "created_at": datetime.now().isoformat()
         })
         
-        if status == "Certified" and outcome == "Seeking Employment" and random.random() < 0.3:
-            db_json["interventions"].append({
-                "trainee_id": t_id,
-                "programme_id": prog["id"],
-                "type": "Skill Bridge Module",
-                "status": "Recommended",
-                "is_synthetic": True,
-                "created_at": datetime.now().isoformat()
-            })
+
             
     with open("demo_data.json", "w") as f:
         json.dump(db_json, f, indent=2)

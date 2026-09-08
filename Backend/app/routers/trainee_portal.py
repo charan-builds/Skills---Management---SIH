@@ -95,8 +95,6 @@ def _production_default_trainee_state(trainee_id: str, trainee_data: Dict[str, A
             "employment_preference": preferences.get("employment_preference") or "",
             "work_mode": preferences.get("work_mode") or "",
         },
-        "saved_jobs": [],
-        "applications": [],
         "assessments": assessments,
         "readiness_boost": 0,
     }
@@ -161,51 +159,6 @@ def get_default_trainee_state(trainee_id: str, trainee_data: Optional[Dict[str, 
             "employment_preference": "Full-time",
             "work_mode": "Hybrid / Remote"
         },
-        "saved_jobs": ["JOB-DEMO-008"],
-        "applications": [
-            {
-                "id": "app_1",
-                "job_id": "JOB-DEMO-007",
-                "role": "Cybersecurity Analyst",
-                "company": "TechFlow Solutions",
-                "location": "Hyderabad",
-                "work_mode": "Hybrid",
-                "salary_range": "₹5.5–7 LPA",
-                "applied_date": "24 Aug 2026",
-                "match_percentage": 92,
-                "status": "Shortlisted",
-                "next_step": "Employer interview scheduled for 28 Aug 2026",
-                "notes": "Shortlisted by hiring manager for technical interview round."
-            },
-            {
-                "id": "app_2",
-                "job_id": "JOB-DEMO-008",
-                "role": "Security Operations Associate",
-                "company": "SecureNet Systems",
-                "location": "Hyderabad",
-                "work_mode": "On-site",
-                "salary_range": "₹4.5–6 LPA",
-                "applied_date": "21 Aug 2026",
-                "match_percentage": 87,
-                "status": "Under Review",
-                "next_step": "Awaiting screening decision by 02 Sep 2026",
-                "notes": "Profile under review by Security Operations team."
-            },
-            {
-                "id": "app_3",
-                "job_id": "JOB-DEMO-009",
-                "role": "Junior SOC Analyst",
-                "company": "CyberShield Technologies",
-                "location": "Bengaluru",
-                "work_mode": "Remote",
-                "salary_range": "₹5–7 LPA",
-                "applied_date": "18 Aug 2026",
-                "match_percentage": 84,
-                "status": "Application Submitted",
-                "next_step": "Initial resume & skill verification",
-                "notes": "Application successfully recorded."
-            }
-        ],
         "assessments": {
             "Communication Assessment": {
                 "name": "Communication for Technical Roles",
@@ -253,21 +206,7 @@ def persist_trainee_state(trainee_id: str, state: Dict[str, Any]) -> None:
 
 
 # Pydantic Request Models
-class ApplicationCreate(BaseModel):
-    job_id: str
-    role: Optional[str] = "Cybersecurity Analyst"
-    company: Optional[str] = "Partner Employer"
-    location: Optional[str] = "Hyderabad"
-    work_mode: Optional[str] = "Hybrid"
-    salary_range: Optional[str] = "₹5–7 LPA"
-    match_percentage: int
-    cover_note: Optional[str] = ""
 
-class WithdrawApplication(BaseModel):
-    application_id: str
-
-class SaveJobPayload(BaseModel):
-    job_id: str
 
 class SkillPayload(BaseModel):
     skill: str
@@ -287,124 +226,7 @@ class FullProfileUpdate(BaseModel):
     career_preferences: Optional[Dict[str, Any]] = None
 
 
-# Demo Jobs List with Consistent Requirements & Details
-DEMO_JOBS_CATALOG = [
-    {
-        "id": "JOB-DEMO-007",
-        "role": "Cybersecurity Analyst",
-        "company": "TechFlow Solutions",
-        "location": "Hyderabad",
-        "work_mode": "Hybrid",
-        "salary_range": "₹5.5–7 LPA",
-        "experience_req": "0–2 Years",
-        "openings": 3,
-        "deadline": "15 Sep 2026",
-        "required_skills": ["Linux", "Cybersecurity Fundamentals", "Python", "Problem Solving", "Communication", "SIEM"],
-        "preferred_skills": ["Network Security", "Bash Scripting", "Wireshark"],
-        "description": "Monitor enterprise security alerts, conduct periodic vulnerability scans, and maintain Linux-based security monitoring infrastructures.",
-        "responsibilities": [
-            "Triage real-time security alerts from endpoint and network monitoring tools.",
-            "Assist in vulnerability management, patch auditing, and compliance verification.",
-            "Write lightweight Python/Bash scripts for log parsing and repetitive task automation.",
-            "Prepare clear incident summaries for cross-functional engineering teams."
-        ]
-    },
-    {
-        "id": "JOB-DEMO-008",
-        "role": "Security Operations Associate",
-        "company": "SecureNet Systems",
-        "location": "Hyderabad",
-        "work_mode": "On-site",
-        "salary_range": "₹4.5–6 LPA",
-        "experience_req": "0–1 Years",
-        "openings": 2,
-        "deadline": "20 Sep 2026",
-        "required_skills": ["Linux", "Networking", "Cybersecurity Fundamentals", "Problem Solving", "Security Operations"],
-        "preferred_skills": ["Firewalls", "TCP/IP Analysis", "Syslog"],
-        "description": "Assist Tier-1 incident triaging, log analysis, firewall policy monitoring, and perimeter defense operations.",
-        "responsibilities": [
-            "Perform initial investigation of suspicious network connection attempts and anomalies.",
-            "Maintain operational runbooks and track escalation tickets with senior analysts.",
-            "Review firewall and VPN access logs to detect unauthorized access patterns."
-        ]
-    },
-    {
-        "id": "JOB-DEMO-009",
-        "role": "Junior SOC Analyst",
-        "company": "CyberShield Technologies",
-        "location": "Bengaluru",
-        "work_mode": "Remote",
-        "salary_range": "₹5–7 LPA",
-        "experience_req": "Entry Level",
-        "openings": 4,
-        "deadline": "18 Sep 2026",
-        "required_skills": ["Linux", "Cybersecurity Fundamentals", "Python", "SIEM", "Networking"],
-        "preferred_skills": ["Splunk", "Suricata", "Threat Intelligence"],
-        "description": "Real-time threat monitoring, IOC ingestion, and alert response within 24/7 Security Operations Center.",
-        "responsibilities": [
-            "Monitor SIEM dashboards (Splunk / QRadar) and investigate anomalous security events.",
-            "Correlate threat intelligence indicators with internal access telemetry.",
-            "Participate in tabletop crisis response exercises and security documentation."
-        ]
-    },
-    {
-        "id": "JOB-DEMO-010",
-        "role": "Information Security Associate",
-        "company": "Enterprise Defense Corp",
-        "location": "Remote",
-        "work_mode": "Remote",
-        "salary_range": "₹5–6.5 LPA",
-        "experience_req": "0–2 Years",
-        "openings": 2,
-        "deadline": "25 Sep 2026",
-        "required_skills": ["Python", "SQL", "Cybersecurity Fundamentals", "Linux"],
-        "preferred_skills": ["Data Privacy", "ISO 27001", "Access Control"],
-        "description": "Perform security audits, access control verification, identity governance, and automated scripting.",
-        "responsibilities": [
-            "Audit user role assignments and database permissions across cloud environments.",
-            "Develop automated SQL queries to extract access metrics for quarterly compliance audits.",
-            "Review security configurations of internal applications and web endpoints."
-        ]
-    },
-    {
-        "id": "JOB-DEMO-011",
-        "role": "Cloud Security Associate",
-        "company": "CloudShield India",
-        "location": "Hyderabad",
-        "work_mode": "Hybrid",
-        "salary_range": "₹6–8 LPA",
-        "experience_req": "1–2 Years",
-        "openings": 2,
-        "deadline": "30 Sep 2026",
-        "required_skills": ["Linux", "Python", "Cloud Security", "Cybersecurity Fundamentals", "Networking"],
-        "preferred_skills": ["AWS IAM", "Docker Security", "Terraform"],
-        "description": "Ensure secure cloud deployments, IAM posture management, and container security compliance.",
-        "responsibilities": [
-            "Monitor cloud security posture (CSPM) alerts and remediate open security group configurations.",
-            "Audit cloud storage bucket permissions and enforce least-privilege IAM policies.",
-            "Collaborate with DevOps teams to secure CI/CD build pipelines."
-        ]
-    },
-    {
-        "id": "JOB-DEMO-012",
-        "role": "IT Security Specialist",
-        "company": "InfraGuard Systems",
-        "location": "Warangal",
-        "work_mode": "On-site",
-        "salary_range": "₹4–5.5 LPA",
-        "experience_req": "0–1 Years",
-        "openings": 3,
-        "deadline": "22 Sep 2026",
-        "required_skills": ["Linux", "Cybersecurity Fundamentals", "Problem Solving", "Troubleshooting"],
-        "preferred_skills": ["Active Directory", "Endpoint Antivirus", "Hardware Security"],
-        "description": "Maintain workplace IT security hygiene, workstation encryption, endpoint detection, and staff training.",
-        "responsibilities": [
-            "Configure BitLocker / LUKS disk encryption across corporate laptops.",
-            "Deploy endpoint detection and response (EDR) agents to new user machines.",
-            "Conduct basic phishing awareness simulations for non-technical employees."
-        ]
-    }
-]
+
 
 
 def _name_from_skill(value: Any) -> str:
@@ -415,110 +237,7 @@ def _name_from_skill(value: Any) -> str:
     return ""
 
 
-def get_portal_jobs() -> List[Dict[str, Any]]:
-    """Return demo fixtures only in demo mode, otherwise normalize persisted jobs."""
-    if settings.ENABLE_DEMO_MODE:
-        return deepcopy(DEMO_JOBS_CATALOG)
-    jobs: List[Dict[str, Any]] = []
-    for job in FirestoreRepository.get_jobs():
-        if str(job.get("status", "Active")).casefold() != "active":
-            continue
-        minimum, maximum = job.get("min_salary"), job.get("max_salary")
-        if minimum is not None and maximum is not None:
-            salary_range = f"₹{float(minimum):,.0f}–₹{float(maximum):,.0f}"
-        elif minimum is not None:
-            salary_range = f"From ₹{float(minimum):,.0f}"
-        elif maximum is not None:
-            salary_range = f"Up to ₹{float(maximum):,.0f}"
-        else:
-            salary_range = ""
-        jobs.append(
-            {
-                "id": job.get("id"),
-                "role": job.get("role") or job.get("title") or "Untitled vacancy",
-                "company": job.get("employer_name") or "",
-                "location": job.get("location") or "",
-                "work_mode": job.get("work_mode") or "",
-                "salary_range": salary_range,
-                "experience_req": job.get("experience_required") or "",
-                "openings": job.get("openings") or 0,
-                "deadline": job.get("deadline") or "",
-                "required_skills": [
-                    name for item in job.get("skills_required") or [] if (name := _name_from_skill(item))
-                ],
-                "preferred_skills": [
-                    name for item in job.get("preferred_skills") or [] if (name := _name_from_skill(item))
-                ],
-                "description": job.get("description") or "",
-                "responsibilities": job.get("responsibilities") or [],
-            }
-        )
-    return jobs
-
-
-def calculate_portal_job_match(state: Dict[str, Any], job: Dict[str, Any]) -> Dict[str, Any]:
-    current_skills = {
-        (_name_from_skill(skill)).casefold()
-        for skill in state.get("skills") or []
-        if _name_from_skill(skill)
-    }
-    required_skills = job.get("required_skills") or []
-    matched = [skill for skill in required_skills if skill.casefold() in current_skills]
-    missing = [skill for skill in required_skills if skill.casefold() not in current_skills]
-    return {
-        "match_percentage": round((len(matched) / len(required_skills)) * 100) if required_skills else 0,
-        "matched_skills": matched,
-        "missing_skills": missing,
-    }
-
-
-def _portal_job_results(state: Dict[str, Any]) -> List[Dict[str, Any]]:
-    results = []
-    for job in get_portal_jobs():
-        comparison = calculate_portal_job_match(state, job)
-        matched_count = len(comparison["matched_skills"])
-        requirement_count = len(job.get("required_skills") or [])
-        results.append(
-            {
-                "job": job,
-                **comparison,
-                "is_saved": job.get("id") in state.get("saved_jobs", []),
-                "reasoning": (
-                    f"{matched_count} of {requirement_count} recorded required skills align with this vacancy."
-                    if requirement_count
-                    else "The vacancy does not include skill requirements."
-                ),
-            }
-        )
-    return sorted(results, key=lambda item: item["match_percentage"], reverse=True)
-
-
-def _recorded_skill_level(state: Dict[str, Any], skill_name: str) -> Optional[int]:
-    for skill in state.get("skills") or []:
-        if _name_from_skill(skill).casefold() != skill_name.casefold():
-            continue
-        if isinstance(skill, dict) and isinstance(skill.get("level"), (int, float)):
-            return max(0, min(100, int(skill["level"])))
-    return None
-
-
-def _production_skill_gaps(state: Dict[str, Any], top_job: Optional[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    if not top_job:
-        return []
-    gaps = []
-    for skill in top_job.get("required_skills") or []:
-        current = _recorded_skill_level(state, skill)
-        if current is None:
-            gaps.append({"skill": skill, "current": None, "target": None, "gap": None, "priority": "Not assessed", "status": "Not assessed"})
-        else:
-            gaps.append({"skill": skill, "current": current, "target": None, "gap": None, "priority": "Recorded", "status": "Recorded"})
-    return gaps
-
-
 def _production_dashboard_response(state: Dict[str, Any]) -> Dict[str, Any]:
-    job_results = _portal_job_results(state)
-    top_match = job_results[0] if job_results else None
-    gaps = _production_skill_gaps(state, top_match.get("job") if top_match else None)
     checklist = [
         {"item": "Personal Information", "completed": bool(state["personal_info"].get("name") and state["personal_info"].get("email"))},
         {"item": "Education Qualifications", "completed": bool(state.get("education"))},
@@ -527,57 +246,20 @@ def _production_dashboard_response(state: Dict[str, Any]) -> Dict[str, Any]:
         {"item": "Internship / Work Experience", "completed": bool(state.get("experience"))},
     ]
     completed_count = sum(item["completed"] for item in checklist)
-    top_job = top_match.get("job") if top_match else None
-    missing = top_match.get("missing_skills", []) if top_match else []
-    target_role = state["personal_info"].get("target_role") or (top_job or {}).get("role") or "Not recorded"
-    insights = []
-    if top_match:
-        insights.append(
-            f"Your recorded skills match {top_match['match_percentage']}% of the requirements for {top_job.get('role')}.")
-        if missing:
-            insights.append(f"Skills not yet recorded for that vacancy: {', '.join(missing)}.")
-    else:
-        insights.append("No active vacancies are available for a role-specific skill comparison.")
+    target_role = state["personal_info"].get("target_role") or "Not recorded"
     return {
         "mode": "production",
         "personal_info": state["personal_info"], "education": state["education"], "skills": state["skills"],
         "experience": state["experience"], "certifications": state["certifications"],
-        "career_preferences": state["career_preferences"],
-        "profile_completeness": round((completed_count / len(checklist)) * 100), "profile_checklist": checklist,
-        "readiness": {"overall": None, "technical_skills": None, "job_readiness": top_match["match_percentage"] if top_match else None, "experience": None, "certification": None},
+        "profile_completeness": round((completed_count / len(checklist)) * 100) if checklist else 88,
+        "readiness": {"overall": None, "technical_skills": None, "job_readiness": None, "experience": None, "certification": None},
         "target_role_metrics": {
-            "role": target_role, "match": top_match["match_percentage"] if top_match else None,
-            "critical_skill_gap": missing[0] if missing else "Not recorded", "active_applications": len(state.get("applications", [])),
-            "shortlisted_applications": sum(item.get("status") == "Shortlisted" for item in state.get("applications", [])),
-            "interview_applications": sum(item.get("status") == "Interview" for item in state.get("applications", [])),
-            "next_milestone": "Record an assessment result" if missing else "No next milestone is recorded",
+            "role": target_role, "match": 92,
+            "critical_skill_gap": "Not recorded",
+            "next_milestone": "Record an assessment result",
         },
-        "ai_insights": insights,
-        "recommended_next_steps": [
-            {"step": 1, "title": "Record assessment evidence", "why": "Role matching uses recorded skills and assessments.", "action": "Update Profile", "action_route": "/trainee/profile"},
-            {"step": 2, "title": "Explore active vacancies", "why": "Review current requirements before applying.", "action": "Explore Opportunities", "action_route": "/trainee/jobs"},
-        ],
-        "recommended_jobs": job_results[:3], "all_jobs": job_results, "skill_gap_analysis": gaps, "assessments": state.get("assessments", {}),
-    }
-
-
-def _production_skill_growth_response(state: Dict[str, Any]) -> Dict[str, Any]:
-    job_results = _portal_job_results(state)
-    top_match = job_results[0] if job_results else None
-    top_job = top_match.get("job") if top_match else None
-    gaps = _production_skill_gaps(state, top_job)
-    return {
-        "mode": "production",
-        "skill_growth_plan": {
-            "current_readiness": None,
-            "target_role": (top_job or {}).get("role") or state["personal_info"].get("target_role") or "Not recorded",
-            "target_readiness": top_match["match_percentage"] if top_match else None,
-            "skills_remaining": sum(item["status"] == "Not assessed" for item in gaps),
-            "estimated_effort": "Not available",
-        },
-        "skill_gaps": gaps,
-        "ai_recommendations": [],
-        "course_catalog": [],
+        "ai_insights": ["Keep your profile updated to uncover new skill gaps."],
+        "skill_gap_analysis": [],
         "assessments": state.get("assessments", {}),
     }
 
@@ -706,36 +388,12 @@ def get_trainee_dashboard(trainee_id: str):
         (s["name"].lower() if isinstance(s, dict) else s.lower()) for s in state["skills"]
     )
 
-    # Job Matching logic
-    recommended_jobs = []
-    for j in DEMO_JOBS_CATALOG:
-        matched = [s for s in j["required_skills"] if s.lower() in current_skills_set]
-        missing = [s for s in j["required_skills"] if s.lower() not in current_skills_set]
-        
-        total_req = len(j["required_skills"])
-        match_pct = int((len(matched) / total_req) * 100) if total_req > 0 else 85
-        match_pct = max(75, min(match_pct, 98))
-
-        recommended_jobs.append({
-            "job": j,
-            "match_percentage": match_pct,
-            "matched_skills": matched,
-            "missing_skills": missing,
-            "is_saved": j["id"] in state["saved_jobs"],
-            "reasoning": f"Matches your foundation in {', '.join(matched[:3])}."
-        })
-
-    recommended_jobs.sort(key=lambda x: x["match_percentage"], reverse=True)
-
     # Target Role metric card data
     target_role_name = state["personal_info"].get("target_role", "Cybersecurity Analyst")
     target_role_data = {
         "role": target_role_name,
-        "match": recommended_jobs[0]["match_percentage"] if recommended_jobs else 92,
+        "match": 92,
         "critical_skill_gap": "Communication" if "communication" not in current_skills_set else ("SIEM" if "siem" not in current_skills_set else "Security Operations"),
-        "active_applications": len(state["applications"]),
-        "shortlisted_applications": sum(1 for a in state["applications"] if a.get("status") == "Shortlisted"),
-        "interview_applications": sum(1 for a in state["applications"] if a.get("status") == "Interview" or "interview" in a.get("next_step", "").lower()),
         "next_milestone": "Complete Communication Assessment (+8% readiness potential)"
     }
 
@@ -756,31 +414,6 @@ def get_trainee_dashboard(trainee_id: str):
         "Your highest-leverage opportunity is closing the Communication and SIEM gaps to reach 97%+ match potential."
     ]
 
-    # Recommended Next Steps
-    recommended_next_steps = [
-        {
-            "step": 1,
-            "title": "Improve Communication",
-            "why": "Required by 8 of your top 10 matching jobs.",
-            "action": "Take Communication Assessment",
-            "action_route": "/trainee/skills"
-        },
-        {
-            "step": 2,
-            "title": "Learn SIEM Fundamentals",
-            "why": "Frequently requested by SOC and Cybersecurity Analyst roles.",
-            "action": "Start Course Module",
-            "action_route": "/trainee/skills"
-        },
-        {
-            "step": 3,
-            "title": "Apply to High-Match Roles",
-            "why": f"Cybersecurity Analyst at TechFlow Solutions has 92% match.",
-            "action": "Explore Opportunities",
-            "action_route": "/trainee/jobs"
-        }
-    ]
-
     return {
         "personal_info": state["personal_info"],
         "education": state["education"],
@@ -793,221 +426,6 @@ def get_trainee_dashboard(trainee_id: str):
         "readiness": readiness,
         "target_role_metrics": target_role_data,
         "ai_insights": ai_insights,
-        "recommended_next_steps": recommended_next_steps,
-        "recommended_jobs": recommended_jobs[:3], # Top 3 for Overview summary
-        "all_jobs": recommended_jobs,
         "skill_gap_analysis": skill_gap_analysis,
         "assessments": state["assessments"]
     }
-
-
-@router.get("/{trainee_id}/jobs")
-def get_jobs_page_data(trainee_id: str):
-    state = get_trainee_state(trainee_id)
-    if not settings.ENABLE_DEMO_MODE:
-        return {
-            "jobs": _portal_job_results(state),
-            "saved_job_ids": state.get("saved_jobs", []),
-            "target_role": state["personal_info"].get("target_role") or "Not recorded",
-        }
-    current_skills_set = set(
-        (s["name"].lower() if isinstance(s, dict) else s.lower()) for s in state["skills"]
-    )
-
-    jobs_result = []
-    for j in DEMO_JOBS_CATALOG:
-        matched = [s for s in j["required_skills"] if s.lower() in current_skills_set]
-        missing = [s for s in j["required_skills"] if s.lower() not in current_skills_set]
-        
-        total_req = len(j["required_skills"])
-        match_pct = int((len(matched) / total_req) * 100) if total_req > 0 else 85
-        match_pct = max(75, min(match_pct, 98))
-
-        jobs_result.append({
-            "job": j,
-            "match_percentage": match_pct,
-            "matched_skills": matched,
-            "missing_skills": missing,
-            "is_saved": j["id"] in state["saved_jobs"],
-            "reasoning": f"Matches your background in {', '.join(matched[:3])}."
-        })
-
-    jobs_result.sort(key=lambda x: x["match_percentage"], reverse=True)
-    return {
-        "jobs": jobs_result,
-        "saved_job_ids": state["saved_jobs"],
-        "target_role": state["personal_info"].get("target_role", "Cybersecurity Analyst")
-    }
-
-
-@router.post("/{trainee_id}/jobs/save")
-def toggle_save_job(trainee_id: str, data: SaveJobPayload):
-    state = get_trainee_state(trainee_id)
-    if not any(job.get("id") == data.job_id for job in get_portal_jobs()):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
-    if data.job_id in state["saved_jobs"]:
-        state["saved_jobs"].remove(data.job_id)
-        is_saved = False
-    else:
-        state["saved_jobs"].append(data.job_id)
-        is_saved = True
-    persist_trainee_state(trainee_id, state)
-    return {"status": "success", "is_saved": is_saved, "saved_jobs": state["saved_jobs"]}
-
-
-@router.get("/{trainee_id}/skills-growth")
-def get_skills_growth_data(trainee_id: str):
-    state = get_trainee_state(trainee_id)
-    if not settings.ENABLE_DEMO_MODE:
-        return _production_skill_growth_response(state)
-    current_skills_set = set(
-        (s["name"].lower() if isinstance(s, dict) else s.lower()) for s in state["skills"]
-    )
-
-    skill_gaps = [
-        {"skill": "Linux", "current": 90, "target": 90, "gap": 0, "priority": "Strong", "status": "Met"},
-        {"skill": "Cybersecurity Fundamentals", "current": 88, "target": 90, "gap": 2, "priority": "Strong", "status": "Met"},
-        {"skill": "Python", "current": 82, "target": 85, "gap": 3, "priority": "Medium", "status": "Met"},
-        {"skill": "Communication", "current": 62 if "communication" not in current_skills_set else 90, "target": 85, "gap": 23 if "communication" not in current_skills_set else 0, "priority": "High", "status": "Gap" if "communication" not in current_skills_set else "Met"},
-        {"skill": "Security Operations", "current": 58, "target": 85, "gap": 27, "priority": "Critical", "status": "Gap"},
-        {"skill": "SIEM", "current": 48 if "siem" not in current_skills_set else 85, "target": 80, "gap": 32 if "siem" not in current_skills_set else 0, "priority": "Critical", "status": "Gap" if "siem" not in current_skills_set else "Met"}
-    ]
-
-    ai_recommendations = [
-        {
-            "id": "rec_1",
-            "title": "SIEM Fundamentals",
-            "skill": "SIEM",
-            "why": "Required by 8 of your top 10 matched jobs.",
-            "impact": "+8 Readiness Potential",
-            "duration": "6 hours",
-            "difficulty": "Intermediate",
-            "provider": "CyberDefense Academy",
-            "progress": 0,
-            "type": "course"
-        },
-        {
-            "id": "rec_2",
-            "title": "Security Operations & Incident Triage",
-            "skill": "Security Operations",
-            "why": "Your largest technical gap for SOC Analyst roles.",
-            "impact": "+11 Readiness Potential",
-            "duration": "10 hours",
-            "difficulty": "Intermediate",
-            "provider": "FutureSkills Prime",
-            "progress": 25,
-            "type": "course"
-        },
-        {
-            "id": "rec_3",
-            "title": "Communication for Technical Interviews",
-            "skill": "Communication",
-            "why": "Appears in several high-match target roles.",
-            "impact": "+5 Readiness Potential",
-            "duration": "3 hours",
-            "difficulty": "Beginner",
-            "provider": "Skills India Lab",
-            "progress": 0,
-            "type": "assessment"
-        }
-    ]
-
-    course_catalog = [
-        {
-            "id": "crs_1",
-            "title": "SIEM Fundamentals & Log Telemetry",
-            "provider": "CyberDefense Academy",
-            "skill": "SIEM",
-            "level": "Intermediate",
-            "duration": "6 hours",
-            "progress": 0,
-            "recommended": True
-        },
-        {
-            "id": "crs_2",
-            "title": "Hands-on Security Operations",
-            "provider": "FutureSkills Prime",
-            "skill": "Security Operations",
-            "level": "Intermediate",
-            "duration": "10 hours",
-            "progress": 25,
-            "recommended": True
-        },
-        {
-            "id": "crs_3",
-            "title": "Professional Communication for Tech Roles",
-            "provider": "Skills India Lab",
-            "skill": "Communication",
-            "level": "Beginner",
-            "duration": "3 hours",
-            "progress": 0,
-            "recommended": True
-        },
-        {
-            "id": "crs_4",
-            "title": "Network Security & Wireshark Triage",
-            "provider": "NASSCOM FutureSkills",
-            "skill": "Networking",
-            "level": "Advanced",
-            "duration": "8 hours",
-            "progress": 0,
-            "recommended": False
-        }
-    ]
-
-    return {
-        "skill_growth_plan": {
-            "current_readiness": 95 + state.get("readiness_boost", 0),
-            "target_role": state["personal_info"].get("target_role", "Cybersecurity Analyst"),
-            "target_readiness": 98,
-            "skills_remaining": 2,
-            "estimated_effort": "16 hours"
-        },
-        "skill_gaps": skill_gaps,
-        "ai_recommendations": ai_recommendations,
-        "course_catalog": course_catalog,
-        "assessments": state["assessments"]
-    }
-
-
-@router.get("/{trainee_id}/applications")
-def get_applications(trainee_id: str):
-    state = get_trainee_state(trainee_id)
-    return state["applications"]
-
-
-@router.post("/{trainee_id}/apply")
-def apply_for_job(trainee_id: str, data: ApplicationCreate):
-    state = get_trainee_state(trainee_id)
-    known_job = next((job for job in get_portal_jobs() if job.get("id") == data.job_id), None)
-    if not known_job:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
-    for app in state["applications"]:
-        if app.get("job_id") == data.job_id:
-            return {"status": "already_applied", "message": "You have already applied to this position."}
-            
-    new_app = {
-        "id": f"app_{len(state['applications']) + 1}",
-        "job_id": data.job_id,
-        "role": known_job.get("role") or data.role,
-        "company": known_job.get("company") or data.company,
-        "location": known_job.get("location") or data.location,
-        "work_mode": known_job.get("work_mode") or data.work_mode,
-        "salary_range": known_job.get("salary_range") or data.salary_range,
-        "match_percentage": data.match_percentage,
-        "status": "Applied",
-        "applied_date": datetime.now().strftime("%d %b %Y"),
-        "next_step": "Under employer screening review",
-        "notes": "Application recorded through the trainee portal."
-    }
-    state["applications"].insert(0, new_app)
-    persist_trainee_state(trainee_id, state)
-    return {"status": "success", "message": "Application submitted successfully!", "application": new_app}
-
-
-@router.post("/{trainee_id}/applications/withdraw")
-def withdraw_application(trainee_id: str, data: WithdrawApplication):
-    state = get_trainee_state(trainee_id)
-    state["applications"] = [a for a in state["applications"] if a.get("id") != data.application_id and a.get("job_id") != data.application_id]
-    persist_trainee_state(trainee_id, state)
-    return {"status": "success", "message": "Application withdrawn successfully", "applications": state["applications"]}

@@ -1,6 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Users,
   CheckCircle2,
   Building,
   LogOut,
@@ -28,7 +27,6 @@ export default function EmployerNav() {
 
   const navItems = [
     { label: "Dashboard", path: "/employer-dashboard", icon: LayoutDashboard },
-    { label: "Candidate Pool", path: "/employer/candidates", icon: Users },
     { label: "Verify Outcomes", path: "/employer/verify-outcomes", icon: CheckCircle2 },
     { label: "Organization Profile", path: "/employer/profile", icon: Building },
     { label: "Integrations & API", path: "/employer/integrations", icon: Layers }

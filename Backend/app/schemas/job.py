@@ -18,7 +18,6 @@ class JobBase(BaseModel):
     max_salary: Optional[float] = 35000.0
     openings: int = 1
     skills_required: List[SkillRequirement] = []
-    applications: Optional[int] = 0
     match: Optional[int] = 85
     employer_id: Optional[str] = None
     employer_name: Optional[str] = None

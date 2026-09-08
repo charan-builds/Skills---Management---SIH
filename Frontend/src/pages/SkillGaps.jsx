@@ -141,7 +141,7 @@ export default function SkillGaps() {
       roles: ["ML/AI Associate", "Predictive Analytics Specialist", "Junior Data Scientist"],
       programmes: ["AI & Machine Learning Associate"],
       supporting_skills: ["Statistics", "Scikit-Learn", "Model Evaluation", "Feature Engineering"],
-      why: "Employer demand for predictive modelling has grown 38% YoY, far outpacing certified candidate supply.",
+      why: "Employer demand for predictive modelling has grown 38% YoY, far outpacing certified Trainee supply.",
       action: "Add 40 additional training seats and deploy hands-on GPU cloud labs focused on model evaluation."
     },
     "SQL & Relational DBs": {
@@ -155,7 +155,7 @@ export default function SkillGaps() {
       roles: ["BI Developer", "Reporting Analyst", "Operations Data Specialist"],
       programmes: ["Data Analytics Specialist"],
       supporting_skills: ["DAX Formulas", "Data Modeling", "Dashboard UI Design"],
-      why: "Enterprise analytics teams demand candidates capable of delivering executive dashboards with custom DAX.",
+      why: "Enterprise analytics teams demand Trainees capable of delivering executive dashboards with custom DAX.",
       action: "Embed 12 hours of advanced DAX practical modeling into the capstone project."
     },
     "Cybersecurity & SIEM": {
@@ -295,7 +295,7 @@ export default function SkillGaps() {
         </div>
 
         <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Candidate Supply</span>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Trainee Supply</span>
           <h3 style={{ margin: '0.25rem 0 0 0', fontSize: '1.7rem', fontWeight: 800, color: '#16a34a' }}>{totalSupply.toLocaleString()} Certified</h3>
           <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 700 }}>500 total active trainees</span>
         </div>
@@ -363,7 +363,7 @@ export default function SkillGaps() {
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: '#475569', marginBottom: '0.2rem' }}>
                     <span>Supply</span>
-                    <strong style={{ color: '#2563eb' }}>{item.supply} Candidates</strong>
+                    <strong style={{ color: '#2563eb' }}>{item.supply} Trainees</strong>
                   </div>
                   <div style={{ height: '10px', background: '#e2e8f0', borderRadius: '5px', overflow: 'hidden' }}>
                     <div style={{ width: `${supplyPct}%`, height: '100%', background: '#2563eb', borderRadius: '5px' }}></div>
@@ -525,7 +525,7 @@ export default function SkillGaps() {
               <span style={{ background: '#fee2e2', color: '#b91c1c', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 800 }}>VERY HIGH GAP</span>
             </div>
             <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#334155' }}>
-              <strong>WHY IT MATTERS:</strong> Employer demand (160 openings) is 38% higher than certified trainee supply (85 candidates).
+              <strong>WHY IT MATTERS:</strong> Employer demand (160 openings) is 38% higher than certified trainee supply (85 Trainees).
             </p>
             <div style={{ background: '#ffffff', padding: '0.65rem', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.8rem', color: '#1e40af' }}>
               <strong>RECOMMENDED ACTION:</strong> Increase ML training capacity by 40 seats and add practical model evaluation labs.
@@ -617,7 +617,7 @@ export default function SkillGaps() {
                   </div>
 
                   <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.85rem', color: '#b91c1c', fontWeight: 600 }}>
-                    <strong>Problem:</strong> {s.gap} Candidate Deficit ({s.demand} Demand vs {s.supply} Supply)
+                    <strong>Problem:</strong> {s.gap} Trainee Deficit ({s.demand} Demand vs {s.supply} Supply)
                   </p>
 
                   <p style={{ margin: '0 0 0.85rem 0', fontSize: '0.85rem', color: '#334155', lineHeight: 1.4 }}>
@@ -751,7 +751,7 @@ export default function SkillGaps() {
                   onClick={() => { setSelectedSkillDetail(null); navigate("/trainees"); }}
                   style={{ padding: '0.5rem 0.85rem', background: '#f1f5f9', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, color: '#334155', cursor: 'pointer' }}
                 >
-                  View Candidates
+                  View Trainees
                 </button>
                 <button
                   onClick={() => { setSelectedSkillDetail(null); navigate("/programmes"); }}

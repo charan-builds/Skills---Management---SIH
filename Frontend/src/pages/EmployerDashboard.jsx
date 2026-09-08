@@ -2,13 +2,8 @@ import { API_BASE } from '../utils/config';
 import { fetchAuth } from '../utils/authFetch';
 import { useState, useEffect } from "react";
 import {
-  BriefcaseBusiness,
-  Users,
-  ClipboardCheck,
   ArrowRight,
   TrendingUp,
-  Bookmark,
-  MapPin,
   Sparkles,
   CheckCircle2,
   BrainCircuit
@@ -35,12 +30,11 @@ export default function EmployerDashboard() {
     setError("");
     Promise.all([
       fetchAuth(`${API_BASE}/api/employers/${organizationId}/dashboard`).then(readResponse),
-      fetchAuth(`${API_BASE}/api/employers/${organizationId}/recommended-candidates`).then(readResponse),
       fetchAuth(`${API_BASE}/api/employers/${organizationId}/active-vacancies`).then(readResponse)
-    ]).then(([dashData, candData, jobsData]) => {
+    ]).then(([dashData, jobsData]) => {
       setData({
         dashboard: dashData,
-        candidates: candData || [],
+        candidates: [],
         jobs: jobsData || []
       });
       setLoading(false);
@@ -62,15 +56,8 @@ export default function EmployerDashboard() {
     );
   }
 
-  const funnel = dashboard?.recruitment_funnel || {
-    sourced: 0, matched: 0, shortlisted: 0, contacted_interview: 0, hired: 0, retention_rate: "Not recorded"
-  };
+
   const skillIntel = dashboard?.skill_intelligence || [];
-  const percentOf = (part, whole) => whole > 0 ? `${Math.round((part / whole) * 100)}%` : "Not recorded";
-  const selectionRate = dashboard?.recruitment_outcome?.selection_rate ?? percentOf(funnel.hired, funnel.matched);
-  const matchRate = percentOf(funnel.matched, funnel.sourced);
-  const shortlistRate = percentOf(funnel.shortlisted, funnel.matched);
-  const contactRate = percentOf(funnel.contacted_interview, funnel.shortlisted);
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
@@ -101,12 +88,7 @@ export default function EmployerDashboard() {
           </div>
 
           <div style={{ display: 'flex', gap: '0.75rem' }}>
-            <button
-              onClick={() => navigate("/employer/candidates")}
-              style={{ padding: '0.65rem 1.25rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', fontWeight: 600, fontSize: '0.9rem', color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-            >
-              <Users size={16} /> Explore Candidate Pool
-            </button>
+
             <button
               onClick={() => navigate("/employer/verify-outcomes")}
               style={{ padding: '0.65rem 1.25rem', background: '#2563eb', color: '#ffffff', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', boxShadow: '0 2px 6px rgba(37,99,235,0.25)' }}
@@ -116,240 +98,7 @@ export default function EmployerDashboard() {
           </div>
         </div>
 
-        {/* TOP-LEVEL SUMMARY METRIC CARDS */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
-          
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Open Job Vacancies</span>
-              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <BriefcaseBusiness size={18} />
-              </div>
-            </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.open_vacancies ?? 0}
-            </h2>
-            <small style={{ color: '#2563eb', fontWeight: 600 }}>Active hiring requisitions</small>
-          </div>
 
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Available Candidates</span>
-              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#f0fdf4', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Users size={18} />
-              </div>
-            </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.available_candidates ?? 0}
-            </h2>
-            <small style={{ color: '#16a34a', fontWeight: 600 }}>Verified certified talent pool</small>
-          </div>
-
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Shortlisted Candidates</span>
-              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#fef3c7', color: '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Bookmark size={18} />
-              </div>
-            </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.shortlisted_candidates ?? 0}
-            </h2>
-            <small style={{ color: '#b45309', fontWeight: 600 }}>Currently in evaluation pipeline</small>
-          </div>
-
-          <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Hired Trainees</span>
-              <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#f3e8ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ClipboardCheck size={18} />
-              </div>
-            </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.25rem 0' }}>
-              {dashboard?.hired_trainees ?? 0}
-            </h2>
-            <small style={{ color: '#7c3aed', fontWeight: 600 }}>Recorded employer outcome data</small>
-          </div>
-
-        </div>
-
-        {/* RECRUITMENT OVERVIEW & FUNNEL */}
-        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', marginBottom: '2.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-            <div>
-              <h3 style={{ margin: '0 0 0.25rem 0', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Recruitment Pipeline Funnel</h3>
-              <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>End-to-end conversion from workforce talent discovery to verified retention.</p>
-            </div>
-            <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 700 }}>
-              {selectionRate} Selection Rate
-            </span>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
-            
-            <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #94a3b8' }}>
-              <span style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 600 }}>1. Sourced</span>
-              <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>{funnel.sourced}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Trainees Screened</span>
-            </div>
-
-            <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #2563eb' }}>
-              <span style={{ fontSize: '0.8rem', color: '#2563eb', fontWeight: 600 }}>2. Matched (65%+)</span>
-              <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>{funnel.matched}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#2563eb' }}>{matchRate} Match Rate</span>
-            </div>
-
-            <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #f59e0b' }}>
-              <span style={{ fontSize: '0.8rem', color: '#b45309', fontWeight: 600 }}>3. Shortlisted</span>
-              <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>{funnel.shortlisted}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#b45309' }}>{shortlistRate} of Matched</span>
-            </div>
-
-            <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #8b5cf6' }}>
-              <span style={{ fontSize: '0.8rem', color: '#7c3aed', fontWeight: 600 }}>4. Interviews</span>
-              <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#0f172a' }}>{funnel.contacted_interview}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#7c3aed' }}>{contactRate} of Shortlisted</span>
-            </div>
-
-            <div style={{ background: '#f0fdf4', padding: '1.25rem', borderRadius: '10px', borderLeft: '4px solid #16a34a' }}>
-              <span style={{ fontSize: '0.8rem', color: '#15803d', fontWeight: 700 }}>5. Hired Trainees</span>
-              <h4 style={{ margin: '0.35rem 0 0.2rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#15803d' }}>{funnel.hired}</h4>
-              <span style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 600 }}>{funnel.retention_rate}</span>
-            </div>
-
-          </div>
-        </div>
-
-        {/* 2-COLUMN SECTION: RECOMMENDED CANDIDATES + ACTIVE JOBS */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
-          
-          {/* AI Recommended Candidates Card */}
-          <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase' }}>AI RECOMMENDATIONS</span>
-                <h3 style={{ margin: '0.2rem 0 0 0', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Top Recommended Candidates</h3>
-              </div>
-              <button
-                onClick={() => navigate("/employer/candidates")}
-                style={{ background: 'transparent', border: 'none', color: '#2563eb', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem' }}
-              >
-                View All <ArrowRight size={15} />
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {candidates.map((cand) => (
-                <div
-                  key={cand.trainee_id}
-                  style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <strong style={{ fontSize: '1.05rem', color: '#0f172a' }}>{cand.name}</strong>
-                        <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>({cand.trainee_id})</span>
-                      </div>
-                      <p style={{ margin: '0.2rem 0', fontSize: '0.85rem', color: '#475569' }}>
-                        {cand.programme} • <MapPin size={12} style={{ verticalAlign: 'middle' }} /> {cand.district}
-                      </p>
-                    </div>
-
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, display: 'inline-block', marginBottom: '0.2rem' }}>
-                        {cand.match_percentage}% Match
-                      </span>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Job Fit: {cand.job_match ?? cand.match_percentage ?? 0}%</div>
-                    </div>
-                  </div>
-
-                  {/* Strong Matches & Gaps */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem', marginBottom: '0.75rem' }}>
-                    {cand.matched_skills?.slice(0, 4).map((s, idx) => (
-                      <span key={idx} style={{ background: '#ffffff', border: '1px solid #cbd5e1', color: '#0f172a', padding: '2px 7px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
-                        ✓ {s}
-                      </span>
-                    ))}
-                    {cand.missing_skills?.slice(0, 1).map((s, idx) => (
-                      <span key={idx} style={{ background: '#fffbeb', border: '1px solid #fde68a', color: '#b45309', padding: '2px 7px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>
-                        △ {s}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* AI Recommendation Reason */}
-                  <div style={{ background: '#eff6ff', padding: '0.65rem 0.85rem', borderRadius: '6px', borderLeft: '3px solid #2563eb', marginBottom: '0.75rem' }}>
-                    <p style={{ margin: 0, fontSize: '0.8rem', color: '#1e40af', lineHeight: 1.4 }}>
-                      <strong>AI Explanation:</strong> "{cand.reasoning}"
-                    </p>
-                  </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
-                    <button
-                      onClick={() => navigate(`/employer/candidates/${cand.trainee_id}`)}
-                      style={{ padding: '0.45rem 0.95rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
-                    >
-                      View Profile <ArrowRight size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {candidates.length === 0 && <p style={{ color: '#64748b', margin: 0 }}>No candidates are available for recommendation.</p>}
-            </div>
-          </div>
-
-          {/* Active Job Vacancies Card */}
-          <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase' }}>OPEN REQUISITIONS</span>
-                <h3 style={{ margin: '0.2rem 0 0 0', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Active Job Vacancies</h3>
-              </div>
-              <span style={{ background: '#eff6ff', color: '#1d4ed8', padding: '3px 8px', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700 }}>
-                {jobs.length} Active
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {jobs.map((job) => (
-                <div
-                  key={job.id}
-                  style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '10px', border: '1px solid #e2e8f0' }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
-                    <div>
-                      <strong style={{ fontSize: '1.05rem', color: '#0f172a', display: 'block' }}>{job.title}</strong>
-                      <span style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                        <MapPin size={12} style={{ verticalAlign: 'middle' }} /> {job.location} • {job.openings} Openings • {job.salary_range}
-                      </span>
-                    </div>
-
-                    <div style={{ textAlign: 'right' }}>
-                      <span style={{ background: '#f0fdf4', color: '#16a34a', padding: '2px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700 }}>
-                        {job.matching_candidates ?? 0} Matched
-                      </span>
-                    </div>
-                  </div>
-
-                  <p style={{ margin: '0.4rem 0 0.75rem 0', fontSize: '0.8rem', color: '#475569' }}>
-                    <strong>Skills:</strong> {job.skills_required?.map(s => typeof s === 'string' ? s : s.skill_name).join(' · ')}
-                  </p>
-
-                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <button
-                      onClick={() => navigate(`/employer/jobs/${job.id}`)}
-                      style={{ padding: '0.45rem 0.95rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, color: '#0f172a', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem' }}
-                    >
-                      View Matches <ArrowRight size={14} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {jobs.length === 0 && <p style={{ color: '#64748b', margin: 0 }}>No active vacancies are recorded for this organization.</p>}
-            </div>
-          </div>
-
-        </div>
 
         {/* WORKFORCE SKILL INTELLIGENCE SECTION */}
         <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', marginBottom: '2.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
@@ -453,10 +202,6 @@ export default function EmployerDashboard() {
                 This summary is calculated from outcomes recorded for your organization.
               </p>
               <div style={{ display: 'flex', gap: '1rem', fontSize: '0.8rem' }}>
-                <span>Selection Rate: <strong>{selectionRate}</strong></span>
-                <span>•</span>
-                <span>Avg Match: <strong>{dashboard?.recruitment_outcome?.avg_skill_match ?? "Not recorded"}</strong></span>
-                <span>•</span>
                 <span>Retention: <strong style={{ color: '#16a34a' }}>{dashboard?.recruitment_outcome?.retention ?? "Not recorded"}</strong></span>
               </div>
             </div>
