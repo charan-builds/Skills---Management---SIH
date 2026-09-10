@@ -12,7 +12,7 @@ from app.auth.dependencies import get_admin_user, get_current_user
 from app.core.config import BASE_DIR, settings
 
 # Import Routers
-from app.routers import programmes, trainees, employers, analytics, interventions, auth, skills, jobs, trainee_portal
+from app.routers import programmes, trainees, employers, analytics, interventions, auth, skills, trainee_portal
 from app.ai.api import router as ai_router
 
 logger = logging.getLogger(__name__)
@@ -54,6 +54,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi import Request
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    if os.getenv("ENVIRONMENT", "production") == "production":
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
 # Include Routers
 app.include_router(programmes.router)
 app.include_router(trainees.router)
@@ -63,7 +75,6 @@ app.include_router(employers.router)
 app.include_router(analytics.router)
 app.include_router(interventions.router)
 app.include_router(skills.router)
-app.include_router(jobs.router)
 app.include_router(ai_router)
 app.include_router(trainee_portal.router)
 from app.routers import cron, followups
