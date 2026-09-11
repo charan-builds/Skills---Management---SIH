@@ -16,7 +16,7 @@ let auth;
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
-} catch (error) {
+} catch {
   // Gracefully handle missing config during development or demo mode
   console.warn("Firebase config not provided. Running without production Identity services.");
 }

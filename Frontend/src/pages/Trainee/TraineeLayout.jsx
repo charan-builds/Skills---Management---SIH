@@ -3,7 +3,9 @@ import {
   UserCog,
   LogOut,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Activity,
+  TrendingUp
 } from "lucide-react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 
@@ -20,6 +22,10 @@ export default function TraineeLayout({ activeTab, onTabChange, children, portal
 
   const navItems = [
     { id: 'overview', label: 'Overview & Insights', icon: LayoutDashboard, route: `/trainee-dashboard/${traineeId}` },
+    { id: 'skill-gaps', label: 'Skill Gap Intelligence', icon: Activity, route: `/trainee/${traineeId}/skill-gaps` },
+    { id: 'recommendations', label: 'Recommended Upskilling', icon: TrendingUp, route: `/trainee/${traineeId}/recommendations` },
+    { id: 'employment', label: 'Employment Status', icon: ShieldCheck, route: `/trainee/${traineeId}/employment` },
+    { id: 'followup', label: 'Check-ins & Follow-ups', icon: Sparkles, route: `/trainee/${traineeId}/followup` },
     { id: 'profile', label: 'Profile & Settings', icon: UserCog, route: `/trainee/profile` },
   ];
 

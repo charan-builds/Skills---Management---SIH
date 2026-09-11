@@ -6,8 +6,7 @@ from app.schemas.skill import (
     SkillMasterResponse,
     SkillMasterCreate,
     SkillAssessmentResponse,
-    SkillAssessmentCreate,
-    ThreeWayGapResponse
+    SkillAssessmentCreate
 )
 
 router = APIRouter(
@@ -64,23 +63,6 @@ def get_trainee_assessments(trainee_id: str, current_user: dict = Depends(get_cu
 @router.post("/assessments", response_model=SkillAssessmentResponse, status_code=status.HTTP_201_CREATED)
 def record_assessment(
     assessment: SkillAssessmentCreate,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_admin_user),
 ):
-    ensure_trainee_access(assessment.trainee_id, current_user)
     return FirestoreRepository.create_assessment(assessment.model_dump())
-
-@router.get("/skills/3way-gap/{programme_id}/{trainee_id}/{job_id}", response_model=ThreeWayGapResponse)
-def get_3way_skill_gap(
-    programme_id: str,
-    trainee_id: str,
-    job_id: str,
-    current_user: dict = Depends(get_current_user),
-):
-    ensure_trainee_access(trainee_id, current_user)
-    gap_analysis = FirestoreRepository.calculate_3way_skill_gap(programme_id, trainee_id, job_id)
-    if not gap_analysis:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Unable to calculate 3-way skill gap for the requested entities"
-        )
-    return gap_analysis

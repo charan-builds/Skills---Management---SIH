@@ -1,14 +1,14 @@
 import React from "react";
 import { ArrowRight, Filter } from "lucide-react";
 
-export default function ImpactEmploymentFunnel({ traineesData, dashboardData }) {
+export default function ImpactEmploymentFunnel({ traineesData }) {
   if (!traineesData || traineesData.length === 0) return null;
 
   const total = traineesData.length;
   // Calculate funnel stages derived from real data
   const assessed = traineesData.filter(t => t.skills && t.skills.length > 0).length;
   
-  // Job Match & Employment
+  // Benchmark Match & Employment
   let employed = 0;
   traineesData.forEach(t => {
     if (t.employment_history && t.employment_history.length > 0) {

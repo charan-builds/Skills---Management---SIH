@@ -42,17 +42,17 @@ EXCLUDED_FEATURES = [
 
 def build_retention_experiment(
     raw_dfs: Dict[str, pd.DataFrame],
-    engineered_features: Dict[str, pd.DataFrame],
-    test_size: float = 0.2,
-    random_state: int = 42
+    engineered_features: Dict[str, pd.DataFrame]
 ) -> Dict[str, Any]:
     """
-    Builds the isolated 6-month retention classification experiment dataset and executes an 80/20 stratified train/test split.
-    Guarantees the test set is partitioned before any modeling or preprocessing occurs.
+    Builds the isolated 6-month retention classification experiment dataset and executes an explicit temporal train/test split.
+    Guarantees the test set is strictly after the train set to prevent longitudinal data leakage.
+    Train: <= 2024-06-30
+    Test: >= 2024-07-01
     """
     X, y, metadata = build_retention_dataset(engineered_features, raw_dfs)
     
-    if X.empty or y.empty:
+    if X.empty or y.empty or 'start_date' not in X.columns:
         return {
             "X_train": pd.DataFrame(),
             "X_test": pd.DataFrame(),
@@ -61,14 +61,36 @@ def build_retention_experiment(
             "metadata": metadata
         }
         
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state, stratify=y
-    )
+    # Sort strictly by time
+    X_full = X.copy()
+    X_full['target'] = y
+    
+    # Sort by start_date to maintain temporal ordering
+    X_full = X_full.sort_values(by='start_date')
+    
+    # Temporal split point: mid 2024
+    split_date = pd.Timestamp("2024-07-01", tz="UTC")
+    train_mask = X_full['start_date'] < split_date
+    test_mask = X_full['start_date'] >= split_date
+    
+    train_df = X_full[train_mask].copy()
+    test_df = X_full[test_mask].copy()
+    
+    X_train = train_df.drop(columns=['target', 'start_date'])
+    y_train = train_df['target']
+    
+    X_test = test_df.drop(columns=['target', 'start_date'])
+    y_test = test_df['target']
     
     metadata["train_size"] = len(X_train)
     metadata["test_size"] = len(X_test)
     metadata["safe_features"] = SAFE_FEATURES
     metadata["excluded_features"] = EXCLUDED_FEATURES
+    metadata["temporal_split"] = {
+        "split_date": "2024-07-01",
+        "train_period": f"{train_df['start_date'].min()} to {train_df['start_date'].max()}",
+        "test_period": f"{test_df['start_date'].min()} to {test_df['start_date'].max()}"
+    } if not train_df.empty and not test_df.empty else {}
     
     return {
         "X_train": X_train,

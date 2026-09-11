@@ -108,16 +108,23 @@ def generate_synthetic_dataset(num_trainees: int = 5000, seed: int = 42) -> Dict
             score = target * p_quality * ability + np.random.normal(0, 8)
             score = np.clip(score, 0, 100)
             
+            
+            # Base assessment date somewhere between Jan 2022 and Dec 2024
+            base_date = datetime(2022, 1, 1) + timedelta(days=np.random.randint(0, 1095))
+            
             assessment_records.append({
                 "trainee_id": tid,
                 "skill_id": sid,
                 "skill_name": s_row['skill_name'],
                 "proficiency_score": score,
                 "assessment_type": "Final",
-                "assessment_date": datetime(2025, 1, 1) + timedelta(days=np.random.randint(0, 30))
+                "assessment_date": base_date
             })
             
     trainee_skill_df = pd.DataFrame(assessment_records)
+    
+    # Store the base dates per trainee to ensure employment starts after assessment
+    t_dates = trainee_skill_df.groupby('trainee_id')['assessment_date'].max().to_dict()
     
     # Calculate pseudo job match to drive employment
     # We will pick a random job target for each trainee
@@ -174,7 +181,8 @@ def generate_synthetic_dataset(num_trainees: int = 5000, seed: int = 42) -> Dict
             elif ret_prob > 0.5: days = 200
             else: days = 45
             
-            start_date = datetime(2025, 2, 1) + timedelta(days=np.random.randint(0, 30))
+            ass_date = t_dates.get(tid, datetime(2022, 1, 1))
+            start_date = ass_date + timedelta(days=np.random.randint(15, 90))
             end_date = start_date + timedelta(days=days) if days < 365 else None
             
             employment_records.append({

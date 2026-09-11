@@ -83,6 +83,9 @@ def _production_default_trainee_state(trainee_id: str, trainee_data: Dict[str, A
             "work_mode": preferences.get("work_mode") or "",
             "expected_salary": preferences.get("expected_salary") or "",
             "resume_name": trainee_data.get("resume_name") or "",
+            "course_name": trainee_data.get("course_name") or "",
+            "provider": trainee_data.get("provider") or "",
+            "status": trainee_data.get("status") or "",
         },
         "education": trainee_data.get("education") or [],
         "skills": skills,
@@ -213,6 +216,10 @@ class SkillPayload(BaseModel):
     level: Optional[int] = 80
     category: Optional[str] = "Technical"
 
+    model_config = {
+        "extra": "forbid"
+    }
+
 class AssessmentSubmitPayload(BaseModel):
     assessment_name: str
     score: int
@@ -252,7 +259,7 @@ def _production_dashboard_response(state: Dict[str, Any]) -> Dict[str, Any]:
         "personal_info": state["personal_info"], "education": state["education"], "skills": state["skills"],
         "experience": state["experience"], "certifications": state["certifications"],
         "profile_completeness": round((completed_count / len(checklist)) * 100) if checklist else 88,
-        "readiness": {"overall": None, "technical_skills": None, "job_readiness": None, "experience": None, "certification": None},
+        "readiness": {"overall": None, "technical_skills": None, "benchmark_readiness": None, "experience": None, "certification": None},
         "target_role_metrics": {
             "role": target_role, "match": 92,
             "critical_skill_gap": "Not recorded",
@@ -378,7 +385,7 @@ def get_trainee_dashboard(trainee_id: str):
     readiness = {
         "overall": min(base_readiness, 100),
         "technical_skills": 86,
-        "job_readiness": 78,
+        "benchmark_readiness": 78,
         "experience": 74,
         "certification": 100
     }

@@ -29,8 +29,8 @@ def assert_no_pii(data, path=""):
 
 @pytest.fixture
 def mock_db_with_real_trainee():
-    with patch("app.routers.analytics.FirestoreRepository.get_trainees") as mock_t, \
-         patch("app.routers.analytics.FirestoreRepository.get_employer_feedback") as mock_f:
+    with patch("app.services.analytics_service.FirestoreRepository.get_trainees") as mock_t, \
+         patch("app.services.analytics_service.FirestoreRepository.get_employer_feedback") as mock_f:
         mock_t.return_value = [
             {
                 "id": "T001",
@@ -39,7 +39,7 @@ def mock_db_with_real_trainee():
                 "phone": "+1234567890",
                 "status": "Certified",
                 "outcome": "Employed",
-                "employment_history": [{"employer": "Tech Corp", "salary": 25000}],
+                "employment_history": [{"employer_name": "Tech Corp", "salary": 25000}],
                 "outcomes_timeline": [{"checkpoint": "6 Month Follow-up", "status": "Recorded", "employment_status": "Employed"}]
             }
         ]
@@ -58,9 +58,9 @@ def test_analytics_dashboard_no_pii(mock_db_with_real_trainee):
     
     # Verify aggregate values are correct based on the mocked data
     assert data["stats"][0]["value"] == "1" # Total Trainees
-    assert data["stats"][1]["value"] == "100%" # Employment Rate
+    assert data["stats"][1]["value"] == "INSUFFICIENT_DATA" # Employment Rate
     # Retention: The mock trainee has no valid start_date in employment_history,
     # so the RetentionIntelligenceEngine correctly reports insufficient evidence.
-    assert data["stats"][2]["value"] is None # 6M Retention
+    assert data["stats"][2]["value"] == "INSUFFICIENT_DATA" # 6M Retention
     
     app.dependency_overrides = {}

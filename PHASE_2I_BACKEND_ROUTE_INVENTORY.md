@@ -1,0 +1,74 @@
+# Phase 2I Backend Route Inventory
+
+This document enumerates the actual application routes exposed by the FastAPI application.
+
+| Method | Path | Operation ID |
+|---|---|---|
+| GET | /api/programmes | get_programmes_api_programmes_get |
+| POST | /api/programmes | create_programme_api_programmes_post |
+| GET | /api/programmes/{id} | get_programme_api_programmes__id__get |
+| GET | /api/trainees | get_trainees_api_trainees_get |
+| POST | /api/trainees | create_trainee_api_trainees_post |
+| GET | /api/trainees/{id} | get_trainee_api_trainees__id__get |
+| PUT | /api/trainees/{id} | update_trainee_endpoint_api_trainees__id__put |
+| PATCH | /api/trainees/{id} | update_trainee_endpoint_api_trainees__id__patch |
+| POST | /api/trainees/bulk | create_trainees_bulk_api_trainees_bulk_post |
+| POST | /api/trainees/{id}/employment | add_employment_api_trainees__id__employment_post |
+| POST | /api/trainees/{id}/followup | submit_followup_api_trainees__id__followup_post |
+| GET | /api/trainees/{id}/outcome-history | get_outcome_history_api_trainees__id__outcome_history_get |
+| GET | /api/trainees/{id}/outcome-current | get_current_outcome_api_trainees__id__outcome_current_get |
+| POST | /api/trainees/{id}/outcome | add_outcome_api_trainees__id__outcome_post |
+| GET | /api/trainees/{id}/consent-history | get_consent_history_api_trainees__id__consent_history_get |
+| POST | /api/trainees/{id}/consent | update_consent_api_trainees__id__consent_post |
+| GET | /api/trainees/{id}/follow-ups | get_trainee_follow_ups_api_trainees__id__follow_ups_get |
+| GET | /auth/me | get_me_auth_me_get |
+| POST | /auth/login | login_auth_login_post |
+| POST | /auth/register | register_trainee_auth_register_post |
+| GET | /api/auth/me | get_me_api_auth_me_get |
+| POST | /api/auth/login | login_api_auth_login_post |
+| POST | /api/auth/register | register_trainee_api_auth_register_post |
+| GET | /api/employers/verifications/pending | get_pending_verifications_api_employers_verifications_pending_get |
+| POST | /api/employers/verifications/{verification_id} | approve_or_reject_verification_api_employers_verifications__verification_id__post |
+| POST | /api/employers/feedback | submit_employer_feedback_api_employers_feedback_post |
+| GET | /api/employers | get_employers_api_employers_get |
+| GET | /api/employers/{org_id}/dashboard | get_employer_dashboard_api_employers__org_id__dashboard_get |
+| GET | /api/employers/{org_id}/outcomes | get_employer_outcomes_api_employers__org_id__outcomes_get |
+| PATCH | /api/employers/{org_id}/outcomes/{trainee_id}/verify | verify_outcome_api_employers__org_id__outcomes__trainee_id__verify_patch |
+| GET | /api/employers/{org_id}/profile | get_employer_profile_api_employers__org_id__profile_get |
+| PUT | /api/employers/{org_id}/profile | update_employer_profile_api_employers__org_id__profile_put |
+| POST | /api/employers/{org_id}/profile | update_employer_profile_api_employers__org_id__profile_post |
+| GET | /api/employers/{org_id}/integrations | get_employer_integrations_api_employers__org_id__integrations_get |
+| POST | /api/employers/{org_id}/integrations/validate | validate_employer_integration_config_api_employers__org_id__integrations_validate_post |
+| POST | /api/employers/{org_id}/integrations/{integration_id}/sync | sync_employer_integration_api_employers__org_id__integrations__integration_id__sync_post |
+| POST | /api/employers/{org_id}/integrations/config | update_employer_integration_config_api_employers__org_id__integrations_config_post |
+| GET | /api/analytics/dashboard | get_dashboard_api_analytics_dashboard_get |
+| GET | /api/analytics/skill-gaps | get_skill_gaps_api_analytics_skill_gaps_get |
+| GET | /api/analytics/export | export_analytics_api_analytics_export_get |
+| GET | /api/interventions | get_interventions_api_interventions_get |
+| POST | /api/interventions | create_intervention_api_interventions_post |
+| GET | /api/interventions/{id} | get_intervention_api_interventions__id__get |
+| GET | /api/skills | get_skills_api_skills_get |
+| POST | /api/skills | create_skill_api_skills_post |
+| GET | /api/skills/{skill_id} | get_skill_api_skills__skill_id__get |
+| GET | /api/assessments | get_assessments_api_assessments_get |
+| POST | /api/assessments | record_assessment_api_assessments_post |
+| GET | /api/assessments/trainee/{trainee_id} | get_trainee_assessments_api_assessments_trainee__trainee_id__get |
+| GET | /api/intelligence/trainees/{trainee_id}/skill-gaps | get_trainee_skill_gaps_api_intelligence_trainees__trainee_id__skill_gaps_get |
+| GET | /api/intelligence/trainees/{trainee_id}/upskilling | get_trainee_upskilling_api_intelligence_trainees__trainee_id__upskilling_get |
+| GET | /api/intelligence/cohorts/{cohort_id} | get_cohort_intelligence_api_intelligence_cohorts__cohort_id__get |
+| GET | /api/intelligence/programmes/{programme_id}/impact | get_programme_impact_api_intelligence_programmes__programme_id__impact_get |
+| GET | /api/trainee-portal/{trainee_id}/profile | get_full_profile_api_trainee_portal__trainee_id__profile_get |
+| POST | /api/trainee-portal/{trainee_id}/profile | update_full_profile_api_trainee_portal__trainee_id__profile_post |
+| POST | /api/trainee-portal/{trainee_id}/skills/add | add_skill_api_trainee_portal__trainee_id__skills_add_post |
+| POST | /api/trainee-portal/{trainee_id}/skills/remove | remove_skill_api_trainee_portal__trainee_id__skills_remove_post |
+| POST | /api/trainee-portal/{trainee_id}/assessment/submit | submit_assessment_api_trainee_portal__trainee_id__assessment_submit_post |
+| GET | /api/trainee-portal/{trainee_id}/dashboard | get_trainee_dashboard_api_trainee_portal__trainee_id__dashboard_get |
+| POST | /api/cron/evaluate-followups | evaluate_followups_api_cron_evaluate_followups_post |
+| GET | /api/admin/follow-ups/pending | get_pending_followups_api_admin_follow_ups_pending_get |
+| GET | /api/admin/follow-ups/{id}/attempts | get_followup_attempts_api_admin_follow_ups__id__attempts_get |
+| POST | /api/admin/follow-ups/{id}/cancel | cancel_followup_api_admin_follow_ups__id__cancel_post |
+| GET | /health | health_check_health_get |
+| GET | /api/status | health_check_api_status_get |
+| GET | /api/protected | protected_route_api_protected_get |
+| GET | /firebase-test | firebase_test_firebase_test_get |
+| GET | /{full_path} | serve_spa__full_path__get |

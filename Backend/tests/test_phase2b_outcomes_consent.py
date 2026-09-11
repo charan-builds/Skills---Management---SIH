@@ -17,30 +17,30 @@ def test_derive_current_employment_outcome():
             {
                 "id": "e1",
                 "status": "EMPLOYED",
-                "employer": "Tech Corp",
-                "role": "Engineer",
-                "salary": 30000.0,
-                "joining_date": "2023-01-01",
+                "employer_name": "Tech Corp",
+                "role": "Software Developer",
+                "salary": 25000.0,
+                "start_date": "2024-01-15",
                 "timestamp": "2023-01-01T10:00:00Z",
                 "verification_state": "EMPLOYER_VERIFIED"
             },
             {
                 "id": "e2",
                 "status": "SEEKING_EMPLOYMENT",
-                "employer": None,
+                "employer_name": None,
                 "role": None,
                 "salary": None,
-                "joining_date": None,
+                "start_date": None,
                 "timestamp": "2023-06-01T10:00:00Z",
                 "verification_state": "SELF_REPORTED"
             },
             {
                 "id": "e3",
                 "status": "EMPLOYED",
-                "employer": "New Corp",
+                "employer_name": "New Corp",
                 "role": "Senior Engineer",
                 "salary": 50000.0,
-                "joining_date": "2023-07-01",
+                "start_date": "2023-07-01",
                 "timestamp": "2023-07-01T10:00:00Z",
                 "verification_state": "CONFLICTING" # This should be ignored
             }

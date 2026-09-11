@@ -113,21 +113,14 @@ for skill in SKILLS:
 print(f"  ? Seeded {len(SKILLS)} canonical skills into skill_master.")
 
 # ==============================================================================
-# 2. SEED JOBS / JOB REQUIREMENTS
+# 2. SEED ROLE BENCHMARKS
 # ==============================================================================
-JOBS = [
+ROLE_BENCHMARKS = [
     {
         "id": "J101",
         "title": "Junior Data Analyst",
         "role": "Data Analyst",
         "industry": "Information Technology",
-        "location": "Hyderabad",
-        "min_salary": 25000.0,
-        "max_salary": 38000.0,
-        "openings": 4,
-        "match": 86,
-        "employer_id": "ORG4582",
-        "employer_name": "ABC Technologies",
         "skills_required": [
             {"skill_id": "S001", "skill_name": "Python", "required_level": 75, "importance": 0.85},
             {"skill_id": "S002", "skill_name": "SQL", "required_level": 80, "importance": 1.0},
@@ -141,13 +134,6 @@ JOBS = [
         "title": "Business Intelligence Associate",
         "role": "Business Analyst",
         "industry": "Financial Services & Analytics",
-        "location": "Bengaluru",
-        "min_salary": 28000.0,
-        "max_salary": 42000.0,
-        "openings": 3,
-        "match": 82,
-        "employer_id": "ORG4582",
-        "employer_name": "ABC Technologies",
         "skills_required": [
             {"skill_id": "S002", "skill_name": "SQL", "required_level": 85, "importance": 1.0},
             {"skill_id": "S003", "skill_name": "Power BI", "required_level": 80, "importance": 0.95},
@@ -160,13 +146,6 @@ JOBS = [
         "title": "Frontend React Developer",
         "role": "Frontend Developer",
         "industry": "Software & Web Services",
-        "location": "Visakhapatnam",
-        "min_salary": 24000.0,
-        "max_salary": 36000.0,
-        "openings": 5,
-        "match": 80,
-        "employer_id": "ORG7890",
-        "employer_name": "Sunrise Digital Labs",
         "skills_required": [
             {"skill_id": "S006", "skill_name": "React & Frontend", "required_level": 80, "importance": 1.0},
             {"skill_id": "S007", "skill_name": "Node.js & REST APIs", "required_level": 65, "importance": 0.75},
@@ -178,13 +157,6 @@ JOBS = [
         "title": "Full Stack Web Apprentice",
         "role": "Full Stack Developer",
         "industry": "Information Technology",
-        "location": "Hyderabad",
-        "min_salary": 20000.0,
-        "max_salary": 30000.0,
-        "openings": 2,
-        "match": 78,
-        "employer_id": "ORG4582",
-        "employer_name": "ABC Technologies",
         "skills_required": [
             {"skill_id": "S006", "skill_name": "React & Frontend", "required_level": 75, "importance": 0.9},
             {"skill_id": "S007", "skill_name": "Node.js & REST APIs", "required_level": 75, "importance": 0.9},
@@ -196,13 +168,6 @@ JOBS = [
         "title": "Industrial Electrical Technician",
         "role": "Electrical Technician",
         "industry": "Manufacturing & Heavy Engineering",
-        "location": "Guntur",
-        "min_salary": 18000.0,
-        "max_salary": 26000.0,
-        "openings": 6,
-        "match": 88,
-        "employer_id": "ORG6310",
-        "employer_name": "Deccan Power & Grid Corp",
         "skills_required": [
             {"skill_id": "S010", "skill_name": "Electrical Circuit Wiring", "required_level": 85, "importance": 1.0},
             {"skill_id": "S012", "skill_name": "Safety Compliance & Standards", "required_level": 90, "importance": 0.95},
@@ -214,13 +179,6 @@ JOBS = [
         "title": "Automation & Controls Assistant",
         "role": "Automation Engineer",
         "industry": "Automotive & Manufacturing",
-        "location": "Krishna",
-        "min_salary": 22000.0,
-        "max_salary": 32000.0,
-        "openings": 2,
-        "match": 75,
-        "employer_id": "ORG6310",
-        "employer_name": "Deccan Power & Grid Corp",
         "skills_required": [
             {"skill_id": "S011", "skill_name": "PLC & Automation", "required_level": 80, "importance": 1.0},
             {"skill_id": "S010", "skill_name": "Electrical Circuit Wiring", "required_level": 75, "importance": 0.85},
@@ -232,13 +190,6 @@ JOBS = [
         "title": "MIS Executive & Data Coordinator",
         "role": "MIS Executive",
         "industry": "Logistics & Supply Chain",
-        "location": "Guntur",
-        "min_salary": 19000.0,
-        "max_salary": 27000.0,
-        "openings": 3,
-        "match": 84,
-        "employer_id": "ORG2215",
-        "employer_name": "Coastal Logistics Ltd",
         "skills_required": [
             {"skill_id": "S005", "skill_name": "Excel & Advanced MIS", "required_level": 85, "importance": 1.0},
             {"skill_id": "S002", "skill_name": "SQL", "required_level": 65, "importance": 0.75},
@@ -250,13 +201,6 @@ JOBS = [
         "title": "Digital Growth Specialist",
         "role": "Digital Marketer",
         "industry": "E-Commerce & Digital Media",
-        "location": "Visakhapatnam",
-        "min_salary": 21000.0,
-        "max_salary": 31000.0,
-        "openings": 2,
-        "match": 81,
-        "employer_id": "ORG7890",
-        "employer_name": "Sunrise Digital Labs",
         "skills_required": [
             {"skill_id": "S013", "skill_name": "Digital Marketing & SEO", "required_level": 80, "importance": 1.0},
             {"skill_id": "S005", "skill_name": "Excel & Advanced MIS", "required_level": 70, "importance": 0.7},
@@ -265,13 +209,13 @@ JOBS = [
     }
 ]
 
-print("--> Seeding jobs collection...")
-for job in JOBS:
+print("--> Seeding role_benchmarks collection...")
+for job in ROLE_BENCHMARKS:
     job["created_at"] = datetime.utcnow().isoformat() + "Z"
     job["updated_at"] = datetime.utcnow().isoformat() + "Z"
     job["status"] = "Active"
-    db.collection("jobs").document(job["id"]).set(job)
-print(f"  ? Seeded {len(JOBS)} structured job openings into jobs collection.")
+    db.collection("role_benchmarks").document(job["id"]).set(job)
+print(f"  ? Seeded {len(ROLE_BENCHMARKS)} structured benchmarks into role_benchmarks collection.")
 
 # ==============================================================================
 # 3. UPDATE PROGRAMMES WITH STRUCTURED SKILLS & NUMERIC RATES

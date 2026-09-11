@@ -1,385 +1,734 @@
 import { useState, useEffect } from "react";
 import {
-  BriefcaseBusiness,
-  CheckCircle2,
-  ShieldCheck
+  TrendingUp, AlertTriangle, Users, ChevronRight, X, Search,
+  Briefcase, GraduationCap, CheckCircle2, UserMinus, ArrowRight,
+  Shield, HelpCircle, MapPin, DollarSign, Target, Award, Layers
 } from "lucide-react";
-import { API_BASE } from "../utils/config";
-import { fetchAuth } from "../utils/authFetch";
-import { adminIntelligenceData } from "../utils/adminData";
+import { useFilters } from "../context/FilterContext";
+import { platformService, usePlatformStore } from "../services/platformService";
+import {
+  PieChart, Pie, Cell, LineChart, Line, BarChart, Bar,
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+} from "recharts";
+import { DataStateWrapper } from "../components/common/DataStateComponents";
 
 export default function Outcomes() {
-  const [verificationList, setVerificationList] = useState(adminIntelligenceData.verification_queue);
-  const [selectedVerification, setSelectedVerification] = useState(null);
-  const [verifyStatus, setVerifyStatus] = useState("Verified");
-  const [verifyRemarks, setVerifyRemarks] = useState("Verified against employer PF/HRMS record.");
-  const [verifySuccess, setVerifySuccess] = useState(false);
+  const { filters } = useFilters();
+  const storeState = usePlatformStore();
+
+  const [workspace, setWorkspace] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function loadOutcomes() {
-      try {
-        const res = await fetchAuth(`${API_BASE}/api/trainees`);
-        if (res.ok) {
-          const trainees = await res.json();
-          const mapped = trainees.map(t => {
-            const latestJob = t.employment_history && t.employment_history.length > 0 ? t.employment_history[t.employment_history.length - 1] : {};
-            return {
-              trainee_id: t.id,
-              trainee_name: t.name,
-              programme: t.programme_id,
-              employer: latestJob.employer_name || "Looking for work",
-              role: latestJob.role || "Trainee",
-              salary: latestJob.salary ? `₹${latestJob.salary} / mo` : "N/A",
-              joining_date: latestJob.start_date || "N/A",
-              verification_status: t.outcome === "Employed" || t.outcome === "Self-Employed" ? "Verified" : "Pending",
-              retention_3m: "Pending",
-              retention_6m: "Pending",
-              retention_12m: "Pending",
-              last_updated: t.updated_at || "Recently"
-            };
-          });
-          if (mapped.length > 0) {
-            setVerificationList(mapped);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load outcomes:", err);
-      } finally {
-        setLoading(false);
-      }
+  // Drilldown selection state
+  const [selectedNonPlacementKey, setSelectedNonPlacementKey] = useState("Location");
+  const [selectedAttritionKey, setSelectedAttritionKey] = useState("Salary");
+  const [candidateSearch, setCandidateSearch] = useState("");
+
+  const loadData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await platformService.getOutcomesWorkspace(filters);
+      setWorkspace(res);
+    } catch (err) {
+      console.error("Failed to load outcomes workspace", err);
+      setError(err);
+    } finally {
+      setLoading(false);
     }
-    loadOutcomes();
-  }, []);
-
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [search, setSearch] = useState("");
-
-  const handleVerifySubmit = (e) => {
-    e.preventDefault();
-    if (!selectedVerification) return;
-
-    setVerificationList(prev => prev.map(item => {
-      if (item.trainee_id === selectedVerification.trainee_id) {
-        return {
-          ...item,
-          verification_status: verifyStatus,
-          retention_3m: "Retained (Verified)",
-          last_updated: "2025-08-31"
-        };
-      }
-      return item;
-    }));
-
-    setVerifySuccess(true);
-    setTimeout(() => {
-      setVerifySuccess(false);
-      setSelectedVerification(null);
-    }, 1500);
   };
 
-  const filteredQueue = verificationList.filter(item => {
-    const q = search.toLowerCase();
-    const matchesSearch =
-      !search ||
-      item.trainee_name.toLowerCase().includes(q) ||
-      item.trainee_id.toLowerCase().includes(q) ||
-      item.employer.toLowerCase().includes(q) ||
-      item.role.toLowerCase().includes(q);
+  useEffect(() => {
+    loadData();
+  }, [filters, storeState.last_updated]);
 
-    const matchesStatus =
-      statusFilter === "All" ||
-      item.verification_status === statusFilter;
+  const summary = workspace?.summary;
+  const funnel = workspace?.funnel || [];
+  const distribution = workspace?.distribution || [];
+  const employmentOverTime = workspace?.employment_over_time || [];
+  const nonPlacement = workspace?.non_placement;
+  const attrition = workspace?.attrition;
+  const diagnosis = workspace?.diagnosis || [];
 
-    return matchesSearch && matchesStatus;
-  });
+  // Active selected drilldowns
+  const selectedNpData = nonPlacement?.categories?.[selectedNonPlacementKey];
+  const selectedAttData = attrition?.categories?.[selectedAttritionKey];
 
   return (
-    <div className="dashboard" style={{ maxWidth: '1440px', margin: '0 auto', padding: '2rem' }}>
-      
-      {/* Header */}
-      <div className="dashboard-header" style={{ marginBottom: '2rem' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-            <BriefcaseBusiness size={18} color="#2563eb" />
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              LONGITUDINAL EMPLOYMENT & RETENTION AUDIT
-            </span>
-          </div>
-          <h1 style={{ fontSize: '1.95rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.35rem 0' }}>
-            Employment Outcome Intelligence & Verification
-          </h1>
-          <p className="page-description" style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
-            Monitor post-training placement velocity, wage progression, and 3M / 6M / 12M longitudinal job retention across hiring employers.
-          </p>
+    <div style={{ maxWidth: "1440px", margin: "0 auto", paddingBottom: "4rem" }}>
+      {/* Page Header */}
+      <div style={{ marginBottom: "2rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
+          <TrendingUp size={18} color="#2563eb" />
+          <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+            ADMIN OUTCOME INTELLIGENCE & EVALUATION WORKSPACE
+          </span>
         </div>
-      </div>
-
-      {/* 5 OUTCOME KPIS */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '2.5rem' }}>
-        <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Employment Rate</span>
-          <h3 style={{ margin: '0.25rem 0 0 0', fontSize: '1.7rem', fontWeight: 800, color: '#15803d' }}>78%</h3>
-          <span style={{ fontSize: '0.75rem', color: '#15803d', fontWeight: 700 }}>+6.0% YoY Increase</span>
-        </div>
-
-        <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Placed Trainees</span>
-          <h3 style={{ margin: '0.25rem 0 0 0', fontSize: '1.7rem', fontWeight: 800, color: '#0f172a' }}>80 / 380</h3>
-          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Across 28 verified employers</span>
-        </div>
-
-        <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Avg Starting Salary</span>
-          <h3 style={{ margin: '0.25rem 0 0 0', fontSize: '1.7rem', fontWeight: 800, color: '#2563eb' }}>₹5.2 LPA</h3>
-          <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 700 }}>₹45k–₹60k/month range</span>
-        </div>
-
-        <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>12-Month Retention</span>
-          <h3 style={{ margin: '0.25rem 0 0 0', fontSize: '1.7rem', fontWeight: 800, color: '#7c3aed' }}>84%</h3>
-          <span style={{ fontSize: '0.75rem', color: '#7c3aed', fontWeight: 700 }}>High longitudinal stability</span>
-        </div>
-
-        <div style={{ background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', padding: '1.25rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Partner Employers</span>
-          <h3 style={{ margin: '0.25rem 0 0 0', fontSize: '1.7rem', fontWeight: 800, color: '#0f172a' }}>28</h3>
-          <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 600 }}>Active Enterprise Gateway</span>
-        </div>
-      </div>
-
-      {/* 2-COLUMN SECTION: BREAKDOWN BY PROGRAMME + TOP HIRING SKILLS */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '2rem', marginBottom: '2.5rem' }}>
-        
-        {/* Employment Outcomes by Programme */}
-        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <h3 style={{ margin: '0 0 1.25rem 0', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>
-            Employment Placement Rate by Programme
-          </h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {adminIntelligenceData.programmes.map((p) => (
-              <div key={p.id}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.35rem' }}>
-                  <span style={{ fontWeight: 700, color: '#0f172a' }}>{p.name}</span>
-                  <span style={{ fontWeight: 800, color: '#15803d' }}>{p.employment_rate}% Placed ({p.enrolled} Trainees)</span>
-                </div>
-                <div style={{ height: '8px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div style={{ width: `${p.employment_rate}%`, height: '100%', background: '#16a34a', borderRadius: '4px' }}></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Top Skills Associated with Successful Hiring */}
-        <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>
-            Top Skills Associated With Hiring
-          </h3>
-          <p style={{ margin: '0 0 1.25rem 0', color: '#64748b', fontSize: '0.85rem' }}>Empirical correlation with offer generation and wage premium.</p>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            <div style={{ padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <strong style={{ fontSize: '0.9rem', color: '#0f172a', display: 'block' }}>Python + SQL Joint Stack</strong>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Data Analytics & AI Engineering</span>
-              </div>
-              <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 800 }}>
-                92% Hiring Rate
-              </span>
-            </div>
-
-            <div style={{ padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <strong style={{ fontSize: '0.9rem', color: '#0f172a', display: 'block' }}>Linux + Network Security Triage</strong>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Cybersecurity Operations (SOC)</span>
-              </div>
-              <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 800 }}>
-                89% Hiring Rate
-              </span>
-            </div>
-
-            <div style={{ padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div>
-                <strong style={{ fontSize: '0.9rem', color: '#0f172a', display: 'block' }}>Machine Learning + Model Evaluation</strong>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>AI Associate Positions</span>
-              </div>
-              <span style={{ background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 800 }}>
-                88% Hiring Rate
-              </span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      {/* OUTCOME VERIFICATION REGISTRY TABLE */}
-      <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', marginBottom: '2.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-              <ShieldCheck size={18} color="#2563eb" />
-              <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: '#0f172a' }}>Employment Verification & Retention Registry</h3>
-            </div>
-            <p style={{ margin: 0, color: '#64748b', fontSize: '0.85rem' }}>Audit and confirm employer-submitted hiring outcomes and longitudinal retention checkpoints.</p>
+            <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
+              Programme Outcomes Workspace
+            </h1>
+            <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
+              Holistic outcome evaluation, longitudinal tracking, and evidence-grounded diagnosis for candidate transitions.
+            </p>
           </div>
-
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ padding: '0.45rem 0.85rem', background: '#ffffff', color: '#0f172a', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600 }}
-            >
-              <option value="All">All Verification Statuses</option>
-              <option value="Verified">Verified Only</option>
-              <option value="Pending">Pending Audit</option>
-            </select>
+          <div style={{ background: "#f8fafc", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.85rem" }}>
+            <span style={{ color: "#64748b" }}>Active Evaluation Scope: </span>
+            <strong style={{ color: "#2563eb" }}>{workspace?.total || 0}</strong> candidates
           </div>
-        </div>
-
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
-            <thead>
-              <tr style={{ borderBottom: '2px solid #e2e8f0', color: '#475569', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>Candidate & ID</th>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>Hiring Employer & Role</th>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'left' }}>Monthly Salary</th>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>3M Retention</th>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>6M Retention</th>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>12M Retention</th>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'center' }}>Audit Status</th>
-                <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredQueue.map((item) => (
-                <tr key={item.trainee_id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <td style={{ padding: '1rem', fontWeight: 700, color: '#0f172a' }}>
-                    {item.trainee_name}
-                    <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748b', fontWeight: 500 }}>{item.trainee_id} • {item.programme}</span>
-                  </td>
-                  <td style={{ padding: '1rem', color: '#0f172a' }}>
-                    <strong>{item.employer}</strong>
-                    <span style={{ display: 'block', fontSize: '0.75rem', color: '#2563eb', fontWeight: 600 }}>{item.role}</span>
-                  </td>
-                  <td style={{ padding: '1rem', fontWeight: 700, color: '#15803d' }}>
-                    {item.salary}
-                  </td>
-                  <td style={{ padding: '1rem', textAlign: 'center', fontSize: '0.8rem', color: '#334155' }}>
-                    {item.retention_3m}
-                  </td>
-                  <td style={{ padding: '1rem', textAlign: 'center', fontSize: '0.8rem', color: '#334155' }}>
-                    {item.retention_6m}
-                  </td>
-                  <td style={{ padding: '1rem', textAlign: 'center', fontSize: '0.8rem', color: '#334155' }}>
-                    {item.retention_12m}
-                  </td>
-                  <td style={{ padding: '1rem', textAlign: 'center' }}>
-                    <span style={{ background: item.verification_status === 'Verified' ? '#dcfce7' : '#fef3c7', color: item.verification_status === 'Verified' ? '#15803d' : '#b45309', padding: '3px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 800 }}>
-                      {item.verification_status}
-                    </span>
-                  </td>
-                  <td style={{ padding: '1rem', textAlign: 'right' }}>
-                    <button
-                      onClick={() => {
-                        setSelectedVerification(item);
-                        setVerifyStatus(item.verification_status);
-                      }}
-                      style={{ padding: '0.4rem 0.85rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, cursor: 'pointer' }}
-                    >
-                      Audit / Verify
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </div>
 
-      {/* ================= OUTCOME VERIFICATION MODAL ================= */}
-      {selectedVerification && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '2rem' }}>
-          <div style={{ background: '#ffffff', borderRadius: '16px', width: '100%', maxWidth: '580px', padding: '2rem', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '1rem' }}>
-              <div>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase' }}>STATE EMPLOYMENT AUDIT</span>
-                <h3 style={{ margin: '0.2rem 0 0 0', fontSize: '1.25rem', fontWeight: 700, color: '#0f172a' }}>Verify {selectedVerification.trainee_name}</h3>
-                <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{selectedVerification.trainee_id} • {selectedVerification.employer}</span>
+      <DataStateWrapper
+        isLoading={loading}
+        error={error}
+        data={workspace}
+        onRetry={loadData}
+        isDataAvailable={(d) => d && d.data_available}
+        isEmptyDetails="No candidate outcome records found for the selected filter scope."
+      >
+        {workspace && (
+          <>
+            {/* Top Summary: 10 Dynamically Calculated KPIs (Section 16) */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Total Trained</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
+                  {summary?.total_trained?.toLocaleString() || 0}
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>Enrolled Pool</span>
               </div>
-              <button onClick={() => setSelectedVerification(null)} style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '1.5rem', lineHeight: 1 }}>&times;</button>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Certified Pass</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#2563eb", marginTop: "0.2rem" }}>
+                  {summary?.certified?.toLocaleString() || 0}
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#64748b" }}>
+                  {Math.round(((summary?.certified || 0) / (summary?.total_trained || 1)) * 100)}% pass rate
+                </span>
+              </div>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Placed (Employed)</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
+                  {summary?.employed?.toLocaleString() || 0}
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600 }}>Formal Corporate Jobs</span>
+              </div>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Self-Employed</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0d9488", marginTop: "0.2rem" }}>
+                  {summary?.self_employed?.toLocaleString() || 0}
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#0d9488" }}>Commercial Enterprises</span>
+              </div>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Apprentices</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#7c3aed", marginTop: "0.2rem" }}>
+                  {summary?.apprentices?.toLocaleString() || 0}
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#7c3aed" }}>Industrial Contracts</span>
+              </div>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Unemployed</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#f59e0b", marginTop: "0.2rem" }}>
+                  {summary?.unemployed?.toLocaleString() || 0}
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>Seeking Placement</span>
+              </div>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Employment Rate</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
+                  {summary?.employment_percentage}%
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#16a34a" }}>Active in Economy</span>
+              </div>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>6M Retention</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
+                  {summary?.retention_6m_percentage}%
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#64748b" }}>3M: {summary?.retention_3m_percentage}% • 12M: {summary?.retention_12m_percentage}%</span>
+              </div>
+
+              <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Average Wage</span>
+                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
+                  {summary?.average_wage > 0 ? `₹${summary.average_wage.toLocaleString()}` : "N/A"}
+                </div>
+                <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 700 }}>
+                  +{summary?.wage_growth_percentage}% Increment
+                </span>
+              </div>
             </div>
 
-            {verifySuccess ? (
-              <div style={{ textAlign: 'center', padding: '2rem 0' }}>
-                <div style={{ width: '54px', height: '54px', borderRadius: '50%', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
-                  <CheckCircle2 size={32} />
+            {/* Section A: Outcome Funnel & Outcome Distribution Donut (Section 18 & 19) */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", marginBottom: "2rem" }}>
+              {/* Outcome Funnel (Section 18) */}
+              <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <Layers size={18} color="#2563eb" /> 6-Stage Outcome Funnel
+                    </h3>
+                    <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
+                      Conversion throughput from initial enrollment to sustained employment.
+                    </p>
+                  </div>
+                  <span style={{ fontSize: "0.75rem", background: "#eff6ff", color: "#1d4ed8", padding: "3px 8px", borderRadius: "6px", fontWeight: 700 }}>
+                    Relational Funnel
+                  </span>
                 </div>
-                <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', fontSize: '1.15rem' }}>Outcome Successfully Verified!</h4>
-                <p style={{ margin: 0, color: '#64748b', fontSize: '0.9rem' }}>
-                  The employment status and 3M retention checkpoint have been confirmed in the State Registry.
-                </p>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                  {funnel.map((stage) => (
+                    <div key={stage.id} style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderRadius: "8px", border: "1px solid #f1f5f9" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.35rem" }}>
+                        <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1e293b" }}>{stage.label}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                          <strong style={{ color: stage.color, fontSize: "0.95rem" }}>{stage.count}</strong>
+                          <span style={{ fontSize: "0.75rem", color: "#64748b", minWidth: "40px", textAlign: "right" }}>
+                            {stage.percentage}%
+                          </span>
+                        </div>
+                      </div>
+                      {/* Bar indicator */}
+                      <div style={{ width: "100%", height: "6px", background: "#e2e8f0", borderRadius: "3px", overflow: "hidden" }}>
+                        <div style={{ width: `${Math.min(stage.percentage, 100)}%`, height: "100%", background: stage.color, borderRadius: "3px" }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <form onSubmit={handleVerifySubmit}>
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '1.25rem', fontSize: '0.85rem' }}>
-                  <p style={{ margin: '0 0 0.35rem 0' }}><strong>Role:</strong> {selectedVerification.role}</p>
-                  <p style={{ margin: '0 0 0.35rem 0' }}><strong>Starting Salary:</strong> {selectedVerification.salary}</p>
-                  <p style={{ margin: 0 }}><strong>Joining Date:</strong> {selectedVerification.joining_date}</p>
+
+              {/* Outcome Distribution Donut Chart (Section 19) */}
+              <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                  <div>
+                    <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                      <Target size={18} color="#16a34a" /> Outcome Distribution
+                    </h3>
+                    <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
+                      Proportional breakdown of active candidates across primary economic destinations.
+                    </p>
+                  </div>
+                  <span style={{ fontSize: "0.75rem", background: "#f0fdf4", color: "#166534", padding: "3px 8px", borderRadius: "6px", fontWeight: 700 }}>
+                    Donut Breakdown
+                  </span>
                 </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.35rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>
-                    Audit Status
-                  </label>
-                  <select
-                    value={verifyStatus}
-                    onChange={(e) => setVerifyStatus(e.target.value)}
-                    style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.9rem', fontWeight: 600 }}
-                  >
-                    <option value="Verified">Verified (Confirmed Active Employment)</option>
-                    <option value="Pending">Pending Additional Verification</option>
-                    <option value="Needs Review">Needs Auditor Review</option>
-                  </select>
+                <div style={{ height: "260px" }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={distribution}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={65}
+                        outerRadius={95}
+                        paddingAngle={3}
+                      >
+                        {distribution.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(val, name, item) => [`${val} Trainees (${item.payload.percentage}%)`, name]}
+                        contentStyle={{ borderRadius: "8px", border: "1px solid #cbd5e1" }}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            </div>
+
+            {/* Section B: Employment Over Time Trend Line (Section 20) */}
+            <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                    <TrendingUp size={18} color="#2563eb" /> Employment Over Time (3M → 6M → 12M Trajectory)
+                  </h3>
+                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
+                    Longitudinal cohort retention trajectory compared against state statutory benchmark (68%).
+                  </p>
+                </div>
+                <div style={{ display: "flex", gap: "1rem", fontSize: "0.8rem" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "#2563eb", fontWeight: 700 }}>
+                    <span style={{ width: "10px", height: "10px", background: "#2563eb", borderRadius: "50%" }}></span> Observed Cohort Rate
+                  </span>
+                  <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "#94a3b8", fontWeight: 700 }}>
+                    <span style={{ width: "10px", height: "10px", background: "#cbd5e1", borderRadius: "50%" }}></span> State Benchmark
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ height: "240px" }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={employmentOverTime} margin={{ top: 10, right: 30, left: 10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                    <XAxis dataKey="milestone" tick={{ fontSize: 11 }} />
+                    <YAxis domain={[40, 100]} tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}%`} />
+                    <Tooltip
+                      formatter={(v, name) => [`${v}%`, name === "rate" ? "Cohort Employment Rate" : "State Benchmark"]}
+                      contentStyle={{ borderRadius: "8px", border: "1px solid #cbd5e1" }}
+                    />
+                    <Line type="monotone" dataKey="rate" name="rate" stroke="#2563eb" strokeWidth={3} dot={{ r: 6, fill: "#2563eb" }} activeDot={{ r: 8 }} />
+                    <Line type="monotone" dataKey="benchmark" name="benchmark" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="4 4" dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Section C: Why People Don't Get Jobs (Section 21 & 22) */}
+            <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <AlertTriangle size={20} color="#ea580c" /> Why People Don't Get Jobs
+                  </h3>
+                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                    Distribution of reported non-placement reasons. Click any category segment or pill to open full diagnostic inspection.
+                  </p>
+                </div>
+                <span style={{ fontSize: "0.75rem", background: "#fef3c7", color: "#b45309", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
+                  Interactive Root-Cause Diagnosis
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "center" }}>
+                {/* Donut Chart */}
+                <div style={{ height: "260px" }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={nonPlacement?.distribution || []}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={95}
+                        paddingAngle={3}
+                        onClick={(entry) => setSelectedNonPlacementKey(entry.name)}
+                        cursor="pointer"
+                      >
+                        {(nonPlacement?.distribution || []).map((entry) => (
+                          <Cell
+                            key={`cell-np-${entry.name}`}
+                            fill={entry.color}
+                            stroke={selectedNonPlacementKey === entry.name ? "#0f172a" : "none"}
+                            strokeWidth={selectedNonPlacementKey === entry.name ? 2 : 0}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(val, name, item) => [`${val} Unplaced (${item.payload.percentage}%)`, item.payload.label]}
+                        contentStyle={{ borderRadius: "8px", border: "1px solid #cbd5e1" }}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
 
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <label style={{ display: 'block', marginBottom: '0.35rem', fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>
-                    Verification Remarks / Notes
-                  </label>
-                  <input
-                    type="text"
-                    value={verifyRemarks}
-                    onChange={(e) => setVerifyRemarks(e.target.value)}
-                    style={{ width: '100%', padding: '0.65rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.85rem' }}
-                  />
+                {/* Clickable Reason Pills */}
+                <div>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
+                    SELECT REASON TO DIAGNOSE
+                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
+                    {Object.values(nonPlacement?.categories || {}).map((cat) => {
+                      const isSelected = selectedNonPlacementKey === cat.key;
+                      return (
+                        <button
+                          key={cat.key}
+                          id={`np-reason-${cat.key.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
+                          onClick={() => setSelectedNonPlacementKey(cat.key)}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            background: isSelected ? "#fff7ed" : "#f8fafc",
+                            border: isSelected ? "2px solid #ea580c" : "1px solid #e2e8f0",
+                            borderRadius: "8px",
+                            padding: "0.6rem 0.9rem",
+                            cursor: "pointer",
+                            textAlign: "left"
+                          }}
+                        >
+                          <div>
+                            <strong style={{ fontSize: "0.85rem", color: isSelected ? "#9a3412" : "#1e293b" }}>
+                              {cat.label}
+                            </strong>
+                            <div style={{ fontSize: "0.72rem", color: "#64748b" }}>
+                              Category: {cat.key}
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <strong style={{ color: cat.color, fontSize: "0.95rem" }}>{cat.count}</strong>
+                            <span style={{ fontSize: "0.75rem", color: "#64748b" }}>({cat.percentage}%)</span>
+                            <ChevronRight size={14} color={isSelected ? "#ea580c" : "#94a3b8"} />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Detail Panel: WHY THIS AREA MAY BE LAGGING (Section 22) */}
+              {selectedNpData && (
+                <div style={{ marginTop: "1.75rem", background: "#f8fafc", borderRadius: "12px", border: "1px solid #fed7aa", padding: "1.5rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                        <span style={{ background: "#ea580c", color: "white", padding: "2px 7px", borderRadius: "4px", fontSize: "0.7rem", fontWeight: 800 }}>
+                          DIAGNOSTIC DETAIL
+                        </span>
+                        <h4 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
+                          Selected Reason: "{selectedNpData.label}"
+                        </h4>
+                      </div>
+                      <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                        Affecting <strong>{selectedNpData.count}</strong> candidates ({selectedNpData.percentage}% of unplaced group) under current scope.
+                      </p>
+                    </div>
+
+                    <span style={{ fontSize: "0.8rem", background: "#ffedd5", color: "#9a3412", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
+                      Evidence-Grounded Root Cause
+                    </span>
+                  </div>
+
+                  {/* Why this area may be lagging explanation */}
+                  <div style={{ background: "#fff7ed", border: "1px solid #fdba74", borderRadius: "8px", padding: "1rem", marginBottom: "1.25rem" }}>
+                    <div style={{ fontWeight: 800, color: "#9a3412", fontSize: "0.85rem", textTransform: "uppercase", marginBottom: "0.25rem" }}>
+                      WHY THIS AREA MAY BE LAGGING (Evidence-Derived Analysis)
+                    </div>
+                    <p style={{ margin: 0, fontSize: "0.9rem", color: "#7c2d12", lineHeight: 1.4 }}>
+                      {selectedNpData.lagging_explanation}
+                    </p>
+                  </div>
+
+                  {/* Geographic & Programme Breakdown */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
+                    <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Programmes Affected</span>
+                      <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                        {selectedNpData.programmes_affected.slice(0, 4).map(p => (
+                          <div key={p.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                            <span style={{ color: "#334155" }}>{p.name}</span>
+                            <strong style={{ color: "#2563eb" }}>{p.count}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Districts Affected</span>
+                      <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                        {selectedNpData.districts_affected.slice(0, 4).map(d => (
+                          <div key={d.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                            <span style={{ color: "#334155" }}>{d.name}</span>
+                            <strong style={{ color: "#ea580c" }}>{d.count}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Cohorts Affected</span>
+                      <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                        {selectedNpData.cohorts_affected.slice(0, 4).map(c => (
+                          <div key={c.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                            <span style={{ color: "#334155" }}>{c.name}</span>
+                            <strong style={{ color: "#475569" }}>{c.count}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sample Candidate Dossiers */}
+                  <div>
+                    <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
+                      SAMPLE AFFECTED CANDIDATE RECORDS ({selectedNpData.sample_trainees.length})
+                    </span>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem", marginTop: "0.5rem" }}>
+                      {selectedNpData.sample_trainees.slice(0, 6).map(t => (
+                        <div key={t.id} style={{ background: "white", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "0.78rem" }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
+                            <span style={{ color: "#0f172a" }}>{t.name}</span>
+                            <span style={{ color: "#2563eb", fontFamily: "monospace" }}>{t.id}</span>
+                          </div>
+                          <div style={{ color: "#64748b", marginTop: "2px" }}>
+                            {t.programme} • {t.district}
+                          </div>
+                          <div style={{ color: "#b45309", marginTop: "4px", fontSize: "0.72rem", background: "#fef3c7", padding: "2px 6px", borderRadius: "4px" }}>
+                            Reported barrier: {t.reported_barrier}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Section D: Why People Leave Jobs (Section 24 & 25) */}
+            <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <UserMinus size={20} color="#e11d48" /> Why People Leave Jobs
+                  </h3>
+                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                    Distribution of reported post-placement attrition drivers. Click any segment to uncover the pattern.
+                  </p>
+                </div>
+                <span style={{ fontSize: "0.75rem", background: "#ffe4e6", color: "#e11d48", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
+                  Interactive Attrition Diagnosis
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem", alignItems: "center" }}>
+                {/* Donut Chart */}
+                <div style={{ height: "260px" }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={attrition?.distribution || []}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={95}
+                        paddingAngle={3}
+                        onClick={(entry) => setSelectedAttritionKey(entry.name)}
+                        cursor="pointer"
+                      >
+                        {(attrition?.distribution || []).map((entry) => (
+                          <Cell
+                            key={`cell-att-${entry.name}`}
+                            fill={entry.color}
+                            stroke={selectedAttritionKey === entry.name ? "#0f172a" : "none"}
+                            strokeWidth={selectedAttritionKey === entry.name ? 2 : 0}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(val, name, item) => [`${val} Exits (${item.payload.percentage}%)`, item.payload.label]}
+                        contentStyle={{ borderRadius: "8px", border: "1px solid #cbd5e1" }}
+                      />
+                      <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedVerification(null)}
-                    style={{ padding: '0.65rem 1.25rem', background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 600, color: '#475569', cursor: 'pointer' }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    style={{ padding: '0.65rem 1.5rem', background: '#2563eb', color: 'white', border: 'none', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}
-                  >
-                    Confirm & Save Verification
-                  </button>
+                {/* Clickable Reason Pills */}
+                <div>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
+                    SELECT REASON TO EXAMINE PATTERN
+                  </span>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
+                    {Object.values(attrition?.categories || {}).map((cat) => {
+                      const isSelected = selectedAttritionKey === cat.key;
+                      return (
+                        <button
+                          key={cat.key}
+                          id={`att-reason-${cat.key.toLowerCase().replace(/[^a-z0-9]/g, "-")}`}
+                          onClick={() => setSelectedAttritionKey(cat.key)}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            background: isSelected ? "#fff1f2" : "#f8fafc",
+                            border: isSelected ? "2px solid #e11d48" : "1px solid #e2e8f0",
+                            borderRadius: "8px",
+                            padding: "0.6rem 0.9rem",
+                            cursor: "pointer",
+                            textAlign: "left"
+                          }}
+                        >
+                          <div>
+                            <strong style={{ fontSize: "0.85rem", color: isSelected ? "#9f1239" : "#1e293b" }}>
+                              {cat.label}
+                            </strong>
+                            <div style={{ fontSize: "0.72rem", color: "#64748b" }}>
+                              Factor: {cat.key}
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <strong style={{ color: cat.color, fontSize: "0.95rem" }}>{cat.count}</strong>
+                            <span style={{ fontSize: "0.75rem", color: "#64748b" }}>({cat.percentage}%)</span>
+                            <ChevronRight size={14} color={isSelected ? "#e11d48" : "#94a3b8"} />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </form>
-            )}
+              </div>
 
-          </div>
-        </div>
-      )}
+              {/* Detail Panel: What pattern are we seeing? (Section 25) */}
+              {selectedAttData && (
+                <div style={{ marginTop: "1.75rem", background: "#f8fafc", borderRadius: "12px", border: "1px solid #fecdd3", padding: "1.5rem" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                        <span style={{ background: "#e11d48", color: "white", padding: "2px 7px", borderRadius: "4px", fontSize: "0.7rem", fontWeight: 800 }}>
+                          PATTERN ANALYSIS
+                        </span>
+                        <h4 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
+                          Why People Leave Because of {selectedAttData.key}
+                        </h4>
+                      </div>
+                      <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                        Affected Count: <strong>{selectedAttData.count}</strong> departures ({selectedAttData.percentage}% of attrited group).
+                      </p>
+                    </div>
 
+                    <div style={{ display: "flex", gap: "1rem", background: "white", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.8rem" }}>
+                      <div>
+                        <span style={{ color: "#64748b" }}>Exit Wage: </span>
+                        <strong style={{ color: "#e11d48" }}>₹{selectedAttData.average_wage.toLocaleString()}</strong>
+                      </div>
+                      <div>
+                        <span style={{ color: "#64748b" }}>Platform Avg: </span>
+                        <strong style={{ color: "#16a34a" }}>₹{selectedAttData.platform_average_wage.toLocaleString()}</strong>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* What pattern are we seeing? explanation */}
+                  <div style={{ background: "#fff1f2", border: "1px solid #fecdd3", borderRadius: "8px", padding: "1rem", marginBottom: "1.25rem" }}>
+                    <div style={{ fontWeight: 800, color: "#9f1239", fontSize: "0.85rem", textTransform: "uppercase", marginBottom: "0.25rem" }}>
+                      WHAT PATTERN ARE WE SEEING? (Derived Telemetry Findings)
+                    </div>
+                    <p style={{ margin: 0, fontSize: "0.9rem", color: "#881337", lineHeight: 1.4 }}>
+                      {selectedAttData.pattern_observed}
+                    </p>
+                  </div>
+
+                  {/* Distribution across Programmes & Districts */}
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
+                    <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Concentration by Programme</span>
+                      <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                        {selectedAttData.programmes_affected.slice(0, 4).map(p => (
+                          <div key={p.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                            <span style={{ color: "#334155" }}>{p.name}</span>
+                            <strong style={{ color: "#2563eb" }}>{p.count}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Concentration by District</span>
+                      <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                        {selectedAttData.districts_affected.slice(0, 4).map(d => (
+                          <div key={d.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                            <span style={{ color: "#334155" }}>{d.name}</span>
+                            <strong style={{ color: "#e11d48" }}>{d.count}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Concentration by Provider</span>
+                      <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                        {selectedAttData.providers_affected.slice(0, 4).map(pr => (
+                          <div key={pr.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
+                            <span style={{ color: "#334155" }}>{pr.name}</span>
+                            <strong style={{ color: "#475569" }}>{pr.count}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Section E: Analytical Outcome Diagnosis & Associated Factors (Section 23 & 26) */}
+            <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <Shield size={20} color="#2563eb" /> Analytical Outcome Diagnosis (Associated Factors)
+                  </h3>
+                  <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
+                    Evidence-derived analysis for underperforming areas. Formulated using associated factors and observed patterns.
+                  </p>
+                </div>
+                <span style={{ fontSize: "0.75rem", background: "#eff6ff", color: "#1d4ed8", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
+                  Policy Evidence Base
+                </span>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+                {diagnosis.map((diag) => (
+                  <div key={diag.id} style={{ background: "#f8fafc", borderRadius: "10px", border: "1px solid #cbd5e1", padding: "1.25rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
+                      <div>
+                        <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#2563eb", textTransform: "uppercase" }}>
+                          PROGRAMME EVALUATION DIAGNOSIS
+                        </span>
+                        <h4 style={{ margin: "0.2rem 0 0 0", fontSize: "1.1rem", color: "#0f172a" }}>
+                          {diag.area}
+                        </h4>
+                      </div>
+                      <span style={{
+                        fontSize: "0.72rem",
+                        fontWeight: 700,
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        background: diag.severity === "High Priority" ? "#fee2e2" : "#fef3c7",
+                        color: diag.severity === "High Priority" ? "#b91c1c" : "#b45309"
+                      }}>
+                        {diag.severity}
+                      </span>
+                    </div>
+
+                    <div style={{ fontSize: "0.85rem", color: "#334155", marginBottom: "0.75rem", background: "white", padding: "0.6rem 0.85rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
+                      <strong>Observed Metric:</strong> {diag.observation}
+                    </div>
+
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#475569", textTransform: "uppercase" }}>
+                        Key Associated Factors:
+                      </span>
+                      <ul style={{ margin: "0.3rem 0 0 0", paddingLeft: "1.2rem", fontSize: "0.8rem", color: "#334155" }}>
+                        {diag.associated_factors.map((af, i) => (
+                          <li key={i} style={{ marginBottom: "0.25rem" }}>{af}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div style={{ fontSize: "0.78rem", color: "#475569", lineHeight: 1.4, borderTop: "1px solid #e2e8f0", paddingTop: "0.6rem" }}>
+                      <div><strong>Observed Pattern:</strong> {diag.observed_pattern}</div>
+                      <div style={{ marginTop: "0.25rem" }}><strong>Potential Contributing Factor:</strong> {diag.potential_contributing_factors}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+      </DataStateWrapper>
     </div>
   );
 }

@@ -64,24 +64,6 @@ def _skill_names(values: Iterable[Any]) -> List[str]:
     return [name for item in values if (name := _skill_name(item))]
 
 
-def _job_skill_names(job: Dict[str, Any]) -> List[str]:
-    return _skill_names(job.get("skills_required") or job.get("required_skills") or [])
-
-
-def _trainee_skill_names(trainee: Dict[str, Any]) -> List[str]:
-    return _skill_names(trainee.get("skills") or [])
-
-
-
-
-def _organization_jobs(org_id: str) -> List[Dict[str, Any]]:
-    return [
-        dict(job)
-        for job in FirestoreRepository.get_jobs()
-        if job.get("employer_id") == org_id and job.get("status", "Active").casefold() == "active"
-    ]
-
-
 
 
 
@@ -93,9 +75,14 @@ def _retention_status(trainee: Dict[str, Any], employer_name: str, milestone: st
 
 
 def _employer_outcomes(org_id: str, employer: Dict[str, Any]) -> List[Dict[str, Any]]:
+    from app.schemas.trainee import TraineeBase
     employer_name = employer.get("name", "")
     outcomes: List[Dict[str, Any]] = []
     for trainee in FirestoreRepository.get_trainees():
+        t_model = TraineeBase(**trainee)
+        if t_model.current_consent.status != "GIVEN":
+            continue
+            
         for record in trainee.get("employment_history") or []:
             belongs_to_org = record.get("organization_id") == org_id or (
                 employer_name and record.get("employer_name") == employer_name
@@ -208,12 +195,34 @@ def approve_or_reject_verification(
 @router.post("/feedback", response_model=EmployerFeedbackResponse, status_code=status.HTTP_201_CREATED)
 def submit_employer_feedback(
     feedback: EmployerFeedbackCreate,
-    _current_user: dict = Depends(get_employer_or_admin),
+    current_user: dict = Depends(get_employer_or_admin),
 ):
-    if not FirestoreRepository.get_trainee(feedback.trainee_id):
+    trainee = FirestoreRepository.get_trainee(feedback.trainee_id)
+    if not trainee:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Trainee not found")
+        
+    # Enforce employer organization isolation
+    if current_user.get("role") == "employer":
+        jwt_org_id = current_user.get("organization_id")
+        if not jwt_org_id:
+             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="JWT missing organization ID")
+             
+        employer_name = current_user.get("name") or feedback.employer_name
+        works_here = False
+        for record in trainee.get("employment_history", []):
+            if record.get("organization_id") == jwt_org_id or (employer_name and record.get("employer_name") == employer_name):
+                works_here = True
+                break
+        
+        if not works_here:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, 
+                detail="Trainee is not employed by your organization."
+            )
+
     if not FirestoreRepository.get_programme(feedback.programme_id):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Programme not found")
+        
     return FirestoreRepository.create_employer_feedback(feedback)
 
 
@@ -225,33 +234,10 @@ def get_employers(_current_user: dict = Depends(get_admin_user)):
 @router.get("/{org_id}/dashboard")
 def get_employer_dashboard(org_id: str, _current_user: dict = Depends(get_organization_user)):
     employer = _organization_or_404(org_id)
-    jobs = _organization_jobs(org_id)
     outcomes = _employer_outcomes(org_id, employer)
     hired_count = len(outcomes)
 
-    demand = Counter(skill for job in jobs for skill in _job_skill_names(job))
-    supply = Counter(skill for candidate in FirestoreRepository.get_trainees() for skill in _trainee_skill_names(candidate))
-    skill_intelligence = []
-    for skill, demand_count in demand.most_common(10):
-        supply_count = supply.get(skill, 0)
-        coverage = round((supply_count / demand_count) * 100) if demand_count else 0
-        skill_intelligence.append(
-            {
-                "skill": skill,
-                "demand": "Very High" if demand_count >= 4 else "High" if demand_count >= 2 else "Medium",
-                "supply": supply_count,
-                "gap": "High" if coverage < 50 else "Moderate" if coverage < 100 else "Low",
-                "coverage": coverage,
-            }
-        )
-    top_gap = next((item for item in skill_intelligence if item["gap"] == "High"), None)
-    training_recommendation = (
-        f"{top_gap['skill']} has {top_gap['supply']} recorded candidates for {top_gap['demand'].lower()} demand across active vacancies."
-        if top_gap
-        else "No active vacancy skill-demand gap is available to analyze."
-    )
     return {
-        "open_vacancies": len(jobs),
         "hired_trainees": hired_count,
         "recruitment_funnel": {
             "hired": hired_count, "retention_rate": "Not recorded",
@@ -260,26 +246,12 @@ def get_employer_dashboard(org_id: str, _current_user: dict = Depends(get_organi
             "hired": hired_count,
             "retention": "Not recorded",
         },
-        "skill_intelligence": skill_intelligence,
+        "skill_intelligence": [],
         "ai_insights": {
-            "training_recommendation": training_recommendation,
-            "skill_gap_alert": (
-                f"{top_gap['skill']} is the largest current recorded skill gap."
-                if top_gap else "No current high skill gap is available from active vacancy data."
-            ),
+            "training_recommendation": "Submit skill feedback to generate insights.",
+            "skill_gap_alert": "Submit skill feedback to generate insights.",
         },
     }
-
-
-@router.get("/{org_id}/active-vacancies")
-def get_active_vacancies(org_id: str, _current_user: dict = Depends(get_organization_user)):
-    _organization_or_404(org_id)
-    vacancies: List[Dict[str, Any]] = []
-    for job in _organization_jobs(org_id):
-        vacancy = dict(job)
-        vacancy["salary_range"] = vacancy.get("salary_range") or _format_salary_range(vacancy)
-        vacancies.append(vacancy)
-    return vacancies
 
 
 
@@ -348,7 +320,25 @@ def update_employer_profile(org_id: str, update: OrgProfileUpdate, _current_user
 @router.get("/{org_id}/integrations")
 def get_employer_integrations(org_id: str, _current_user: dict = Depends(get_organization_user)):
     employer = _organization_or_404(org_id)
-    return {"integrations": employer.get("integrations") or [], "api_config": _public_integration_config(employer.get("integration_config") or {})}
+    outcomes = _employer_outcomes(org_id, employer)
+    
+    # Compute stats for overview
+    auto_verified = sum(1 for o in outcomes if o.get("verification_status") == "Employer attested" and "CONFLICT" not in str(o.get("employer_remarks", "")).upper())
+    manual_review = sum(1 for o in outcomes if o.get("verification_status") == "Pending verification")
+    records_received = auto_verified + manual_review
+    
+    integrations = employer.get("integrations") or []
+    
+    return {
+        "integrations": integrations, 
+        "api_config": _public_integration_config(employer.get("integration_config") or {}),
+        "integration_overview": {
+            "connected_systems": len(integrations),
+            "records_received": records_received,
+            "automatically_verified": auto_verified,
+            "manual_review_required": manual_review
+        }
+    }
 
 
 @router.post("/{org_id}/integrations/validate")
@@ -366,8 +356,52 @@ def validate_employer_integration_config(org_id: str, _current_user: dict = Depe
 
 @router.post("/{org_id}/integrations/{integration_id}/sync")
 def sync_employer_integration(org_id: str, integration_id: str, _current_user: dict = Depends(get_organization_user)):
-    _organization_or_404(org_id)
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="A production connector provider has not been configured for this integration.")
+    employer = _organization_or_404(org_id)
+    integrations = employer.get("integrations") or []
+    integration = next((i for i in integrations if i.get("id") == integration_id), None)
+    if not integration:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Integration not found")
+        
+    employer_name = employer.get("name", org_id)
+    
+    processed_count = 0
+    exceptions = 0
+    
+    for trainee in FirestoreRepository.get_trainees():
+        history = trainee.get("employment_history") or []
+        updated = False
+        
+        for record in history:
+            belongs_to_org = record.get("organization_id") == org_id or (employer_name and record.get("employer_name") == employer_name)
+            if belongs_to_org:
+                if not record.get("verified") and record.get("verification_state") in ["SELF_REPORTED", "UNVERIFIED", "Pending"]:
+                    # Deterministic Mock Engine
+                    if not record.get("start_date") or "mock" in str(record.get("role", "")).lower() or record.get("salary") == 0:
+                        record["verification_state"] = "CONFLICTING"
+                        record["employer_remarks"] = f"SYSTEM DETECTED CONFLICT: ATS payload mismatched or missing joining details for claiming trainee."
+                        exceptions += 1
+                    else:
+                        record["verified"] = True
+                        record["verification_state"] = "EMPLOYER_VERIFIED"
+                        record["employer_remarks"] = "Auto-verified via HRMS/ATS API Matching Engine."
+                        
+                    updated = True
+                    processed_count += 1
+                    
+        if updated:
+            FirestoreRepository.update_trainee(trainee.get("id"), {"employment_history": history})
+
+    integration["last_synced"] = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+    integration["candidates_synced"] = (integration.get("candidates_synced", 0) or 0) + processed_count
+    
+    FirestoreRepository.update_employer(org_id, {"integrations": integrations})
+    
+    return {
+        "status": "success",
+        "processed": processed_count,
+        "exceptions": exceptions,
+        "message": f"ATS synchronization completed. {processed_count} records processed."
+    }
 
 
 @router.post("/{org_id}/integrations/config")

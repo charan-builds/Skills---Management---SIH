@@ -4,7 +4,7 @@ import math
 from typing import Dict, Any, List
 from app.ai.ingestion import (
     load_trainees, load_skills, load_skill_assessments, load_programmes,
-    load_jobs, load_employer_feedback, load_employer_verifications, load_interventions,
+    load_role_benchmarks, load_employer_feedback, load_employer_verifications, load_interventions,
     build_trainee_df, build_trainee_skill_df, build_job_skill_df, build_programme_skill_df,
     build_employment_outcome_df, build_outcomes_timeline_df, build_employer_feedback_df
 )
@@ -30,14 +30,14 @@ class AIService:
     def process_intelligence(cls) -> tuple[Dict[str, Any], Dict[str, pd.DataFrame]]:
         trainees = load_trainees()
         assessments = load_skill_assessments()
-        jobs = load_jobs()
+        role_benchmarks = load_role_benchmarks()
         programmes = load_programmes()
         employer_feedback = load_employer_feedback()
         
         raw_dfs = {
             "trainee_df": build_trainee_df(trainees),
             "trainee_skill_df": build_trainee_skill_df(assessments),
-            "job_skill_df": build_job_skill_df(jobs),
+            "job_skill_df": build_job_skill_df(role_benchmarks),
             "programme_skill_df": build_programme_skill_df(programmes),
             "employment_outcome_df": build_employment_outcome_df(trainees),
             "outcomes_timeline_df": build_outcomes_timeline_df(trainees),
@@ -60,19 +60,7 @@ class AIService:
         t_df = df[df['trainee_id'] == trainee_id]
         return clean_nan(t_df.to_dict(orient='records'))
 
-    @classmethod
-    def get_trainee_job_match(cls, trainee_id: str, job_id: str) -> Dict[str, Any]:
-        intel, features = cls.process_intelligence()
-        from app.ai.intelligence import personal_skill_intelligence
-        tj = features.get('trainee_job_features', pd.DataFrame())
-        ts = features.get('trainee_skill_features', pd.DataFrame())
-        js = features.get('job_skill_df', pd.DataFrame())
-        
-        if tj.empty or ts.empty or js.empty:
-            return {"error": "INSUFFICIENT_DATA"}
-            
-        match = personal_skill_intelligence(trainee_id, job_id, tj, ts, js)
-        return clean_nan(match)
+
 
     @classmethod
     def get_programme_diagnosis(cls, programme_id: str) -> List[Dict[str, Any]]:

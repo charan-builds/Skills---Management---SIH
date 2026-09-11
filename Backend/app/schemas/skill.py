@@ -31,23 +31,24 @@ class SkillAssessmentCreate(SkillAssessmentBase):
 class SkillAssessmentResponse(SkillAssessmentBase):
     created_at: Optional[datetime] = None
 
-class SkillGapItem(BaseModel):
-    skill_id: str
-    skill_name: str
-    programme_taught_level: int
-    trainee_acquired_score: int
-    job_required_level: int
-    importance_weight: float
-    gap: int # job_required - trainee_acquired (positive = gap, negative/0 = met)
-    status: str # "Met", "Minor Gap", "Major Gap"
 
-class ThreeWayGapResponse(BaseModel):
-    programme_id: str
-    programme_name: str
-    trainee_id: str
-    trainee_name: str
-    job_id: str
-    job_role: str
-    overall_match_percentage: int
-    skills_analysis: List[SkillGapItem]
-    recommendations: List[str]
+
+class SkillGapBase(BaseModel):
+    skill: str
+    skill_id: Optional[str] = None
+    current_proficiency: Optional[int] = None
+    required_proficiency: int
+    gap_size: Optional[int] = None
+    priority: str
+    evidence_state: str
+    benchmark_source: str
+
+class UpskillingRecommendationBase(BaseModel):
+    gap_id: Optional[str] = None
+    skill: str
+    state: str
+    recommended_programme: Optional[str] = None
+    programme_id: Optional[str] = None
+    provider: Optional[str] = None
+    expected_impact: Optional[int] = None
+    reason: Optional[str] = None

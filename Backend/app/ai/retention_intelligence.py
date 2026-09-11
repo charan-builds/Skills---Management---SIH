@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class RetentionIntelligenceEngine:
     def __init__(self):
-        self.min_sample_threshold = 10
+        self.min_sample_threshold = 5
 
     def _fetch_trainees(self):
         return FirestoreRepository.get_trainees()

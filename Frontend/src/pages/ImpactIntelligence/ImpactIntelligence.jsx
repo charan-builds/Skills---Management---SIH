@@ -1,8 +1,9 @@
 import { API_BASE } from '../../utils/config';
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { fetchAuth } from "../../utils/authFetch";
 import { AlertCircle, Filter, ChevronDown, ChevronUp, AlertOctagon, AlertTriangle, Info } from "lucide-react";
 import "./ImpactIntelligence.css";
+import { DataStateWrapper } from "../../components/common/DataStateComponents";
 
 export default function ImpactIntelligence() {
   const [loading, setLoading] = useState(true);
@@ -24,36 +25,40 @@ export default function ImpactIntelligence() {
     setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
-  useEffect(() => {
-    async function fetchAllData() {
-      setLoading(true);
-      setError(null);
-      try {
-        const [
-          programmesRes,
-          decisionEngineRes
-        ] = await Promise.all([
-          fetchAuth(`${API_BASE}/api/programmes`),
-          fetchAuth(`${API_BASE}/api/ai/decision-engine/summary`)
-        ]);
+  const fetchAllData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [
+        programmesRes,
+        decisionEngineRes
+      ] = await Promise.all([
+        fetchAuth(`${API_BASE}/api/programmes`),
+        fetchAuth(`${API_BASE}/api/ai/decision-engine/summary`)
+      ]);
 
-        const programmes = programmesRes.ok ? await programmesRes.json() : [];
-        const decisionEngine = decisionEngineRes.ok ? await decisionEngineRes.json() : { data: { recommendations: [] } };
-
-        setProgrammesData(programmes);
-        const recs = decisionEngine.data?.recommendations || decisionEngine.recommendations || [];
-        setRecommendations(recs);
-
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load Impact Intelligence. Please check your connection and authentication.");
-      } finally {
-        setLoading(false);
+      if (!programmesRes.ok || !decisionEngineRes.ok) {
+        throw new Error("Failed to load Impact Intelligence");
       }
-    }
 
-    fetchAllData();
+      const programmes = await programmesRes.json();
+      const decisionEngine = await decisionEngineRes.json();
+
+      setProgrammesData(programmes);
+      const recs = decisionEngine.data?.recommendations || decisionEngine.recommendations || [];
+      setRecommendations(recs);
+
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load Impact Intelligence. Please check your connection and authentication.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchAllData();
+  }, [fetchAllData]);
 
   const filteredRecommendations = useMemo(() => {
     return recommendations.filter(rec => {
@@ -90,7 +95,6 @@ export default function ImpactIntelligence() {
     });
   }, [recommendations, priorityFilter, programmeFilter, districtFilter]);
 
-
   // Sort filtered recommendations by strength (CRITICAL -> HIGH -> MEDIUM -> LOW)
   // then by some metric.
   const sortedRecommendations = useMemo(() => {
@@ -106,31 +110,12 @@ export default function ImpactIntelligence() {
     });
   }, [filteredRecommendations]);
 
-
   const counts = {
     CRITICAL: filteredRecommendations.filter(r => r.strength === "CRITICAL").length,
     HIGH: filteredRecommendations.filter(r => r.strength === "HIGH").length,
     MEDIUM: filteredRecommendations.filter(r => r.strength === "MEDIUM").length,
     LOW: filteredRecommendations.filter(r => r.strength === "LOW").length,
   };
-
-  if (loading) {
-    return (
-      <div className="impact-loading">
-        <div className="spinner"></div>
-        <p>Gathering intelligence streams...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="impact-error">
-        <AlertCircle size={32} />
-        <p>{error}</p>
-      </div>
-    );
-  }
 
   const getPriorityColor = (strength) => {
     switch (strength) {
@@ -190,107 +175,110 @@ export default function ImpactIntelligence() {
         </div>
       </div>
 
-      {/* C. PRIORITY SUMMARY */}
-      <div className="priority-summary-grid">
-        <div className="priority-card critical">
-          <h3>Critical</h3>
-          <p className="count">{counts.CRITICAL}</p>
-        </div>
-        <div className="priority-card high">
-          <h3>High</h3>
-          <p className="count">{counts.HIGH}</p>
-        </div>
-        <div className="priority-card medium">
-          <h3>Medium</h3>
-          <p className="count">{counts.MEDIUM}</p>
-        </div>
-        <div className="priority-card low">
-          <h3>Low</h3>
-          <p className="count">{counts.LOW}</p>
-        </div>
-      </div>
+      <div style={{ position: 'relative', minHeight: '400px' }}>
+        <DataStateWrapper
+          isLoading={loading}
+          error={error}
+          data={sortedRecommendations}
+          onRetry={fetchAllData}
+          isDataAvailable={(d) => d && d.length > 0}
+          isEmptyDetails="No intelligence matches the selected filters."
+        >
+          {/* C. PRIORITY SUMMARY */}
+          <div className="priority-summary-grid">
+            <div className="priority-card critical">
+              <h3>Critical</h3>
+              <p className="count">{counts.CRITICAL}</p>
+            </div>
+            <div className="priority-card high">
+              <h3>High</h3>
+              <p className="count">{counts.HIGH}</p>
+            </div>
+            <div className="priority-card medium">
+              <h3>Medium</h3>
+              <p className="count">{counts.MEDIUM}</p>
+            </div>
+            <div className="priority-card low">
+              <h3>Low</h3>
+              <p className="count">{counts.LOW}</p>
+            </div>
+          </div>
 
-      {/* G. EMPTY STATE */}
-      {sortedRecommendations.length === 0 ? (
-        <div className="empty-state">
-          <AlertCircle size={48} color="#94a3b8" />
-          <p>No intelligence matches the selected filters.</p>
-        </div>
-      ) : (
-        /* D. PRIORITIZED INTELLIGENCE LIST */
-        <div className="intelligence-list">
-          {sortedRecommendations.map((rec) => {
-            const isExpanded = expandedItems[rec.recommendation_id];
-            
-            return (
-              <div key={rec.recommendation_id} className={`intelligence-item ${rec.strength.toLowerCase()}`}>
-                <div className="item-header" onClick={() => toggleExpand(rec.recommendation_id)}>
-                  <div className="item-title-section">
-                    <span className="priority-badge" style={{ backgroundColor: getPriorityColor(rec.strength) }}>
-                      {getPriorityIcon(rec.strength)}
-                      {rec.strength}
-                    </span>
-                    <h3>{rec.title}</h3>
+          {/* D. PRIORITIZED INTELLIGENCE LIST */}
+          <div className="intelligence-list">
+            {sortedRecommendations.map((rec) => {
+              const isExpanded = expandedItems[rec.recommendation_id];
+              
+              return (
+                <div key={rec.recommendation_id} className={`intelligence-item ${rec.strength.toLowerCase()}`}>
+                  <div className="item-header" onClick={() => toggleExpand(rec.recommendation_id)}>
+                    <div className="item-title-section">
+                      <span className="priority-badge" style={{ backgroundColor: getPriorityColor(rec.strength) }}>
+                        {getPriorityIcon(rec.strength)}
+                        {rec.strength}
+                      </span>
+                      <h3>{rec.title}</h3>
+                    </div>
+                    <button className="expand-btn">
+                      {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                    </button>
                   </div>
-                  <button className="expand-btn">
-                    {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-                  </button>
-                </div>
 
-                <div className="item-summary">
-                  <p>{rec.description}</p>
-                  
-                  <div className="item-meta">
-                    {rec.affected_skill && (
-                      <span className="meta-tag"><strong>Skill:</strong> {rec.affected_skill}</span>
-                    )}
-                    {rec.target_scope && (
-                      <span className="meta-tag"><strong>Scope:</strong> {rec.target_scope.replace('_', ' ')}</span>
-                    )}
-                    {rec.metrics?.factor_value && (
-                      <span className="meta-tag"><strong>Affected:</strong> {rec.metrics.factor_value}</span>
-                    )}
-                    {rec.metrics?.employer_complaint_frequency !== undefined && (
-                      <span className="meta-tag"><strong>Complaints:</strong> {rec.metrics.employer_complaint_frequency}</span>
-                    )}
-                    {rec.metrics?.trainees_affected !== undefined && (
-                      <span className="meta-tag"><strong>Trainees Affected:</strong> {rec.metrics.trainees_affected}</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* E. DETAILS */}
-                {isExpanded && (
-                  <div className="item-details">
-                    <div className="details-grid">
-                      <div className="details-section">
-                        <h4>Evidence</h4>
-                        <ul>
-                          {rec.evidence?.length > 0 ? (
-                            rec.evidence.map((ev, idx) => <li key={idx}>{ev}</li>)
-                          ) : (
-                            <li className="no-data">Not available</li>
-                          )}
-                        </ul>
-                      </div>
-                      <div className="details-section">
-                        <h4>Reasoning & Action</h4>
-                        <ul>
-                          {rec.reasoning?.length > 0 ? (
-                            rec.reasoning.map((rs, idx) => <li key={idx}>{rs}</li>)
-                          ) : (
-                            <li className="no-data">Not available</li>
-                          )}
-                        </ul>
-                      </div>
+                  <div className="item-summary">
+                    <p>{rec.description}</p>
+                    
+                    <div className="item-meta">
+                      {rec.affected_skill && (
+                        <span className="meta-tag"><strong>Skill:</strong> {rec.affected_skill}</span>
+                      )}
+                      {rec.target_scope && (
+                        <span className="meta-tag"><strong>Scope:</strong> {rec.target_scope.replace('_', ' ')}</span>
+                      )}
+                      {rec.metrics?.factor_value && (
+                        <span className="meta-tag"><strong>Affected:</strong> {rec.metrics.factor_value}</span>
+                      )}
+                      {rec.metrics?.employer_complaint_frequency !== undefined && (
+                        <span className="meta-tag"><strong>Complaints:</strong> {rec.metrics.employer_complaint_frequency}</span>
+                      )}
+                      {rec.metrics?.trainees_affected !== undefined && (
+                        <span className="meta-tag"><strong>Trainees Affected:</strong> {rec.metrics.trainees_affected}</span>
+                      )}
                     </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
+
+                  {/* E. DETAILS */}
+                  {isExpanded && (
+                    <div className="item-details">
+                      <div className="details-grid">
+                        <div className="details-section">
+                          <h4>Evidence</h4>
+                          <ul>
+                            {rec.evidence?.length > 0 ? (
+                              rec.evidence.map((ev, idx) => <li key={idx}>{ev}</li>)
+                            ) : (
+                              <li className="no-data">Not available</li>
+                            )}
+                          </ul>
+                        </div>
+                        <div className="details-section">
+                          <h4>Reasoning & Action</h4>
+                          <ul>
+                            {rec.reasoning?.length > 0 ? (
+                              rec.reasoning.map((rs, idx) => <li key={idx}>{rs}</li>)
+                            ) : (
+                              <li className="no-data">Not available</li>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </DataStateWrapper>
+      </div>
     </div>
   );
 }

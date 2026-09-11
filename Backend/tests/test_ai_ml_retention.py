@@ -25,7 +25,7 @@ def retention_experiment_data():
     """Generates synthetic dataset and prepares retention experiment partitions."""
     raw_dfs = generate_synthetic_dataset(num_trainees=500, seed=42)
     engineered_features = engineer_features(raw_dfs)
-    experiment = build_retention_experiment(raw_dfs, engineered_features, test_size=0.2, random_state=42)
+    experiment = build_retention_experiment(raw_dfs, engineered_features)
     return raw_dfs, engineered_features, experiment
 
 
@@ -59,7 +59,7 @@ def test_retention_leakage_and_hidden_variable_exclusion(retention_experiment_da
 def test_retention_train_test_split_determinism_and_isolation(retention_experiment_data):
     """Verifies stratified split determinism and that test partition remains strictly separated."""
     raw_dfs, engineered_features, experiment1 = retention_experiment_data
-    experiment2 = build_retention_experiment(raw_dfs, engineered_features, test_size=0.2, random_state=42)
+    experiment2 = build_retention_experiment(raw_dfs, engineered_features)
     
     pd.testing.assert_frame_equal(experiment1["X_train"], experiment2["X_train"])
     pd.testing.assert_frame_equal(experiment1["X_test"], experiment2["X_test"])

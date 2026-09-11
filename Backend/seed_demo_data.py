@@ -104,30 +104,30 @@ EMPLOYERS = [
     {"id": "EMP-DEMO-010", "name": "BuildSmart Enterprise", "industry": "Software Consulting"}
 ]
 
-# Generate job opportunities
-JOB_ROLES = [
+# Generate role benchmarks
+ROLE_BENCHMARKS = [
     {
-        "id": "JOB-DEMO-001A",
-        "employer_id": "EMP-DEMO-001",
+        "id": "BENCH-DEMO-001A",
         "title": "Data Analyst",
+        "industry": "Information Technology",
         "skills_required": ["Python", "SQL", "Excel", "Power BI", "Statistics", "Data Analysis", "Communication"]
     },
     {
-        "id": "JOB-DEMO-001B",
-        "employer_id": "EMP-DEMO-001",
+        "id": "BENCH-DEMO-001B",
         "title": "Junior Full Stack Developer",
+        "industry": "Information Technology",
         "skills_required": ["JavaScript", "React", "HTML", "CSS", "REST APIs", "Git", "SQL"]
     },
     {
-        "id": "JOB-DEMO-001C",
-        "employer_id": "EMP-DEMO-001",
+        "id": "BENCH-DEMO-001C",
         "title": "Cloud Support Associate",
+        "industry": "Cloud Infrastructure",
         "skills_required": ["Linux", "AWS", "Networking", "Docker", "Git", "CI/CD"]
     },
     {
-        "id": "JOB-DEMO-001D",
-        "employer_id": "EMP-DEMO-001",
+        "id": "BENCH-DEMO-001D",
         "title": "ML/AI Associate",
+        "industry": "Information Technology",
         "skills_required": ["Python", "Statistics", "Machine Learning", "SQL", "Data Analysis", "Scikit-learn"]
     }
 ]
@@ -135,20 +135,20 @@ JOB_ROLES = [
 for i, emp in enumerate(EMPLOYERS):
     if emp["id"] == "EMP-DEMO-001":
         continue # Already added
-    # Job 1
+    # Benchmark 1
     prog1 = random.choice(PROGRAMMES)
-    JOB_ROLES.append({
-        "id": f"JOB-DEMO-{i}A",
-        "employer_id": emp["id"],
+    ROLE_BENCHMARKS.append({
+        "id": f"BENCH-DEMO-{i}A",
         "title": f"Junior {prog1['name'].split(' ')[0]} Specialist",
+        "industry": emp["industry"],
         "skills_required": random.sample(prog1["skills_taught"], k=min(4, len(prog1["skills_taught"])))
     })
-    # Job 2
+    # Benchmark 2
     prog2 = random.choice(PROGRAMMES)
-    JOB_ROLES.append({
-        "id": f"JOB-DEMO-{i}B",
-        "employer_id": emp["id"],
+    ROLE_BENCHMARKS.append({
+        "id": f"BENCH-DEMO-{i}B",
         "title": f"Associate {prog2['name'].split(' ')[0]} Analyst",
+        "industry": emp["industry"],
         "skills_required": random.sample(prog2["skills_taught"], k=min(5, len(prog2["skills_taught"])))
     })
 
@@ -164,7 +164,7 @@ import json
 demo_data = {
     "programmes": [],
     "employers": [],
-    "jobs": [],
+    "role_benchmarks": [],
     "employer_feedback": [],
     "trainees": [],
     "interventions": [],
@@ -195,7 +195,7 @@ def seed_programmes():
         demo_data["programmes"].append(data)
 
 def seed_employers_and_jobs():
-    print("Seeding employers and jobs...")
+    print("Seeding employers and benchmarks...")
     for emp in EMPLOYERS:
         data = {
             "id": emp["id"],
@@ -206,21 +206,17 @@ def seed_employers_and_jobs():
         }
         demo_data["employers"].append(data)
     
-    for job in JOB_ROLES:
-        emp = next(e for e in EMPLOYERS if e["id"] == job["employer_id"])
+    for bench in ROLE_BENCHMARKS:
         data = {
-            "id": job["id"],
-            "employer_id": job["employer_id"],
-            "employer_name": emp["name"],
-            "title": job["title"],
-            "role": job["title"],
-            "industry": emp["industry"],
-            "location": random.choice(DISTRICTS),
-            "skills_required": [{"skill_id": next((s["skill_id"] for s in SKILLS_MASTER if s["skill_name"] == sk), ""), "skill_name": sk, "required_level": random.randint(60, 90), "importance": round(random.uniform(0.5, 1.0), 2)} for sk in job["skills_required"]],
+            "id": bench["id"],
+            "title": bench["title"],
+            "role": bench["title"],
+            "industry": bench["industry"],
+            "skills_required": [{"skill_id": next((s["skill_id"] for s in SKILLS_MASTER if s["skill_name"] == sk), ""), "skill_name": sk, "required_level": random.randint(60, 90), "importance": round(random.uniform(0.5, 1.0), 2)} for sk in bench["skills_required"]],
             "is_synthetic": True,
             "status": "Active"
         }
-        demo_data["jobs"].append(data)
+        demo_data["role_benchmarks"].append(data)
 
 def seed_trainees():
     print("Seeding 350 trainees...")
@@ -253,9 +249,9 @@ def seed_trainees():
         emp_hist = []
         if outcome == "Employed":
             if random.random() < 0.8:
-                job = random.choice(JOB_ROLES)
-                emp_name = next(e["name"] for e in EMPLOYERS if e["id"] == job["employer_id"])
-                job_title = job["title"]
+                bench = random.choice(ROLE_BENCHMARKS)
+                emp_name = random.choice(EMPLOYERS)["name"]
+                job_title = bench["title"]
             else:
                 emp_name = "External Corp"
                 job_title = "Analyst"
@@ -319,6 +315,7 @@ def seed_trainees():
             "provider": random.choice(["SkillIndia Institute", "Tech Academy", "Govt ITI", "FutureSkills Center"]),
             "status": status,
             "outcome": outcome,
+            "target_role_id": random.choice(ROLE_BENCHMARKS)["id"] if random.random() < 0.9 else None,
             "skills": acquired_skills,
             "skill_ids": acquired_skill_ids,
             "certifications": [],

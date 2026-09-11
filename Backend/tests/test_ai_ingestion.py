@@ -1,7 +1,7 @@
 import pytest
 from app.ai.ingestion import (
     load_trainees, load_skills, load_skill_assessments, load_programmes,
-    load_jobs, load_employer_feedback, load_employer_verifications, load_interventions,
+    load_role_benchmarks, load_employer_feedback, load_employer_verifications, load_interventions,
     build_trainee_df, build_trainee_skill_df, build_job_skill_df, build_programme_skill_df,
     build_employment_outcome_df, build_outcomes_timeline_df, build_employer_feedback_df
 )
@@ -12,7 +12,7 @@ from unittest.mock import patch
 @patch("app.ai.ingestion.FirestoreRepository.get_skills", return_value=[{"id": "S1", "name": "Python"}])
 @patch("app.ai.ingestion.FirestoreRepository.get_assessments", return_value=[{"trainee_id": "T1", "skill_id": "S1", "proficiency_score": 80}])
 @patch("app.ai.ingestion.FirestoreRepository.get_programmes", return_value=[{"id": "P1", "curriculum": [{"skill_id": "S1", "target_level": 70}]}])
-@patch("app.ai.ingestion.FirestoreRepository.get_jobs", return_value=[{"id": "J1", "required_skills": [{"skill_id": "S1", "required_level": 80}]}])
+@patch("app.ai.ingestion.FirestoreRepository.get_role_benchmarks", return_value=[{"id": "J1", "skills_required": [{"skill_id": "S1", "required_level": 80}]}])
 @patch("app.ai.ingestion.FirestoreRepository.get_employer_feedback", return_value=[{"employer_id": "E1", "trainee_id": "T1"}])
 def test_ingestion_and_validation(m1, m2, m3, m4, m5, m6):
     # 1. Load Data
@@ -20,7 +20,7 @@ def test_ingestion_and_validation(m1, m2, m3, m4, m5, m6):
     skills_data = load_skills()
     assessments_data = load_skill_assessments()
     programmes_data = load_programmes()
-    jobs_data = load_jobs()
+    jobs_data = load_role_benchmarks()
     feedback_data = load_employer_feedback()
     
     # 2. Build DataFrames

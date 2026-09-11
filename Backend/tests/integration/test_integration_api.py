@@ -38,10 +38,10 @@ def test_get_programmes():
         assert "retention" in prog
 
 def test_get_programme_by_id():
-    response = client.get("/api/programmes/PROG-DEMO-001")
+    response = client.get("/api/programmes/PROG-001")
     assert response.status_code == 200
-    assert response.json()["id"] == "PROG-DEMO-001"
-    assert "Data Analytics" in response.json()["name"]
+    assert response.json()["id"] == "PROG-001"
+    assert "Data" in response.json()["name"]
 
 def test_get_trainees():
     response = client.get("/api/trainees")
@@ -51,10 +51,10 @@ def test_get_trainees():
     assert len(data) > 0
 
 def test_get_trainee_by_id():
-    response = client.get("/api/trainees/T102")
+    response = client.get("/api/trainees/TR-0001")
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == "T102"
+    assert data["id"] == "TR-0001"
     assert "name" in data
     assert "employment_history" in data
     assert "outcomes_timeline" in data
@@ -63,13 +63,13 @@ def test_add_trainee_employment():
     # Post new employment history for trainee TR-DEMO-1001
     payload = {
         "status": "EMPLOYED",
-        "employer": "Test Employer LLC",
+        "employer_name": "Test Employer LLC",
         "role": "Software Developer",
         "salary": 24000.0,
-        "joining_date": "2025-08-01",
+        "start_date": "2025-08-01",
         "verification_state": "SELF_REPORTED"
     }
-    response = client.post("/api/trainees/TR-DEMO-1001/outcome", json=payload)
+    response = client.post("/api/trainees/TR-0002/outcome", json=payload)
     assert response.status_code == 200
     data = response.json()
     assert data["outcome"] == "EMPLOYED"
@@ -80,7 +80,7 @@ def test_add_trainee_employment():
     verifications = v_response.json()
     assert len(verifications) > 0
     # Find the verification we just triggered
-    test_v = [v for v in verifications if v["trainee_id"] == "TR-DEMO-1001" and v["employer_name"] == "Test Employer LLC"]
+    test_v = [v for v in verifications if v["trainee_id"] == "TR-0002" and v["employer_name"] == "Test Employer LLC"]
     assert len(test_v) >= 1
 
 def test_submit_followup():
@@ -92,7 +92,7 @@ def test_submit_followup():
         "job_relevance": "High",
         "description": "Follow-up completed successfully"
     }
-    response = client.post("/api/trainees/TR-DEMO-1001/followup", json=payload)
+    response = client.post("/api/trainees/TR-0002/followup", json=payload)
     assert response.status_code == 200
     data = response.json()
 
@@ -125,7 +125,7 @@ def test_employer_verification_flow():
     # Check verification status in history
     found_verified_job = False
     for job in t_data["employment_history"]:
-        if job.get("employer") == target_v["employer_name"] and job.get("role") == target_v["role"]:
+        if job.get("employer_name") == target_v["employer_name"] and job.get("role") == target_v["role"]:
             assert job["verification_state"] == "EMPLOYER_VERIFIED"
             found_verified_job = True
             break
@@ -134,8 +134,8 @@ def test_employer_verification_flow():
 
 def test_submit_employer_feedback():
     payload = {
-        "trainee_id": "T102",
-        "programme_id": "PROG-DEMO-001",
+        "trainee_id": "TR-0001",
+        "programme_id": "PROG-001",
         "employer_name": "Tech Corp",
         "satisfaction_score": 4,
         "technical_deficiencies": ["Docker", "Kubernetes"],
@@ -158,7 +158,7 @@ def test_interventions():
     payload = {
         "title": "Introduce Docker module",
         "description": "Added containerization modules to course curriculum",
-        "programme_id": "P001",
+        "programme_id": "PROG-001",
         "date": "2026-08-01"
     }
     c_response = client.post("/api/interventions", json=payload)

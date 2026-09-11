@@ -44,3 +44,13 @@ Backend/firebase/*.json
 *.env
 .env.*
 !.env.example
+.vercel
+.env*
+playwright-report/
+test-results/
+scratch/
+temp_users.json
+test_results.txt
+Frontend/playwright-report/
+Frontend/test-results/
+Frontend/admin_acceptance_results.json

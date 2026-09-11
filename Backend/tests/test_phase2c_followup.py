@@ -142,10 +142,10 @@ def test_no_response_invariant():
              {
                 "id": "job1",
                 "status": "EMPLOYED",
-                "employer": "ABC",
+                "employer_name": "ABC",
                 "role": "Dev",
                 "salary": 1000,
-                "joining_date": None,
+                "start_date": None,
                 "timestamp": "2024-01-01T00:00:00Z",
                 "verification_state": "EMPLOYER_VERIFIED"
             }

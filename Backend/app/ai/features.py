@@ -6,13 +6,16 @@ def build_trainee_skill_features(trainee_skill_df: pd.DataFrame) -> pd.DataFrame
     if trainee_skill_df.empty:
         return pd.DataFrame(columns=["trainee_id", "skill_id", "latest_score", "assessment_count", "skill_improvement", "skill_category"])
         
-    df = trainee_skill_df.dropna(subset=['trainee_id', 'skill_id', 'proficiency_score']).copy()
+    subset_cols = [c for c in ['trainee_id', 'skill_id', 'proficiency_score'] if c in trainee_skill_df.columns]
+    df = trainee_skill_df.dropna(subset=subset_cols).copy() if subset_cols else trainee_skill_df.copy()
     
-    if df.empty:
+    if df.empty or 'skill_id' not in df.columns or 'trainee_id' not in df.columns:
         return pd.DataFrame(columns=["trainee_id", "skill_id", "latest_score", "assessment_count", "skill_improvement", "skill_category"])
         
     if 'assessment_date' in df.columns:
         df['assessment_date'] = pd.to_datetime(df['assessment_date'], errors='coerce', utc=True)
+        now = pd.Timestamp.now('UTC')
+        df = df[(df['assessment_date'].isna()) | (df['assessment_date'] <= now)]
         df = df.sort_values(by=['trainee_id', 'skill_id', 'assessment_date'])
         
     grouped = df.groupby(['trainee_id', 'skill_id'])
@@ -44,7 +47,9 @@ def build_programme_skill_gap(trainee_df: pd.DataFrame, trainee_skill_features: 
         return pd.DataFrame()
         
     df = pd.merge(trainee_skill_features, trainee_df[['trainee_id', 'programme_id']], on='trainee_id', how='inner')
-    df = pd.merge(df, programme_skill_df[['programme_id', 'skill_id', 'target_level']], on=['programme_id', 'skill_id'], how='inner')
+    subset_cols = [c for c in ['programme_id', 'skill_id', 'target_level'] if c in programme_skill_df.columns]
+    prog_df = programme_skill_df.dropna(subset=subset_cols).copy() if subset_cols else programme_skill_df.copy()
+    df = pd.merge(df, prog_df[['programme_id', 'skill_id', 'target_level']], on=['programme_id', 'skill_id'], how='inner')
     
     df['skill_gap'] = df['target_level'] - df['latest_score']
     df['absolute_skill_gap'] = np.maximum(0, df['skill_gap'])
@@ -103,13 +108,17 @@ def build_trainee_job_match(trainee_features: pd.DataFrame, job_skill_df: pd.Dat
     return match_df
 
 def build_employment_wage_features(employment_outcome_df: pd.DataFrame) -> pd.DataFrame:
-    if employment_outcome_df.empty:
-        return pd.DataFrame()
+    if employment_outcome_df.empty or 'trainee_id' not in employment_outcome_df.columns:
+        return pd.DataFrame(columns=["trainee_id", "is_employed", "retained_3m", "retained_6m", "retained_12m", "latest_salary", "wage_growth_amount"])
         
     df = employment_outcome_df.copy()
     
     df['start_date'] = pd.to_datetime(df.get('start_date', pd.NaT), utc=True, errors='coerce')
     df['end_date'] = pd.to_datetime(df.get('end_date', pd.NaT), utc=True, errors='coerce')
+    
+    # Temporal Leakage Filter
+    now = pd.Timestamp.now('UTC')
+    df = df[(df['start_date'].isna()) | (df['start_date'] <= now)]
     
     df = df.sort_values(by=['trainee_id', 'start_date'])
     
@@ -157,23 +166,33 @@ def build_employment_wage_features(employment_outcome_df: pd.DataFrame) -> pd.Da
         retained_3m=('retained_3m', 'any'),
         retained_6m=('retained_6m', 'any'),
         retained_12m=('retained_12m', 'any'),
-        job_relevance_score=('job_relevance_score', 'first')
+        job_relevance_score=('job_relevance_score', 'first'),
+        start_date=('start_date', 'first')
     ).reset_index()
     
     trainee_emp = pd.merge(trainee_emp, wages, on='trainee_id', how='left')
     return trainee_emp
 
 def build_programme_employer_aggregates(trainee_df, emp_features, employer_feedback_df):
+    MIN_COHORT_THRESHOLD = 5
     prog_features = pd.DataFrame()
     if not trainee_df.empty and not emp_features.empty:
         t_prog = pd.merge(trainee_df[['trainee_id', 'programme_id']], emp_features, on='trainee_id', how='left')
         
+        def safe_mean(x):
+            valid = x.dropna()
+            return valid.mean() * 100 if len(valid) >= MIN_COHORT_THRESHOLD else np.nan
+            
+        def safe_mean_raw(x):
+            valid = x.dropna()
+            return valid.mean() if len(valid) >= MIN_COHORT_THRESHOLD else np.nan
+
         prog_features = t_prog.groupby('programme_id').agg(
-            employment_rate=('is_employed', lambda x: x.mean() * 100 if len(x.dropna()) > 0 else np.nan),
-            retention_6m_rate=('retained_6m', lambda x: x.mean() * 100 if len(x.dropna()) > 0 else np.nan),
-            retention_12m_rate=('retained_12m', lambda x: x.mean() * 100 if len(x.dropna()) > 0 else np.nan),
-            average_salary=('latest_salary', 'mean'),
-            average_wage_growth=('wage_growth_amount', 'mean')
+            employment_rate=('is_employed', safe_mean),
+            retention_6m_rate=('retained_6m', safe_mean),
+            retention_12m_rate=('retained_12m', safe_mean),
+            average_salary=('latest_salary', safe_mean_raw),
+            average_wage_growth=('wage_growth_amount', safe_mean_raw)
         ).reset_index()
         
         # Unavailable deterministic fields

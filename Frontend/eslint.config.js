@@ -23,6 +23,7 @@ export default defineConfig([
     },
     rules: {
       "no-unused-vars": "off",
+      "react-hooks/exhaustive-deps": "off",
       "react-hooks/set-state-in-effect": "off",
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [

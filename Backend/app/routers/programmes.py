@@ -60,10 +60,10 @@ def get_programmes():
         # Let's return actual count, but if it is empty return a fallback or actual DB count.
         # Seed has 4, 3, 3 trainees. Let's return the actual DB count.
         summaries.append(ProgrammeSummaryResponse(
-            id=prog["id"],
-            name=prog["name"],
-            provider=prog["provider"],
-            status=prog["status"],
+            id=prog.get("id"),
+            name=prog.get("name"),
+            provider=prog.get("provider", prog.get("provider_id", "Unknown Provider")),
+            status=prog.get("status", "Active"),
             trainees=total_count,
             employment=employment_str,
             retention=retention_str
@@ -112,6 +112,7 @@ def get_programme(id: str):
     prog["trainees"] = total_count
     prog["employment"] = employment_str
     prog["retention"] = retention_str
+    prog["provider"] = prog.get("provider", prog.get("provider_id", "Unknown Provider"))
     return prog
 
 

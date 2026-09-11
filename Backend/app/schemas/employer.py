@@ -4,10 +4,10 @@ from datetime import datetime
 
 class EmployerVerificationBase(BaseModel):
     trainee_id: str
-    employer_email: EmailStr
+    employer_email: Optional[EmailStr] = None
     employer_name: str
     role: str
-    salary: float
+    salary: Optional[float] = None
     is_synthetic: bool = False
 
 class EmployerVerificationCreate(EmployerVerificationBase):

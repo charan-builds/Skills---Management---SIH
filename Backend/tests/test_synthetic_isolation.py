@@ -100,7 +100,6 @@ def test_missing_is_synthetic_behaves_safely(production_repository):
         make_doc_mock({"id": "J1", "title": "Real Job"})
     ]
     
-    jobs = FirestoreRepository.get_jobs()
-    
+    jobs = FirestoreRepository.get_role_benchmarks()
     assert len(jobs) == 1
     assert jobs[0]["id"] == "J1"

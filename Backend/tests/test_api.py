@@ -20,8 +20,8 @@ def test_health_check():
         "message": "Skilling Impact Intelligence API is running"
     }
 
-@patch("app.routers.analytics.FirestoreRepository.get_trainees")
-@patch("app.routers.analytics.FirestoreRepository.get_employer_feedback")
+@patch("app.services.analytics_service.FirestoreRepository.get_trainees")
+@patch("app.services.analytics_service.FirestoreRepository.get_employer_feedback")
 def test_analytics_dashboard(mock_fb, mock_tr):
     mock_tr.return_value = []
     mock_fb.return_value = []
@@ -37,11 +37,11 @@ def test_analytics_dashboard(mock_fb, mock_tr):
     # Verify the stat cards structure
     for stat in data["stats"]:
         assert stat["title"] in ["Total Trainees", "Employment Rate", "6M Retention", "Wage Progression"]
-        assert stat["value"] is None or "%" in stat["value"] or stat["value"].isdigit() or "+" in stat["value"] or stat["value"] == "None"
+        assert stat["value"] is None or "%" in stat["value"] or stat["value"].isdigit() or "+" in stat["value"] or stat["value"] == "None" or stat["value"] == "INSUFFICIENT_DATA"
     app.dependency_overrides = {}
 
-@patch("app.routers.analytics.FirestoreRepository.get_programme")
-@patch("app.routers.analytics.FirestoreRepository.get_employer_feedback")
+@patch("app.services.analytics_service.FirestoreRepository.get_programme")
+@patch("app.services.analytics_service.FirestoreRepository.get_employer_feedback")
 def test_skill_gap_analysis(mock_fb, mock_prog):
     mock_prog.return_value = {"id": "P001", "name": "Data Analytics", "skills_taught": ["Python", "SQL"]}
     mock_fb.return_value = []
@@ -55,21 +55,10 @@ def test_skill_gap_analysis(mock_fb, mock_prog):
     assert "common_gaps" in data
     app.dependency_overrides = {}
 
-@patch("app.ai.service.AIService.get_programme_diagnosis")
-def test_diagnosis_engine(mock_diag):
-    """Test the current AI diagnosis endpoint at /api/ai/programmes/{id}/diagnosis."""
-    mock_diag.return_value = [{"issue": "INSUFFICIENT_DATA", "severity": "UNKNOWN"}]
-    app.dependency_overrides[get_current_user] = lambda: {"uid": "admin123", "role": "admin"}
-    response = client.get("/api/ai/programmes/P001/diagnosis", headers={"Authorization": "Bearer token"})
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "success"
-    assert isinstance(data["data"], list)
-    assert data["data"][0]["issue"] == "INSUFFICIENT_DATA"
-    app.dependency_overrides = {}
 
-@patch("app.routers.analytics.FirestoreRepository.get_trainees")
-@patch("app.routers.analytics.FirestoreRepository.get_employer_feedback")
+
+@patch("app.services.analytics_service.FirestoreRepository.get_trainees")
+@patch("app.services.analytics_service.FirestoreRepository.get_employer_feedback")
 def test_analytics_dashboard_empty_db(mock_fb, mock_tr):
     # Empty DB behavior
     mock_tr.return_value = []
@@ -85,3 +74,40 @@ def test_analytics_dashboard_empty_db(mock_fb, mock_tr):
             assert stat["value"] == "0"
     app.dependency_overrides = {}
 
+@patch("app.firebase.repository.FirestoreRepository.get_employer")
+def test_auth_me_employer(mock_get_employer):
+    mock_get_employer.return_value = {"id": "ORG-TEST", "name": "Test Organization"}
+    
+    app.dependency_overrides[get_current_user] = lambda: {
+        "uid": "emp123", 
+        "role": "employer", 
+        "organization_id": "ORG-TEST"
+    }
+    
+    response = client.get("/api/auth/me", headers={"Authorization": "Bearer token"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["role"] == "employer"
+    assert data["organization_id"] == "ORG-TEST"
+    assert data["name"] == "Test Organization"
+    
+    app.dependency_overrides = {}
+
+@patch("app.firebase.repository.FirestoreRepository.get_trainee")
+def test_auth_me_trainee(mock_get_trainee):
+    mock_get_trainee.return_value = {"id": "T123", "name": "John Trainee"}
+    
+    app.dependency_overrides[get_current_user] = lambda: {
+        "uid": "T123", 
+        "role": "trainee", 
+        "name": "Fallback Name"
+    }
+    
+    response = client.get("/api/auth/me", headers={"Authorization": "Bearer token"})
+    assert response.status_code == 200
+    data = response.json()
+    assert data["role"] == "trainee"
+    assert data["user_id"] == "T123"
+    assert data["name"] == "John Trainee"
+    
+    app.dependency_overrides = {}

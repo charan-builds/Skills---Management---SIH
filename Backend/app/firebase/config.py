@@ -42,7 +42,8 @@ elif not firebase_admin._apps:
     if cred is not None:
         try:
             firebase_admin.initialize_app(cred)
-            db = firestore.client()
+            from google.cloud import firestore as gc_firestore
+            db = gc_firestore.Client(credentials=cred.get_credential(), project=cred.project_id)
             logger.info("Firebase Admin SDK initialized successfully.")
         except Exception as e:
             logger.warning(f"Failed to initialize firebase_admin: {e}")

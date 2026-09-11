@@ -27,7 +27,7 @@ def mock_db():
          patch("app.ai.ingestion.FirestoreRepository.get_skills", return_value=[]), \
          patch("app.ai.ingestion.FirestoreRepository.get_assessments", return_value=[]), \
          patch("app.ai.ingestion.FirestoreRepository.get_programmes", return_value=[]), \
-         patch("app.ai.ingestion.FirestoreRepository.get_jobs", return_value=[]), \
+         patch("app.ai.ingestion.FirestoreRepository.get_role_benchmarks", return_value=[]), \
          patch("app.ai.ingestion.FirestoreRepository.get_employer_feedback", return_value=[]), \
          patch("app.ai.decision_engine.SkillIntelligenceEngine.analyze_skill_gaps", return_value={"skill_gaps": [], "meta": {}}), \
          patch("app.ai.decision_engine.RetentionIntelligenceEngine.analyze_retention_risks", return_value={"risk_patterns": [], "meta": {}}):

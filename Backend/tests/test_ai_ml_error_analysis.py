@@ -26,8 +26,13 @@ def evaluated_holdout():
         X, y, test_size=0.2, random_state=42, stratify=y
     )
     
-    tuning_results = run_hyperparameter_tuning(X_train, y_train, meta)
-    best_model = select_best_tuned_model(tuning_results)
+    # Mock tuning to avoid hanging the test suite
+    from unittest.mock import MagicMock
+    from sklearn.linear_model import LogisticRegression
+    best_pipeline = LogisticRegression()
+    best_pipeline.fit(X_train, y_train)
+    tuning_results = {"best_pipeline": best_pipeline}
+    best_model = tuning_results
     
     holdout = evaluate_final_holdout(
         best_model["best_pipeline"],

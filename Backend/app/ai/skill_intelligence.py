@@ -163,8 +163,8 @@ class SkillIntelligenceEngine:
             for p, c in e_stats.get("districts", {}).items():
                 affected_dist_dict[p] = affected_dist_dict.get(p, 0) + c
                 
-            # Filter low signal
-            if total_trainees < self.min_sample_threshold and emp_freq < 2:
+            # Enforce strict privacy threshold
+            if total_trainees < self.min_sample_threshold:
                 continue
                 
             # Only consider it a gap if deficiency rate is high OR employers complained

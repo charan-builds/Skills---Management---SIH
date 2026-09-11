@@ -114,7 +114,12 @@ def build_retention_dataset(engineered_features: Dict[str, pd.DataFrame], raw_df
     # Pick all placed trainees with starting/latest salary to evaluate retention
     employed = emp_feats[emp_feats['latest_salary'].notna()].copy()
     
-    target_df = employed[['trainee_id', 'retained_6m', 'latest_salary']].copy()
+    # Extract start_date for temporal splitting
+    cols_to_keep = ['trainee_id', 'retained_6m', 'latest_salary']
+    if 'start_date' in employed.columns:
+        cols_to_keep.append('start_date')
+        
+    target_df = employed[cols_to_keep].copy()
     target_df['retained_6m'] = target_df['retained_6m'].astype(int)
     
     base_x = _build_flat_trainee_features(trainee_df, t_skills)

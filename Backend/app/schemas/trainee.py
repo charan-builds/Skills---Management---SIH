@@ -8,18 +8,22 @@ class CertificationSchema(BaseModel):
     issuing_body: str
 
 class EmploymentHistorySchema(BaseModel):
-    id: str
+    id: Optional[str] = None
     status: str # EMPLOYED, SELF_EMPLOYED, APPRENTICESHIP, SEEKING_EMPLOYMENT, UNKNOWN
-    employer: Optional[str] = None
+    employer_name: Optional[str] = None
+    organization_id: Optional[str] = None
     role: Optional[str] = None
     salary: Optional[float] = None
-    joining_date: Optional[str] = None
-    timestamp: str
+    start_date: Optional[str] = None
+    timestamp: Optional[str] = None
     verification_state: str # SELF_REPORTED, EMPLOYER_VERIFIED, ADMIN_VERIFIED, CONFLICTING, UNVERIFIED
+    employment_type: Optional[str] = None
+    job_relevance: Optional[str] = None
+    employer_remarks: Optional[str] = None
 
 class ConsentRecordSchema(BaseModel):
-    status: str # GIVEN, REVOKED, NOT_GIVEN
-    effective_timestamp: str
+    status: Optional[str] = None # GIVEN, REVOKED, NOT_GIVEN
+    effective_timestamp: Optional[str] = None
     version: str = "1.0"
     source: str = "TraineePortal"
 
@@ -37,14 +41,14 @@ class TimelineCheckpointSchema(BaseModel):
 class TraineeBase(BaseModel):
     id: str
     name: str
-    email: EmailStr
+    email: str
     phone: str
-    district: str
-    programme_id: str
-    course_name: str
-    provider: str
-    status: str
-    outcome: str
+    district: Optional[str] = None
+    programme_id: Optional[str] = None
+    course_name: Optional[str] = None
+    provider: Optional[str] = None
+    status: Optional[str] = None
+    outcome: Optional[str] = None
     skills: List[str] = []
     skill_ids: Optional[List[str]] = []
     certifications: List[CertificationSchema] = []
@@ -52,6 +56,8 @@ class TraineeBase(BaseModel):
     consent_history: List[ConsentRecordSchema] = []
     outcomes_timeline: List[TimelineCheckpointSchema] = []
     is_synthetic: bool = False
+    target_role_id: Optional[str] = None
+    target_role_name: Optional[str] = None
 
     @property
     def current_outcome(self) -> Optional[EmploymentHistorySchema]:
@@ -96,13 +102,17 @@ class TraineeUpdate(BaseModel):
     status: Optional[str] = None
     outcome: Optional[str] = None
     skills: Optional[List[str]] = None
+    
+    model_config = {
+        "extra": "forbid"
+    }
 
 class TraineeEmploymentCreate(BaseModel):
     status: str
-    employer: Optional[str] = None
+    employer_name: Optional[str] = None
     role: Optional[str] = None
     salary: Optional[float] = None
-    joining_date: Optional[str] = None
+    start_date: Optional[str] = None
     verification_state: str = "SELF_REPORTED"
 
 class TraineeConsentUpdate(BaseModel):
@@ -117,3 +127,7 @@ class TraineeFollowupSubmit(BaseModel):
     job_relevance: str
     verification_status: str = "Pending"
     description: str
+
+class TraineeTargetRoleUpdate(BaseModel):
+    target_role_id: str
+    target_role_name: str

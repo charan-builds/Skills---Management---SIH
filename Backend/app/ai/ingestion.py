@@ -16,8 +16,8 @@ def load_skill_assessments() -> List[Dict[str, Any]]:
 def load_programmes() -> List[Dict[str, Any]]:
     return FirestoreRepository.get_programmes()
 
-def load_jobs() -> List[Dict[str, Any]]:
-    return FirestoreRepository.get_jobs()
+def load_role_benchmarks() -> List[Dict[str, Any]]:
+    return FirestoreRepository.get_role_benchmarks()
 
 def load_employer_feedback() -> List[Dict[str, Any]]:
     return FirestoreRepository.get_employer_feedback()
@@ -38,22 +38,26 @@ def load_interventions() -> List[Dict[str, Any]]:
 # Flattening Functions
 def build_trainee_df(trainees_data: List[Dict[str, Any]]) -> pd.DataFrame:
     if not trainees_data:
-        return pd.DataFrame(columns=["trainee_id", "programme_id", "district", "course_name", "provider"])
+        return pd.DataFrame(columns=["trainee_id", "programme_id", "district", "course_name", "provider", "is_synthetic"])
     
     df = pd.DataFrame(trainees_data)
     if "id" in df.columns:
         df = df.rename(columns={"id": "trainee_id"})
+        
+    if "is_synthetic" not in df.columns:
+        df["is_synthetic"] = df["trainee_id"].astype(str).str.contains("-DEMO-|T-SYN", na=False)
     
-    cols = ["trainee_id", "programme_id", "district", "course_name", "provider"]
+    cols = ["trainee_id", "programme_id", "district", "course_name", "provider", "is_synthetic"]
     for col in cols:
         if col not in df.columns:
-            df[col] = None
+            df[col] = False if col == "is_synthetic" else None
             
+    df[cols] = df[cols].fillna(value=np.nan)
     return df[cols]
 
 def build_trainee_skill_df(assessments_data: List[Dict[str, Any]]) -> pd.DataFrame:
     if not assessments_data:
-        return pd.DataFrame(columns=["trainee_id", "skill_id", "skill_name", "proficiency_score", "assessment_type", "assessment_date"])
+        return pd.DataFrame(columns=["trainee_id", "skill_id", "skill_name", "proficiency_score", "assessment_type", "assessment_date", "is_synthetic"])
         
     df = pd.DataFrame(assessments_data)
     
@@ -63,11 +67,15 @@ def build_trainee_skill_df(assessments_data: List[Dict[str, Any]]) -> pd.DataFra
     if "proficiency_score" in df.columns:
         df["proficiency_score"] = pd.to_numeric(df["proficiency_score"], errors="coerce")
         
-    cols = ["trainee_id", "skill_id", "skill_name", "proficiency_score", "assessment_type", "assessment_date"]
+    if "is_synthetic" not in df.columns:
+        df["is_synthetic"] = df["trainee_id"].astype(str).str.contains("-DEMO-|T-SYN", na=False) if "trainee_id" in df.columns else False
+        
+    cols = ["trainee_id", "skill_id", "skill_name", "proficiency_score", "assessment_type", "assessment_date", "is_synthetic"]
     for col in cols:
         if col not in df.columns:
-            df[col] = None
+            df[col] = False if col == "is_synthetic" else None
             
+    df[cols] = df[cols].fillna(value=np.nan)
     return df[cols]
 
 def build_job_skill_df(jobs_data: List[Dict[str, Any]]) -> pd.DataFrame:

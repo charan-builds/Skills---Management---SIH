@@ -38,13 +38,14 @@ EMPLOYERS = [
     {"id": "EMP-DEMO-005", "name": "FinTech Innovators", "industry": "Financial Technology"}
 ]
 
-JOB_ROLES = []
+ROLE_BENCHMARKS = []
 for i, emp in enumerate(EMPLOYERS):
     prog1 = random.choice(PROGRAMMES)
-    JOB_ROLES.append({
-        "id": f"JOB-DEMO-{i}A",
-        "employer_id": emp["id"],
-        "role": f"Junior {prog1['name'].split(' ')[0]} Specialist", # changed from title to role
+    ROLE_BENCHMARKS.append({
+        "id": f"BENCH-DEMO-{i}A",
+        "title": f"Junior {prog1['name'].split(' ')[0]} Specialist",
+        "role": f"Junior {prog1['name'].split(' ')[0]} Specialist",
+        "industry": emp["industry"],
         "skills_required": random.sample(prog1["skills_taught"], k=min(4, len(prog1["skills_taught"]))),
         "is_synthetic": True,
         "is_active": True
@@ -57,7 +58,7 @@ def generate_data():
     db_json = {
         "programmes": [],
         "employers": [],
-        "jobs": [],
+        "role_benchmarks": [],
         "trainees": [],
         "employer_feedback": [],
         "interventions": []
@@ -89,14 +90,14 @@ def generate_data():
             "is_synthetic": True
         })
 
-    for job in JOB_ROLES:
-        db_json["jobs"].append(job)
+    # Benchmarks
+    for bench in ROLE_BENCHMARKS:
+        db_json["role_benchmarks"].append(bench)
         if random.random() > 0.5:
             db_json["employer_feedback"].append({
-                "employer_id": job["employer_id"],
                 "programme_id": random.choice(PROGRAMMES)["id"],
-                "skills_required_in_job": job["skills_required"],
-                "technical_deficiencies": random.sample(job["skills_required"], k=min(2, len(job["skills_required"]))),
+                "skills_required_in_job": bench["skills_required"],
+                "technical_deficiencies": random.sample(bench["skills_required"], k=min(2, len(bench["skills_required"]))),
                 "is_synthetic": True
             })
 
@@ -121,15 +122,17 @@ def generate_data():
                 outcome = "Employed"
 
         acquired_skills = []
+        acquired_skill_ids = []
         if status != "Dropped":
             acquired_skills = random.sample(prog["skills_taught"], k=max(2, int(len(prog["skills_taught"]) * random.uniform(0.6, 1.0))))
+            acquired_skill_ids = [s.lower().replace(" ", "-").replace("&", "and") for s in acquired_skills]
 
         emp_hist = []
         if outcome == "Employed":
             if random.random() < 0.8:
-                job = random.choice(JOB_ROLES)
-                emp_name = next(e["name"] for e in EMPLOYERS if e["id"] == job["employer_id"])
-                job_title = job["role"]
+                bench = random.choice(ROLE_BENCHMARKS)
+                emp_name = random.choice(EMPLOYERS)["name"]
+                job_title = bench["role"]
             else:
                 emp_name = "External Corp"
                 job_title = "Analyst"
@@ -227,11 +230,13 @@ def generate_data():
             "district": random.choice(DISTRICTS),
             "programme_id": prog["id"],
             "course_name": prog["name"],
-            "provider": "State Skilling Agency",
+            "provider": random.choice(["SkillIndia Institute", "Tech Academy", "Govt ITI", "FutureSkills Center"]),
             "status": status,
             "outcome": outcome,
+            "target_role_id": random.choice(ROLE_BENCHMARKS)["id"] if random.random() < 0.9 else None,
             "skills": acquired_skills,
-            "employment_history": emp_hist,
+            "skill_ids": acquired_skill_ids,
+            "certifications": [],
             "consent_history": consent_hist,
             "assessments": assessments,
             "outcomes_timeline": timeline,

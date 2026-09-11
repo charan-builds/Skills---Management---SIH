@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react";
 import { API_BASE } from "../../utils/config";
 import { fetchAuth } from "../../utils/authFetch";
+import { DataStateWrapper } from "../../components/common/DataStateComponents";
 
 export default function TraineeOverview({
   portalData,
@@ -16,16 +17,34 @@ export default function TraineeOverview({
   onStartAssessment
 }) {
   const [outcomeHistory, setOutcomeHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const loadHistory = () => {
     if (portalData?.profile?.id) {
+      setLoading(true);
+      setError(null);
       fetchAuth(`${API_BASE}/api/trainees/${portalData.profile.id}/outcome-history`)
-        .then(res => res.json())
+        .then(async res => {
+          if (!res.ok) throw new Error("Failed to load outcome history");
+          return res.json();
+        })
         .then(data => {
           if (Array.isArray(data)) setOutcomeHistory(data);
+          setLoading(false);
         })
-        .catch(console.error);
+        .catch(err => {
+          console.error(err);
+          setError(err);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    loadHistory();
   }, [portalData]);
 
   if (!portalData) return null;
@@ -81,11 +100,11 @@ export default function TraineeOverview({
 
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', marginBottom: '0.35rem', color: '#334155' }}>
-                <span>Job Readiness</span>
-                <strong>{percentLabel(readiness.job_readiness)}</strong>
+                <span>Benchmark Readiness</span>
+                <strong>{percentLabel(readiness.benchmark_readiness)}</strong>
               </div>
               <div style={{ height: '7px', background: '#f1f5f9', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${normalisePercent(readiness.job_readiness) ?? 0}%`, height: '100%', background: '#f59e0b' }}></div>
+                <div style={{ width: `${normalisePercent(readiness.benchmark_readiness) ?? 0}%`, height: '100%', background: '#f59e0b' }}></div>
               </div>
             </div>
 
@@ -173,28 +192,60 @@ export default function TraineeOverview({
         </button>
       </div>
 
-      {/* SECTION 3: Outcome History */}
+      {/* SECTION 3: Authoritative Training History */}
       <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', marginBottom: '2.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', margin: '0 0 1.25rem 0' }}>
-          Employment Outcome History
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', margin: '0 0 1.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Award size={20} color="#2563eb" /> Official Training Record
         </h3>
-        {outcomeHistory.length === 0 ? (
-          <p style={{ color: '#64748b', fontSize: '0.9rem' }}>No outcome history recorded.</p>
-        ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', background: '#f8fafc', padding: '1.25rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Programme / Course</p>
+            <p style={{ margin: '0.2rem 0', fontSize: '1rem', color: '#0f172a', fontWeight: 700 }}>{portalData.personal_info?.course_name || "Enrolled Programme"}</p>
+          </div>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Training Provider</p>
+            <p style={{ margin: '0.2rem 0', fontSize: '1rem', color: '#0f172a', fontWeight: 700 }}>{portalData.personal_info?.provider || "Authorized Provider"}</p>
+          </div>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>Current Status</p>
+            <span style={{ display: 'inline-block', marginTop: '0.2rem', padding: '3px 10px', background: '#dcfce7', color: '#16a34a', borderRadius: '12px', fontSize: '0.8rem', fontWeight: 700 }}>{portalData.personal_info?.status || "Certified"}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 4: Outcome & Wage History */}
+      <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.75rem', marginBottom: '2.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', position: 'relative', minHeight: '150px' }}>
+        <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a', margin: '0 0 1.25rem 0' }}>
+          Employment & Wage History
+        </h3>
+        <DataStateWrapper
+          isLoading={loading}
+          error={error}
+          data={outcomeHistory}
+          onRetry={loadHistory}
+          isDataAvailable={(d) => d && d.length > 0}
+          isEmptyDetails="No outcome history recorded."
+        >
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {outcomeHistory.map((outcome, idx) => (
-              <div key={idx} style={{ padding: '1rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <strong style={{ color: '#0f172a' }}>{outcome.status}</strong>
-                  <span style={{ fontSize: '0.8rem', color: '#64748b' }}>{new Date(outcome.timestamp).toLocaleDateString()}</span>
+              <div key={idx} style={{ padding: '1.25rem', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', alignItems: 'center' }}>
+                  <strong style={{ color: '#0f172a', fontSize: '1.05rem' }}>{outcome.status.replace("_", "-")}</strong>
+                  <span style={{ fontSize: '0.85rem', color: '#64748b' }}>{new Date(outcome.timestamp).toLocaleDateString()}</span>
                 </div>
-                {outcome.employer && <div style={{ fontSize: '0.9rem', color: '#475569' }}>Employer: {outcome.employer}</div>}
-                {outcome.role && <div style={{ fontSize: '0.9rem', color: '#475569' }}>Role: {outcome.role}</div>}
-                <div style={{ fontSize: '0.8rem', color: '#16a34a', marginTop: '0.5rem', fontWeight: 600 }}>{outcome.verification_state}</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.9rem', color: '#475569' }}>
+                  {outcome.employer_name && <div><strong>Employer:</strong> {outcome.employer_name}</div>}
+                  {outcome.role && <div><strong>Role:</strong> {outcome.role}</div>}
+                  {outcome.salary > 0 && <div style={{ color: '#16a34a', fontWeight: 700 }}><strong>Wage/Salary:</strong> ₹{outcome.salary}/mo</div>}
+                  {outcome.start_date && <div><strong>Start Date:</strong> {outcome.start_date}</div>}
+                </div>
+                <div style={{ fontSize: '0.8rem', color: outcome.verification_state === 'EMPLOYER_VERIFIED' ? '#16a34a' : '#f59e0b', marginTop: '0.75rem', fontWeight: 700, display: 'inline-block', padding: '2px 8px', background: outcome.verification_state === 'EMPLOYER_VERIFIED' ? '#dcfce7' : '#fef3c7', borderRadius: '4px' }}>
+                  {outcome.verification_state}
+                </div>
               </div>
             ))}
           </div>
-        )}
+        </DataStateWrapper>
       </div>
 
       {/* SECTION 4: AI Career Analysis & Insights Banner */}

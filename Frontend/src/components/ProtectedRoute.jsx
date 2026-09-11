@@ -12,14 +12,11 @@ function ProtectedRoute({ children, role }) {
   // Wrong role
   if (role && loggedInRole !== role) {
     if (loggedInRole === "trainee") {
-      const traineeId = localStorage.getItem("traineeId");
-      if (traineeId) {
-        return <Navigate to={`/trainee-dashboard/${traineeId}`} replace />;
-      }
+      return <Navigate to="/trainee" replace />;
     } else if (loggedInRole === "employer") {
-      return <Navigate to="/employer-dashboard" replace />;
+      return <Navigate to="/employer" replace />;
     } else if (loggedInRole === "admin") {
-      return <Navigate to="/" replace />;
+      return <Navigate to="/admin" replace />;
     }
 
     return <Navigate to="/login" replace />;
