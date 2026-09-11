@@ -1,0 +1,12 @@
+trainee_id,programme_id,district,avg_skill_score,total_assessments,is_employed
+T105,P002,Krishna,0.0,0,1
+T107,P003,Guntur,0.0,0,1
+T114,P002,Chennai,0.0,0,1
+T115,P003,Visakhapatnam,0.0,0,1
+T119,P002,Visakhapatnam,0.0,0,1
+T121,P003,Krishna,0.0,0,1
+T134,P002,Chennai,0.0,0,1
+T143,P002,Chennai,0.0,0,1
+T145,P002,Visakhapatnam,0.0,0,1
+T149,P002,Bengaluru,0.0,0,1
+T152,P003,Bengaluru,0.0,0,1
