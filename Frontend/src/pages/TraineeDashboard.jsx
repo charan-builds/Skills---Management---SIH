@@ -126,7 +126,7 @@ export default function TraineeDashboard() {
 
   const emp = trainee?.employment || {};
   const followups = trainee?.follow_ups || [];
-  const nextFollowup = followups.find(f => f.status === "Due" || f.status === "Upcoming") || followups[0];
+  const nextFollowup = followups.find(f => f.status === "Due" || f.status === "Needs Verification" || f.status === "Needs Assistance") || followups.find(f => f.status === "Upcoming") || followups[0];
   const timelineEvents = trainee?.timeline_events || [];
 
   return (
@@ -292,7 +292,14 @@ export default function TraineeDashboard() {
                 {nextFollowup ? nextFollowup.milestone : "Completed"}
               </div>
               <div style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "0.75rem" }}>
-                Status: <strong>{nextFollowup?.status || "Up to date"}</strong> ({nextFollowup?.due_date || "N/A"})
+                Status: <strong style={{
+                  color: nextFollowup?.status === "Due" ? "#b45309"
+                    : nextFollowup?.status === "Needs Verification" ? "#7e22ce"
+                    : (nextFollowup?.status === "Needs Assistance" || nextFollowup?.status === "Contact Error") ? "#b91c1c"
+                    : "#15803d"
+                }}>
+                  {nextFollowup?.status || "Up to date"}
+                </strong> ({nextFollowup?.due_date || "N/A"})
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", color: "#64748b", borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
                 <span>{isConsentDeclined ? "Restricted (Opted out)" : "Active"}</span>

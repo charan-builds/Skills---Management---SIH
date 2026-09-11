@@ -110,57 +110,140 @@ export default function FollowUps() {
       {isAdmin ? (
         /* ADMIN ASSISTED FOLLOW-UP OVERVIEW (Feature 21) */
         <div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
-            <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Total Cohort Trainees</span>
-              <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
-                {store.trainees.length}
-              </div>
-            </div>
-            <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Follow-ups Due Today</span>
-              <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#b45309", marginTop: "0.2rem" }}>
-                2 Pending
-              </div>
-            </div>
-            <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Overall Response Rate</span>
-              <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
-                86.4%
-              </div>
-            </div>
-          </div>
+          {(() => {
+            const allFollowups = (store.trainees || []).flatMap(t =>
+              (t.follow_ups || []).map(fu => ({ ...fu, trainee: t }))
+            );
+            const totalCount = allFollowups.length;
+            const completedCount = allFollowups.filter(f => f.status === "Completed").length;
+            const dueCount = allFollowups.filter(f => f.status === "Due").length;
+            const needsVerificationCount = allFollowups.filter(f => f.status === "Needs Verification").length;
+            const needsAssistanceCount = allFollowups.filter(f => f.status === "Needs Assistance" || f.status === "Contact Error" || f.status === "Delivery Error").length;
+            const upcomingCount = allFollowups.filter(f => f.status === "Upcoming").length;
+            const actionableCount = totalCount - upcomingCount || 1;
+            const dynamicResponseRate = Math.round((completedCount / actionableCount) * 100);
 
-          <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
-            <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc" }}>
-              <h3 style={{ margin: 0, fontSize: "1.05rem", color: "#0f172a" }}>
-                Active Assisted Follow-up Queue (Omnichannel Outreach Engine)
-              </h3>
-            </div>
-            <div style={{ padding: "1.5rem" }}>
-              {store.trainees.map((t) => (
-                <div key={t.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem", borderBottom: "1px solid #f1f5f9" }}>
-                  <div>
-                    <strong style={{ color: "#0f172a", display: "block" }}>{t.name} ({t.id})</strong>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                      {t.programme_name} • District: {t.district} • Contact: {t.phone}
+            const actionableQueue = allFollowups
+              .filter(f => f.status !== "Completed" && f.status !== "Upcoming")
+              .slice(0, 15);
+
+            return (
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+                  <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Total Cohort Trainees</span>
+                    <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
+                      {store.trainees.length}
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: "#2563eb" }}>{totalCount} Total Checkpoints</span>
+                  </div>
+
+                  <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #fef3c7" }}>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Actionable Follow-ups</span>
+                    <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#b45309", marginTop: "0.2rem" }}>
+                      {dueCount + needsVerificationCount + needsAssistanceCount}
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: "#b45309" }}>
+                      {dueCount} Due • {needsVerificationCount} Verify • {needsAssistanceCount} Errors
                     </span>
                   </div>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ background: "#dcfce7", color: "#166534", padding: "3px 8px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: 700 }}>
-                      Follow-ups Active
+
+                  <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #dcfce7" }}>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Verified Response Rate</span>
+                    <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
+                      {dynamicResponseRate}%
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: "#16a34a" }}>
+                      {completedCount} of {actionableCount} Actionable Checkpoints
                     </span>
-                    <button
-                      onClick={() => alert(`Triggering assisted SMS & WhatsApp outreach notification to ${t.name} (${t.phone})...`)}
-                      style={{ padding: "0.4rem 0.8rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}
-                    >
-                      <PhoneCall size={13} /> Trigger Outreach
-                    </button>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+
+                <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+                  <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: "1.05rem", color: "#0f172a" }}>
+                        Active Actionable Follow-up Queue (Pending Actions & Escalations)
+                      </h3>
+                      <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
+                        Live stream of check-ins requiring verification, candidate reminder, or call center outreach.
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => window.location.href = "/admin/follow-ups"}
+                      style={{ padding: "0.45rem 0.85rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}
+                    >
+                      Open Full Governance Desk &rarr;
+                    </button>
+                  </div>
+                  <div style={{ padding: "1rem 1.5rem" }}>
+                    {actionableQueue.map((item) => {
+                      const isNV = item.status === "Needs Verification";
+                      const isNA = item.status === "Needs Assistance" || item.status === "Contact Error" || item.status === "Delivery Error";
+
+                      return (
+                        <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 0", borderBottom: "1px solid #f1f5f9" }}>
+                          <div>
+                            <strong style={{ color: "#0f172a", display: "block" }}>
+                              {item.trainee.name} ({item.trainee.id}) • {item.milestone} Checkpoint
+                            </strong>
+                            <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
+                              {item.trainee.programme_name} • District: {item.trainee.district} • Contact: {item.trainee.phone}
+                            </span>
+                            <div style={{ fontSize: "0.75rem", color: isNA ? "#b91c1c" : isNV ? "#7e22ce" : "#b45309", marginTop: "2px" }}>
+                              {item.notes}
+                            </div>
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                            <span style={{
+                              background: isNV ? "#f3e8ff" : isNA ? "#fee2e2" : "#fef3c7",
+                              color: isNV ? "#7e22ce" : isNA ? "#b91c1c" : "#b45309",
+                              border: isNV ? "1px solid #d8b4fe" : isNA ? "1px solid #fca5a5" : "1px solid #fde68a",
+                              padding: "4px 9px",
+                              borderRadius: "6px",
+                              fontSize: "0.75rem",
+                              fontWeight: 700
+                            }}>
+                              {item.status}
+                            </span>
+                            <button
+                              onClick={() => {
+                                if (isNV) {
+                                  alert(`Directing to verification desk for candidate ${item.trainee.name} (${item.trainee.id})...`);
+                                  window.location.href = "/admin/follow-ups";
+                                } else if (isNA) {
+                                  alert(`Initiating assisted call-center desk session for ${item.trainee.name} (${item.trainee.phone})...`);
+                                  window.location.href = "/admin/follow-ups";
+                                } else {
+                                  alert(`Triggering automated reminder notification to ${item.trainee.name} (${item.trainee.phone})...`);
+                                }
+                              }}
+                              style={{
+                                padding: "0.45rem 0.85rem",
+                                background: isNV ? "#7e22ce" : isNA ? "#dc2626" : "#2563eb",
+                                color: "white",
+                                border: "none",
+                                borderRadius: "6px",
+                                fontSize: "0.75rem",
+                                fontWeight: 700,
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.3rem"
+                              }}
+                            >
+                              {isNV ? <ShieldCheck size={13} /> : <PhoneCall size={13} />}
+                              {isNV ? "Verify Claim" : isNA ? "Assisted Outreach" : "Trigger Reminder"}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </div>
       ) : (
         /* TRAINEE MILESTONE CARDS & CHECK-IN (SECTIONS 16, 17, C10) */
@@ -195,6 +278,8 @@ export default function FollowUps() {
           {/* Milestone Cards Grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", marginBottom: "2rem" }}>
             {followups.map((fu) => {
+              const isNeedsVerification = fu.status === "Needs Verification";
+              const isNeedsAssistance = fu.status === "Needs Assistance" || fu.status === "Contact Error" || fu.status === "Delivery Error";
               const isDue = fu.status === "Due";
               const isCompleted = fu.status === "Completed";
               const isUpcoming = fu.status === "Upcoming";
@@ -204,14 +289,14 @@ export default function FollowUps() {
                 <div
                   key={fu.id}
                   style={{
-                    background: isDue ? "#fffbeb" : "white",
+                    background: isDue ? "#fffbeb" : isNeedsVerification ? "#faf5ff" : isNeedsAssistance ? "#fef2f2" : "white",
                     borderRadius: "12px",
-                    border: isDue ? "2px solid #f59e0b" : "1px solid #e2e8f0",
+                    border: isDue ? "2px solid #f59e0b" : isNeedsVerification ? "2px solid #c084fc" : isNeedsAssistance ? "2px solid #f87171" : "1px solid #e2e8f0",
                     padding: "1.5rem",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    boxShadow: isDue ? "0 4px 12px rgba(245,158,11,0.1)" : "none"
+                    boxShadow: isDue ? "0 4px 12px rgba(245,158,11,0.1)" : isNeedsVerification ? "0 4px 12px rgba(192,132,252,0.1)" : "none"
                   }}
                 >
                   <div>
@@ -221,15 +306,16 @@ export default function FollowUps() {
                       </span>
                       <span
                         style={{
-                          background: isCompleted ? "#dcfce7" : isDue ? "#fef3c7" : "#f1f5f9",
-                          color: isCompleted ? "#15803d" : isDue ? "#b45309" : "#64748b",
+                          background: isCompleted ? "#dcfce7" : isNeedsVerification ? "#f3e8ff" : isNeedsAssistance ? "#fee2e2" : isDue ? "#fef3c7" : "#f1f5f9",
+                          color: isCompleted ? "#15803d" : isNeedsVerification ? "#7e22ce" : isNeedsAssistance ? "#b91c1c" : isDue ? "#b45309" : "#64748b",
+                          border: isNeedsVerification ? "1px solid #d8b4fe" : isNeedsAssistance ? "1px solid #fca5a5" : isDue ? "1px solid #fde68a" : "none",
                           padding: "3px 8px",
                           borderRadius: "4px",
                           fontSize: "0.75rem",
                           fontWeight: 700
                         }}
                       >
-                        {fu.status}
+                        {isNeedsVerification ? "Pending Verification" : isNeedsAssistance ? "Action Needed (Errors)" : fu.status}
                       </span>
                     </div>
 
@@ -242,7 +328,7 @@ export default function FollowUps() {
                     </div>
 
                     {fu.notes && (
-                      <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.8rem", color: "#475569", background: "#f8fafc", padding: "0.5rem", borderRadius: "6px" }}>
+                      <p style={{ margin: "0.5rem 0 0 0", fontSize: "0.8rem", color: isNeedsAssistance ? "#b91c1c" : isNeedsVerification ? "#7e22ce" : "#475569", background: isNeedsAssistance ? "#fee2e2" : isNeedsVerification ? "#f3e8ff" : "#f8fafc", padding: "0.5rem", borderRadius: "6px" }}>
                         {fu.notes}
                       </p>
                     )}
@@ -252,6 +338,10 @@ export default function FollowUps() {
                     {isCompleted ? (
                       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#16a34a", fontSize: "0.85rem", fontWeight: 700 }}>
                         <CheckCircle2 size={16} /> Completed on {fu.completed_date}
+                      </div>
+                    ) : isNeedsVerification ? (
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#7e22ce", fontSize: "0.85rem", fontWeight: 700 }}>
+                        <Clock size={16} /> Response Submitted (Awaiting Nodal Review)
                       </div>
                     ) : (
                       <button
@@ -266,8 +356,8 @@ export default function FollowUps() {
                         style={{
                           width: "100%",
                           padding: "0.6rem",
-                          background: isDeclined ? "#cbd5e1" : (isDue ? "#2563eb" : "#f1f5f9"),
-                          color: isDeclined ? "#64748b" : (isDue ? "white" : "#475569"),
+                          background: isDeclined ? "#cbd5e1" : isNeedsAssistance ? "#dc2626" : (isDue ? "#2563eb" : "#f1f5f9"),
+                          color: isDeclined ? "#64748b" : (isDue || isNeedsAssistance ? "white" : "#475569"),
                           border: "none",
                           borderRadius: "6px",
                           fontWeight: 700,
@@ -279,7 +369,9 @@ export default function FollowUps() {
                           gap: "0.4rem"
                         }}
                       >
-                        <span>{isDeclined ? "Restricted (Consent Declined)" : (isDue ? "Complete Check-in Now" : "Pre-fill Check-in")}</span>
+                        <span>
+                          {isDeclined ? "Restricted (Consent Declined)" : isNeedsAssistance ? "Update Contact & Check-in" : (isDue ? "Complete Check-in Now" : "Pre-fill Check-in")}
+                        </span>
                         <ChevronRight size={16} />
                       </button>
                     )}

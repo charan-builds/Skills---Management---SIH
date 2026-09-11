@@ -888,19 +888,40 @@ export function generateRelationalDataset(targetCount = 800) {
     const makeMilestone = (dueDate, milestoneName) => {
       const isPast = dueDate <= EVAL_REF_DATE;
       const isRecentlyDue = !isPast && dueDate <= "2024-09-30";
-      const needsAssistanceRoll = rng() < 0.045;
 
-      if (!isPast) {
-        if (isRecentlyDue && rng() < 0.3) {
+      // Special deterministic handling for primary demo candidate TR-0001 (Arjun Kadam)
+      if (id === "TR-0001") {
+        if (milestoneName === 3) {
+          return {
+            id: `FU-${id}-${milestoneName}M`,
+            milestone: `${milestoneName}-Month`,
+            due_date: dueDate,
+            status: "Completed",
+            completed_date: dueDate,
+            notes: "Verified active at Tata Consultancy Services. Monthly wage ₹28,000 confirmed via EPF."
+          };
+        }
+        if (milestoneName === 6) {
           return {
             id: `FU-${id}-${milestoneName}M`,
             milestone: `${milestoneName}-Month`,
             due_date: dueDate,
             status: "Due",
             completed_date: null,
-            notes: "Questionnaire active. Awaiting trainee self-service response."
+            notes: "6-Month career check-in window open. Awaiting trainee self-service response."
           };
         }
+        return {
+          id: `FU-${id}-${milestoneName}M`,
+          milestone: `${milestoneName}-Month`,
+          due_date: dueDate,
+          status: "Upcoming",
+          completed_date: null,
+          notes: "Scheduled 12-month longitudinal outcome checkpoint."
+        };
+      }
+
+      if (!isPast && !isRecentlyDue) {
         return {
           id: `FU-${id}-${milestoneName}M`,
           milestone: `${milestoneName}-Month`,
@@ -911,41 +932,91 @@ export function generateRelationalDataset(targetCount = 800) {
         };
       }
 
-      if (needsAssistanceRoll) {
+      // Realistic outcome status distribution for past / actionable milestones
+      const roll = rng();
+
+      // 1. Completed & Verified Check-in (~52%)
+      if (roll < 0.52) {
+        let milestoneNotes = "Check-in completed.";
+        if (outcomeStatus === "EMPLOYED" || outcomeStatus === "APPRENTICESHIP") {
+          milestoneNotes = (milestoneName === 3 ? isRetained3M : (milestoneName === 6 ? isRetained6M : isRetained12M))
+            ? `Verified active at ${employment?.employer_name || "employer"}. Wage: ₹${(currentWageMetric || 24000).toLocaleString()}.`
+            : `Trainee exited employment: ${attritionReason || "Career transition"}.`;
+        } else if (outcomeStatus === "SELF_EMPLOYED") {
+          milestoneNotes = `Self-employment business trade active in ${district}. Monthly turnover steady.`;
+        } else if (outcomeStatus === "UNEMPLOYED") {
+          milestoneNotes = `Candidate actively seeking placement. Barrier: ${unempReason || "Skills gap"}.`;
+        } else {
+          milestoneNotes = "Continuing full-time advanced vocational/degree coursework.";
+        }
+
         return {
           id: `FU-${id}-${milestoneName}M`,
           milestone: `${milestoneName}-Month`,
           due_date: dueDate,
-          status: "Needs Assistance",
-          completed_date: null,
-          outreach_attempts: randInt(1, 3),
-          last_attempt_date: addMonths(dueDate, 1),
-          last_attempt_channel: "Automated SMS / IVR Call",
-          notes: "Trainee uncontactable via automated SMS. Flagged for assisted call center outreach."
+          status: "Completed",
+          completed_date: dueDate,
+          notes: milestoneNotes
         };
       }
 
-      // Completed check-in
-      let milestoneNotes = "Check-in completed.";
-      if (outcomeStatus === "EMPLOYED" || outcomeStatus === "APPRENTICESHIP") {
-        milestoneNotes = (milestoneName === 3 ? isRetained3M : (milestoneName === 6 ? isRetained6M : isRetained12M))
-          ? `Verified active at ${employment?.employer_name || "employer"}. Wage: ₹${(currentWageMetric || 24000).toLocaleString()}.`
-          : `Trainee exited employment: ${attritionReason || "Career transition"}.`;
-      } else if (outcomeStatus === "SELF_EMPLOYED") {
-        milestoneNotes = `Self-employment business trade active in ${district}. Monthly turnover steady.`;
-      } else if (outcomeStatus === "UNEMPLOYED") {
-        milestoneNotes = `Candidate actively seeking placement. Barrier: ${unempReason || "Skills gap"}.`;
-      } else {
-        milestoneNotes = "Continuing full-time advanced vocational/degree coursework.";
+      // 2. Needs Verification (~18%) - Self-checkin submitted, pending nodal/employer verification
+      if (roll < 0.70) {
+        let verifyNotes = "Trainee completed self-service check-in. Verification required by verification desk.";
+        if (outcomeStatus === "EMPLOYED" || outcomeStatus === "APPRENTICESHIP") {
+          verifyNotes = `Trainee self-reported ongoing employment at ${employment?.employer_name || "corporate employer"} (Claimed Wage: ₹${(currentWageMetric || 25000).toLocaleString()}). Pending salary slip & payroll verification.`;
+        } else if (outcomeStatus === "SELF_EMPLOYED") {
+          verifyNotes = `Trainee reported active enterprise trade in ${district}. Pending district nodal officer verification.`;
+        } else {
+          verifyNotes = "Trainee reported job search status. Needs administrative counselor follow-up verification.";
+        }
+
+        return {
+          id: `FU-${id}-${milestoneName}M`,
+          milestone: `${milestoneName}-Month`,
+          due_date: dueDate,
+          status: "Needs Verification",
+          completed_date: null,
+          notes: verifyNotes
+        };
+      }
+
+      // 3. Due Now / Overdue (~15%) - Awaiting trainee response
+      if (roll < 0.85) {
+        const overdueDays = randInt(4, 28);
+        return {
+          id: `FU-${id}-${milestoneName}M`,
+          milestone: `${milestoneName}-Month`,
+          due_date: dueDate,
+          status: "Due",
+          completed_date: null,
+          notes: `Check-in survey window open (Overdue by ${overdueDays} days). Automated SMS reminder dispatched.`
+        };
+      }
+
+      // 4. Needs Assistance & Contact/Delivery Errors (~15%)
+      const errVariant = randInt(1, 3);
+      let channel = "Automated SMS Gateway (Delivery Bounced)";
+      let errNotes = "Contact Error: Primary phone unreachable / disconnected (ERR_UNDELIV_NUM). Escalated to call center desk.";
+
+      if (errVariant === 2) {
+        channel = "Automated IVR Call System (No Answer)";
+        errNotes = "Outreach Error: 3 automated IVR attempts went unanswered / rang out. Flagged for assisted telephone outreach.";
+      } else if (errVariant === 3) {
+        channel = "WhatsApp Verified Notification (Undelivered)";
+        errNotes = "Delivery Error: WhatsApp notification bounced. Number inactive on messaging gateway. Alternate contact needed.";
       }
 
       return {
         id: `FU-${id}-${milestoneName}M`,
         milestone: `${milestoneName}-Month`,
         due_date: dueDate,
-        status: "Completed",
-        completed_date: dueDate,
-        notes: milestoneNotes
+        status: "Needs Assistance",
+        completed_date: null,
+        outreach_attempts: randInt(2, 4),
+        last_attempt_date: addMonths(dueDate, 1),
+        last_attempt_channel: channel,
+        notes: errNotes
       };
     };
 

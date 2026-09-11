@@ -516,6 +516,57 @@ class MockStore {
   }
 
   /**
+   * Admin / Nodal officer verifies and confirms a follow-up outcome (Needs Verification -> Completed).
+   */
+  verifyFollowupOutcome(traineeId, followupId, verificationData = {}) {
+    const trainee = this.state.trainees.find(t => t.id === traineeId);
+    if (!trainee) return null;
+
+    const fu = (trainee.follow_ups || []).find(f => f.id === followupId);
+    if (fu) {
+      fu.status = "Completed";
+      fu.completed_date = new Date().toISOString().split("T")[0];
+      fu.notes = verificationData.notes || `Milestone outcome verified by ${verificationData.verified_by || "State Nodal Verification Desk"}. Verified active and in compliance.`;
+
+      if (trainee.employment && trainee.employment.verification_status === "Pending Employer Confirmation") {
+        trainee.employment.verification_status = "Confirmed";
+      }
+
+      if (!trainee.timeline_events) trainee.timeline_events = [];
+      trainee.timeline_events.push({
+        id: `EV-${Date.now().toString().slice(-4)}`,
+        stage: `${fu.milestone} Check-in`,
+        date: new Date().toISOString().split("T")[0],
+        title: "Follow-Up Outcome Verified",
+        description: fu.notes,
+        status: "Verified"
+      });
+    }
+
+    this.save();
+    return { trainee, followup: fu };
+  }
+
+  /**
+   * Dispatches an omnichannel reminder notification for a Due follow-up milestone.
+   */
+  sendFollowupReminder(traineeId, followupId, channel = "SMS & WhatsApp") {
+    const trainee = this.state.trainees.find(t => t.id === traineeId);
+    if (!trainee) return null;
+
+    const fu = (trainee.follow_ups || []).find(f => f.id === followupId);
+    if (fu) {
+      fu.outreach_attempts = (fu.outreach_attempts || 0) + 1;
+      fu.last_attempt_date = new Date().toISOString().split("T")[0];
+      fu.last_attempt_channel = channel;
+      fu.notes = `Automated milestone reminder dispatched via ${channel} on ${fu.last_attempt_date}.`;
+    }
+
+    this.save();
+    return { trainee, followup: fu };
+  }
+
+  /**
    * Employer submits feedback on skill gaps & curriculum relevance.
    */
   submitEmployerFeedback(data) {

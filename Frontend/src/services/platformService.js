@@ -1868,11 +1868,13 @@ class PlatformService {
 
     const totalFollowups = records.length;
     const dueCount = records.filter(r => r.status === "Due").length;
-    const upcomingCount = records.filter(r => r.status === "Upcoming").length;
+    const needsVerificationCount = records.filter(r => r.status === "Needs Verification").length;
+    const needsAssistanceCount = records.filter(r => r.status === "Needs Assistance" || r.status === "Contact Error" || r.status === "Delivery Error").length;
     const completedCount = records.filter(r => r.status === "Completed").length;
+    const upcomingCount = records.filter(r => r.status === "Upcoming").length;
     const missedCount = records.filter(r => r.status === "Missed").length;
-    const needsAssistanceCount = records.filter(r => r.status === "Needs Assistance").length;
-    const responseRate = totalFollowups > 0 ? Math.round((completedCount / (totalFollowups - upcomingCount || 1)) * 100) : 0;
+    const actionableFollowups = totalFollowups - upcomingCount || 1;
+    const responseRate = totalFollowups > 0 ? Math.round((completedCount / actionableFollowups) * 100) : 0;
 
     // Search filter
     if (options.search) {
@@ -1887,7 +1889,16 @@ class PlatformService {
 
     // Status filter
     if (options.status && options.status !== "All") {
-      records = records.filter(r => r.status.toLowerCase() === options.status.toLowerCase());
+      const target = options.status.toLowerCase();
+      if (target === "needs_assistance" || target === "needs assistance") {
+        records = records.filter(r => r.status === "Needs Assistance" || r.status === "Contact Error" || r.status === "Delivery Error");
+      } else if (target === "needs_verification" || target === "needs verification") {
+        records = records.filter(r => r.status === "Needs Verification");
+      } else if (target === "due" || target === "due now") {
+        records = records.filter(r => r.status === "Due");
+      } else {
+        records = records.filter(r => r.status.toLowerCase() === target);
+      }
     }
 
     // Milestone filter
@@ -1920,10 +1931,11 @@ class PlatformService {
       summary: {
         total_followups: totalFollowups,
         due: dueCount,
-        upcoming: upcomingCount,
-        completed: completedCount,
-        missed: missedCount,
+        needs_verification: needsVerificationCount,
         needs_assistance: needsAssistanceCount,
+        completed: completedCount,
+        upcoming: upcomingCount,
+        missed: missedCount,
         response_rate: `${responseRate}%`
       },
       records: paginated,
@@ -1939,6 +1951,22 @@ class PlatformService {
   async resolveAssistedFollowup(traineeId, followupId, resolutionData) {
     await wait();
     return mockStore.resolveAssistedFollowup(traineeId, followupId, resolutionData);
+  }
+
+  /**
+   * Admin / Nodal officer verifies and confirms a follow-up outcome (Needs Verification -> Completed)
+   */
+  async verifyFollowupOutcome(traineeId, followupId, verificationData = {}) {
+    await wait();
+    return mockStore.verifyFollowupOutcome(traineeId, followupId, verificationData);
+  }
+
+  /**
+   * Dispatch automated SMS / WhatsApp reminder to trainee for Due follow-up
+   */
+  async sendFollowupReminder(traineeId, followupId, channel = "SMS & WhatsApp") {
+    await wait();
+    return mockStore.sendFollowupReminder(traineeId, followupId, channel);
   }
 }
 

@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import {
   PhoneCall, Clock, CheckCircle2, AlertTriangle, AlertCircle,
   Calendar, Search, Filter, ArrowRight, UserCheck, Phone,
-  Send, ShieldCheck, ChevronLeft, ChevronRight, X, ExternalLink
+  Send, ShieldCheck, ChevronLeft, ChevronRight, X, ExternalLink,
+  ShieldAlert, FileCheck, Check
 } from "lucide-react";
 import { useFilters } from "../context/FilterContext";
 import { platformService, usePlatformStore } from "../services/platformService";
@@ -18,8 +19,8 @@ export default function FollowUpManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filters & Controls
-  const [activeTab, setActiveTab] = useState("all"); // "all" | "due" | "upcoming" | "completed" | "needs_assistance" | "missed"
+  // Filters & Pagination
+  const [activeTab, setActiveTab] = useState("all"); // "all" | "due" | "needs_verification" | "needs_assistance" | "completed" | "upcoming"
   const [search, setSearch] = useState("");
   const [milestoneFilter, setMilestoneFilter] = useState("All");
   const [page, setPage] = useState(1);
@@ -41,7 +42,13 @@ export default function FollowUpManagement() {
     setError(null);
     try {
       const res = await platformService.getFollowUpManagementData(filters, {
-        status: activeTab === "all" ? "All" : activeTab === "due" ? "Due" : activeTab === "upcoming" ? "Upcoming" : activeTab === "completed" ? "Completed" : activeTab === "needs_assistance" ? "Needs Assistance" : "Missed",
+        status: activeTab === "all" ? "All"
+          : activeTab === "due" ? "Due"
+          : activeTab === "needs_verification" ? "Needs Verification"
+          : activeTab === "needs_assistance" ? "Needs Assistance"
+          : activeTab === "completed" ? "Completed"
+          : activeTab === "upcoming" ? "Upcoming"
+          : "All",
         search,
         milestone: milestoneFilter,
         page,
@@ -63,6 +70,7 @@ export default function FollowUpManagement() {
   const summary = workspace?.summary || {
     total_followups: 0,
     due: 0,
+    needs_verification: 0,
     upcoming: 0,
     completed: 0,
     missed: 0,
@@ -77,6 +85,31 @@ export default function FollowUpManagement() {
     setIsEmployed(record.current_employment === "EMPLOYED" || record.current_employment === "APPRENTICESHIP");
     setCapturedWage(record.current_wage ? record.current_wage.toString() : "26000");
     setResolutionNotes(`Assisted phone outreach conducted by state verification officer. Verified current outcome status.`);
+  };
+
+  const handleVerifyOutcome = async (record) => {
+    try {
+      await platformService.verifyFollowupOutcome(record.trainee_id, record.id, {
+        verified_by: "State Nodal Verification Desk",
+        notes: `Outcome claim for candidate ${record.trainee_name} verified against payroll & institutional records.`
+      });
+      setSuccessToast(`Follow-up outcome for candidate ${record.trainee_name} (${record.trainee_id}) successfully verified!`);
+      setTimeout(() => setSuccessToast(""), 4000);
+      loadData();
+    } catch (err) {
+      alert("Verification failed: " + err.message);
+    }
+  };
+
+  const handleSendReminder = async (record) => {
+    try {
+      await platformService.sendFollowupReminder(record.trainee_id, record.id, "SMS & WhatsApp Official Channel");
+      setSuccessToast(`Omnichannel reminder sent to ${record.trainee_name} (${record.phone})!`);
+      setTimeout(() => setSuccessToast(""), 4000);
+      loadData();
+    } catch (err) {
+      alert("Failed to send reminder: " + err.message);
+    }
   };
 
   const handleSubmitResolution = async (e) => {
@@ -121,7 +154,7 @@ export default function FollowUpManagement() {
               Follow-Up Management
             </h1>
             <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-              Monitor longitudinal 3M, 6M, and 12M post-training milestone check-ins, resolve non-responsive candidates via assisted outreach, and capture verified outcomes.
+              Monitor longitudinal 3M, 6M, and 12M post-training milestone check-ins, resolve pending verifications, outreach errors, and uncontactable candidates.
             </p>
           </div>
 
@@ -151,24 +184,32 @@ export default function FollowUpManagement() {
           <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>In Filtered Scope</span>
         </div>
 
-        <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-          <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Due Now (Actionable)</span>
+        <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #fef3c7" }}>
+          <span style={{ fontSize: "0.75rem", color: "#b45309", fontWeight: 600 }}>Due Now (Actionable)</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#b45309", marginTop: "0.2rem" }}>
             {summary.due.toLocaleString()}
           </div>
           <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>Awaiting Response</span>
         </div>
 
-        <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-          <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Needs Assistance</span>
+        <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #f3e8ff" }}>
+          <span style={{ fontSize: "0.75rem", color: "#7e22ce", fontWeight: 600 }}>Needs Verification</span>
+          <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#7e22ce", marginTop: "0.2rem" }}>
+            {(summary.needs_verification || 0).toLocaleString()}
+          </div>
+          <span style={{ fontSize: "0.7rem", color: "#7e22ce", fontWeight: 700 }}>Pending Review</span>
+        </div>
+
+        <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #fee2e2" }}>
+          <span style={{ fontSize: "0.75rem", color: "#dc2626", fontWeight: 600 }}>Needs Assistance / Errors</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#dc2626", marginTop: "0.2rem" }}>
             {summary.needs_assistance.toLocaleString()}
           </div>
-          <span style={{ fontSize: "0.7rem", color: "#dc2626", fontWeight: 700 }}>Call Center Escalated</span>
+          <span style={{ fontSize: "0.7rem", color: "#dc2626", fontWeight: 700 }}>Delivery / Contact Failed</span>
         </div>
 
-        <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-          <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Completed</span>
+        <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #dcfce7" }}>
+          <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Completed</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
             {summary.completed.toLocaleString()}
           </div>
@@ -190,10 +231,11 @@ export default function FollowUpManagement() {
         <div style={{ display: "flex", gap: "0.5rem", borderBottom: "1px solid #e2e8f0", paddingBottom: "0.75rem", marginBottom: "1rem", flexWrap: "wrap" }}>
           {[
             { key: "all", label: "All Follow-ups", count: summary.total_followups },
-            { key: "due", label: "Due Now", count: summary.due },
-            { key: "needs_assistance", label: "Needs Assistance", count: summary.needs_assistance },
-            { key: "completed", label: "Completed", count: summary.completed },
-            { key: "upcoming", label: "Upcoming", count: summary.upcoming }
+            { key: "due", label: "Due Now", count: summary.due, color: "#b45309", bg: "#fef3c7" },
+            { key: "needs_verification", label: "Needs Verification", count: summary.needs_verification || 0, color: "#7e22ce", bg: "#f3e8ff" },
+            { key: "needs_assistance", label: "Needs Assistance / Errors", count: summary.needs_assistance, color: "#dc2626", bg: "#fee2e2" },
+            { key: "completed", label: "Completed", count: summary.completed, color: "#16a34a", bg: "#dcfce7" },
+            { key: "upcoming", label: "Upcoming", count: summary.upcoming, color: "#64748b", bg: "#f1f5f9" }
           ].map(tab => (
             <button
               key={tab.key}
@@ -214,11 +256,12 @@ export default function FollowUpManagement() {
             >
               <span>{tab.label}</span>
               <span style={{
-                background: activeTab === tab.key ? "rgba(255,255,255,0.25)" : "#e2e8f0",
-                color: activeTab === tab.key ? "white" : "#334155",
+                background: activeTab === tab.key ? "rgba(255,255,255,0.25)" : (tab.bg || "#e2e8f0"),
+                color: activeTab === tab.key ? "white" : (tab.color || "#334155"),
                 padding: "1px 6px",
                 borderRadius: "10px",
-                fontSize: "0.75rem"
+                fontSize: "0.75rem",
+                fontWeight: 800
               }}>
                 {tab.count}
               </span>
@@ -300,7 +343,8 @@ export default function FollowUpManagement() {
                   </tr>
                 ) : (
                   records.map((r) => {
-                    const isNeedsAssistance = r.status === "Needs Assistance";
+                    const isNeedsVerification = r.status === "Needs Verification";
+                    const isNeedsAssistance = r.status === "Needs Assistance" || r.status === "Contact Error" || r.status === "Delivery Error";
                     const isDue = r.status === "Due";
                     const isCompleted = r.status === "Completed";
                     const isUpcoming = r.status === "Upcoming";
@@ -340,21 +384,38 @@ export default function FollowUpManagement() {
                             display: "inline-flex",
                             alignItems: "center",
                             gap: "0.3rem",
-                            background: isCompleted ? "#dcfce7" : isNeedsAssistance ? "#fee2e2" : isDue ? "#fef3c7" : "#f1f5f9",
-                            color: isCompleted ? "#15803d" : isNeedsAssistance ? "#b91c1c" : isDue ? "#b45309" : "#64748b"
+                            background: isCompleted ? "#dcfce7" : isNeedsVerification ? "#f3e8ff" : isNeedsAssistance ? "#fee2e2" : isDue ? "#fef3c7" : "#f1f5f9",
+                            color: isCompleted ? "#15803d" : isNeedsVerification ? "#7e22ce" : isNeedsAssistance ? "#b91c1c" : isDue ? "#b45309" : "#64748b",
+                            border: isNeedsVerification ? "1px solid #d8b4fe" : isNeedsAssistance ? "1px solid #fca5a5" : isDue ? "1px solid #fde68a" : "1px solid transparent"
                           }}>
                             {isCompleted && <CheckCircle2 size={12} />}
+                            {isNeedsVerification && <ShieldAlert size={12} />}
                             {isNeedsAssistance && <AlertTriangle size={12} />}
                             {isDue && <Clock size={12} />}
+                            {isUpcoming && <Calendar size={12} />}
                             {r.status}
                           </span>
                         </td>
 
-                        <td style={{ padding: "1rem 1.25rem", color: "#475569", maxWidth: "260px" }}>
+                        <td style={{ padding: "1rem 1.25rem", color: "#475569", maxWidth: "280px" }}>
                           {isNeedsAssistance ? (
                             <div>
                               <span style={{ color: "#b91c1c", fontWeight: 700, fontSize: "0.75rem", display: "block" }}>
-                                {r.outreach_attempts} outreach attempt(s) ({r.last_attempt_channel})
+                                {r.outreach_attempts || 2} attempt(s) • {r.last_attempt_channel}
+                              </span>
+                              <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{r.notes}</span>
+                            </div>
+                          ) : isNeedsVerification ? (
+                            <div>
+                              <span style={{ color: "#7e22ce", fontWeight: 700, fontSize: "0.75rem", display: "block" }}>
+                                Self-Reported Check-In (Pending Review)
+                              </span>
+                              <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{r.notes}</span>
+                            </div>
+                          ) : isDue ? (
+                            <div>
+                              <span style={{ color: "#b45309", fontWeight: 700, fontSize: "0.75rem", display: "block" }}>
+                                Survey Window Open (Action Required)
                               </span>
                               <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{r.notes}</span>
                             </div>
@@ -365,6 +426,27 @@ export default function FollowUpManagement() {
 
                         <td style={{ padding: "1rem 1.25rem", textAlign: "right", whiteSpace: "nowrap" }}>
                           <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                            {isNeedsVerification && (
+                              <button
+                                onClick={() => handleVerifyOutcome(r)}
+                                style={{
+                                  padding: "0.45rem 0.8rem",
+                                  background: "#7e22ce",
+                                  color: "white",
+                                  border: "none",
+                                  borderRadius: "6px",
+                                  fontSize: "0.75rem",
+                                  fontWeight: 700,
+                                  cursor: "pointer",
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "0.3rem"
+                                }}
+                              >
+                                <Check size={12} /> Verify Outcome
+                              </button>
+                            )}
+
                             {isNeedsAssistance && (
                               <button
                                 onClick={() => handleOpenAssistedModal(r)}
@@ -387,24 +469,44 @@ export default function FollowUpManagement() {
                             )}
 
                             {isDue && (
-                              <button
-                                onClick={() => handleOpenAssistedModal(r)}
-                                style={{
-                                  padding: "0.45rem 0.8rem",
-                                  background: "#2563eb",
-                                  color: "white",
-                                  border: "none",
-                                  borderRadius: "6px",
-                                  fontSize: "0.75rem",
-                                  fontWeight: 700,
-                                  cursor: "pointer",
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: "0.3rem"
-                                }}
-                              >
-                                <Phone size={12} /> Conduct Outreach
-                              </button>
+                              <>
+                                <button
+                                  onClick={() => handleSendReminder(r)}
+                                  style={{
+                                    padding: "0.45rem 0.75rem",
+                                    background: "#fef3c7",
+                                    color: "#92400e",
+                                    border: "1px solid #fde68a",
+                                    borderRadius: "6px",
+                                    fontSize: "0.75rem",
+                                    fontWeight: 700,
+                                    cursor: "pointer",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.3rem"
+                                  }}
+                                >
+                                  <Send size={12} /> Send Reminder
+                                </button>
+                                <button
+                                  onClick={() => handleOpenAssistedModal(r)}
+                                  style={{
+                                    padding: "0.45rem 0.8rem",
+                                    background: "#2563eb",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    fontSize: "0.75rem",
+                                    fontWeight: 700,
+                                    cursor: "pointer",
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "0.3rem"
+                                  }}
+                                >
+                                  <Phone size={12} /> Conduct Outreach
+                                </button>
+                              </>
                             )}
 
                             <button
