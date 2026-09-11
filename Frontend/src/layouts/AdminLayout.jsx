@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Menu, LogOut, ChevronDown, X,
   LayoutDashboard, BarChart3, Briefcase, Target, GraduationCap, 
-  Building2, Map, Users2, Users, ShieldCheck, FileText, Filter, GitBranch, RefreshCw
+  Building2, Map, Users2, Users, ShieldCheck, FileText, Filter, GitBranch, RefreshCw, PhoneCall
 } from "lucide-react";
 import "../../src/App.css";
 import { FilterProvider, useFilters } from "../context/FilterContext";
@@ -20,6 +20,7 @@ const adminMenuItems = [
   { label: "Training Provider Performance", path: "/admin/providers", icon: Building2 },
   { label: "District Performance", path: "/admin/districts", icon: Map },
   { label: "Cohort Comparison", path: "/admin/cohorts", icon: Users2 },
+  { label: "Follow-Up Management", path: "/admin/follow-ups", icon: PhoneCall },
   { label: "Key Findings & Insights", path: "/admin/interventions", icon: GitBranch },
   { label: "Employer Verification", path: "/admin/employers", icon: ShieldCheck },
   { label: "Reports", path: "/admin/reports", icon: FileText }

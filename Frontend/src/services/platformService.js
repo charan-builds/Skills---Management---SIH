@@ -1827,6 +1827,119 @@ class PlatformService {
       ai_insights: aiInsights
     };
   }
+
+  /**
+   * Follow-up Management Workspace for Admin (Section 15, 17, 54)
+   */
+  async getFollowUpManagementData(filters = {}, options = {}) {
+    await wait();
+    const state = mockStore.getState();
+    const trainees = this.filterTrainees(state.trainees, filters);
+    const totalTrainees = trainees.length;
+
+    // Collect all follow-ups with trainee metadata
+    let records = [];
+    trainees.forEach(t => {
+      (t.follow_ups || []).forEach(fu => {
+        records.push({
+          id: fu.id,
+          trainee_id: t.id,
+          trainee_name: t.name,
+          programme_id: t.programme_id,
+          programme_name: t.programme_name,
+          provider_id: t.provider_id,
+          provider_name: t.provider_name,
+          district: t.district,
+          cohort: t.cohort,
+          phone: t.phone,
+          milestone: fu.milestone,
+          due_date: fu.due_date,
+          status: fu.status, // "Due" | "Upcoming" | "Completed" | "Missed" | "Needs Assistance"
+          completed_date: fu.completed_date || null,
+          notes: fu.notes || "",
+          outreach_attempts: fu.outreach_attempts || 0,
+          last_attempt_date: fu.last_attempt_date || null,
+          last_attempt_channel: fu.last_attempt_channel || null,
+          current_employment: t.employment?.status || "UNEMPLOYED",
+          current_wage: t.employment?.current_wage || 0
+        });
+      });
+    });
+
+    const totalFollowups = records.length;
+    const dueCount = records.filter(r => r.status === "Due").length;
+    const upcomingCount = records.filter(r => r.status === "Upcoming").length;
+    const completedCount = records.filter(r => r.status === "Completed").length;
+    const missedCount = records.filter(r => r.status === "Missed").length;
+    const needsAssistanceCount = records.filter(r => r.status === "Needs Assistance").length;
+    const responseRate = totalFollowups > 0 ? Math.round((completedCount / (totalFollowups - upcomingCount || 1)) * 100) : 0;
+
+    // Search filter
+    if (options.search) {
+      const q = options.search.toLowerCase();
+      records = records.filter(r =>
+        r.trainee_name.toLowerCase().includes(q) ||
+        r.trainee_id.toLowerCase().includes(q) ||
+        r.programme_name.toLowerCase().includes(q) ||
+        r.district.toLowerCase().includes(q)
+      );
+    }
+
+    // Status filter
+    if (options.status && options.status !== "All") {
+      records = records.filter(r => r.status.toLowerCase() === options.status.toLowerCase());
+    }
+
+    // Milestone filter
+    if (options.milestone && options.milestone !== "All") {
+      records = records.filter(r => r.milestone.toLowerCase().includes(options.milestone.toLowerCase()));
+    }
+
+    // Sorting
+    const sortField = options.sortField || "due_date";
+    const sortOrder = options.sortOrder || "desc";
+    records.sort((a, b) => {
+      let valA = a[sortField] || "";
+      let valB = b[sortField] || "";
+      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+      return 0;
+    });
+
+    // Pagination
+    const page = Number(options.page) || 1;
+    const limit = Number(options.limit) || 15;
+    const totalRecords = records.length;
+    const totalPages = Math.ceil(totalRecords / limit) || 1;
+    const paginated = records.slice((page - 1) * limit, page * limit);
+
+    return {
+      data_available: true,
+      insufficient_data: totalTrainees < 5,
+      total_trainees: totalTrainees,
+      summary: {
+        total_followups: totalFollowups,
+        due: dueCount,
+        upcoming: upcomingCount,
+        completed: completedCount,
+        missed: missedCount,
+        needs_assistance: needsAssistanceCount,
+        response_rate: `${responseRate}%`
+      },
+      records: paginated,
+      total: totalRecords,
+      page,
+      totalPages
+    };
+  }
+
+  /**
+   * Admin resolves/records assisted follow-up outreach (Section 17, 54)
+   */
+  async resolveAssistedFollowup(traineeId, followupId, resolutionData) {
+    await wait();
+    return mockStore.resolveAssistedFollowup(traineeId, followupId, resolutionData);
+  }
 }
 
 export const platformService = new PlatformService();

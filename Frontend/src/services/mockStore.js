@@ -24,6 +24,15 @@ class MockStore {
   constructor() {
     this.listeners = new Set();
     this.state = this.loadState();
+    if (typeof window !== "undefined") {
+      try {
+        if (!localStorage.getItem(STORAGE_KEY)) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+        }
+      } catch (e) {
+        // ignore quota
+      }
+    }
   }
 
   loadState() {
@@ -102,7 +111,11 @@ class MockStore {
     const status = data.status || "EMPLOYED";
 
     if (status === "EMPLOYED" || status === "APPRENTICESHIP") {
-      const verificationId = `VER-${Date.now().toString().slice(-6)}`;
+      // Check if verification request already exists for this trainee (e.g. resubmission after correction)
+      const existingVer = this.state.verifications.find(
+        v => v.trainee_id === trainee.id || (prevEmployment.verification_id && v.id === prevEmployment.verification_id)
+      );
+      const verificationId = existingVer ? existingVer.id : `VER-${Date.now().toString().slice(-6)}`;
       const employerName = data.employer_name || "Tata Consultancy Services";
       const employer = this.state.employers.find(e => e.name.toLowerCase() === employerName.toLowerCase()) || this.state.employers[0];
 
@@ -123,26 +136,38 @@ class MockStore {
         employer_remarks: data.remarks || null
       };
 
-      // Add to verification queue for employer
-      this.state.verifications.unshift({
-        id: verificationId,
-        trainee_id: trainee.id,
-        trainee_name: trainee.name,
-        employer_id: employer.id,
-        employer_name: employer.name,
-        programme_id: trainee.programme_id,
-        programme_name: trainee.programme_name,
-        job_role: trainee.employment.job_role,
-        employment_type: trainee.employment.employment_type,
-        joining_date: trainee.employment.joining_date,
-        salary: trainee.employment.starting_wage,
-        status: "Pending",
-        requested_at: new Date().toISOString().split("T")[0],
-        verified_at: null,
-        employer_remarks: "New employment verification request pending review.",
-        match_status: "PENDING_MANUAL",
-        detected_conflicts: null
-      });
+      if (existingVer) {
+        existingVer.employer_id = employer.id;
+        existingVer.employer_name = employer.name;
+        existingVer.job_role = trainee.employment.job_role;
+        existingVer.employment_type = trainee.employment.employment_type;
+        existingVer.joining_date = trainee.employment.joining_date;
+        existingVer.salary = trainee.employment.starting_wage;
+        existingVer.status = "Pending";
+        existingVer.requested_at = new Date().toISOString().split("T")[0];
+        existingVer.employer_remarks = data.remarks || "Resubmitted by candidate with requested corrections.";
+      } else {
+        // Add to verification queue for employer
+        this.state.verifications.unshift({
+          id: verificationId,
+          trainee_id: trainee.id,
+          trainee_name: trainee.name,
+          employer_id: employer.id,
+          employer_name: employer.name,
+          programme_id: trainee.programme_id,
+          programme_name: trainee.programme_name,
+          job_role: trainee.employment.job_role,
+          employment_type: trainee.employment.employment_type,
+          joining_date: trainee.employment.joining_date,
+          salary: trainee.employment.starting_wage,
+          status: "Pending",
+          requested_at: new Date().toISOString().split("T")[0],
+          verified_at: null,
+          employer_remarks: "New employment verification request pending review.",
+          match_status: "PENDING_MANUAL",
+          detected_conflicts: null
+        });
+      }
 
       // Update wage history
       if (!trainee.wage_history) trainee.wage_history = [];
@@ -375,7 +400,7 @@ class MockStore {
   }
 
   /**
-   * Submit Trainee Follow-up questionnaire
+   * Submit Trainee Follow-up questionnaire (Section 15, 18)
    */
   submitFollowup(traineeId, followupId, response) {
     const trainee = this.state.trainees.find(t => t.id === traineeId);
@@ -388,19 +413,106 @@ class MockStore {
       fu.notes = response.notes || "Check-in completed by trainee.";
     }
 
-    if (response.current_wage) {
-      this.updateTraineeWage(traineeId, response.current_wage, `${fu?.milestone || "Periodic"} Check-in`);
+    // Low-burden conditional handling (Section 18)
+    if (response.is_working === false || response.still_working === false) {
+      if (trainee.employment) {
+        trainee.employment.status = "UNEMPLOYED";
+        trainee.employment.attrition_reason = response.attrition_reason || "Low salary / compensation";
+        trainee.employment.comments = response.notes || "Reported during milestone follow-up";
+        trainee.employment.verification_status = "Resigned";
+      }
+      if (trainee.retention) {
+        trainee.retention.is_active = false;
+        trainee.retention.retention_6m = "Left Employment";
+      }
+      if (!trainee.timeline_events) trainee.timeline_events = [];
+      trainee.timeline_events.push({
+        id: `EV-${Date.now().toString().slice(-4)}`,
+        stage: `${fu?.milestone || "Follow-up"} Check-in`,
+        date: new Date().toISOString().split("T")[0],
+        title: "Trainee Reported Exit from Employment",
+        description: `Reason: ${response.attrition_reason || "Reported in check-in"}`,
+        status: "Attrited"
+      });
+    } else {
+      if (response.changed_job && response.new_employer) {
+        this.reportTraineeEmployment(traineeId, {
+          status: "EMPLOYED",
+          employer_name: response.new_employer,
+          job_role: response.new_role || "Associate",
+          starting_wage: Number(response.current_wage) || 25000,
+          current_wage: Number(response.current_wage) || 25000,
+          joining_date: response.new_joining_date || new Date().toISOString().split("T")[0]
+        });
+      } else if (response.current_wage) {
+        this.updateTraineeWage(traineeId, response.current_wage, `${fu?.milestone || "Periodic"} Check-in`);
+      }
+    }
+
+    if (response.training_relevance) {
+      this.submitTrainingRelevance(traineeId, {
+        relevant: response.training_relevance,
+        missing_skills: response.reported_skill_gaps || [],
+        comments: response.notes || ""
+      });
     }
 
     if (response.reported_skill_gaps && response.reported_skill_gaps.length > 0) {
       if (!trainee.reported_skill_gaps) trainee.reported_skill_gaps = [];
       response.reported_skill_gaps.forEach(g => {
-        if (!trainee.reported_skill_gaps.includes(g)) trainee.reported_skill_gaps.push(g);
+        if (g && !trainee.reported_skill_gaps.includes(g)) trainee.reported_skill_gaps.push(g);
       });
     }
 
     this.save();
     return trainee;
+  }
+
+  /**
+   * Admin resolves/records assisted follow-up outreach or captures verified outcome (Section 17, 54).
+   */
+  resolveAssistedFollowup(traineeId, followupId, resolutionData) {
+    const trainee = this.state.trainees.find(t => t.id === traineeId);
+    if (!trainee) return null;
+
+    const fu = (trainee.follow_ups || []).find(f => f.id === followupId);
+    if (fu) {
+      fu.outreach_attempts = (fu.outreach_attempts || 0) + 1;
+      fu.last_attempt_date = new Date().toISOString().split("T")[0];
+      fu.last_attempt_channel = resolutionData.channel || "Government Call Center (Assisted)";
+
+      if (resolutionData.outcome_captured) {
+        fu.status = "Completed";
+        fu.completed_date = new Date().toISOString().split("T")[0];
+        fu.notes = resolutionData.notes || `Assisted follow-up: outcome verified via ${fu.last_attempt_channel}.`;
+
+        // Update trainee outcome state
+        if (resolutionData.is_employed) {
+          if (resolutionData.current_wage) {
+            this.updateTraineeWage(traineeId, resolutionData.current_wage, "Assisted Verification");
+          }
+          if (trainee.retention) {
+            trainee.retention.is_active = true;
+            trainee.retention.last_confirmed = new Date().toISOString().split("T")[0];
+            trainee.retention.retention_6m = "Retained";
+          }
+        } else {
+          if (trainee.employment) {
+            trainee.employment.status = "UNEMPLOYED";
+            trainee.employment.attrition_reason = resolutionData.attrition_reason || "Lack of placement opportunities";
+          }
+          if (trainee.retention) {
+            trainee.retention.is_active = false;
+            trainee.retention.retention_6m = "Left Employment";
+          }
+        }
+      } else {
+        fu.notes = resolutionData.notes || `Attempted outreach via ${fu.last_attempt_channel}. Callback scheduled.`;
+      }
+    }
+
+    this.save();
+    return { trainee, followup: fu };
   }
 
   /**

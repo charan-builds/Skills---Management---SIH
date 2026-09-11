@@ -202,6 +202,27 @@ export default function TraineeEmployment() {
           </div>
         )}
 
+        {/* Correction Requested Notice (Section 27) */}
+        {currentEmp?.verification_status === "Correction Requested" && (
+          <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: "12px", padding: "1.25rem", marginBottom: "1.75rem", display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
+            <AlertTriangle size={22} color="#b45309" style={{ flexShrink: 0, marginTop: "2px" }} />
+            <div style={{ flex: 1 }}>
+              <strong style={{ color: "#92400e", fontSize: "0.95rem", display: "block", marginBottom: "0.25rem" }}>
+                Employer Requested Information Correction
+              </strong>
+              <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.85rem", color: "#78350f" }}>
+                The employer review desk at <strong>{currentEmp.employer_name}</strong> reviewed your claim and requested the following adjustment:
+              </p>
+              <div style={{ background: "white", padding: "0.75rem 1rem", borderRadius: "6px", border: "1px solid #fcd34d", fontStyle: "italic", fontSize: "0.85rem", color: "#b45309", marginBottom: "0.5rem" }}>
+                "{currentEmp.employer_remarks || "Please verify your official job title or joining date."}"
+              </div>
+              <span style={{ fontSize: "0.8rem", color: "#92400e", fontWeight: 600 }}>
+                Please adjust the details in the form below and click "Submit Employment Record" to dispatch the corrected claim back to the employer.
+              </span>
+            </div>
+          </div>
+        )}
+
         {successMessage && (
           <div style={{ background: "#dcfce7", border: "1px solid #86efac", color: "#166534", padding: "0.9rem 1.25rem", borderRadius: "8px", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <CheckCircle size={18} />

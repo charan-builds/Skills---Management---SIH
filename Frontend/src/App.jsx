@@ -25,6 +25,7 @@ import EmployerVerifyOutcomes from "./pages/EmployerVerifyOutcomes";
 import Reports from "./pages/Reports";
 import ProgrammeProfile from "./pages/ProgrammeProfile";
 import Interventions from "./pages/Interventions";
+import FollowUpManagement from "./pages/FollowUpManagement";
 
 // Employer Pages
 import EmployerLogin from "./pages/EmployerLogin";
@@ -62,14 +63,24 @@ function App() {
           <Route path="trainees" element={<Trainees />} />
           <Route path="trainees/:traineeId" element={<TraineeProfileView />} />
           <Route path="outcomes" element={<Outcomes />} />
+          <Route path="why-attrition" element={<Outcomes />} />
+          <Route path="why-unemployed" element={<Outcomes />} />
           <Route path="employment" element={<Employment />} />
+          <Route path="income-growth" element={<Employment />} />
           <Route path="skill-gaps" element={<SkillGaps />} />
+          <Route path="skills" element={<SkillGaps />} />
+          <Route path="demand-supply" element={<SkillGaps />} />
+          <Route path="curriculum" element={<SkillGaps />} />
+          <Route path="training-relevance" element={<SkillGaps />} />
           <Route path="programmes" element={<Programmes />} />
           <Route path="programmes/:programmeId" element={<ProgrammeProfile />} />
           <Route path="providers" element={<Providers />} />
           <Route path="districts" element={<Districts />} />
           <Route path="cohorts" element={<Cohorts />} />
+          <Route path="follow-ups" element={<FollowUpManagement />} />
           <Route path="interventions" element={<Interventions />} />
+          <Route path="priority-areas" element={<Interventions />} />
+          <Route path="recommended-actions" element={<Interventions />} />
           <Route path="employers" element={<EmployerVerifyOutcomes />} />
           <Route path="reports" element={<Reports />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />

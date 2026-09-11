@@ -38,6 +38,13 @@ async function runTraineeAcceptanceTests() {
     await page.goto("http://localhost:5173/trainee");
     await page.waitForTimeout(800);
 
+    const consentBtn = page.locator('button:has-text("I Agree & Authorize Follow-Ups")');
+    if (await consentBtn.count() > 0) {
+      console.log("[FLOW] Consent prompt displayed, authorizing follow-ups...");
+      await consentBtn.click();
+      await page.waitForTimeout(800);
+    }
+
     const welcomeHeading = await page.textContent("h1");
     assert(welcomeHeading && welcomeHeading.includes("Welcome"), `Trainee Dashboard renders welcome heading: ${welcomeHeading}`);
 

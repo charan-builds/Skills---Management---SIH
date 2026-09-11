@@ -24,7 +24,7 @@ async function runAudit() {
 
   try {
     // 1. Check Employer Registration & Login (/employer/login)
-    await page.goto("http://localhost:5173/employer/login", { waitUntil: "networkidle" });
+    await page.goto("http://localhost:5173/employer/login", { waitUntil: "domcontentloaded" });
     const pageTitle = await page.textContent("body");
     record("AC-04", "Employer login page loads", pageTitle.includes("Authorised Organisation Login"));
 
@@ -65,7 +65,7 @@ async function runAudit() {
     record("AC-08", "Chronological Recent Activity Stream works", dashText.includes("Recent Operational Activity") || dashText.includes("Audit Stream"));
 
     // 4. Verification Inbox (/employer/verifications)
-    await page.goto("http://localhost:5173/employer/verifications", { waitUntil: "networkidle" });
+    await page.goto("http://localhost:5173/employer/verifications", { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(600);
     const inboxText = await page.textContent("body");
     record("AC-09", "Verification inbox loads", inboxText.includes("Verification Requests"));
@@ -105,7 +105,7 @@ async function runAudit() {
     }
 
     // 5. Verified Workforce Roster (/employer/workforce)
-    await page.goto("http://localhost:5173/employer/workforce", { waitUntil: "networkidle" });
+    await page.goto("http://localhost:5173/employer/workforce", { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(600);
     const workforceText = await page.textContent("body");
     record("AC-14", "Verified workforce roster loads", workforceText.includes("Verified Workforce"));
@@ -150,7 +150,7 @@ async function runAudit() {
     }
 
     // 7. Employer Skill Feedback (/employer/feedback)
-    await page.goto("http://localhost:5173/employer/feedback", { waitUntil: "networkidle" });
+    await page.goto("http://localhost:5173/employer/feedback", { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(600);
     const feedbackText = await page.textContent("body");
     record("AC-21", "Employer skill feedback loads", feedbackText.includes("Skills We Need") && feedbackText.includes("Report Missing"));
@@ -166,7 +166,7 @@ async function runAudit() {
     record("AC-23", "Employer skill intelligence works", afterFeedbackText.includes("Skills We Need"));
 
     // 8. Employment Data Integration Hub (/employer/integrations)
-    await page.goto("http://localhost:5173/employer/integrations", { waitUntil: "networkidle" });
+    await page.goto("http://localhost:5173/employer/integrations", { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(600);
     const intText = await page.textContent("body");
     record("AC-25", "Integration page loads", intText.includes("Employment Data Integration"));
@@ -207,7 +207,7 @@ async function runAudit() {
     }
 
     // 9. Organisation Profile (/employer/profile)
-    await page.goto("http://localhost:5173/employer/profile", { waitUntil: "networkidle" });
+    await page.goto("http://localhost:5173/employer/profile", { waitUntil: "domcontentloaded" });
     await page.waitForTimeout(600);
     const profileText = await page.textContent("body");
     record("AC-03", "Authoritative registry details displayed", profileText.includes("Authoritative Employer Registry Data") && profileText.includes("GSTIN"));

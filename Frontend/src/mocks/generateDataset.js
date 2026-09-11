@@ -23,6 +23,14 @@ function randInt(min, max) {
   return Math.floor(rng() * (max - min + 1)) + min;
 }
 
+function addMonths(dateStr, months) {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const totalMonths = (y * 12 + (m - 1)) + months;
+  const newYear = Math.floor(totalMonths / 12);
+  const newMonth = (totalMonths % 12) + 1;
+  return `${newYear}-${String(newMonth).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
 export const PROGRAMMES = [
   {
     id: "PRG-001",
@@ -334,7 +342,9 @@ export function generateRelationalDataset(targetCount = 800) {
     let wageHistory = [];
     let retention = null;
     let attritionReason = null;
-    let followUps = [];
+    let isRetained3M = false;
+    let isRetained6M = false;
+    let isRetained12M = false;
 
     if (!droppedOut) {
       const placementRoll = rng();
@@ -376,9 +386,9 @@ export function generateRelationalDataset(targetCount = 800) {
 
       // Longitudinal Retention trajectory
       const retentionRoll = rng();
-      const isRetained3M = retentionRoll < provider.retention_bias;
-      const isRetained6M = isRetained3M && retentionRoll < (provider.retention_bias * 0.92);
-      const isRetained12M = isRetained6M && retentionRoll < (provider.retention_bias * 0.82);
+      isRetained3M = retentionRoll < provider.retention_bias;
+      isRetained6M = isRetained3M && retentionRoll < (provider.retention_bias * 0.92);
+      isRetained12M = isRetained6M && retentionRoll < (provider.retention_bias * 0.82);
 
       // Add 3M check
       if (isRetained3M) {
@@ -437,21 +447,7 @@ export function generateRelationalDataset(targetCount = 800) {
         retention_12m: cohort.startsWith("2023") ? (isRetained12M ? "Retained" : "Left Employment") : "Upcoming"
       };
 
-      // Follow-up records
-      followUps = [
-        { id: `FU-${id}-3M`, milestone: "3-Month", due_date: "2023-08-01", status: "Completed", completed_date: "2023-08-05", notes: "Working actively." },
-        { id: `FU-${id}-6M`, milestone: "6-Month", due_date: "2023-11-01", status: isRetained6M ? "Completed" : "Completed", completed_date: "2023-11-04", notes: isRetained6M ? "Retained with increment." : `Left employment: ${attritionReason}` }
-      ];
-      if (cohort.startsWith("2023")) {
-        followUps.push({
-          id: `FU-${id}-12M`,
-          milestone: "12-Month",
-          due_date: "2024-05-01",
-          status: isRetained12M ? "Completed" : "Completed",
-          completed_date: "2024-05-06",
-          notes: isRetained12M ? "12M verified retention." : "Attrition noted."
-        });
-      }
+      // Follow-up records generated universally below
 
       // Add to verifications table
       verifications.push({
@@ -883,6 +879,84 @@ export function generateRelationalDataset(targetCount = 800) {
       attention_area: reportedGaps.length > 0 ? `${reportedGaps[0]} Deficiency` : (unempReason || attritionReason || "None (Optimal)")
     };
 
+    // Construct Derived Milestone Follow-up Records (Sections 15, 16, 17, 54)
+    const EVAL_REF_DATE = "2024-08-15";
+    const due3M = addMonths(trainingEndDate, 3);
+    const due6M = addMonths(trainingEndDate, 6);
+    const due12M = addMonths(trainingEndDate, 12);
+
+    const makeMilestone = (dueDate, milestoneName) => {
+      const isPast = dueDate <= EVAL_REF_DATE;
+      const isRecentlyDue = !isPast && dueDate <= "2024-09-30";
+      const needsAssistanceRoll = rng() < 0.045;
+
+      if (!isPast) {
+        if (isRecentlyDue && rng() < 0.3) {
+          return {
+            id: `FU-${id}-${milestoneName}M`,
+            milestone: `${milestoneName}-Month`,
+            due_date: dueDate,
+            status: "Due",
+            completed_date: null,
+            notes: "Questionnaire active. Awaiting trainee self-service response."
+          };
+        }
+        return {
+          id: `FU-${id}-${milestoneName}M`,
+          milestone: `${milestoneName}-Month`,
+          due_date: dueDate,
+          status: "Upcoming",
+          completed_date: null,
+          notes: "Scheduled future outcome checkpoint."
+        };
+      }
+
+      if (needsAssistanceRoll) {
+        return {
+          id: `FU-${id}-${milestoneName}M`,
+          milestone: `${milestoneName}-Month`,
+          due_date: dueDate,
+          status: "Needs Assistance",
+          completed_date: null,
+          outreach_attempts: randInt(1, 3),
+          last_attempt_date: addMonths(dueDate, 1),
+          last_attempt_channel: "Automated SMS / IVR Call",
+          notes: "Trainee uncontactable via automated SMS. Flagged for assisted call center outreach."
+        };
+      }
+
+      // Completed check-in
+      let milestoneNotes = "Check-in completed.";
+      if (outcomeStatus === "EMPLOYED" || outcomeStatus === "APPRENTICESHIP") {
+        milestoneNotes = (milestoneName === 3 ? isRetained3M : (milestoneName === 6 ? isRetained6M : isRetained12M))
+          ? `Verified active at ${employment?.employer_name || "employer"}. Wage: ₹${(currentWageMetric || 24000).toLocaleString()}.`
+          : `Trainee exited employment: ${attritionReason || "Career transition"}.`;
+      } else if (outcomeStatus === "SELF_EMPLOYED") {
+        milestoneNotes = `Self-employment business trade active in ${district}. Monthly turnover steady.`;
+      } else if (outcomeStatus === "UNEMPLOYED") {
+        milestoneNotes = `Candidate actively seeking placement. Barrier: ${unempReason || "Skills gap"}.`;
+      } else {
+        milestoneNotes = "Continuing full-time advanced vocational/degree coursework.";
+      }
+
+      return {
+        id: `FU-${id}-${milestoneName}M`,
+        milestone: `${milestoneName}-Month`,
+        due_date: dueDate,
+        status: "Completed",
+        completed_date: dueDate,
+        notes: milestoneNotes
+      };
+    };
+
+    const followUps = [
+      makeMilestone(due3M, 3),
+      makeMilestone(due6M, 6)
+    ];
+    if (cohort.startsWith("2023")) {
+      followUps.push(makeMilestone(due12M, 12));
+    }
+
     trainees.push({
       id,
       name,
@@ -904,7 +978,7 @@ export function generateRelationalDataset(targetCount = 800) {
       certified,
       assessment_score: assessmentScore,
       certificate_id,
-      completion_date: "2023-04-20",
+      completion_date: trainingEndDate,
       consent: { status: "GIVEN", date: "2023-01-10" },
       employment,
       job_history: jobHistory,

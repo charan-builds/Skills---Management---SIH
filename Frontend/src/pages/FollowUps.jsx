@@ -15,10 +15,17 @@ export default function FollowUps() {
   const [activeCheckin, setActiveCheckin] = useState(null); // Selected follow-up milestone to complete
   const [toastMessage, setToastMessage] = useState("");
 
-  // Check-in Questionnaire Form
+  // Check-in Questionnaire Form (Section 18 Conditional)
+  const [isWorking, setIsWorking] = useState(true);
+  const [sameEmployer, setSameEmployer] = useState(true);
+  const [newEmployerName, setNewEmployerName] = useState("");
+  const [newJobRole, setNewJobRole] = useState("");
   const [checkinWage, setCheckinWage] = useState("");
-  const [checkinNotes, setCheckinNotes] = useState("");
+  const [trainingRelevance, setTrainingRelevance] = useState("Yes");
   const [checkinGaps, setCheckinGaps] = useState("");
+  const [attritionReason, setAttritionReason] = useState("Low salary / compensation");
+  const [seekingPlacement, setSeekingPlacement] = useState(true);
+  const [checkinNotes, setCheckinNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const loadData = async () => {
@@ -26,6 +33,8 @@ export default function FollowUps() {
     try {
       const res = await platformService.getTraineeProfile(traineeId);
       setTrainee(res.trainee);
+      const isEmp = res.trainee?.employment?.status === "EMPLOYED" || res.trainee?.employment?.status === "APPRENTICESHIP";
+      setIsWorking(isEmp);
       if (res.trainee?.employment?.current_wage) {
         setCheckinWage(res.trainee.employment.current_wage.toString());
       }
@@ -46,9 +55,16 @@ export default function FollowUps() {
     setSubmitting(true);
     try {
       await platformService.submitFollowup(traineeId, activeCheckin.id, {
-        current_wage: Number(checkinWage) || undefined,
-        notes: checkinNotes || "Self-service check-in submitted by trainee.",
-        reported_skill_gaps: checkinGaps ? [checkinGaps] : []
+        is_working: isWorking,
+        still_working: isWorking,
+        changed_job: isWorking && !sameEmployer,
+        new_employer: isWorking && !sameEmployer ? newEmployerName : undefined,
+        new_role: isWorking && !sameEmployer ? newJobRole : undefined,
+        current_wage: isWorking ? (Number(checkinWage) || undefined) : 0,
+        attrition_reason: !isWorking ? attritionReason : undefined,
+        training_relevance: isWorking ? trainingRelevance : undefined,
+        reported_skill_gaps: checkinGaps ? [checkinGaps] : [],
+        notes: checkinNotes || (isWorking ? `Milestone confirmed with wage: ₹${checkinWage}` : `Candidate reported exit: ${attritionReason}`)
       });
       setToastMessage(`${activeCheckin.milestone} Check-in successfully recorded!`);
       setActiveCheckin(null);
@@ -300,77 +316,177 @@ export default function FollowUps() {
                 </div>
 
                 <form onSubmit={handleCompleteFollowup}>
-                  <div style={{ marginBottom: "1rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                      Current Monthly Gross Compensation (₹)
+                  {/* Step 1: Are you currently working? (Section 18) */}
+                  <div style={{ marginBottom: "1.25rem", background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                    <label style={{ display: "block", fontSize: "0.9rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem" }}>
+                      1. Are you currently working?
                     </label>
-                    <input
-                      type="number"
-                      value={checkinWage}
-                      onChange={(e) => setCheckinWage(e.target.value)}
-                      placeholder="e.g. 26000"
-                      required
-                      style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
-                    />
+                    <div style={{ display: "flex", gap: "1rem" }}>
+                      <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontWeight: 600, fontSize: "0.9rem", color: isWorking ? "#2563eb" : "#475569" }}>
+                        <input
+                          type="radio"
+                          name="isWorking"
+                          checked={isWorking}
+                          onChange={() => setIsWorking(true)}
+                        />
+                        Yes, currently working
+                      </label>
+                      <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontWeight: 600, fontSize: "0.9rem", color: !isWorking ? "#b91c1c" : "#475569" }}>
+                        <input
+                          type="radio"
+                          name="isWorking"
+                          checked={!isWorking}
+                          onChange={() => setIsWorking(false)}
+                        />
+                        No, not working
+                      </label>
+                    </div>
                   </div>
 
-                  <div style={{ marginBottom: "1rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                      Job Retention: Same Employer?
-                    </label>
-                    <select
-                      style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
-                    >
-                      <option value="same">Yes — Still with {trainee?.employment?.employer_name || "same employer"}</option>
-                      <option value="promoted">Yes — Same employer with role promotion</option>
-                      <option value="changed">No — Transitioned to a new employer</option>
-                      <option value="left">No — Currently seeking new opportunity</option>
-                    </select>
-                  </div>
+                  {/* BRANCH A: IF YES (CURRENTLY WORKING) */}
+                  {isWorking && (
+                    <>
+                      <div style={{ marginBottom: "1rem" }}>
+                        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                          Are you with the same employer ({trainee?.employment?.employer_name || "previous employer"})?
+                        </label>
+                        <select
+                          value={sameEmployer ? "yes" : "no"}
+                          onChange={(e) => setSameEmployer(e.target.value === "yes")}
+                          style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                        >
+                          <option value="yes">Yes — Still with {trainee?.employment?.employer_name || "same employer"}</option>
+                          <option value="no">No — Changed job to a new employer</option>
+                        </select>
+                      </div>
 
-                  <div style={{ marginBottom: "1rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                      Was Your Training Relevant to Your Current Workplace Tasks?
-                    </label>
-                    <select
-                      style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
-                    >
-                      <option value="Yes">Yes — Core skills directly applied daily</option>
-                      <option value="Partially">Partially — Some modules used, others missing</option>
-                      <option value="No">No — Job role requires different tooling</option>
-                    </select>
-                  </div>
+                      {!sameEmployer && (
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem", background: "#f1f5f9", padding: "0.75rem", borderRadius: "6px" }}>
+                          <div>
+                            <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.25rem" }}>
+                              New Employer Name
+                            </label>
+                            <input
+                              type="text"
+                              value={newEmployerName}
+                              onChange={(e) => setNewEmployerName(e.target.value)}
+                              placeholder="e.g. Wipro Technologies"
+                              required={!sameEmployer}
+                              style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.25rem" }}>
+                              New Job Role
+                            </label>
+                            <input
+                              type="text"
+                              value={newJobRole}
+                              onChange={(e) => setNewJobRole(e.target.value)}
+                              placeholder="e.g. Cloud Consultant"
+                              required={!sameEmployer}
+                              style={{ width: "100%", padding: "0.5rem", borderRadius: "4px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                            />
+                          </div>
+                        </div>
+                      )}
 
-                  <div style={{ marginBottom: "1rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                      Workplace Status & Role Notes
-                    </label>
-                    <textarea
-                      value={checkinNotes}
-                      onChange={(e) => setCheckinNotes(e.target.value)}
-                      rows={2}
-                      placeholder="e.g. Working full-time, steady wage progression, positive team mentor support."
-                      style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
-                    />
-                  </div>
+                      <div style={{ marginBottom: "1rem" }}>
+                        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                          Current Monthly Gross Wage (₹)
+                        </label>
+                        <input
+                          type="number"
+                          value={checkinWage}
+                          onChange={(e) => setCheckinWage(e.target.value)}
+                          placeholder="e.g. 26000"
+                          required={isWorking}
+                          style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
+                        />
+                      </div>
 
-                  <div style={{ marginBottom: "1.5rem" }}>
-                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                      Observed Skill Gaps (What was missing?)
-                    </label>
-                    <input
-                      type="text"
-                      value={checkinGaps}
-                      onChange={(e) => setCheckinGaps(e.target.value)}
-                      placeholder="e.g. Cloud Deployment / Docker containerization"
-                      style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
-                    />
-                    <span style={{ fontSize: "0.75rem", color: "#64748b" }}>
-                      This feeds Skill Intelligence without overwriting your certified course records.
-                    </span>
-                  </div>
+                      <div style={{ marginBottom: "1rem" }}>
+                        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                          Are the skills from your training useful in your current work?
+                        </label>
+                        <select
+                          value={trainingRelevance}
+                          onChange={(e) => setTrainingRelevance(e.target.value)}
+                          style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                        >
+                          <option value="Yes">Yes — Core skills directly applied daily</option>
+                          <option value="Partially">Partially — Some modules useful, others missing</option>
+                          <option value="No">No — Job role requires completely different skills</option>
+                        </select>
+                      </div>
 
-                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+                      <div style={{ marginBottom: "1.25rem" }}>
+                        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                          Which skills were missing from your training? (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          value={checkinGaps}
+                          onChange={(e) => setCheckinGaps(e.target.value)}
+                          placeholder="e.g. Docker / Kubernetes / Cloud Lab hands-on"
+                          style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                        />
+                        <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Feeds curriculum alignment analytics.</span>
+                      </div>
+                    </>
+                  )}
+
+                  {/* BRANCH B: IF NO (NOT WORKING) */}
+                  {!isWorking && (
+                    <>
+                      <div style={{ marginBottom: "1rem" }}>
+                        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                          What is the primary reason you are currently not working?
+                        </label>
+                        <select
+                          value={attritionReason}
+                          onChange={(e) => setAttritionReason(e.target.value)}
+                          style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                        >
+                          <option value="Low salary / inadequate compensation">Low salary / inadequate compensation</option>
+                          <option value="Relocation / location mismatch">Relocation / location mismatch</option>
+                          <option value="Lack of required skills / failed technical assessment">Lack of required skills / failed technical assessment</option>
+                          <option value="Family / personal reasons">Family / personal reasons</option>
+                          <option value="Company downsized / contract completed">Company downsized / contract completed</option>
+                          <option value="Enrolled in higher studies / competitive exams">Enrolled in higher studies / competitive exams</option>
+                        </select>
+                      </div>
+
+                      <div style={{ marginBottom: "1rem" }}>
+                        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                          Are you actively seeking placement assistance?
+                        </label>
+                        <select
+                          value={seekingPlacement ? "yes" : "no"}
+                          onChange={(e) => setSeekingPlacement(e.target.value === "yes")}
+                          style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                        >
+                          <option value="yes">Yes — Connect me to state employment drives</option>
+                          <option value="no">No — Not actively seeking at this time</option>
+                        </select>
+                      </div>
+
+                      <div style={{ marginBottom: "1.25rem" }}>
+                        <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
+                          Additional notes or support needed:
+                        </label>
+                        <textarea
+                          value={checkinNotes}
+                          onChange={(e) => setCheckinNotes(e.target.value)}
+                          rows={2}
+                          placeholder="Tell us what assistance would help you transition back to employment..."
+                          style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem", borderTop: "1px solid #f1f5f9", paddingTop: "1rem" }}>
                     <button
                       type="button"
                       onClick={() => setActiveCheckin(null)}

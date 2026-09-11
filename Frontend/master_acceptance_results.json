@@ -1,0 +1,140 @@
+{
+  "score": 100,
+  "passedCount": 21,
+  "totalCount": 21,
+  "results": [
+    {
+      "id": "SEC-03",
+      "title": "Deterministic Dataset (~800 Trainees) Loaded",
+      "passed": true,
+      "details": "Count: 800"
+    },
+    {
+      "id": "SEC-05",
+      "title": "Permanent Trainee ID format verified",
+      "passed": true,
+      "details": "Sample ID: TR-0001"
+    },
+    {
+      "id": "SEC-15",
+      "title": "Milestone Date-Derived Follow-Ups present across cohort",
+      "passed": true,
+      "details": "3M/6M/12M followups active"
+    },
+    {
+      "id": "SEC-26A",
+      "title": "Trainee submitted employment claim to TCS",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "id": "SEC-27A",
+      "title": "Employer requested correction with specific remark",
+      "passed": true,
+      "details": "Salary adjustment note attached"
+    },
+    {
+      "id": "SEC-27B",
+      "title": "Trainee sees Correction Requested banner & employer remarks",
+      "passed": true,
+      "details": "Correction note rendered dynamically"
+    },
+    {
+      "id": "SEC-27C",
+      "title": "Trainee resubmits corrected claim",
+      "passed": true,
+      "details": "Wage updated to ₹30,000"
+    },
+    {
+      "id": "SEC-26B",
+      "title": "Employer confirms verified employment claim",
+      "passed": true,
+      "details": "Status transitioned to Confirmed"
+    },
+    {
+      "id": "SEC-26C",
+      "title": "Trainee dashboard reflects verified employment",
+      "passed": true,
+      "details": "Confirmed status displayed"
+    },
+    {
+      "id": "SEC-23",
+      "title": "Trainee submitted missing skill report",
+      "passed": true,
+      "details": "Kubernetes Production Clustering reported"
+    },
+    {
+      "id": "SEC-31",
+      "title": "Employer submitted corresponding missing skill notice",
+      "passed": true,
+      "details": "Source = employer stored in shared intelligence queue"
+    },
+    {
+      "id": "SEC-46",
+      "title": "Admin synthesizes both trainee & employer skill feedback",
+      "passed": true,
+      "details": "Multi-source feedback ranking visible"
+    },
+    {
+      "id": "SEC-14",
+      "title": "Trainee appends wage increment event",
+      "passed": true,
+      "details": "Wage history event appended"
+    },
+    {
+      "id": "SEC-45",
+      "title": "Admin Income Growth recalculates from relational wage events",
+      "passed": true,
+      "details": "Derived wage metrics active"
+    },
+    {
+      "id": "SEC-28",
+      "title": "Employer recorded Resigned transition with specific reason",
+      "passed": true,
+      "details": "Resigned lifecycle transition logged"
+    },
+    {
+      "id": "SEC-43",
+      "title": "Admin Why People Leave Jobs updates with attrition diagnosis",
+      "passed": true,
+      "details": "Empirical attrition distribution displayed"
+    },
+    {
+      "id": "SEC-54",
+      "title": "Admin Follow-Up Management page renders with status breakdowns",
+      "passed": true,
+      "details": "Universal follow-up roster active"
+    },
+    {
+      "id": "SEC-17",
+      "title": "Admin conducts assisted outreach and captures verified outcome",
+      "passed": true,
+      "details": "Outcome resolved and recorded in longitudinal history"
+    },
+    {
+      "id": "SEC-36",
+      "title": "Admin Trainee Directory loads sortable, searchable population",
+      "passed": true,
+      "details": "Roster renders 800-trainee population"
+    },
+    {
+      "id": "SEC-37",
+      "title": "Admin Trainee Profile renders full longitudinal timeline",
+      "passed": true,
+      "details": "Comprehensive dossier loaded"
+    },
+    {
+      "id": "SEC-38",
+      "title": "Chronological Last 6 Months events displayed on profile",
+      "passed": true,
+      "details": "Data-derived longitudinal event timeline active"
+    },
+    {
+      "id": "SEC-84",
+      "title": "Zero Fatal Console Errors",
+      "passed": true,
+      "details": "Errors: 0"
+    }
+  ],
+  "consoleErrors": []
+}
