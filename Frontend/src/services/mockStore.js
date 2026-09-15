@@ -133,7 +133,9 @@ class MockStore {
         verification_status: "Pending verification",
         verification_id: verificationId,
         verified_at: null,
-        employer_remarks: data.remarks || null
+        employer_remarks: data.remarks || null,
+        status_reason: data.status_reason || data.comments || "",
+        comments: data.comments || data.status_reason || ""
       };
 
       if (existingVer) {
@@ -198,7 +200,9 @@ class MockStore {
         current_wage: Number(data.monthly_income) || 25000,
         verification_status: "Self-Reported",
         verification_id: `VER-SELF-${Date.now().toString().slice(-4)}`,
-        verified_at: new Date().toISOString().split("T")[0]
+        verified_at: new Date().toISOString().split("T")[0],
+        status_reason: data.status_reason || data.comments || "",
+        comments: data.comments || data.status_reason || ""
       };
       if (!trainee.wage_history) trainee.wage_history = [];
       trainee.wage_history.push({
@@ -217,8 +221,9 @@ class MockStore {
     } else if (status === "UNEMPLOYED") {
       trainee.employment = {
         status: "UNEMPLOYED",
-        unemployment_reason: data.unemployment_reason || "Lack of required skills",
-        comments: data.comments || "Seeking relevant openings",
+        unemployment_reason: data.unemployment_reason || data.status_reason || "Lack of required skills",
+        status_reason: data.status_reason || data.unemployment_reason || data.comments || "",
+        comments: data.comments || data.status_reason || "Seeking relevant openings",
         verification_status: "Not Applicable",
         verification_id: null,
         starting_wage: 0,
@@ -238,7 +243,9 @@ class MockStore {
         verification_status: "Self-Reported",
         verification_id: null,
         starting_wage: 0,
-        current_wage: 0
+        current_wage: 0,
+        status_reason: data.status_reason || data.comments || "",
+        comments: data.comments || data.status_reason || ""
       };
       trainee.retention = {
         is_active: false,
@@ -247,6 +254,9 @@ class MockStore {
         retention_12m: "Not Applicable"
       };
     }
+
+    trainee.outcome_reason = data.status_reason || data.unemployment_reason || data.comments || "";
+    trainee.outcome = status;
 
     this.save();
     return trainee;
@@ -695,8 +705,16 @@ class MockStore {
     const trainee = this.state.trainees.find(t => t.id === traineeId);
     if (!trainee) return null;
 
+    const numRating = Number(relevanceData.rating) || (
+      relevanceData.relevant === "Yes" || String(relevanceData.relevant).includes("Fully") ? 5 :
+      relevanceData.relevant === "Partially" || String(relevanceData.relevant).includes("Moderately") ? 3 :
+      relevanceData.relevant === "No" || String(relevanceData.relevant).includes("Not") ? 1 : 4
+    );
+
+    trainee.training_relevance_rating = numRating;
     trainee.training_relevance_feedback = {
-      relevant: relevanceData.relevant, // "Yes" | "Partially" | "No"
+      rating: numRating,
+      relevant: relevanceData.relevant || (numRating >= 4 ? "Fully Relevant" : numRating === 3 ? "Moderately Relevant" : "Not Relevant"),
       missing_skills: relevanceData.missing_skills || [],
       comments: relevanceData.comments || "",
       submitted_at: new Date().toISOString().split("T")[0]

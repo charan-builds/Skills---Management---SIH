@@ -4,7 +4,7 @@ from app.firebase.repository import FirestoreRepository
 from app.auth.dependencies import ensure_trainee_access, get_admin_user, get_current_user
 from app.schemas.trainee import (
     TraineeCreate, TraineeBase, TraineeEmploymentCreate, TraineeFollowupSubmit, TraineeUpdate,
-    EmploymentHistorySchema, ConsentRecordSchema, TraineeConsentUpdate
+    EmploymentHistorySchema, ConsentRecordSchema, TraineeConsentUpdate, TraineeRelevanceSubmit
 )
 
 router = APIRouter(
@@ -239,6 +239,32 @@ def update_consent(
     updated_trainee = FirestoreRepository.add_trainee_consent(id, consent)
     if not updated_trainee:
         raise HTTPException(status_code=404, detail="Trainee not found")
+    return updated_trainee
+
+@router.post("/{id}/relevance", response_model=TraineeBase)
+def submit_training_relevance(
+    id: str,
+    relevance: TraineeRelevanceSubmit,
+    current_user: dict = Depends(get_current_user),
+):
+    ensure_trainee_access(id, current_user)
+    if relevance.rating < 1 or relevance.rating > 5:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Relevance rating must be between 1 and 5"
+        )
+    trainee = FirestoreRepository.get_trainee(id)
+    if not trainee:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Trainee with ID {id} not found"
+        )
+    updated_trainee = FirestoreRepository.add_trainee_relevance(id, relevance)
+    if not updated_trainee:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Trainee with ID {id} not found"
+        )
     return updated_trainee
 
 @router.patch("/{id}", response_model=TraineeBase)

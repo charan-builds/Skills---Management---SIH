@@ -33,6 +33,9 @@ export default function TraineeEmployment() {
   const [apprenticeStart, setApprenticeStart] = useState(new Date().toISOString().split("T")[0]);
   const [stipend, setStipend] = useState("16000");
 
+  // Common Status Reason / Context Field (All Statuses)
+  const [statusReason, setStatusReason] = useState("");
+
   // Unemployed Fields (C11)
   const [unemploymentReason, setUnemploymentReason] = useState("Lack of required skills");
   const [unemploymentComments, setUnemploymentComments] = useState("");
@@ -40,6 +43,47 @@ export default function TraineeEmployment() {
   // Studying Further Fields
   const [institutionName, setInstitutionName] = useState("");
   const [courseName, setCourseName] = useState("");
+
+  const getStatusReasonConfig = (currentStatus) => {
+    switch (currentStatus) {
+      case "EMPLOYED":
+        return {
+          label: "Reason / Context for Employment Status",
+          description: "Explain how you secured this role, relevant skills used, or any notes on your placement.",
+          placeholder: "e.g. Secured full-time employment through campus placement drive based on cloud infrastructure skills."
+        };
+      case "SELF_EMPLOYED":
+        return {
+          label: "Reason / Context for Self-Employment Venture",
+          description: "Explain your venture rationale, freelance client base, or motivation for self-employment.",
+          placeholder: "e.g. Established independent tech consultancy focusing on web development for local businesses."
+        };
+      case "APPRENTICESHIP":
+        return {
+          label: "Reason / Context for Apprenticeship",
+          description: "Explain your learning objectives or transition path to full-time employment.",
+          placeholder: "e.g. Selected apprenticeship to gain practical industrial plant experience in renewable energy."
+        };
+      case "UNEMPLOYED":
+        return {
+          label: "Reason / Context for Seeking Job",
+          description: "Explain the reason or provide personal context for your current job search (e.g. skill gaps, interview experiences).",
+          placeholder: "e.g. I am currently looking for a job because I lack experience with the technical skills required in recent interviews."
+        };
+      case "STUDYING_FURTHER":
+        return {
+          label: "Reason / Context for Further Education",
+          description: "Explain why you chose to pursue advanced education and future career plans.",
+          placeholder: "e.g. Enrolled in higher technical diploma to qualify for specialized engineering roles."
+        };
+      default:
+        return {
+          label: "Reason / Comments on Current Status",
+          description: "Provide additional context or explanation regarding your current status.",
+          placeholder: "Describe the reason or context for your current employment status..."
+        };
+    }
+  };
 
   const loadData = async () => {
     setLoading(true);
@@ -50,6 +94,8 @@ export default function TraineeEmployment() {
         const emp = res.trainee.employment;
         if (emp?.status) {
           setStatus(emp.status);
+          const savedReason = emp.status_reason || emp.comments || emp.unemployment_reason || "";
+          setStatusReason(savedReason);
           if (emp.status === "EMPLOYED") {
             setEmployerName(emp.employer_name || "");
             setJobRole(emp.job_role || "");
@@ -68,7 +114,7 @@ export default function TraineeEmployment() {
             setStipend(emp.stipend?.toString() || "");
           } else if (emp.status === "UNEMPLOYED") {
             setUnemploymentReason(emp.unemployment_reason || "Lack of required skills");
-            setUnemploymentComments(emp.comments || "");
+            setUnemploymentComments(emp.comments || savedReason || "");
           }
         }
       }
@@ -88,7 +134,7 @@ export default function TraineeEmployment() {
     setSubmitting(true);
     setSuccessMessage("");
     try {
-      let payload = { status };
+      let payload = { status, status_reason: statusReason, comments: statusReason };
       if (status === "EMPLOYED") {
         payload = {
           ...payload,
@@ -96,7 +142,9 @@ export default function TraineeEmployment() {
           job_role: jobRole,
           joining_date: joiningDate,
           work_location: workLocation,
-          starting_wage: Number(salary) || 22000
+          starting_wage: Number(salary) || 22000,
+          status_reason: statusReason,
+          comments: statusReason
         };
       } else if (status === "SELF_EMPLOYED") {
         payload = {
@@ -105,7 +153,9 @@ export default function TraineeEmployment() {
           business_type: businessType,
           monthly_income: Number(monthlyIncome) || 20000,
           start_date: selfStartDate,
-          work_location: workLocation
+          work_location: workLocation,
+          status_reason: statusReason,
+          comments: statusReason
         };
       } else if (status === "APPRENTICESHIP") {
         payload = {
@@ -114,19 +164,24 @@ export default function TraineeEmployment() {
           job_role: apprenticeRole,
           joining_date: apprenticeStart,
           stipend: Number(stipend) || 15000,
-          starting_wage: Number(stipend) || 15000
+          starting_wage: Number(stipend) || 15000,
+          status_reason: statusReason,
+          comments: statusReason
         };
       } else if (status === "UNEMPLOYED") {
         payload = {
           ...payload,
           unemployment_reason: unemploymentReason,
-          comments: unemploymentComments
+          status_reason: statusReason || unemploymentComments,
+          comments: statusReason || unemploymentComments
         };
       } else if (status === "STUDYING_FURTHER") {
         payload = {
           ...payload,
           institution_name: institutionName,
-          course_name: courseName
+          course_name: courseName,
+          status_reason: statusReason,
+          comments: statusReason
         };
       }
 
@@ -182,6 +237,12 @@ export default function TraineeEmployment() {
                   <span style={{ color: "#475569" }}>at {currentEmp.employer_name}</span>
                 )}
               </div>
+              {(currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason) && (
+                <div style={{ marginTop: "0.4rem", fontSize: "0.85rem", color: "#475569", background: "#f8fafc", padding: "0.4rem 0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
+                  <span style={{ fontWeight: 600, color: "#334155" }}>Recorded Context / Reason: </span>
+                  <span style={{ fontStyle: "italic" }}>"{currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason}"</span>
+                </div>
+              )}
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -265,6 +326,42 @@ export default function TraineeEmployment() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Dynamic Reason / Context Field for Selected Outcome Status */}
+          <div style={{ marginBottom: "2rem", background: "#f8fafc", padding: "1.25rem 1.5rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.35rem", flexWrap: "wrap", gap: "0.5rem" }}>
+              <label style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a" }}>
+                {getStatusReasonConfig(status).label}
+              </label>
+              <span style={{ fontSize: "0.75rem", color: "#2563eb", background: "#eff6ff", padding: "2px 8px", borderRadius: "12px", border: "1px solid #bfdbfe", fontWeight: 600 }}>
+                {status === "UNEMPLOYED" ? "Key context for placement cell" : "Self-reported explanation"}
+              </span>
+            </div>
+            <p style={{ margin: "0 0 0.75rem 0", fontSize: "0.8rem", color: "#64748b" }}>
+              {getStatusReasonConfig(status).description}
+            </p>
+            <textarea
+              value={statusReason}
+              onChange={(e) => {
+                setStatusReason(e.target.value);
+                if (status === "UNEMPLOYED") {
+                  setUnemploymentComments(e.target.value);
+                }
+              }}
+              rows={3}
+              placeholder={getStatusReasonConfig(status).placeholder}
+              style={{
+                width: "100%",
+                padding: "0.75rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                fontSize: "0.9rem",
+                background: "white",
+                boxSizing: "border-box",
+                lineHeight: "1.4"
+              }}
+            />
           </div>
 
           {/* C5 EMPLOYED FORM */}
@@ -485,8 +582,11 @@ export default function TraineeEmployment() {
                   Comments / Support Requested from Placement Cell
                 </label>
                 <textarea
-                  value={unemploymentComments}
-                  onChange={(e) => setUnemploymentComments(e.target.value)}
+                  value={unemploymentComments || statusReason}
+                  onChange={(e) => {
+                    setUnemploymentComments(e.target.value);
+                    setStatusReason(e.target.value);
+                  }}
                   rows={3}
                   placeholder="Describe your current job search and if you require refocused competency training."
                   style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}

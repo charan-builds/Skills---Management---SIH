@@ -390,7 +390,9 @@ export default function Dashboard() {
                           <span><strong>Cohort:</strong> {t.cohort}</span>
                           {t.employment?.employer_name && <span><strong>Employer:</strong> {t.employment.employer_name}</span>}
                           {t.employment?.current_wage > 0 && <span><strong>Wage:</strong> ₹{t.employment.current_wage.toLocaleString()}/mo</span>}
-                          {t.employment?.unemployment_reason && <span><strong>Reason:</strong> {t.employment.unemployment_reason}</span>}
+                          {(t.employment?.status_reason || t.employment?.unemployment_reason || t.employment?.comments) && (
+                            <span><strong>Reason / Context:</strong> {t.employment.status_reason || t.employment.unemployment_reason || t.employment.comments}</span>
+                          )}
                         </div>
                       </div>
                     ))}

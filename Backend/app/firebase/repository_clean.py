@@ -218,6 +218,11 @@ class FirestoreRepository:
 
     @staticmethod
     def add_trainee_employment(trainee_id: str, emp: TraineeEmploymentCreate) -> Optional[Dict[str, Any]]:
+        new_emp = emp.model_dump()
+        new_emp['id'] = f"emp_{uuid.uuid4().hex[:8]}"
+        new_emp['timestamp'] = datetime.utcnow().isoformat() + "Z"
+        new_outcome = emp.status
+        reason = emp.status_reason or emp.unemployment_reason or emp.comments
         if db:
             try:
                 doc_ref = db.collection("trainees").document(trainee_id)
@@ -226,11 +231,15 @@ class FirestoreRepository:
                     trainee_data = doc.to_dict()
                     employment_list = trainee_data.get("employment_history", [])
                     employment_list.append(new_emp)
-                    doc_ref.update({
+                    update_dict = {
                         "employment_history": employment_list,
                         "outcome": new_outcome,
                         "updated_at": datetime.utcnow().isoformat() + "Z"
-                    })
+                    }
+                    if reason:
+                        update_dict["status_reason"] = reason
+                        update_dict["outcome_reason"] = reason
+                    doc_ref.update(update_dict)
                     updated_doc = doc_ref.get().to_dict()
             except Exception as e:
                 print(f"Firestore error in add_trainee_employment: {e}")
@@ -238,6 +247,31 @@ class FirestoreRepository:
         else:
             raise RuntimeError("No datastore is configured for trainees")
 
+        return updated_doc
+
+    @staticmethod
+    def add_trainee_relevance(trainee_id: str, relevance: Any) -> Optional[Dict[str, Any]]:
+        updated_doc = None
+        rel_data = relevance.model_dump() if hasattr(relevance, 'model_dump') else dict(relevance)
+        if db:
+            try:
+                doc_ref = db.collection("trainees").document(trainee_id)
+                doc = doc_ref.get()
+                if doc.exists:
+                    now = datetime.utcnow().isoformat() + "Z"
+                    rel_data['submitted_at'] = now
+                    update_dict = {
+                        "training_relevance_rating": rel_data.get("rating"),
+                        "training_relevance_feedback": rel_data,
+                        "updated_at": now
+                    }
+                    doc_ref.update(update_dict)
+                    updated_doc = doc_ref.get().to_dict()
+            except Exception as e:
+                print(f"Firestore error in add_trainee_relevance: {e}")
+                raise
+        else:
+            raise RuntimeError("No datastore is configured for trainees")
         return updated_doc
 
     @staticmethod

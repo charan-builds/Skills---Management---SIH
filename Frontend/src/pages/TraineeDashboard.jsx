@@ -242,7 +242,7 @@ export default function TraineeDashboard() {
                 {emp.status ? emp.status.replace("_", " ") : "Unemployed"}
               </div>
               <div style={{ fontSize: "0.8rem", color: "#475569", marginBottom: "0.75rem" }}>
-                {emp.job_role ? `${emp.job_role} at ${emp.employer_name || "Enterprise"}` : (emp.unemployment_reason || "Seeking Placement")}
+                {emp.job_role ? `${emp.job_role} at ${emp.employer_name || "Enterprise"}` : (emp.status_reason || emp.unemployment_reason || "Seeking Placement")}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
                 <span style={{ color: emp.verification_status === "Verified" ? "#15803d" : "#b45309", fontWeight: 700 }}>

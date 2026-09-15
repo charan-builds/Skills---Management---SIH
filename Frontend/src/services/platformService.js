@@ -960,7 +960,7 @@ class PlatformService {
     };
 
     unemployed.forEach(t => {
-      const r = t.employment?.unemployment_reason || "Lack of required skills";
+      const r = t.employment?.unemployment_reason || t.employment?.status_reason || "Lack of required skills";
       const key = Object.keys(reasonCounts).find(k => k.toLowerCase().includes(r.toLowerCase())) || "Other personal reasons";
       reasonCounts[key].count += 1;
       if (reasonCounts[key].trainees.length < 12) {

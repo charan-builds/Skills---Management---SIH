@@ -27,10 +27,20 @@ export default function Feedback() {
   const [employerComments, setEmployerComments] = useState("");
 
   // Trainee state (Sections 27, 37)
-  const [traineeRelevance, setTraineeRelevance] = useState("Partially");
+  const [traineeRelevanceRating, setTraineeRelevanceRating] = useState(4);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [traineeRelevance, setTraineeRelevance] = useState("Highly Relevant");
   const [missingSkillName, setMissingSkillName] = useState("Cloud Deployment & Kubernetes");
   const [gapType, setGapType] = useState("Missing from curriculum");
   const [traineeComments, setTraineeComments] = useState("");
+
+  const relevanceInterpretations = {
+    1: "Not Relevant",
+    2: "Slightly Relevant",
+    3: "Moderately Relevant",
+    4: "Highly Relevant",
+    5: "Fully Relevant"
+  };
 
   const commonSkillTags = [
     "Docker & Containerization",
@@ -51,6 +61,15 @@ export default function Feedback() {
     try {
       const res = await platformService.getTraineeProfile(traineeId);
       setTrainee(res.trainee);
+      // Restore saved rating if present
+      const savedRating = res.trainee?.training_relevance_rating;
+      if (savedRating && savedRating >= 1 && savedRating <= 5) {
+        setTraineeRelevanceRating(savedRating);
+        setTraineeRelevance(relevanceInterpretations[savedRating] || "Highly Relevant");
+      }
+      const savedFeedback = res.trainee?.training_relevance_feedback;
+      if (savedFeedback?.comments) setTraineeComments(savedFeedback.comments);
+      if (savedFeedback?.missing_skills?.[0]) setMissingSkillName(savedFeedback.missing_skills[0]);
     } catch (e) {
       console.error(e);
     } finally {
@@ -109,7 +128,8 @@ export default function Feedback() {
     try {
       // 1. Submit Training Relevance Feedback
       await platformService.submitTrainingRelevance(traineeId, {
-        relevant: traineeRelevance,
+        rating: traineeRelevanceRating,
+        relevant: relevanceInterpretations[traineeRelevanceRating] || traineeRelevance,
         missing_skills: missingSkillName ? [missingSkillName] : [],
         comments: traineeComments
       });
@@ -333,39 +353,78 @@ export default function Feedback() {
               Submit Training Relevance &amp; Skill Observations
             </h3>
 
-            {/* Question 1: Was Training Relevant? (Section 37) */}
+            {/* Question 1: Was Training Relevant? (Section 37) - 5-Star Relevance Rating */}
             <div style={{ marginBottom: "1.75rem" }}>
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.5rem" }}>
                 1. Was your training programme relevant to your actual workplace tasks? (Section 37)
               </label>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem" }}>
-                {["Yes", "Partially", "No"].map((option) => (
-                  <label
-                    key={option}
+              <div style={{ background: "#f8fafc", padding: "1.25rem 1.5rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
+                  {[1, 2, 3, 4, 5].map((star) => {
+                    const isFilled = star <= (hoverRating || traineeRelevanceRating);
+                    return (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => {
+                          setTraineeRelevanceRating(star);
+                          setTraineeRelevance(relevanceInterpretations[star]);
+                        }}
+                        onMouseEnter={() => setHoverRating(star)}
+                        onMouseLeave={() => setHoverRating(0)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                          padding: "4px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          transition: "transform 0.15s ease, color 0.15s ease",
+                          transform: star <= (hoverRating || traineeRelevanceRating) ? "scale(1.18)" : "scale(1)"
+                        }}
+                        title={`${star} Star${star > 1 ? "s" : ""} — ${relevanceInterpretations[star]}`}
+                      >
+                        <Star
+                          size={32}
+                          fill={isFilled ? "#f59e0b" : "none"}
+                          color={isFilled ? "#f59e0b" : "#cbd5e1"}
+                          strokeWidth={isFilled ? 2 : 1.5}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Descriptive label below stars */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "0.25rem", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: "1.05rem" }}>
+                    {"⭐".repeat(hoverRating || traineeRelevanceRating)}
+                  </span>
+                  <span
                     style={{
-                      padding: "0.85rem",
-                      border: traineeRelevance === option ? "2px solid #2563eb" : "1px solid #cbd5e1",
-                      background: traineeRelevance === option ? "#eff6ff" : "white",
-                      borderRadius: "8px",
-                      cursor: "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: "0.5rem",
-                      fontWeight: 700,
-                      color: traineeRelevance === option ? "#1d4ed8" : "#475569"
+                      fontSize: "0.95rem",
+                      fontWeight: 800,
+                      color: (hoverRating || traineeRelevanceRating) >= 4 ? "#15803d" : (hoverRating || traineeRelevanceRating) === 3 ? "#b45309" : "#b91c1c"
                     }}
                   >
-                    <input
-                      type="radio"
-                      name="relevance"
-                      value={option}
-                      checked={traineeRelevance === option}
-                      onChange={(e) => setTraineeRelevance(e.target.value)}
-                    />
-                    {option === "Yes" ? "Yes — Fully Relevant" : option === "Partially" ? "Partially Relevant" : "No — Not Relevant"}
-                  </label>
-                ))}
+                    — {relevanceInterpretations[hoverRating || traineeRelevanceRating]}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "0.75rem",
+                      color: "#64748b",
+                      marginLeft: "0.25rem",
+                      background: "#ffffff",
+                      padding: "3px 10px",
+                      borderRadius: "12px",
+                      border: "1px solid #e2e8f0",
+                      fontWeight: 600
+                    }}
+                  >
+                    Numerical Score: {hoverRating || traineeRelevanceRating} / 5
+                  </span>
+                </div>
               </div>
             </div>
 

@@ -20,6 +20,8 @@ class EmploymentHistorySchema(BaseModel):
     employment_type: Optional[str] = None
     job_relevance: Optional[str] = None
     employer_remarks: Optional[str] = None
+    status_reason: Optional[str] = None
+    comments: Optional[str] = None
 
 class ConsentRecordSchema(BaseModel):
     status: Optional[str] = None # GIVEN, REVOKED, NOT_GIVEN
@@ -37,6 +39,7 @@ class TimelineCheckpointSchema(BaseModel):
     job_relevance: Optional[str] = None
     verification_status: Optional[str] = None
     description: str
+    status_reason: Optional[str] = None
 
 class TraineeBase(BaseModel):
     id: str
@@ -58,6 +61,10 @@ class TraineeBase(BaseModel):
     is_synthetic: bool = False
     target_role_id: Optional[str] = None
     target_role_name: Optional[str] = None
+    training_relevance_rating: Optional[int] = None
+    training_relevance_feedback: Optional[dict] = None
+    status_reason: Optional[str] = None
+    outcome_reason: Optional[str] = None
 
     @property
     def current_outcome(self) -> Optional[EmploymentHistorySchema]:
@@ -102,6 +109,10 @@ class TraineeUpdate(BaseModel):
     status: Optional[str] = None
     outcome: Optional[str] = None
     skills: Optional[List[str]] = None
+    training_relevance_rating: Optional[int] = None
+    training_relevance_feedback: Optional[dict] = None
+    status_reason: Optional[str] = None
+    outcome_reason: Optional[str] = None
     
     model_config = {
         "extra": "forbid"
@@ -114,6 +125,9 @@ class TraineeEmploymentCreate(BaseModel):
     salary: Optional[float] = None
     start_date: Optional[str] = None
     verification_state: str = "SELF_REPORTED"
+    status_reason: Optional[str] = None
+    comments: Optional[str] = None
+    unemployment_reason: Optional[str] = None
 
 class TraineeConsentUpdate(BaseModel):
     status: str # GIVEN, REVOKED, NOT_GIVEN
@@ -127,7 +141,15 @@ class TraineeFollowupSubmit(BaseModel):
     job_relevance: str
     verification_status: str = "Pending"
     description: str
+    status_reason: Optional[str] = None
+    comments: Optional[str] = None
 
 class TraineeTargetRoleUpdate(BaseModel):
     target_role_id: str
     target_role_name: str
+
+class TraineeRelevanceSubmit(BaseModel):
+    rating: int # 1 to 5
+    relevant: Optional[str] = None
+    missing_skills: List[str] = []
+    comments: Optional[str] = None
