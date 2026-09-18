@@ -1069,7 +1069,7 @@ export function generateRelationalDataset(targetCount = 800) {
       skills_detail: skillsDetail,
       reported_skill_gaps: reportedGaps,
       outcome_summary: outcomeSummary,
-      training_relevance_rating: outcomeStatus === "EMPLOYED" ? randInt(4, 5) : randInt(2, 4)
+      training_relevance_rating: 0
     });
   }
 

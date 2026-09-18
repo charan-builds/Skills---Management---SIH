@@ -2994,6 +2994,32 @@ body {
   font-size: 11px;
 }
 
+/* Logo Hero */
+
+.login-logo-hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.login-brand-logo {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  /* Preserve original proportions — no crop, no filter, no transform */
+}
+
+/* Tablet (481px – 768px) */
+
+@media (max-width: 768px) and (min-width: 481px) {
+  .login-brand-logo {
+    max-width: 240px;
+  }
+}
+
 /* Mobile */
 
 @media (max-width: 600px) {
@@ -3008,6 +3034,10 @@ body {
 
   .login-heading h1 {
     font-size: 24px;
+  }
+
+  .login-brand-logo {
+    max-width: 190px;
   }
 }
 /* =========================================

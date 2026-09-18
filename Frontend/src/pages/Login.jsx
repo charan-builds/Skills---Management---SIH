@@ -18,9 +18,13 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 function Login() {
   const navigate = useNavigate();
 
-  const ENABLE_DEMO_MODE = import.meta.env.VITE_ENABLE_DEMO_MODE === 'true';
+  const ENABLE_DEMO_MODE = import.meta.env.VITE_ENABLE_DEMO_MODE !== 'false';
 
   const [role, setRole] = useState("admin");
+
+  /* Admin */
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
 
   /* Trainee */
   const [traineeId, setTraineeId] = useState("");
@@ -37,37 +41,29 @@ function Login() {
 
 
   /* =========================================
-     DEMO LOGIN
+     DEMO AUTO-FILL CREDENTIALS
   ========================================= */
 
-  const handleDemoLogin = (demoRole) => {
+  const handleDemoFill = (demoRole) => {
     setError("");
     setRole(demoRole);
 
     if (demoRole === "admin") {
-      localStorage.setItem("userRole", "admin");
-      localStorage.setItem("sih_token", "demo_admin_jwt_token_verified");
-      navigate("/admin");
-      return;
+      setAdminEmail("admin@sih.gov.in");
+      setAdminPassword("admin123");
+    } else if (demoRole === "trainee") {
+      setTraineeId("TR-0001");
+      setTraineeEmail("demo.trainee@sih.gov.in");
+      setTraineePassword("demo1234");
+    } else if (demoRole === "employer") {
+      setOrganizationId("EMP-001");
+      setEmployerEmail("hr@infosys.com");
+      setEmployerPassword("demo1234");
     }
+  };
 
-    if (demoRole === "trainee") {
-      localStorage.setItem("userRole", "trainee");
-      localStorage.setItem("sih_token", "demo_trainee_jwt_token_verified");
-      localStorage.setItem("traineeId", "TR-0001");
-      localStorage.setItem("traineeEmail", "demo.trainee@sih.gov.in");
-      navigate("/trainee");
-      return;
-    }
-
-    if (demoRole === "employer") {
-      localStorage.setItem("userRole", "employer");
-      localStorage.setItem("sih_token", "demo_employer_jwt_token_verified");
-      localStorage.setItem("organizationId", "EMP-001");
-      localStorage.setItem("organizationName", "Infosys Technologies");
-      navigate("/employer");
-      return;
-    }
+  const handleDemoLogin = (demoRole) => {
+    handleDemoFill(demoRole);
   };
 
 
@@ -304,6 +300,18 @@ function Login() {
 
 
         {/* =================================
+            LOGO HERO
+        ================================= */}
+
+        <div className="login-logo-hero">
+          <img
+            src="/skill2impact-logo.jpg"
+            alt="Skill2Impact — Skills Today A Brighter Tomorrow"
+            className="login-brand-logo"
+          />
+        </div>
+
+        {/* =================================
             HEADING
         ================================= */}
 
@@ -406,6 +414,8 @@ function Login() {
                   id="admin-email"
                   type="email"
                   placeholder="Enter admin email"
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
                   required
                 />
 
@@ -419,6 +429,8 @@ function Login() {
                   id="admin-password"
                   type="password"
                   placeholder="Enter password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
                   required
                 />
 
@@ -674,35 +686,35 @@ function Login() {
         {ENABLE_DEMO_MODE && (
           <div className="demo-access-section" style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
             <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-light)', letterSpacing: '0.05em', marginBottom: '1rem', textTransform: 'uppercase' }}>
-              Demo Access
+              Quick Auto-Fill Demo Credentials
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <button 
                 type="button" 
                 id="btn-government-access"
-                onClick={() => handleDemoLogin('admin')} 
+                onClick={() => handleDemoFill('admin')} 
                 className="login-submit" 
                 style={{ background: '#2563eb', color: 'white', fontWeight: 700, justifyContent: 'center', cursor: 'pointer' }}
               >
-                Government Access (Admin Panel)
+                Government Admin Credentials
               </button>
               <button 
                 type="button" 
                 id="btn-trainee-access"
-                onClick={() => handleDemoLogin('trainee')} 
+                onClick={() => handleDemoFill('trainee')} 
                 className="login-submit" 
-                style={{ background: '#0284c7', color: 'white', fontWeight: 700, justifyContent: 'center', cursor: 'pointer' }}
+                style={{ background: '#2563eb', color: 'white', fontWeight: 700, justifyContent: 'center', cursor: 'pointer' }}
               >
-                Trainee Portal Access
+                Trainee Credentials
               </button>
               <button 
                 type="button" 
                 id="btn-employer-access"
-                onClick={() => handleDemoLogin('employer')} 
+                onClick={() => handleDemoFill('employer')} 
                 className="login-submit" 
-                style={{ background: '#475569', color: 'white', fontWeight: 700, justifyContent: 'center', cursor: 'pointer' }}
+                style={{ background: '#2563eb', color: 'white', fontWeight: 700, justifyContent: 'center', cursor: 'pointer' }}
               >
-                Organisation / Employer Access
+                Organisation / Employer Credentials
               </button>
             </div>
           </div>

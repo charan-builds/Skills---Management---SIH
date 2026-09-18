@@ -21,20 +21,21 @@ export default function Feedback() {
 
   // Employer state
   const [programmeId, setProgrammeId] = useState("PRG-001");
-  const [relevanceRating, setRelevanceRating] = useState(4);
+  const [relevanceRating, setRelevanceRating] = useState(0);
   const [selectedGaps, setSelectedGaps] = useState(["Kubernetes & Orchestration"]);
   const [newGapInput, setNewGapInput] = useState("");
   const [employerComments, setEmployerComments] = useState("");
 
   // Trainee state (Sections 27, 37)
-  const [traineeRelevanceRating, setTraineeRelevanceRating] = useState(4);
+  const [traineeRelevanceRating, setTraineeRelevanceRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
-  const [traineeRelevance, setTraineeRelevance] = useState("Highly Relevant");
+  const [traineeRelevance, setTraineeRelevance] = useState("Not Selected");
   const [missingSkillName, setMissingSkillName] = useState("Cloud Deployment & Kubernetes");
   const [gapType, setGapType] = useState("Missing from curriculum");
   const [traineeComments, setTraineeComments] = useState("");
 
   const relevanceInterpretations = {
+    0: "Not Selected",
     1: "Not Relevant",
     2: "Slightly Relevant",
     3: "Moderately Relevant",
@@ -61,12 +62,9 @@ export default function Feedback() {
     try {
       const res = await platformService.getTraineeProfile(traineeId);
       setTrainee(res.trainee);
-      // Restore saved rating if present
-      const savedRating = res.trainee?.training_relevance_rating;
-      if (savedRating && savedRating >= 1 && savedRating <= 5) {
-        setTraineeRelevanceRating(savedRating);
-        setTraineeRelevance(relevanceInterpretations[savedRating] || "Highly Relevant");
-      }
+      // Always start with 0 stars (Not Selected) by default for new input
+      setTraineeRelevanceRating(0);
+      setTraineeRelevance("Not Selected");
       const savedFeedback = res.trainee?.training_relevance_feedback;
       if (savedFeedback?.comments) setTraineeComments(savedFeedback.comments);
       if (savedFeedback?.missing_skills?.[0]) setMissingSkillName(savedFeedback.missing_skills[0]);
@@ -361,7 +359,8 @@ export default function Feedback() {
               <div style={{ background: "#f8fafc", padding: "1.25rem 1.5rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
                   {[1, 2, 3, 4, 5].map((star) => {
-                    const isFilled = star <= (hoverRating || traineeRelevanceRating);
+                    const currentVal = hoverRating || traineeRelevanceRating;
+                    const isFilled = currentVal > 0 && star <= currentVal;
                     return (
                       <button
                         key={star}
@@ -381,7 +380,7 @@ export default function Feedback() {
                           alignItems: "center",
                           justifyContent: "center",
                           transition: "transform 0.15s ease, color 0.15s ease",
-                          transform: star <= (hoverRating || traineeRelevanceRating) ? "scale(1.18)" : "scale(1)"
+                          transform: isFilled ? "scale(1.18)" : "scale(1)"
                         }}
                         title={`${star} Star${star > 1 ? "s" : ""} — ${relevanceInterpretations[star]}`}
                       >
@@ -398,17 +397,26 @@ export default function Feedback() {
 
                 {/* Descriptive label below stars */}
                 <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginTop: "0.25rem", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "1.05rem" }}>
-                    {"⭐".repeat(hoverRating || traineeRelevanceRating)}
-                  </span>
+                  {(hoverRating || traineeRelevanceRating) > 0 && (
+                    <span style={{ fontSize: "1.05rem" }}>
+                      {"⭐".repeat(hoverRating || traineeRelevanceRating)}
+                    </span>
+                  )}
                   <span
                     style={{
                       fontSize: "0.95rem",
                       fontWeight: 800,
-                      color: (hoverRating || traineeRelevanceRating) >= 4 ? "#15803d" : (hoverRating || traineeRelevanceRating) === 3 ? "#b45309" : "#b91c1c"
+                      color:
+                        (hoverRating || traineeRelevanceRating) >= 4
+                          ? "#15803d"
+                          : (hoverRating || traineeRelevanceRating) === 3
+                          ? "#b45309"
+                          : (hoverRating || traineeRelevanceRating) > 0
+                          ? "#b91c1c"
+                          : "#64748b"
                     }}
                   >
-                    — {relevanceInterpretations[hoverRating || traineeRelevanceRating]}
+                    — {relevanceInterpretations[hoverRating || traineeRelevanceRating] || "Not Selected"}
                   </span>
                   <span
                     style={{
