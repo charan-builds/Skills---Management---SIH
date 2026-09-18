@@ -668,6 +668,44 @@ class MockStore {
   }
 
   /**
+   * Log legal login consent proof audit record (Terms & Privacy agreement).
+   */
+  logTraineeLoginConsent(traineeId, consentData) {
+    const trainee = this.state.trainees.find(t => t.id === traineeId);
+    if (!trainee) return null;
+
+    const acceptedAt = consentData.accepted_at || new Date().toISOString();
+    const dateStr = acceptedAt.split("T")[0];
+    const proofToken = consentData.proof_token || `PROOF-${traineeId}-${Date.now()}`;
+
+    trainee.consent = {
+      status: "GIVEN",
+      date: dateStr,
+      type: consentData.consent_type || "LOGIN_TERMS_AND_PRIVACY",
+      terms_version: consentData.terms_version || "v1.0",
+      proof_token: proofToken,
+      accepted_at: acceptedAt,
+      user_agent: consentData.user_agent || "Browser Client"
+    };
+
+    if (!trainee.consent_audit_log) trainee.consent_audit_log = [];
+    trainee.consent_audit_log.unshift({
+      id: `LOG-${Date.now().toString().slice(-6)}`,
+      trainee_id: traineeId,
+      trainee_email: consentData.email || trainee.email,
+      status: "GIVEN",
+      consent_type: consentData.consent_type || "LOGIN_TERMS_AND_PRIVACY",
+      terms_version: consentData.terms_version || "v1.0",
+      accepted_at: acceptedAt,
+      proof_token: proofToken,
+      user_agent: consentData.user_agent || "Browser Client"
+    });
+
+    this.save();
+    return trainee.consent;
+  }
+
+  /**
    * Trainee reports a perceived skill gap from training.
    * Stored as separate TRAINEE-PERCEIVED feedback; never overwrites verified assessment evidence.
    */

@@ -122,12 +122,6 @@ export default function Dashboard() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-            <Sparkles size={18} color="#2563eb" />
-            <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              STATE SKILLING IMPACT INTELLIGENCE • EXECUTIVE OVERVIEW (A1, A2)
-            </span>
-          </div>
           <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
             Executive Outcome Dashboard
           </h1>

@@ -1395,6 +1395,29 @@ class PlatformService {
     return mockStore.updateTraineeConsent(traineeId, status);
   }
 
+  async submitLoginConsent(traineeId, consentData) {
+    await wait(50);
+    const mockResult = mockStore.logTraineeLoginConsent(traineeId, consentData);
+    try {
+      await fetch(`${API_BASE}/trainees/${traineeId}/consent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
+        body: JSON.stringify({
+          status: "GIVEN",
+          source: "TraineeLogin",
+          proof_token: consentData.proof_token,
+          terms_version: consentData.terms_version || "v1.0",
+          user_agent: consentData.user_agent,
+          consent_type: consentData.consent_type || "LOGIN_TERMS_AND_PRIVACY",
+          accepted_at: consentData.accepted_at
+        })
+      });
+    } catch (e) {
+      // Ignore if backend offline in demo mode
+    }
+    return mockResult;
+  }
+
   // Alias for compatibility
   async updateConsent(traineeId, status) {
     return this.updateTraineeConsent(traineeId, status);

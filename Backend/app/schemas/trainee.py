@@ -28,6 +28,12 @@ class ConsentRecordSchema(BaseModel):
     effective_timestamp: Optional[str] = None
     version: str = "1.0"
     source: str = "TraineePortal"
+    # Legal proof audit fields
+    proof_token: Optional[str] = None
+    terms_version: Optional[str] = "v1.0"
+    user_agent: Optional[str] = None
+    consent_type: Optional[str] = "LOGIN_TERMS_AND_PRIVACY"
+    accepted_at: Optional[str] = None
 
 class TimelineCheckpointSchema(BaseModel):
     checkpoint: str # e.g. "Training Completed", "3 Month Follow-up"
@@ -132,6 +138,12 @@ class TraineeEmploymentCreate(BaseModel):
 class TraineeConsentUpdate(BaseModel):
     status: str # GIVEN, REVOKED, NOT_GIVEN
     source: str = "TraineePortal"
+    # Legal proof fields (for login consent audit)
+    proof_token: Optional[str] = None
+    terms_version: Optional[str] = "v1.0"
+    user_agent: Optional[str] = None
+    consent_type: Optional[str] = "LOGIN_TERMS_AND_PRIVACY"
+    accepted_at: Optional[str] = None
 
 class TraineeFollowupSubmit(BaseModel):
     checkpoint: str # "3 Month Follow-up", "6 Month Follow-up", "12 Month Follow-up"

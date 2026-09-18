@@ -55,12 +55,7 @@ export default function EmployerVerifyOutcomes() {
     <div style={{ maxWidth: "1400px", margin: "0 auto", paddingBottom: "3rem" }}>
       {/* Header */}
       <div style={{ marginBottom: "2rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-          <ShieldCheck size={18} color="#2563eb" />
-          <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            GOVERNANCE & TRUST FRAMEWORK (SECTION 25)
-          </span>
-        </div>
+  
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
           Employer Verification Oversight
         </h1>

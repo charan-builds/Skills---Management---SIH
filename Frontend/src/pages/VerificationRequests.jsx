@@ -76,12 +76,7 @@ export default function VerificationRequests() {
       {/* Header (Section 8) */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
-            <ShieldCheck size={20} color="#2563eb" />
-            <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              WORKFORCE ATTESTATION DESK (SECTIONS 8–13, 20)
-            </span>
-          </div>
+          
           <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.4rem 0" }}>
             Verification Requests Inbox
           </h1>

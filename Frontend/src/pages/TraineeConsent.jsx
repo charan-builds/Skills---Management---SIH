@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Clock, Info, AlertTriangle, Lock } from "lucide-react";
+import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Clock, Info, AlertTriangle, Lock, FileCheck, KeyRound, User, Globe, Calendar } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 
@@ -45,6 +45,9 @@ export default function TraineeConsent() {
       setSaving(false);
     }
   };
+
+  const auditLog = trainee?.consent_audit_log || [];
+  const loginProofToken = typeof window !== "undefined" ? localStorage.getItem("traineeLoginProofToken") : null;
 
   return (
     <div style={{ maxWidth: "920px", margin: "0 auto", paddingBottom: "3rem" }}>
@@ -148,6 +151,120 @@ export default function TraineeConsent() {
               </div>
             </div>
           )}
+        </div>
+
+        {/* ===== LOGIN CONSENT PROOF AUDIT TRAIL ===== */}
+        <div style={{ background: "white", borderRadius: "14px", border: "1.5px solid #dbeafe", padding: "1.75rem", marginBottom: "2rem", boxShadow: "0 2px 8px rgba(37,99,235,0.07)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", marginBottom: "1.25rem" }}>
+            <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <FileCheck size={18} color="#2563eb" />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>Login Consent — Legal Proof Audit Trail</p>
+              <p style={{ margin: 0, fontSize: "0.78rem", color: "#64748b" }}>
+                Immutable record of your Terms &amp; Privacy acceptance at login · Terms v1.0
+              </p>
+            </div>
+            <span style={{ marginLeft: "auto", background: "#dcfce7", color: "#15803d", fontSize: "0.72rem", fontWeight: 700, padding: "3px 10px", borderRadius: "20px", display: "flex", alignItems: "center", gap: "4px" }}>
+              <CheckCircle2 size={12} /> Verified
+            </span>
+          </div>
+
+          {/* Current session proof token */}
+          {loginProofToken && (
+            <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "10px", padding: "1rem 1.25rem", marginBottom: "1.25rem" }}>
+              <p style={{ margin: "0 0 0.35rem 0", fontSize: "0.75rem", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase", letterSpacing: "0.4px" }}>
+                Current Session Proof Token
+              </p>
+              <code style={{ fontSize: "0.8rem", color: "#1e40af", wordBreak: "break-all", fontFamily: "monospace", fontWeight: 600 }}>
+                {loginProofToken}
+              </code>
+            </div>
+          )}
+
+          {/* Audit log records */}
+          {auditLog.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+              {auditLog.map((record, idx) => (
+                <div
+                  key={record.id || idx}
+                  style={{
+                    border: "1px solid #e2e8f0",
+                    borderRadius: "10px",
+                    padding: "1rem 1.25rem",
+                    background: idx === 0 ? "#f8faff" : "#fafafa"
+                  }}
+                >
+                  {idx === 0 && (
+                    <span style={{ display: "inline-block", background: "#dbeafe", color: "#1d4ed8", fontSize: "0.7rem", fontWeight: 700, padding: "2px 8px", borderRadius: "20px", marginBottom: "0.6rem" }}>
+                      Most Recent Login
+                    </span>
+                  )}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.6rem" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                      <KeyRound size={14} color="#6366f1" style={{ flexShrink: 0, marginTop: "2px" }} />
+                      <div>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Proof Token</p>
+                        <code style={{ fontSize: "0.72rem", color: "#1e40af", wordBreak: "break-all" }}>{record.proof_token || "—"}</code>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                      <Calendar size={14} color="#16a34a" style={{ flexShrink: 0, marginTop: "2px" }} />
+                      <div>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Accepted At</p>
+                        <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a", fontWeight: 600 }}>
+                          {record.accepted_at ? new Date(record.accepted_at).toLocaleString() : "—"}
+                        </p>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                      <FileCheck size={14} color="#9333ea" style={{ flexShrink: 0, marginTop: "2px" }} />
+                      <div>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Terms Version</p>
+                        <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a", fontWeight: 600 }}>{record.terms_version || "v1.0"}</p>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                      <User size={14} color="#0891b2" style={{ flexShrink: 0, marginTop: "2px" }} />
+                      <div>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Consent Type</p>
+                        <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a", fontWeight: 600 }}>{record.consent_type || "LOGIN_TERMS_AND_PRIVACY"}</p>
+                      </div>
+                    </div>
+                    {record.user_agent && (
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", gridColumn: "1 / -1" }}>
+                        <Globe size={14} color="#64748b" style={{ flexShrink: 0, marginTop: "2px" }} />
+                        <div>
+                          <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Browser / User Agent</p>
+                          <p style={{ margin: 0, fontSize: "0.72rem", color: "#475569", wordBreak: "break-all" }}>{record.user_agent}</p>
+                        </div>
+                      </div>
+                    )}
+                    {record.trainee_email && (
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
+                        <Info size={14} color="#64748b" style={{ flexShrink: 0, marginTop: "2px" }} />
+                        <div>
+                          <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Email on Record</p>
+                          <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a" }}>{record.trainee_email}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: "10px", padding: "1.5rem", textAlign: "center" }}>
+              <ShieldAlert size={28} color="#94a3b8" style={{ marginBottom: "0.5rem" }} />
+              <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
+                No login consent records found yet. Records will appear here after your next login.
+              </p>
+            </div>
+          )}
+
+          <p style={{ margin: "1rem 0 0 0", fontSize: "0.75rem", color: "#94a3b8", textAlign: "center" }}>
+            This audit log is tamper-evident and stored as legal proof per Section 43A of the IT Act, 2000.
+          </p>
         </div>
 
         {/* Clear Policy Disclosures */}

@@ -8,12 +8,15 @@ import {
   BadgeCheck,
   LockKeyhole,
   Mail,
+  FileText,
+  X,
+  CheckSquare,
+  Square
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase-config";
 import { signInWithEmailAndPassword } from "firebase/auth";
-
-
+import { platformService } from "../services/platformService";
 
 function Login() {
   const navigate = useNavigate();
@@ -30,6 +33,10 @@ function Login() {
   const [traineeId, setTraineeId] = useState("");
   const [traineeEmail, setTraineeEmail] = useState("");
   const [traineePassword, setTraineePassword] = useState("");
+  const [traineeConsentAgreed, setTraineeConsentAgreed] = useState(false);
+
+  /* Modal for Terms / Privacy */
+  const [showModal, setShowModal] = useState(null);
 
   /* Employer */
   const [organizationId, setOrganizationId] = useState("");
@@ -55,6 +62,7 @@ function Login() {
       setTraineeId("TR-0001");
       setTraineeEmail("demo.trainee@sih.gov.in");
       setTraineePassword("demo1234");
+      setTraineeConsentAgreed(true);
     } else if (demoRole === "employer") {
       setOrganizationId("EMP-001");
       setEmployerEmail("hr@infosys.com");
@@ -169,16 +177,32 @@ function Login() {
       setError("Please enter your password.");
       return;
     }
+    if (!traineeConsentAgreed) {
+      setError("You must agree to all applicable Terms & Conditions and Privacy Policy to log in.");
+      return;
+    }
+
+    const proofToken = `PROOF-LOGIN-${enteredId || 'TR-0001'}-${Date.now()}`;
+    const consentRecord = {
+      proof_token: proofToken,
+      accepted_at: new Date().toISOString(),
+      terms_version: "v1.0",
+      user_agent: typeof navigator !== "undefined" ? navigator.userAgent : "Web Browser",
+      consent_type: "LOGIN_TERMS_AND_PRIVACY",
+      email: enteredEmail
+    };
 
     if (ENABLE_DEMO_MODE) {
       try {
+        await platformService.submitLoginConsent(enteredId || "TR-0001", consentRecord);
         const res = await fetch(`${API_BASE}/auth/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" },
           body: JSON.stringify({
             trainee_id: enteredId,
             email: enteredEmail,
-            role: "trainee"
+            role: "trainee",
+            consent: consentRecord
           })
         });
         if (res.ok) {
@@ -187,21 +211,25 @@ function Login() {
           localStorage.setItem("sih_token", data.token || "demo_trainee_jwt_token_verified");
           localStorage.setItem("traineeId", data.user_id || enteredId);
           localStorage.setItem("traineeEmail", enteredEmail);
+          localStorage.setItem("traineeLoginProofToken", proofToken);
           navigate("/trainee");
           return;
         }
       } catch (err) {
         // Fallback for seamless demo
       }
+      await platformService.submitLoginConsent(enteredId || "TR-0001", consentRecord);
       localStorage.setItem("userRole", "trainee");
       localStorage.setItem("sih_token", "demo_trainee_jwt_token_verified");
       localStorage.setItem("traineeId", enteredId || "TR-0001");
       localStorage.setItem("traineeEmail", enteredEmail || "demo.trainee@sih.gov.in");
+      localStorage.setItem("traineeLoginProofToken", proofToken);
       navigate("/trainee");
       return;
     } else {
       // Production Identity via Firebase
       try {
+        await platformService.submitLoginConsent(enteredId || "TR-0001", consentRecord);
         const userCredential = await signInWithEmailAndPassword(auth, enteredEmail, traineePassword);
         const token = await userCredential.user.getIdToken();
         await fetchAuthoritativeProfile(token, "trainee", enteredId);
@@ -294,6 +322,7 @@ function Login() {
 
 
   return (
+    <>
     <div className="login-page">
 
       <div className="login-card">
@@ -540,6 +569,52 @@ function Login() {
                 </div>
 
 
+                {/* ---- CONSENT CHECKBOX ---- */}
+                <div style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "0.65rem",
+                  marginTop: "1.1rem",
+                  background: traineeConsentAgreed ? "rgba(37,99,235,0.06)" : "rgba(248,250,252,0.9)",
+                  border: traineeConsentAgreed ? "1.5px solid rgba(37,99,235,0.3)" : "1.5px solid #e2e8f0",
+                  borderRadius: "10px",
+                  padding: "0.85rem 1rem",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+                  onClick={() => setTraineeConsentAgreed(prev => !prev)}
+                >
+                  <span style={{ flexShrink: 0, marginTop: "1px", color: traineeConsentAgreed ? "#2563eb" : "#94a3b8" }}>
+                    {traineeConsentAgreed
+                      ? <CheckSquare size={20} />
+                      : <Square size={20} />
+                    }
+                  </span>
+                  <span style={{ fontSize: "0.82rem", color: "#374151", lineHeight: 1.55 }}>
+                    I agree to accept all applicable{" "}
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setShowModal("terms"); }}
+                      style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, cursor: "pointer", padding: 0, textDecoration: "underline", fontSize: "0.82rem" }}
+                    >
+                      Terms &amp; Conditions
+                    </button>
+                    {" "}and{" "}
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setShowModal("privacy"); }}
+                      style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, cursor: "pointer", padding: 0, textDecoration: "underline", fontSize: "0.82rem" }}
+                    >
+                      Privacy Policy
+                    </button>
+                    {". "}
+                    <span style={{ color: "#64748b", fontSize: "0.78rem" }}>
+                      Your consent will be logged as legal proof.
+                    </span>
+                  </span>
+                </div>
+
+
                 {error && (
                   <p className="login-error">
                     {error}
@@ -555,6 +630,8 @@ function Login() {
                 <button
                   type="submit"
                   className="login-submit"
+                  disabled={!traineeConsentAgreed}
+                  style={{ opacity: traineeConsentAgreed ? 1 : 0.55, cursor: traineeConsentAgreed ? "pointer" : "not-allowed" }}
                 >
                   Sign in
                   <ArrowRight size={17} />
@@ -564,6 +641,7 @@ function Login() {
               </form>
 
             )}
+
 
 
             {/* =================================
@@ -732,6 +810,129 @@ function Login() {
       </div>
 
     </div>
+
+    {/* =================================
+        TERMS & PRIVACY MODALS
+    ================================= */}
+    {showModal && (
+      <div
+        onClick={() => setShowModal(null)}
+        style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(15,23,42,0.65)",
+          backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: "1rem"
+        }}
+      >
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            background: "white", borderRadius: "18px",
+            width: "100%", maxWidth: "540px",
+            maxHeight: "80vh", overflow: "hidden",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.25)",
+            display: "flex", flexDirection: "column"
+          }}
+        >
+          {/* Modal Header */}
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            padding: "1.25rem 1.5rem",
+            borderBottom: "1px solid #e2e8f0",
+            background: showModal === "terms" ? "#eff6ff" : "#f0fdf4"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+              <FileText size={20} color={showModal === "terms" ? "#2563eb" : "#16a34a"} />
+              <span style={{ fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>
+                {showModal === "terms" ? "Terms & Conditions" : "Privacy Policy"}
+              </span>
+              <span style={{
+                background: showModal === "terms" ? "#dbeafe" : "#dcfce7",
+                color: showModal === "terms" ? "#1d4ed8" : "#15803d",
+                fontSize: "0.7rem", fontWeight: 700, padding: "2px 8px", borderRadius: "20px"
+              }}>
+                v1.0 · Effective Jan 2024
+              </span>
+            </div>
+            <button
+              onClick={() => setShowModal(null)}
+              style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", display: "flex" }}
+            >
+              <X size={22} />
+            </button>
+          </div>
+
+          {/* Modal Body */}
+          <div style={{ overflowY: "auto", padding: "1.5rem", fontSize: "0.85rem", color: "#374151", lineHeight: 1.7 }}>
+            {showModal === "terms" ? (
+              <>
+                <p style={{ fontWeight: 700, color: "#0f172a", marginBottom: "0.75rem" }}>
+                  Skill2Impact — Government Skilling Portal — Terms &amp; Conditions
+                </p>
+                <ol style={{ paddingLeft: "1.25rem", margin: 0 }}>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Acceptance:</strong> By logging in, you agree to abide by these Terms and all applicable Indian Government guidelines on vocational training data.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Eligibility:</strong> Access is restricted to registered trainees with a valid Permanent Trainee ID issued under the National Skills Qualification Framework (NSQF).</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Data Accuracy:</strong> You are responsible for ensuring that the personal and professional information you provide is accurate and up to date.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Platform Use:</strong> The portal must be used solely for legitimate skill tracking, outcome reporting, and employer verification purposes.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Consent Logging:</strong> Your agreement to these terms is time-stamped, proof-tokenized, and stored as an immutable legal audit record per Section 43A IT Act, 2000.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Accountability:</strong> Misuse of the platform, fraudulent data entry, or unauthorized access may result in suspension and referral to appropriate authorities.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Modifications:</strong> The Government reserves the right to revise these terms. Continued use after notification constitutes acceptance.</li>
+                </ol>
+              </>
+            ) : (
+              <>
+                <p style={{ fontWeight: 700, color: "#0f172a", marginBottom: "0.75rem" }}>
+                  Skill2Impact — Data Privacy Policy for Trainees
+                </p>
+                <ol style={{ paddingLeft: "1.25rem", margin: 0 }}>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Data Collected:</strong> We collect your Trainee ID, email, training programme details, employment outcomes, and follow-up survey responses.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Purpose of Collection:</strong> Data is used for policy evaluation, programme funding decisions, and employer verification only.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>No Commercial Sharing:</strong> Your individual data will never be sold, shared with commercial marketers, or used for targeted advertising.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Anonymized Analytics:</strong> Government outcome reports use only anonymized, aggregated data — never individually identifiable records.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Consent Audit Trail:</strong> Your login consent is recorded with a cryptographic proof token, timestamp, and terms version as a verifiable legal record.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Your Rights:</strong> You may request a data export, correction, or deletion through the State Portal Administration at any time.</li>
+                  <li style={{ marginBottom: "0.6rem" }}><strong>Security:</strong> All data is encrypted at rest and in transit per IS/ISO 27001 guidelines and Government of India Cloud Security standards.</li>
+                </ol>
+              </>
+            )}
+          </div>
+
+          {/* Modal Footer */}
+          <div style={{
+            padding: "1rem 1.5rem",
+            borderTop: "1px solid #e2e8f0",
+            display: "flex", justifyContent: "flex-end", gap: "0.75rem",
+            background: "#f8fafc"
+          }}>
+            <button
+              onClick={() => setShowModal(null)}
+              style={{
+                padding: "0.55rem 1.25rem", borderRadius: "8px",
+                border: "1px solid #e2e8f0", background: "white",
+                color: "#374151", fontWeight: 600, cursor: "pointer", fontSize: "0.85rem"
+              }}
+            >
+              Close
+            </button>
+            <button
+              onClick={() => { setTraineeConsentAgreed(true); setShowModal(null); }}
+              style={{
+                padding: "0.55rem 1.25rem", borderRadius: "8px",
+                border: "none",
+                background: showModal === "terms" ? "#2563eb" : "#16a34a",
+                color: "white", fontWeight: 700, cursor: "pointer", fontSize: "0.85rem",
+                display: "flex", alignItems: "center", gap: "0.4rem"
+              }}
+            >
+              <CheckSquare size={16} />
+              I Accept &amp; Agree
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 

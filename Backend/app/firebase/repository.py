@@ -232,6 +232,9 @@ class FirestoreRepository:
         new_consent = consent.model_dump()
         new_consent['effective_timestamp'] = datetime.utcnow().isoformat() + 'Z'
         new_consent['version'] = '1.0'
+        # Persist accepted_at (use effective_timestamp as fallback)
+        if not new_consent.get('accepted_at'):
+            new_consent['accepted_at'] = new_consent['effective_timestamp']
         updated_doc = None
         if db:
             try:
@@ -248,7 +251,6 @@ class FirestoreRepository:
                 raise
         else:
             raise RuntimeError('No datastore is configured for trainees')
-        return updated_doc
         return updated_doc
 
     @staticmethod
