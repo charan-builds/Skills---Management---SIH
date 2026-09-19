@@ -31,7 +31,7 @@ const DEMO_EMPLOYERS = [
 
 export default function EmployerLayout({ children }) {
   const store = usePlatformStore();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarHovered, setSidebarHovered] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -67,56 +67,109 @@ export default function EmployerLayout({ children }) {
   const verificationStatus = currentEmployer?.status || "Verified";
 
   return (
-    <div className={`app-layout ${sidebarOpen ? "" : "sidebar-closed"}`}>
-      {/* SIDEBAR */}
-      {sidebarOpen && (
-        <aside className="sidebar">
-          <div style={{ padding: "1.25rem", borderBottom: "1px solid #e2e8f0" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
-              <Building size={18} color="#2563eb" />
-              <strong style={{ fontSize: "0.95rem", color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {orgName}
-              </strong>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-              {verificationStatus === "Verified" ? (
-                <span style={{ background: "#dcfce7", color: "#166534", fontSize: "0.7rem", fontWeight: 700, padding: "2px 8px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "3px" }}>
-                  <CheckCircle2 size={11} /> Verified Employer
-                </span>
-              ) : verificationStatus === "Pending" ? (
-                <span style={{ background: "#fef3c7", color: "#b45309", fontSize: "0.7rem", fontWeight: 700, padding: "2px 8px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "3px" }}>
-                  <Clock size={11} /> Admin Verification Pending
-                </span>
-              ) : (
-                <span style={{ background: "#fee2e2", color: "#b91c1c", fontSize: "0.7rem", fontWeight: 700, padding: "2px 8px", borderRadius: "10px", display: "inline-flex", alignItems: "center", gap: "3px" }}>
-                  <XCircle size={11} /> Verification Rejected
-                </span>
-              )}
-            </div>
+    <div className="app-layout employer-layout-container">
+      {/* Left Edge Hover Zone to open sidebar on mouse hover */}
+      <div 
+        onMouseEnter={() => setSidebarHovered(true)}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "16px",
+          height: "100vh",
+          zIndex: 9999,
+          cursor: "pointer"
+        }}
+      />
+
+      {/* SIDEBAR - CLOSED BY DEFAULT, OPENS ON HOVER ONLY */}
+      <aside 
+        className={`sidebar ${sidebarHovered ? "sidebar-expanded" : "sidebar-closed"}`}
+        onMouseEnter={() => setSidebarHovered(true)}
+        onMouseLeave={() => setSidebarHovered(false)}
+        style={{
+          width: "260px",
+          transform: sidebarHovered ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          zIndex: 10000,
+          background: "#0f172a",
+          borderRight: "1px solid #1e293b",
+          boxShadow: sidebarHovered ? "8px 0 32px rgba(0,0,0,0.35)" : "none",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <div style={{ padding: "1.25rem 1rem", borderBottom: "1px solid #1e293b", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Building size={18} color="white" />
           </div>
+          <div style={{ whiteSpace: "nowrap", overflow: "hidden" }}>
+            <strong style={{ fontSize: "0.95rem", color: "#f8fafc", display: "block" }}>{orgName}</strong>
+            <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>Employer Portal</span>
+          </div>
+        </div>
 
-          <nav className="sidebar-nav">
-            {employerMenuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path || 
-                (item.path === "/employer" && location.pathname === "/employer/dashboard") ||
-                (item.path === "/employer/workforce" && location.pathname === "/employer/outcomes");
-              return (
-                <Link key={item.label} to={item.path} className={`sidebar-item ${isActive ? "active" : ""}`}>
-                  <Icon size={18} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-      )}
+        <nav className="sidebar-nav" style={{ padding: "0.85rem 0.5rem", flex: 1, display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          {employerMenuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path || 
+              (item.path === "/employer" && location.pathname === "/employer/dashboard") ||
+              (item.path === "/employer/workforce" && location.pathname === "/employer/outcomes");
+            return (
+              <Link 
+                key={item.label} 
+                to={item.path} 
+                className={`sidebar-item ${isActive ? "active" : ""}`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.85rem",
+                  padding: "0.7rem 0.85rem",
+                  borderRadius: "8px",
+                  color: isActive ? "#ffffff" : "#94a3b8",
+                  background: isActive ? "#2563eb" : "transparent",
+                  textDecoration: "none",
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: "0.85rem",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                <Icon size={20} style={{ flexShrink: 0 }} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
 
-      <main className="main-content">
+      <main className="main-content" style={{ marginLeft: 0, width: "100%", flex: 1, minWidth: 0 }}>
         <div className="admin-topbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.5rem", background: "white", borderBottom: "1px solid #e2e8f0" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} type="button" aria-label="Toggle Menu">
-              <Menu size={20} />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <button 
+              className="menu-toggle" 
+              onMouseEnter={() => setSidebarHovered(true)}
+              onClick={() => setSidebarHovered(!sidebarHovered)} 
+              type="button" 
+              aria-label="Toggle sidebar menu"
+              style={{
+                background: "#f1f5f9",
+                border: "1px solid #cbd5e1",
+                padding: "7px 10px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#0f172a"
+              }}
+            >
+              <Menu size={22} color="#0f172a" />
             </button>
             <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#1e293b", letterSpacing: "0.3px" }}>
               ORGANISATION PORTAL

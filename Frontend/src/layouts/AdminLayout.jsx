@@ -35,7 +35,7 @@ export default function AdminLayout({ children }) {
 }
 
 function AdminLayoutInner({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarHovered, setSidebarHovered] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -57,32 +57,108 @@ function AdminLayoutInner({ children }) {
   const scopePct = Math.round((scopeCount / (totalTrainees || 1)) * 100);
 
   return (
-    <div className={`app-layout ${sidebarOpen ? "" : "sidebar-closed"}`}>
-      {/* SIDEBAR */}
-      {sidebarOpen && (
-        <aside className="sidebar">
-          <nav className="sidebar-nav">
-            {adminMenuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path;
-              return (
-                <Link key={item.label} to={item.path} className={`sidebar-item ${isActive ? "active" : ""}`}>
-                  <Icon size={19} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-      )}
+    <div className="app-layout admin-layout-container">
+      {/* Left Edge Hover Zone to open sidebar on mouse hover */}
+      <div 
+        onMouseEnter={() => setSidebarHovered(true)}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "16px",
+          height: "100vh",
+          zIndex: 9999,
+          cursor: "pointer"
+        }}
+      />
 
-      <main className="main-content">
+      {/* SIDEBAR - CLOSED BY DEFAULT, OPENS ON HOVER ONLY */}
+      <aside 
+        className={`sidebar ${sidebarHovered ? "sidebar-expanded" : "sidebar-closed"}`}
+        onMouseEnter={() => setSidebarHovered(true)}
+        onMouseLeave={() => setSidebarHovered(false)}
+        style={{
+          width: "260px",
+          transform: sidebarHovered ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          zIndex: 10000,
+          background: "#0f172a",
+          borderRight: "1px solid #1e293b",
+          boxShadow: sidebarHovered ? "8px 0 32px rgba(0,0,0,0.35)" : "none",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <div style={{ padding: "1.25rem 1rem", borderBottom: "1px solid #1e293b", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Filter size={18} color="white" />
+          </div>
+          <div style={{ whiteSpace: "nowrap", overflow: "hidden" }}>
+            <strong style={{ fontSize: "0.95rem", color: "#f8fafc", display: "block" }}>Admin Intelligence</strong>
+            <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>National Skilling Platform</span>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav" style={{ padding: "0.85rem 0.5rem", flex: 1, display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          {adminMenuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path;
+            return (
+              <Link 
+                key={item.label} 
+                to={item.path} 
+                className={`sidebar-item ${isActive ? "active" : ""}`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.85rem",
+                  padding: "0.7rem 0.85rem",
+                  borderRadius: "8px",
+                  color: isActive ? "#ffffff" : "#94a3b8",
+                  background: isActive ? "#2563eb" : "transparent",
+                  textDecoration: "none",
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: "0.85rem",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                <Icon size={20} style={{ flexShrink: 0 }} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+
+      <main className="main-content" style={{ marginLeft: 0, width: "100%", flex: 1, minWidth: 0 }}>
         <div className="admin-topbar">
-          <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle sidebar" type="button">
-            <Menu size={22} />
-          </button>
-
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <button 
+              className="menu-toggle" 
+              onMouseEnter={() => setSidebarHovered(true)}
+              onClick={() => setSidebarHovered(!sidebarHovered)} 
+              aria-label="Toggle sidebar menu" 
+              type="button"
+              style={{
+                background: "#f1f5f9",
+                border: "1px solid #cbd5e1",
+                padding: "7px 10px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#0f172a"
+              }}
+            >
+              <Menu size={22} color="#0f172a" />
+            </button>
             <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1e293b" }}>
               National Skilling Framework • Admin Intelligence
             </span>

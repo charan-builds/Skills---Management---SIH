@@ -601,14 +601,25 @@ class MockStore {
    * Admin adopts or dismisses a policy intervention.
    */
   updatePolicyIntervention(interventionId, action) {
-    const policy = this.state.policy_interventions.find(p => p.id === interventionId);
-    if (policy) {
+    if (!this.state.policy_interventions) {
+      this.state.policy_interventions = [];
+    }
+    let policy = this.state.policy_interventions.find(p => p.id === interventionId);
+    if (!policy) {
+      policy = {
+        id: interventionId,
+        title: `Intervention ${interventionId}`,
+        status: action === "adopt" ? "Adopted" : "Proposed",
+        adopted_at: action === "adopt" ? new Date().toISOString().split("T")[0] : null
+      };
+      this.state.policy_interventions.push(policy);
+    } else {
       policy.status = action === "adopt" ? "Adopted" : action === "dismiss" ? "Dismissed" : "Identified";
       if (action === "adopt") {
         policy.adopted_at = new Date().toISOString().split("T")[0];
       }
-      this.save();
     }
+    this.save();
     return policy;
   }
 

@@ -70,3 +70,14 @@ def get_intervention(id: str):
 @router.post("", response_model=InterventionResponse, status_code=status.HTTP_201_CREATED)
 def create_intervention(intervention: InterventionCreate):
     return FirestoreRepository.create_intervention(intervention)
+
+@router.post("/{id}/adopt")
+def adopt_intervention(id: str):
+    res = FirestoreRepository.get_intervention(id)
+    if not res:
+        res = {"id": id, "title": "Policy Intervention", "status": "Adopted"}
+    else:
+        res["status"] = "Adopted"
+    FirestoreRepository.create_intervention(res)
+    return {"status": "success", "id": id, "action_status": "Adopted"}
+

@@ -334,7 +334,7 @@ function Login() {
 
         <div className="login-logo-hero">
           <img
-            src="/skill2impact-logo.jpg"
+            src="/skill2impact-logo.png"
             alt="Skill2Impact — Skills Today A Brighter Tomorrow"
             className="login-brand-logo"
           />

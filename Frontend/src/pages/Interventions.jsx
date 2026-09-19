@@ -21,19 +21,21 @@ export default function Interventions() {
     setLoading(true);
     setError(null);
     try {
-      const [dashRes, sgRes, retRes, npRes] = await Promise.all([
+      const [dashRes, sgRes, retRes, npRes, policyRes] = await Promise.all([
         platformService.getAdminDashboard(filters),
         platformService.getSkillGaps(filters),
         platformService.getRetentionMetrics(filters),
-        platformService.getNonPlacementReasons(filters)
+        platformService.getNonPlacementReasons(filters),
+        platformService.getPolicyInterventions(filters)
       ]);
 
       const total = dashRes?.total || 800;
       const topGap = sgRes?.skills?.[0]?.skill || "Kubernetes & Containerization";
       const topGapCount = sgRes?.skills?.[0]?.affected_trainees || 92;
+      const persistedActions = policyRes?.actions || [];
 
       // Evidence-traceable Insight Cards (Section 31 & 32)
-      const dynamicInsights = [
+      const baseInsights = [
         {
           id: "INS-01",
           type: "Placement concern",
@@ -136,6 +138,15 @@ export default function Interventions() {
         }
       ];
 
+      // Overlay persisted status from backend / mockStore
+      const dynamicInsights = baseInsights.map(item => {
+        const persisted = persistedActions.find(p => p.id === item.id);
+        if (persisted && persisted.status) {
+          return { ...item, status: persisted.status };
+        }
+        return item;
+      });
+
       setInsights(dynamicInsights);
       setSelectedInsight(dynamicInsights[0]);
     } catch (err) {
@@ -150,8 +161,14 @@ export default function Interventions() {
     loadInsights();
   }, [filters, store.last_updated]);
 
-  const handleAdopt = (id) => {
-    setAdoptedMap(prev => ({ ...prev, [id]: true }));
+  const handleAdopt = async (id) => {
+    try {
+      await platformService.adoptPolicyIntervention(id);
+      setAdoptedMap(prev => ({ ...prev, [id]: true }));
+      setInsights(prev => prev.map(ins => ins.id === id ? { ...ins, status: "Adopted" } : ins));
+    } catch (err) {
+      console.error("Failed to persist adopt action", err);
+    }
   };
 
   return (

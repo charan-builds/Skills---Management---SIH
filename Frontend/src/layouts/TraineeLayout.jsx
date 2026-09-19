@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Menu, LogOut, ChevronDown,
@@ -25,7 +25,7 @@ const traineeMenuItems = [
 ];
 
 export default function TraineeLayout({ children }) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarHovered, setSidebarHovered] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -33,6 +33,14 @@ export default function TraineeLayout({ children }) {
 
   const currentTraineeId = localStorage.getItem("traineeId") || "TR-0001";
   const currentTrainee = (storeState.trainees || []).find(t => t.id === currentTraineeId) || storeState.trainees?.[0];
+
+  const availablePersonas = useMemo(() => {
+    const list = storeState.trainees || [];
+    if (list.length === 0) return [];
+    const sampleIds = ["TR-0001", "TR-0002", "TR-0003", "TR-0004", "TR-0006", "TR-0014"];
+    const found = sampleIds.map(id => list.find(t => t.id === id)).filter(Boolean);
+    return found.length > 0 ? found : list.slice(0, 6);
+  }, [storeState.trainees]);
 
   const handleTraineeSwitch = (newId) => {
     localStorage.setItem("traineeId", newId);
@@ -45,40 +53,108 @@ export default function TraineeLayout({ children }) {
   };
 
   return (
-    <div className={`app-layout ${sidebarOpen ? "" : "sidebar-closed"}`}>
-      {/* SIDEBAR */}
-      {sidebarOpen && (
-        <aside className="sidebar">
-          <div style={{ padding: '1.25rem 1.25rem', borderBottom: '1px solid #e2e8f0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
-              <Zap size={18} color="#2563eb" />
-              <strong style={{ fontSize: '1rem', color: '#0f172a' }}>Trainee Portal</strong>
-            </div>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>
-              Personal Skills & Career Intelligence
-            </p>
-          </div>
-          <nav className="sidebar-nav">
-            {traineeMenuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.path || 
-                (item.path === "/trainee/training" && location.pathname === "/trainee/training-history");
-              return (
-                <Link key={item.label} to={item.path} className={`sidebar-item ${isActive ? "active" : ""}`}>
-                  <Icon size={18} />
-                  <span>{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-      )}
+    <div className="app-layout trainee-layout-container">
+      {/* Left Edge Hover Zone to open sidebar on mouse hover */}
+      <div 
+        onMouseEnter={() => setSidebarHovered(true)}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "16px",
+          height: "100vh",
+          zIndex: 9999,
+          cursor: "pointer"
+        }}
+      />
 
-      <main className="main-content">
+      {/* SIDEBAR - CLOSED BY DEFAULT, OPENS ON HOVER ONLY */}
+      <aside 
+        className={`sidebar ${sidebarHovered ? "sidebar-expanded" : "sidebar-closed"}`}
+        onMouseEnter={() => setSidebarHovered(true)}
+        onMouseLeave={() => setSidebarHovered(false)}
+        style={{
+          width: "260px",
+          transform: sidebarHovered ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          zIndex: 10000,
+          background: "#0f172a",
+          borderRight: "1px solid #1e293b",
+          boxShadow: sidebarHovered ? "8px 0 32px rgba(0,0,0,0.35)" : "none",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column"
+        }}
+      >
+        <div style={{ padding: "1.25rem 1rem", borderBottom: "1px solid #1e293b", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "#2563eb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Zap size={18} color="white" />
+          </div>
+          <div style={{ whiteSpace: "nowrap", overflow: "hidden" }}>
+            <strong style={{ fontSize: "0.95rem", color: "#f8fafc", display: "block" }}>Trainee Portal</strong>
+            <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>Personal Skills & Career</span>
+          </div>
+        </div>
+
+        <nav className="sidebar-nav" style={{ padding: "0.85rem 0.5rem", flex: 1, display: "flex", flexDirection: "column", gap: "0.35rem" }}>
+          {traineeMenuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.path || 
+              (item.path === "/trainee/training" && location.pathname === "/trainee/training-history");
+            return (
+              <Link 
+                key={item.label} 
+                to={item.path} 
+                className={`sidebar-item ${isActive ? "active" : ""}`}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.85rem",
+                  padding: "0.7rem 0.85rem",
+                  borderRadius: "8px",
+                  color: isActive ? "#ffffff" : "#94a3b8",
+                  background: isActive ? "#2563eb" : "transparent",
+                  textDecoration: "none",
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: "0.85rem",
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap"
+                }}
+              >
+                <Icon size={20} style={{ flexShrink: 0 }} />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </aside>
+
+      <main className="main-content" style={{ marginLeft: 0, width: "100%", flex: 1, minWidth: 0 }}>
         <div className="admin-topbar">
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button className="menu-toggle" onClick={() => setSidebarOpen(!sidebarOpen)} type="button">
-              <Menu size={22} />
+            <button 
+              className="menu-toggle" 
+              onMouseEnter={() => setSidebarHovered(true)}
+              onClick={() => setSidebarHovered(!sidebarHovered)} 
+              type="button"
+              aria-label="Toggle sidebar menu"
+              style={{
+                background: "#f1f5f9",
+                border: "1px solid #cbd5e1",
+                padding: "7px 10px",
+                borderRadius: "8px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#0f172a"
+              }}
+            >
+              <Menu size={22} color="#0f172a" />
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Trainee Persona:</span>
@@ -96,12 +172,11 @@ export default function TraineeLayout({ children }) {
                   cursor: 'pointer'
                 }}
               >
-                <option value="TR-0001">TR-0001: Priya Sharma (Employed, Retained)</option>
-                <option value="TR-0002">TR-0002: Rahul Patil (Employed, Verified)</option>
-                <option value="TR-0003">TR-0003: Sneha Kulkarni (Self-Employed)</option>
-                <option value="TR-0004">TR-0004: Amit Deshmukh (Apprenticeship)</option>
-                <option value="TR-0006">TR-0006: Neha Shinde (Seeking Placement)</option>
-                <option value="TR-0014">TR-0014: Pooja More (Multi-Job Career Transition)</option>
+                {availablePersonas.map(t => (
+                  <option key={t.id} value={t.id}>
+                    {t.id}: {t.name} ({t.employment?.status || t.training_status})
+                  </option>
+                ))}
               </select>
             </div>
           </div>
@@ -109,7 +184,7 @@ export default function TraineeLayout({ children }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <div style={{ textAlign: 'right' }}>
               <strong style={{ display: 'block', fontSize: '0.85rem', color: '#0f172a' }}>
-                {currentTrainee?.name || "Priya Sharma"}
+                {currentTrainee?.name || "Trainee Persona"}
               </strong>
               <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                 ID: {currentTrainee?.id || currentTraineeId}

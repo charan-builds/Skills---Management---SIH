@@ -175,7 +175,7 @@ export default function SkillGaps() {
                   </div>
                 </div>
 
-                <div style={{ height: "360px", marginBottom: "1.5rem" }}>
+                <div style={{ height: `${Math.max(380, (skillGapsData?.skills?.length || 0) * 48)}px`, marginBottom: "1.5rem" }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={skillGapsData?.skills || []}
