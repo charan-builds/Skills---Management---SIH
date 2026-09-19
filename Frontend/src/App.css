@@ -2684,11 +2684,11 @@ body {
 
 /* ---- LOGO BLOCK (inside left hero column) ---- */
 .landing-logo-block {
-  margin-bottom: 1.75rem;
+  margin-bottom: 1rem;
 }
 
 .landing-brand-logo {
-  height: 70px;
+  height: 150px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -5505,4 +5505,4 @@ body {
   opacity: 0.9;
   font-size: 0.95rem;
   line-height: 1.5;
-}
+}
