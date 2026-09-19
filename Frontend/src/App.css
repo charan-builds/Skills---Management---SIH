@@ -2688,7 +2688,7 @@ body {
 }
 
 .landing-brand-logo {
-  height: 48px;
+  height: 70px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -3484,7 +3484,7 @@ body {
   }
 
   .landing-brand-logo {
-    height: 38px;
+    height: 50px;
   }
 
   .landing-headline {
