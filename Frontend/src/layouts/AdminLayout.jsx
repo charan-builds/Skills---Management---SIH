@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Menu, LogOut, ChevronDown, X,
   LayoutDashboard, BarChart3, Briefcase, Target, GraduationCap, 
-  Building2, Map, Users2, Users, ShieldCheck, FileText, Filter, GitBranch, RefreshCw, PhoneCall
+  Building2, Map, Users2, Users, ShieldCheck, FileText, Filter, GitBranch, RefreshCw, PhoneCall, Sliders
 } from "lucide-react";
 import "../../src/App.css";
 import { FilterProvider, useFilters } from "../context/FilterContext";
@@ -22,6 +22,7 @@ const adminMenuItems = [
   { label: "Cohort Comparison", path: "/admin/cohorts", icon: Users2 },
   { label: "Follow-Up Management", path: "/admin/follow-ups", icon: PhoneCall },
   { label: "Key Findings & Insights", path: "/admin/interventions", icon: GitBranch },
+  { label: "Policy Simulator", path: "/admin/policy-simulator", icon: Sliders },
   { label: "Employer Verification", path: "/admin/employers", icon: ShieldCheck },
   { label: "Reports", path: "/admin/reports", icon: FileText }
 ];

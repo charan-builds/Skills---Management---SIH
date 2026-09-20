@@ -12,7 +12,7 @@ from app.auth.dependencies import get_admin_user, get_current_user
 from app.core.config import BASE_DIR, settings
 
 # Import Routers
-from app.routers import programmes, trainees, employers, analytics, interventions, auth, skills, trainee_portal, intelligence
+from app.routers import programmes, trainees, employers, analytics, interventions, auth, skills, trainee_portal, intelligence, policy_simulator
 
 logger = logging.getLogger(__name__)
 
@@ -75,6 +75,7 @@ app.include_router(analytics.router)
 app.include_router(interventions.router)
 app.include_router(skills.router)
 app.include_router(intelligence.router)
+app.include_router(policy_simulator.router)
 app.include_router(trainee_portal.router)
 from app.routers import cron, followups
 app.include_router(cron.router, prefix="/api/cron", tags=["Cron"])

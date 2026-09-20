@@ -2059,6 +2059,317 @@ class PlatformService {
     await wait();
     return mockStore.sendFollowupReminder(traineeId, followupId, channel);
   }
+
+  /**
+   * Policy Simulator Baseline Aggregator (What-If Analysis)
+   */
+  async getPolicySimulatorBaseline(filters = {}) {
+    await wait();
+    const state = mockStore.getState();
+    const trainees = this.filterTrainees(state.trainees, filters);
+    const total = trainees.length || 800;
+
+    const completed = trainees.filter(t => t.training_status === "Completed").length;
+    const certified = trainees.filter(t => t.certified).length;
+    const placed = trainees.filter(t => t.employment?.status === "EMPLOYED" || t.employment?.status === "APPRENTICESHIP").length;
+    const employed = trainees.filter(t => t.employment?.status === "EMPLOYED" || t.employment?.status === "APPRENTICESHIP" || t.employment?.status === "SELF_EMPLOYED").length;
+
+    const currentWages = trainees.map(t => t.employment?.current_wage).filter(w => typeof w === "number" && w > 0);
+    const avgIncome = currentWages.length ? Math.round(currentWages.reduce((a, b) => a + b, 0) / currentWages.length) : 18500;
+
+    const placementRate = total > 0 ? Math.round((placed / total) * 100) : 68;
+    const employmentRate = total > 0 ? Math.round((employed / total) * 100) : 64;
+    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 81;
+
+    const uniqueEmployers = new Set(trainees.map(t => t.employment?.company_name).filter(Boolean));
+    const employerPartners = Math.max(uniqueEmployers.size, 142);
+
+    return {
+      total_trainees: total,
+      placement_rate: placementRate,
+      employment_rate: employmentRate,
+      completion_rate: completionRate,
+      job_relevance: 72,
+      employer_satisfaction: 75,
+      average_income: avgIncome,
+      employer_partners: employerPartners,
+      average_training_hours: 120
+    };
+  }
+
+  /**
+   * Policy Simulator Engine - Deterministic What-If Calculation
+   */
+  async runPolicySimulation(scenario, filters = {}) {
+    await wait(200);
+    const baseline = await this.getPolicySimulatorBaseline(filters);
+    
+    const interventionType = scenario.intervention_type || "Add Training Module";
+    const params = scenario.parameters || {};
+
+    const basePlacement = Number(baseline.placement_rate) || 68;
+    const baseEmployment = Number(baseline.employment_rate) || 64;
+    const baseCompletion = Number(baseline.completion_rate) || 81;
+    const baseRelevance = Number(baseline.job_relevance) || 72;
+    const baseSatisfaction = Number(baseline.employer_satisfaction) || 75;
+    const baseIncome = Number(baseline.average_income) || 18500;
+    const totalTrainees = Number(baseline.total_trainees) || 5240;
+
+    const affectedTrainees = Number(params.affected_trainees) || totalTrainees;
+    const scopeRatio = Math.min(affectedTrainees / (totalTrainees || 1), 1.0);
+
+    const additionalHours = Number(params.additional_hours) || 20;
+    const costPerTrainee = Number(params.cost_per_trainee) || 2500;
+    const relevanceLevel = String(params.relevance_level || "High").toLowerCase();
+    const durationMonths = Number(params.duration_months) || 3;
+    const employerCount = Number(params.employer_count) || 15;
+
+    const relevanceMult = relevanceLevel === "high" ? 1.25 : (relevanceLevel === "medium" ? 1.0 : 0.7);
+
+    let placementBoost = 0;
+    let employmentBoost = 0;
+    let completionBoost = 0;
+    let relevanceBoost = 0;
+    let satisfactionBoost = 0;
+    let incomeBoost = 0;
+
+    switch (interventionType) {
+      case "Add Training Module":
+      case "add_module":
+        placementBoost = (additionalHours * 0.28 * relevanceMult) * scopeRatio;
+        relevanceBoost = (additionalHours * 0.45 * relevanceMult) * scopeRatio;
+        satisfactionBoost = (additionalHours * 0.2 * relevanceMult) * scopeRatio;
+        incomeBoost = additionalHours * 85 * scopeRatio;
+        break;
+
+      case "Increase Training Hours":
+      case "increase_hours":
+        placementBoost = (additionalHours * 0.20) * scopeRatio;
+        completionBoost = (additionalHours * 0.15) * scopeRatio;
+        relevanceBoost = (additionalHours * 0.25) * scopeRatio;
+        incomeBoost = additionalHours * 50 * scopeRatio;
+        break;
+
+      case "Industry Certification":
+      case "industry_certification":
+        placementBoost = 7.5 * scopeRatio;
+        satisfactionBoost = 11.0 * scopeRatio;
+        relevanceBoost = 9.0 * scopeRatio;
+        incomeBoost = 1800 * scopeRatio;
+        break;
+
+      case "Apprenticeship Program":
+      case "apprenticeship":
+        placementBoost = 11.0 * scopeRatio;
+        employmentBoost = 12.5 * scopeRatio;
+        satisfactionBoost = 14.0 * scopeRatio;
+        incomeBoost = 2400 * scopeRatio;
+        completionBoost = 4.0 * scopeRatio;
+        break;
+
+      case "Employer Mentorship":
+      case "employer_mentorship":
+        placementBoost = 6.0 * scopeRatio;
+        satisfactionBoost = 9.5 * scopeRatio;
+        incomeBoost = 1200 * scopeRatio;
+        break;
+
+      case "Placement Assistance":
+      case "placement_assistance":
+        placementBoost = 9.0 * scopeRatio;
+        employmentBoost = 8.0 * scopeRatio;
+        break;
+
+      case "Soft Skills Training":
+      case "soft_skills":
+        placementBoost = 5.5 * scopeRatio;
+        completionBoost = 6.0 * scopeRatio;
+        satisfactionBoost = 7.0 * scopeRatio;
+        break;
+
+      case "Trainer Capacity Increase":
+      case "trainer_capacity":
+        completionBoost = 7.0 * scopeRatio;
+        relevanceBoost = 5.0 * scopeRatio;
+        placementBoost = 4.5 * scopeRatio;
+        break;
+
+      case "Employer Partnership Expansion":
+      case "employer_partnerships":
+        placementBoost = (employerCount * 0.35) * scopeRatio;
+        employmentBoost = (employerCount * 0.30) * scopeRatio;
+        satisfactionBoost = 5.0 * scopeRatio;
+        break;
+
+      case "Post-Training Follow-up":
+      case "post_training_followup":
+        employmentBoost = 8.5 * scopeRatio;
+        satisfactionBoost = 6.0 * scopeRatio;
+        break;
+
+      case "Transportation Support":
+      case "transportation_support":
+        completionBoost = 9.5 * scopeRatio;
+        placementBoost = 4.0 * scopeRatio;
+        break;
+
+      default:
+        placementBoost = (additionalHours * 0.15 + 4.0) * scopeRatio;
+        employmentBoost = (additionalHours * 0.12 + 3.0) * scopeRatio;
+        completionBoost = 4.0 * scopeRatio;
+        incomeBoost = 1000 * scopeRatio;
+        break;
+    }
+
+    const projPlacement = Math.round(Math.min(basePlacement + placementBoost, 98.0) * 10) / 10;
+    const projEmployment = Math.round(Math.min(baseEmployment + employmentBoost, 96.0) * 10) / 10;
+    const projCompletion = Math.round(Math.min(baseCompletion + completionBoost, 99.0) * 10) / 10;
+    const projRelevance = Math.round(Math.min(baseRelevance + relevanceBoost, 98.0) * 10) / 10;
+    const projSatisfaction = Math.round(Math.min(baseSatisfaction + satisfactionBoost, 97.0) * 10) / 10;
+    const projIncome = Math.round(baseIncome + incomeBoost);
+
+    const placementDeltaPct = Math.round((projPlacement - basePlacement) * 10) / 10;
+    const employmentDeltaPct = Math.round((projEmployment - baseEmployment) * 10) / 10;
+
+    const additionalPlacements = Math.round((placementDeltaPct / 100) * affectedTrainees);
+    const additionalEmployed = Math.round((employmentDeltaPct / 100) * affectedTrainees);
+    const totalCost = Math.round(affectedTrainees * costPerTrainee);
+    const costPerAdditionalPlacement = Math.round(totalCost / Math.max(additionalPlacements, 1));
+
+    const rangeMin = Math.round(Math.max(projPlacement - 2.2, basePlacement) * 10) / 10;
+    const rangeMax = Math.round(Math.min(projPlacement + 2.2, 100.0) * 10) / 10;
+
+    const moduleNameStr = params.module_name ? `"${params.module_name}"` : interventionType;
+
+    const whyStatements = [
+      `The intervention directly targets skill gaps across ${affectedTrainees.toLocaleString()} trainees in scope.`,
+      `Adding ${additionalHours} training hours improves practical competency and technical evaluation scores.`,
+      `Strong alignment with ${relevanceLevel} industry demand increases hiring velocity among registered partner employers.`,
+      `Estimated project impact yields +${placementDeltaPct}% placement growth at an average cost of ₹${costPerTrainee.toLocaleString()} per candidate.`
+    ];
+
+    const aiSynthesis = `Adding ${moduleNameStr} (${additionalHours} hours) is model-projected to improve program placement from ${basePlacement}% to approximately ${projPlacement}% (+${placementDeltaPct} percentage points). Across ${affectedTrainees.toLocaleString()} targeted trainees, the model estimates ${additionalPlacements.toLocaleString()} additional formal placements with a total program investment of ₹${(totalCost / 10000000).toFixed(2)} Cr.`;
+
+    return {
+      baseline: {
+        placement_rate: basePlacement,
+        employment_rate: baseEmployment,
+        completion_rate: baseCompletion,
+        job_relevance: baseRelevance,
+        employer_satisfaction: baseSatisfaction,
+        average_income: baseIncome,
+        total_trainees: totalTrainees
+      },
+      projected: {
+        placement_rate: projPlacement,
+        employment_rate: projEmployment,
+        completion_rate: projCompletion,
+        job_relevance: projRelevance,
+        employer_satisfaction: projSatisfaction,
+        average_income: projIncome,
+        placement_delta_pct: placementDeltaPct,
+        employment_delta_pct: employmentDeltaPct,
+        completion_delta_pct: Math.round((projCompletion - baseCompletion) * 10) / 10,
+        income_delta: projIncome - baseIncome
+      },
+      impact: {
+        affected_trainees: affectedTrainees,
+        additional_placements: additionalPlacements,
+        additional_employed: additionalEmployed,
+        total_cost: totalCost,
+        cost_per_additional_placement: costPerAdditionalPlacement,
+        range_min: rangeMin,
+        range_max: rangeMax
+      },
+      explanation: {
+        why_statements: whyStatements,
+        ai_synthesis: aiSynthesis
+      }
+    };
+  }
+
+  /**
+   * Saved Policy Simulations (CRUD & Persistent State)
+   */
+  getSavedScenarios() {
+    try {
+      const raw = localStorage.getItem("sih_saved_policy_simulations");
+      if (raw) return JSON.parse(raw);
+    } catch (e) {
+      console.error("Failed to read saved simulations", e);
+    }
+    const defaults = [
+      {
+        id: "SIM-2026-01",
+        scenario_name: "PLC Expansion – September 2026",
+        intervention_type: "Add Training Module",
+        parameters: {
+          module_name: "PLC Training",
+          additional_hours: 20,
+          affected_trainees: 4200,
+          cost_per_trainee: 2500,
+          relevance_level: "High"
+        },
+        baseline: { placement_rate: 68, employment_rate: 64, completion_rate: 81 },
+        projected: { placement_rate: 76.2, employment_rate: 71.4, completion_rate: 85.0, placement_delta_pct: 8.2 },
+        impact: { affected_trainees: 4200, additional_placements: 344, total_cost: 10500000 },
+        created_at: "2026-09-18 14:30",
+        created_by: "Government Admin"
+      }
+    ];
+    try {
+      localStorage.setItem("sih_saved_policy_simulations", JSON.stringify(defaults));
+    } catch (e) {}
+    return defaults;
+  }
+
+  saveScenario(scenarioData) {
+    const list = this.getSavedScenarios();
+    const newId = "SIM-" + Date.now().toString(36).toUpperCase();
+    const item = {
+      id: newId,
+      scenario_name: scenarioData.scenario_name || "Untitled Scenario",
+      intervention_type: scenarioData.intervention_type || "Add Training Module",
+      parameters: scenarioData.parameters || {},
+      baseline: scenarioData.baseline || {},
+      projected: scenarioData.projected || {},
+      impact: scenarioData.impact || {},
+      created_at: new Date().toISOString().replace("T", " ").substring(0, 16),
+      created_by: "Government Admin"
+    };
+    const updated = [item, ...list];
+    try {
+      localStorage.setItem("sih_saved_policy_simulations", JSON.stringify(updated));
+    } catch (e) {}
+    return item;
+  }
+
+  deleteScenario(id) {
+    const list = this.getSavedScenarios();
+    const updated = list.filter(s => s.id !== id);
+    try {
+      localStorage.setItem("sih_saved_policy_simulations", JSON.stringify(updated));
+    } catch (e) {}
+    return updated;
+  }
+
+  duplicateScenario(id) {
+    const list = this.getSavedScenarios();
+    const target = list.find(s => s.id === id);
+    if (!target) return list;
+    const newId = "SIM-" + Date.now().toString(36).toUpperCase();
+    const duplicated = {
+      ...target,
+      id: newId,
+      scenario_name: `${target.scenario_name} (Copy)`,
+      created_at: new Date().toISOString().replace("T", " ").substring(0, 16)
+    };
+    const updated = [duplicated, ...list];
+    try {
+      localStorage.setItem("sih_saved_policy_simulations", JSON.stringify(updated));
+    } catch (e) {}
+    return duplicated;
+  }
 }
 
 export const platformService = new PlatformService();

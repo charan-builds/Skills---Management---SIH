@@ -26,6 +26,7 @@ import Reports from "./pages/Reports";
 import ProgrammeProfile from "./pages/ProgrammeProfile";
 import Interventions from "./pages/Interventions";
 import FollowUpManagement from "./pages/FollowUpManagement";
+import PolicySimulator from "./pages/PolicySimulator";
 
 // Employer Pages
 import EmployerLogin from "./pages/EmployerLogin";
@@ -81,6 +82,9 @@ function App() {
           <Route path="interventions" element={<Interventions />} />
           <Route path="priority-areas" element={<Interventions />} />
           <Route path="recommended-actions" element={<Interventions />} />
+          <Route path="policy-simulator" element={<PolicySimulator />} />
+          <Route path="what-if" element={<PolicySimulator />} />
+          <Route path="simulator" element={<PolicySimulator />} />
           <Route path="employers" element={<EmployerVerifyOutcomes />} />
           <Route path="reports" element={<Reports />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
