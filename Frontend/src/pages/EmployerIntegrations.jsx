@@ -306,7 +306,7 @@ export default function EmployerIntegrations() {
             {/* Section 28: Today's Verification Activity Visualization */}
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
               <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-                Today's Verification Activity (Section 28)
+                Today's Verification Activity
               </h3>
               <p style={{ fontSize: "0.85rem", color: "#64748b", margin: "0 0 1.5rem 0" }}>
                 Proportional breakdown of incoming records processed through the automated correlation pipeline.
