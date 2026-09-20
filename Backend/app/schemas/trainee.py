@@ -71,6 +71,9 @@ class TraineeBase(BaseModel):
     training_relevance_feedback: Optional[dict] = None
     status_reason: Optional[str] = None
     outcome_reason: Optional[str] = None
+    aadhaar_hash: Optional[str] = None
+    aadhaar_last4: Optional[str] = None
+    aadhaar_linked: Optional[bool] = False
 
     @property
     def current_outcome(self) -> Optional[EmploymentHistorySchema]:
@@ -119,9 +122,13 @@ class TraineeUpdate(BaseModel):
     training_relevance_feedback: Optional[dict] = None
     status_reason: Optional[str] = None
     outcome_reason: Optional[str] = None
+    aadhaar_number: Optional[str] = None
+    aadhaar_hash: Optional[str] = None
+    aadhaar_last4: Optional[str] = None
+    aadhaar_linked: Optional[bool] = None
     
     model_config = {
-        "extra": "forbid"
+        "extra": "ignore"
     }
 
 class TraineeEmploymentCreate(BaseModel):

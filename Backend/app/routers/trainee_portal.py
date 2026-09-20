@@ -279,9 +279,18 @@ def get_full_profile(trainee_id: str):
 
 @router.post("/{trainee_id}/profile")
 def update_full_profile(trainee_id: str, data: FullProfileUpdate):
+    import hashlib
     state = get_trainee_state(trainee_id)
     if data.personal_info is not None:
-        state["personal_info"].update(data.personal_info)
+        p_info = dict(data.personal_info)
+        raw_aadhaar = p_info.pop("aadhaar_number", None) or p_info.pop("aadhaarNumber", None)
+        if raw_aadhaar:
+            clean_num = "".join(c for c in str(raw_aadhaar) if c.isdigit())
+            if len(clean_num) >= 12:
+                p_info["aadhaar_hash"] = hashlib.sha256(clean_num.encode('utf-8')).hexdigest()
+                p_info["aadhaar_last4"] = clean_num[-4:]
+                p_info["aadhaar_linked"] = True
+        state["personal_info"].update(p_info)
     if data.education is not None:
         state["education"] = data.education
     if data.skills is not None:

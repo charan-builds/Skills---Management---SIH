@@ -657,7 +657,25 @@ class MockStore {
   updateTraineeProfile(traineeId, profileData) {
     const trainee = this.state.trainees.find(t => t.id === traineeId);
     if (trainee) {
-      Object.assign(trainee, profileData);
+      const copy = { ...profileData };
+      const rawAadhaar = copy.aadhaar_number || copy.aadhaarNumber;
+      delete copy.aadhaar_number;
+      delete copy.aadhaarNumber;
+
+      if (rawAadhaar) {
+        const clean = String(rawAadhaar).replace(/\D/g, "");
+        if (clean.length >= 12) {
+          copy.aadhaar_last4 = clean.slice(-4);
+          copy.aadhaar_linked = true;
+          let hashAcc = 0;
+          for (let i = 0; i < clean.length; i++) {
+            hashAcc = ((hashAcc << 5) - hashAcc) + clean.charCodeAt(i);
+            hashAcc |= 0;
+          }
+          copy.aadhaar_hash = "3b859942a" + Math.abs(hashAcc).toString(16) + clean.slice(-4) + "89abcdef0123456789";
+        }
+      }
+      Object.assign(trainee, copy);
       this.save();
     }
     return trainee;

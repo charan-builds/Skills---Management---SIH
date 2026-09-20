@@ -267,6 +267,10 @@ def submit_training_relevance(
         )
     return updated_trainee
 
+import hashlib
+
+@router.patch("/{id}/profile", response_model=TraineeBase)
+@router.post("/{id}/profile", response_model=TraineeBase)
 @router.patch("/{id}", response_model=TraineeBase)
 @router.put("/{id}", response_model=TraineeBase)
 def update_trainee_endpoint(
@@ -276,6 +280,17 @@ def update_trainee_endpoint(
 ):
     ensure_trainee_access(id, current_user)
     update_data = trainee_update.model_dump(exclude_unset=True)
+    
+    # Process Aadhaar Number hashing if provided
+    raw_aadhaar = update_data.pop("aadhaar_number", None)
+    if raw_aadhaar:
+        clean_num = "".join(c for c in str(raw_aadhaar) if c.isdigit())
+        if len(clean_num) >= 12:
+            aadhaar_hash = hashlib.sha256(clean_num.encode('utf-8')).hexdigest()
+            update_data["aadhaar_hash"] = aadhaar_hash
+            update_data["aadhaar_last4"] = clean_num[-4:]
+            update_data["aadhaar_linked"] = True
+
     if not update_data:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

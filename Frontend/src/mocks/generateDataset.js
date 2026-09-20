@@ -1069,7 +1069,10 @@ export function generateRelationalDataset(targetCount = 800) {
       skills_detail: skillsDetail,
       reported_skill_gaps: reportedGaps,
       outcome_summary: outcomeSummary,
-      training_relevance_rating: 0
+      training_relevance_rating: 0,
+      aadhaar_hash: "3b859942a7894a8f9c123456789abcdef0123456789abcdef0123456789abcde",
+      aadhaar_last4: String(7000 + (i % 999)),
+      aadhaar_linked: true
     });
   }
 
