@@ -1190,6 +1190,7 @@ class PlatformService {
       const certified = cTrainees.filter(t => t.certified).length;
       const placed = cTrainees.filter(t => t.employment?.status === "EMPLOYED" || t.employment?.status === "APPRENTICESHIP").length;
       const eligibleRetention = cTrainees.filter(t => t.retention?.retention_6m).length || 1;
+      const retained6M = cTrainees.filter(t => t.retention?.retention_6m === "Retained").length;
       // Dynamic wage growth calculation per cohort
       const startingWages = cTrainees.map(t => t.employment?.starting_wage).filter(w => typeof w === "number" && w > 0);
       const currentWages = cTrainees.map(t => t.employment?.current_wage).filter(w => typeof w === "number" && w > 0);
