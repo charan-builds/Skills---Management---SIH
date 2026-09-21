@@ -149,7 +149,7 @@ export default function EmployerLayout({ children }) {
       </aside>
 
       <main className="main-content" style={{ marginLeft: 0, width: "100%", flex: 1, minWidth: 0 }}>
-        <div className="admin-topbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.5rem", background: "white", borderBottom: "1px solid #e2e8f0" }}>
+        <div className="admin-topbar" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1.5rem", background: "white", borderBottom: "1px solid #e2e8f0", position: "sticky", top: 0, zIndex: 1000 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <button 
               className="menu-toggle" 
@@ -250,7 +250,7 @@ export default function EmployerLayout({ children }) {
         </div>
         
         {/* PAGE CONTENT */}
-        <div style={{ padding: "1.5rem", flex: 1, overflowY: "auto", background: "#f8fafc" }}>
+        <div style={{ padding: "1.5rem", flex: 1, background: "#f8fafc" }}>
           <ModeBanner mode="Employer / Organisation Simulation Mode" />
           {children}
         </div>

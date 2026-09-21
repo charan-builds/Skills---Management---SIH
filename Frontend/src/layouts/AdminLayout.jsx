@@ -138,7 +138,7 @@ function AdminLayoutInner({ children }) {
       </aside>
 
       <main className="main-content" style={{ marginLeft: 0, width: "100%", flex: 1, minWidth: 0 }}>
-        <div className="admin-topbar">
+        <div className="admin-topbar" style={{ position: "sticky", top: 0, zIndex: 1000, background: "white" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <button 
               className="menu-toggle" 
@@ -187,7 +187,7 @@ function AdminLayoutInner({ children }) {
         </div>
         
         {/* PAGE CONTENT */}
-        <div style={{ padding: '1.5rem', flex: 1, overflowY: 'auto', background: '#f8fafc' }}>
+        <div style={{ padding: '1.5rem', flex: 1, background: '#f8fafc' }}>
           
           {/* GLOBAL FILTER BAR (7 RELATIONAL DIMENSIONS) */}
           <div style={{ 

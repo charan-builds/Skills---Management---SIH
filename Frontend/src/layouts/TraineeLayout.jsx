@@ -134,7 +134,7 @@ export default function TraineeLayout({ children }) {
       </aside>
 
       <main className="main-content" style={{ marginLeft: 0, width: "100%", flex: 1, minWidth: 0 }}>
-        <div className="admin-topbar">
+        <div className="admin-topbar" style={{ position: "sticky", top: 0, zIndex: 1000, background: "white" }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <button 
               className="menu-toggle" 
@@ -223,7 +223,7 @@ export default function TraineeLayout({ children }) {
         </div>
         
         {/* PAGE CONTENT */}
-        <div style={{ padding: '1.5rem', flex: 1, overflowY: 'auto', background: '#f8fafc' }}>
+        <div style={{ padding: '1.5rem', flex: 1, background: '#f8fafc' }}>
           <ModeBanner mode="Trainee Personal Intelligence Mode" />
           {children}
         </div>
