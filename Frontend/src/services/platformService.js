@@ -1282,6 +1282,37 @@ class PlatformService {
   }
 
   /**
+   * 3-Tier Verification Cascade (EPFO -> HRIS -> Manual 2-Tap Fallback)
+   */
+  async get3TierDemoTrainees() {
+    await wait();
+    return mockStore.get3TierDemoTrainees();
+  }
+
+  async run3TierVerificationCheck() {
+    await wait(250); // Realistic processing delay for 3-tier checks
+    try {
+      const res = await fetch(`${API_BASE}/verification/run-check`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "true" }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        mockStore.run3TierVerificationCheck(); // Keep mock store reactively in sync
+        return data;
+      }
+    } catch (e) {
+      // Offline / fallback to local simulation engine
+    }
+    return mockStore.run3TierVerificationCheck();
+  }
+
+  async reset3TierVerification() {
+    await wait(100);
+    return mockStore.reset3TierVerification();
+  }
+
+  /**
    * Policy Interventions & Actions Persistence
    */
   async getPolicyInterventions(filters = {}) {

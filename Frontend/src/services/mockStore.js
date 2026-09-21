@@ -45,6 +45,12 @@ class MockStore {
       console.warn("Could not load from localStorage, initializing fresh mock store", e);
     }
 
+    const defaultTrainees3Tier = [
+      { id: "TR-EPFO-01", full_name: "Deepika Sharma", aadhaar_number: "555566667777", claimed_employer: "Wipro Technologies", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Submitted claimed employment with Wipro Technologies." },
+      { id: "TR-HRIS-02", full_name: "Rahul Verma", aadhaar_number: "666677778888", claimed_employer: "Tata Consultancy Services", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Submitted claimed employment with TCS." },
+      { id: "TR-MAN-03", full_name: "Amit Kumar", aadhaar_number: "888899990000", claimed_employer: "Local Auto Workshop Pvt Ltd", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Submitted claimed employment with local automobile vendor." }
+    ];
+
     return {
       programmes: INITIAL_PROGRAMMES,
       employers: INITIAL_EMPLOYERS,
@@ -58,6 +64,7 @@ class MockStore {
       curriculum_mapping: INITIAL_CURRICULUM_MAPPING,
       integrations: INITIAL_INTEGRATIONS,
       employer_feedback: INITIAL_EMPLOYER_FEEDBACK,
+      tier3_demo_trainees: defaultTrainees3Tier,
       last_updated: new Date().toISOString()
     };
   }
@@ -1305,16 +1312,108 @@ class MockStore {
   /**
    * Resolve matching exception (Section 31)
    */
-  resolveMatchingException(employerId, exceptionId, action, notes) {
-    // Action can be: "confirm", "reject", "request_correction"
-    this.logEmployerActivity(employerId, {
-      type: "EXCEPTION_RESOLVED",
-      title: `Verification Discrepancy Resolved: ${action.toUpperCase()}`,
-      details: notes || `Exception ${exceptionId} resolved as ${action}`
+  /**
+   * 3-Tier Employment Verification Engine (EPFO -> HRIS -> Manual 2-Tap Fallback)
+   */
+  get3TierDemoTrainees() {
+    if (!this.state.tier3_demo_trainees || !this.state.tier3_demo_trainees.length) {
+      this.state.tier3_demo_trainees = [
+        { id: "TR-EPFO-01", full_name: "Deepika Sharma", aadhaar_number: "555566667777", claimed_employer: "Wipro Technologies", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Claimed employment with Wipro Technologies." },
+        { id: "TR-HRIS-02", full_name: "Rahul Verma", aadhaar_number: "666677778888", claimed_employer: "Tata Consultancy Services", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Claimed employment with TCS." },
+        { id: "TR-MAN-03", full_name: "Amit Kumar", aadhaar_number: "888899990000", claimed_employer: "Local Auto Workshop Pvt Ltd", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Claimed employment with local automotive vendor." }
+      ];
+      this.save();
+    }
+    return this.state.tier3_demo_trainees;
+  }
+
+  run3TierVerificationCheck() {
+    const epfoRecords = [
+      { aadhaar_number: "555566667777", company_name: "Wipro Technologies", pf_uan: "100912384912" },
+      { aadhaar_number: "111122223333", company_name: "Infosys Ltd", pf_uan: "100877654321" }
+    ];
+
+    const employerIntegrations = [
+      { employer_name: "Tata Consultancy Services", system_name: "Workday HCM", connection_status: "Connected" },
+      { employer_name: "Apollo Hospitals", system_name: "BambooHR Connect", connection_status: "Connected" }
+    ];
+
+    const hrisRecords = [
+      { aadhaar_number: "666677778888", employer_name: "Tata Consultancy Services", full_name: "Rahul Verma", job_status: "Active" },
+      { aadhaar_number: "999900001111", employer_name: "Apollo Hospitals", full_name: "Sneha Patil", job_status: "Active" }
+    ];
+
+    const currentTrainees = this.get3TierDemoTrainees();
+    let tier1Count = 0;
+    let tier3Count = 0;
+    let tier2Count = 0;
+    const today = new Date().toISOString().split("T")[0];
+
+    const updated = currentTrainees.map(trainee => {
+      const copy = { ...trainee };
+      const aadhaar = copy.aadhaar_number;
+      const claimedEmp = copy.claimed_employer;
+
+      // TIER 1 — EPFO Check
+      const epfoMatch = epfoRecords.find(e => e.aadhaar_number === aadhaar);
+      if (epfoMatch) {
+        copy.status = "employed";
+        copy.company_name = epfoMatch.company_name;
+        copy.verified_on = today;
+        copy.verification_tier = "EPFO";
+        copy.verification_badge = "Verified via EPFO (Tier 1)";
+        copy.notes = `Matched UAN ${epfoMatch.pf_uan} in statutory EPFO database. Instant zero-touch verification.`;
+        tier1Count++;
+        return copy;
+      }
+
+      // TIER 3 — Partner HRIS Check
+      const partner = employerIntegrations.find(p => p.employer_name.toLowerCase() === claimedEmp.toLowerCase() && p.connection_status === "Connected");
+      if (partner) {
+        const hrisMatch = hrisRecords.find(h => h.aadhaar_number === aadhaar && h.employer_name.toLowerCase() === claimedEmp.toLowerCase() && h.job_status === "Active");
+        if (hrisMatch) {
+          copy.status = "employed";
+          copy.company_name = claimedEmp;
+          copy.verified_on = today;
+          copy.verification_tier = "HRIS";
+          copy.verification_badge = "Verified via HRIS (Tier 3)";
+          copy.notes = `Matched active record in partner system (${partner.system_name}). Real-time API verification.`;
+          tier3Count++;
+          return copy;
+        }
+      }
+
+      // TIER 2 — Direct Employer Confirmation Request (Fallback)
+      copy.status = "awaiting_employer_confirmation";
+      copy.company_name = claimedEmp;
+      copy.verified_on = null;
+      copy.verification_tier = "MANUAL_REQUEST";
+      copy.verification_badge = "Awaiting Employer Confirmation (Tier 2)";
+      copy.notes = "No EPFO/HRIS match. Sent direct 2-tap verification request to employer HR.";
+      tier2Count++;
+      return copy;
     });
 
+    this.state.tier3_demo_trainees = updated;
     this.save();
-    return { success: true, exceptionId, action };
+
+    return {
+      tier1_epfo: tier1Count,
+      tier3_hris: tier3Count,
+      tier2_manual: tier2Count,
+      total_processed: updated.length,
+      results: updated
+    };
+  }
+
+  reset3TierVerification() {
+    this.state.tier3_demo_trainees = [
+      { id: "TR-EPFO-01", full_name: "Deepika Sharma", aadhaar_number: "555566667777", claimed_employer: "Wipro Technologies", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Claimed employment with Wipro Technologies." },
+      { id: "TR-HRIS-02", full_name: "Rahul Verma", aadhaar_number: "666677778888", claimed_employer: "Tata Consultancy Services", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Claimed employment with TCS." },
+      { id: "TR-MAN-03", full_name: "Amit Kumar", aadhaar_number: "888899990000", claimed_employer: "Local Auto Workshop Pvt Ltd", status: "pending", verification_tier: "UNVERIFIED", verification_badge: "Pending Check", notes: "Claimed employment with local automotive vendor." }
+    ];
+    this.save();
+    return this.state.tier3_demo_trainees;
   }
 }
 
