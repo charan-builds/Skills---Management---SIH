@@ -91,7 +91,7 @@ export default function FollowUps() {
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          {isAdmin ? "State Assisted Follow-up Oversight (Feature 21)" : "Periodic Outcome Follow-ups (C10)"}
+          {isAdmin ? "State Assisted Follow-up Oversight" : "Periodic Outcome Follow-ups"}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
           {isAdmin

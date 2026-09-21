@@ -56,7 +56,7 @@ export default function TraineeConsent() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <ShieldCheck size={20} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            PRIVACY, CITIZEN DATA RIGHTS & OUTCOME CONSENT (SECTIONS 6, 7, 42)
+            PRIVACY, CITIZEN DATA RIGHTS & OUTCOME CONSENT
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>

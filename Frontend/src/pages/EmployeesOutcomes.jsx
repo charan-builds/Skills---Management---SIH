@@ -163,7 +163,7 @@ export default function EmployeesOutcomes() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
               <Users size={18} color="#2563eb" />
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                ORGANISATION WORKFORCE ROSTER (SECTIONS 14–20)
+                ORGANISATION WORKFORCE ROSTER
               </span>
             </div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -315,7 +315,7 @@ export default function EmployeesOutcomes() {
                   },
                   {
                     key: "employment_status",
-                    label: "Employment Status (B7)",
+                    label: "Employment Status",
                     render: (e) => {
                       const isEmployed = e.employment_status === "Currently Employed";
                       return (
@@ -344,7 +344,7 @@ export default function EmployeesOutcomes() {
                   },
                   {
                     key: "wage_confirmation",
-                    label: "Wage Status (B8)",
+                    label: "Wage Status",
                     render: (e) => {
                       const status = e.wage_confirmation || "Pending";
                       return (
@@ -445,7 +445,7 @@ export default function EmployeesOutcomes() {
               <div style={{ padding: "1.5rem", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div>
                   <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>
-                    Verified Employee Record (Section 15)
+                    Verified Employee Record
                   </span>
                   <h2 style={{ fontSize: "1.35rem", fontWeight: 800, color: "#0f172a", margin: "0.25rem 0" }}>
                     {selectedEmployee.trainee_name}
@@ -504,7 +504,7 @@ export default function EmployeesOutcomes() {
                 <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                     <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#475569", textTransform: "uppercase" }}>
-                      Wage Verification Response (Section 18)
+                      Wage Verification Response
                     </span>
                     <span style={{ background: "#dbeafe", color: "#1d4ed8", padding: "2px 8px", borderRadius: "10px", fontSize: "0.75rem", fontWeight: 700 }}>
                       {selectedEmployee.wage_confirmation || "Confirmed"}
@@ -536,7 +536,7 @@ export default function EmployeesOutcomes() {
                 {/* Traceable Verification History */}
                 <div>
                   <h4 style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.75rem 0" }}>
-                    Attestation & Audit Trail (Section 13)
+                    Attestation & Audit Trail
                   </h4>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                     <div style={{ display: "flex", gap: "0.75rem", fontSize: "0.8rem" }}>
@@ -558,7 +558,7 @@ export default function EmployeesOutcomes() {
 
                 {/* Privacy Safeguard Notice */}
                 <div style={{ background: "#f1f5f9", padding: "0.85rem", borderRadius: "8px", fontSize: "0.75rem", color: "#64748b", border: "1px solid #e2e8f0" }}>
-                  <strong>Privacy Safeguard (Section 15):</strong> Personal trainee records (Aadhaar number, caste, parental identity, personal phone) are strictly restricted from employer view to safeguard candidate privacy.
+                  <strong>Privacy Safeguard:</strong> Personal trainee records (Aadhaar number, caste, parental identity, personal phone) are strictly restricted from employer view to safeguard candidate privacy.
                 </div>
               </div>
 
@@ -605,7 +605,7 @@ export default function EmployeesOutcomes() {
             <div style={{ background: "white", borderRadius: "14px", maxWidth: "480px", width: "100%", padding: "2rem", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.15)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                 <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
-                  Update Employment Status (Section 16)
+                  Update Employment Status
                 </h3>
                 <button onClick={() => setStatusModalEmployee(null)} style={{ background: "none", border: "none", fontSize: "1rem", color: "#64748b", cursor: "pointer" }}>✕</button>
               </div>
@@ -649,7 +649,7 @@ export default function EmployeesOutcomes() {
 
                     <div>
                       <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        Departure Reason / Category (Section 17)
+                        Departure Reason / Category
                       </label>
                       <select
                         value={exitReason}
@@ -719,7 +719,7 @@ export default function EmployeesOutcomes() {
             <div style={{ background: "white", borderRadius: "14px", maxWidth: "480px", width: "100%", padding: "2rem", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.15)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                 <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
-                  Respond to Reported Wage (Section 18)
+                  Respond to Reported Wage
                 </h3>
                 <button onClick={() => setWageModalEmployee(null)} style={{ background: "none", border: "none", fontSize: "1rem", color: "#64748b", cursor: "pointer" }}>✕</button>
               </div>
@@ -809,7 +809,7 @@ export default function EmployeesOutcomes() {
             <div style={{ background: "white", borderRadius: "14px", maxWidth: "480px", width: "100%", padding: "2rem", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.15)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                 <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
-                  Confirm Job Role (Section 19)
+                  Confirm Job Role
                 </h3>
                 <button onClick={() => setRoleModalEmployee(null)} style={{ background: "none", border: "none", fontSize: "1rem", color: "#64748b", cursor: "pointer" }}>✕</button>
               </div>

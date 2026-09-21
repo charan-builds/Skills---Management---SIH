@@ -145,7 +145,7 @@ export default function FollowUpManagement() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <PhoneCall size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            ADMIN OUTCOME GOVERNANCE & FOLLOW-UP MANAGEMENT (SECTIONS 15, 17, 54)
+            ADMIN OUTCOME GOVERNANCE & FOLLOW-UP MANAGEMENT
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>

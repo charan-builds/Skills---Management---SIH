@@ -206,7 +206,7 @@ export default function TraineeEmployment() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Briefcase size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            EMPLOYMENT & OUTCOME REPORTING (C4-C7)
+            EMPLOYMENT & OUTCOME REPORTING
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -296,7 +296,7 @@ export default function TraineeEmployment() {
           {/* C4 Status Tabs */}
           <div style={{ marginBottom: "2rem" }}>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.5rem" }}>
-              Select Your Current Outcome Status (C4)
+              Select Your Current Outcome Status
             </label>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.75rem" }}>
               {[
@@ -560,7 +560,7 @@ export default function TraineeEmployment() {
             <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Primary Non-Placement Reason (C11)
+                  Primary Non-Placement Reason
                 </label>
                 <select
                   value={unemploymentReason}

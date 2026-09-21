@@ -91,7 +91,7 @@ export default function TraineeProfile() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <User size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            CANDIDATE DEMOGRAPHICS & PROFILE (C2)
+            CANDIDATE DEMOGRAPHICS & PROFILE
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -355,7 +355,7 @@ export default function TraineeProfile() {
                   }}
                 >
                   <Save size={18} />
-                  {saving ? "Saving Changes..." : "Save Profile Details (C2)"}
+                  {saving ? "Saving Changes..." : "Save Profile Details"}
                 </button>
               </div>
             </form>

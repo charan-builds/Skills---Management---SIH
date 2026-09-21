@@ -162,7 +162,7 @@ export default function EmployerIntegrations() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
               <GitBranch size={18} color="#2563eb" />
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                EMPLOYMENT DATA INTEGRATION (SECTIONS 25–36)
+                EMPLOYMENT DATA INTEGRATION
               </span>
             </div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -194,7 +194,7 @@ export default function EmployerIntegrations() {
               }}
             >
               <RefreshCw size={15} style={{ animation: isSyncing ? "spin 1s linear infinite" : "none" }} />
-              {isSyncing ? "Syncing Feed..." : "Sync Now (Section 33)"}
+              {isSyncing ? "Syncing Feed..." : "Sync Now"}
             </button>
           </div>
         </div>
@@ -385,7 +385,7 @@ export default function EmployerIntegrations() {
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
               <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0" }}>
                 <h3 style={{ margin: "0 0 0.2rem 0", fontSize: "1.1rem", color: "#0f172a" }}>
-                  Connected Systems & Gateways (Section 27)
+                  Connected Systems & Gateways
                 </h3>
                 <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
                   Active integration endpoints configured for outcome synchronization.
@@ -469,7 +469,7 @@ export default function EmployerIntegrations() {
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <KeyRound size={18} color="#2563eb" />
                   <strong style={{ fontSize: "1rem", color: "#0f172a" }}>
-                    Integration Settings & API Configuration (Section 35)
+                    Integration Settings & API Configuration
                   </strong>
                 </div>
                 {showConfig ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -478,7 +478,7 @@ export default function EmployerIntegrations() {
               {showConfig && (
                 <div style={{ padding: "1.75rem" }}>
                   <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "0.75rem 1rem", borderRadius: "8px", marginBottom: "1.25rem", fontSize: "0.8rem", color: "#475569" }}>
-                    <strong>Security Notice (Section 35):</strong> API credentials and webhook signing keys are encrypted at rest and permanently masked. Sensitive secrets are never exposed in user logs or reports.
+                    <strong>Security Notice:</strong> API credentials and webhook signing keys are encrypted at rest and permanently masked. Sensitive secrets are never exposed in user logs or reports.
                   </div>
 
                   {configSaved && (
@@ -514,7 +514,7 @@ export default function EmployerIntegrations() {
 
                     <div>
                       <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        API Secret Key (Masked - Section 35)
+                        API Secret Key (Masked)
                       </label>
                       <input
                         type="password"
@@ -579,7 +579,7 @@ export default function EmployerIntegrations() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
               <h3 style={{ fontSize: "1.15rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-                5-Point Deterministic Matching Criteria (Section 29)
+                5-Point Deterministic Matching Criteria
               </h3>
               <p style={{ fontSize: "0.85rem", color: "#64748b", margin: "0 0 1.5rem 0" }}>
                 Incoming trainee declarations are evaluated against organizational HR/ATS data using five strict criteria:
@@ -604,7 +604,7 @@ export default function EmployerIntegrations() {
 
               {/* Matching Records Table (Section 30) */}
               <h4 style={{ fontSize: "1rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.75rem 0" }}>
-                Matching Results Evaluation (Section 30)
+                Matching Results Evaluation
               </h4>
 
               <div style={{ overflowX: "auto" }}>
@@ -679,7 +679,7 @@ export default function EmployerIntegrations() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
               <div>
                 <h3 style={{ margin: "0 0 0.2rem 0", fontSize: "1.15rem", color: "#0f172a" }}>
-                  Verification Exceptions & Mismatches (Section 31)
+                  Verification Exceptions & Mismatches
                 </h3>
                 <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
                   Mismatches detected between candidate claims and <strong>{organizationName}</strong> HR/ATS records.
@@ -761,7 +761,7 @@ export default function EmployerIntegrations() {
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
             <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0" }}>
               <h3 style={{ margin: "0 0 0.2rem 0", fontSize: "1.1rem", color: "#0f172a" }}>
-                Integration Synchronization Activity Log (Section 36)
+                Integration Synchronization Activity Log
               </h3>
               <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
                 Chronological audit record of automated batch jobs, webhook triggers, and reconciliation events.
@@ -831,7 +831,7 @@ export default function EmployerIntegrations() {
             <div style={{ background: "white", borderRadius: "14px", maxWidth: "520px", width: "100%", padding: "2rem", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.15)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                 <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
-                  Resolve Verification Exception (Section 31)
+                  Resolve Verification Exception
                 </h3>
                 <button onClick={() => setSelectedException(null)} style={{ background: "none", border: "none", fontSize: "1rem", color: "#64748b", cursor: "pointer" }}>✕</button>
               </div>

@@ -217,7 +217,7 @@ export default function EmployerDashboard() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
                   <div>
                     <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>
-                      Workforce Status Distribution (Section 38)
+                      Workforce Status Distribution
                     </h3>
                     <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Current employment status of verified graduates</span>
                   </div>
@@ -279,7 +279,7 @@ export default function EmployerDashboard() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
                   <div>
                     <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>
-                      Claim Attestation Breakdown (Section 39)
+                      Claim Attestation Breakdown
                     </h3>
                     <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Clickable verification decision distribution</span>
                   </div>
@@ -358,7 +358,7 @@ export default function EmployerDashboard() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                   <div>
                     <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>
-                      Skills We Need (Section 40)
+                      Skills We Need
                     </h3>
                     <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Ranked skill shortages reported by your hiring managers</span>
                   </div>
@@ -390,7 +390,7 @@ export default function EmployerDashboard() {
               <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                   <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>
-                    Recent Operational Activity (Section 7)
+                    Recent Operational Activity
                   </h3>
                   <span style={{ fontSize: "0.75rem", background: "#f1f5f9", color: "#475569", padding: "2px 8px", borderRadius: "10px", fontWeight: 700 }}>
                     Live Audit Stream

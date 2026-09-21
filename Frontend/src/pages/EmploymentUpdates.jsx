@@ -179,7 +179,7 @@ export default function EmploymentUpdates() {
                 {/* B7: Employment Status */}
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Current Employment Status (B7)
+                    Current Employment Status
                   </label>
                   <select
                     value={statusAction}
@@ -196,7 +196,7 @@ export default function EmploymentUpdates() {
                 {/* B9: Role Confirmation */}
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Job Role Confirmation (B9)
+                    Job Role Confirmation
                   </label>
                   <select
                     value={roleConfirmation}
@@ -212,7 +212,7 @@ export default function EmploymentUpdates() {
                 {/* B8: Wage Confirmation */}
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Wage Confirmation (B8)
+                    Wage Confirmation
                   </label>
                   <select
                     value={wageConfirmation}

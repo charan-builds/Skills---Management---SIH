@@ -93,7 +93,7 @@ export default function EmployerProfile() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
               <Building2 size={18} color="#2563eb" />
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                ORGANISATION PROFILE & VERIFICATION RECORD (SECTIONS 3–5)
+                ORGANISATION PROFILE & VERIFICATION RECORD
               </span>
             </div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -107,7 +107,7 @@ export default function EmployerProfile() {
           {/* Section 5: Read-Only Admin Verification Badge */}
           <div style={{ textAlign: "right" }}>
             <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>
-              State Verification Badge (Section 5)
+              State Verification Badge
             </span>
             {verificationStatus === "Verified" ? (
               <span style={{
@@ -177,7 +177,7 @@ export default function EmployerProfile() {
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem" }}>
           <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a", margin: "0 0 1.25rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <ShieldCheck size={18} color="#2563eb" />
-            Authoritative Employer Registry Data (Section 3)
+            Authoritative Employer Registry Data
           </h3>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
@@ -205,7 +205,7 @@ export default function EmployerProfile() {
           </div>
 
           <div style={{ background: "#f1f5f9", padding: "0.85rem 1rem", borderRadius: "8px", marginTop: "1.25rem", fontSize: "0.8rem", color: "#475569" }}>
-            <strong>Governance Rule (Section 3 & 5):</strong> The verification status badge is strictly controlled by State Skilling Administrators. Employers cannot unilaterally alter their attestation standing.
+            <strong>Governance Rule:</strong> The verification status badge is strictly controlled by State Skilling Administrators. Employers cannot unilaterally alter their attestation standing.
           </div>
         </div>
 

@@ -458,7 +458,7 @@ function DetailDrawer({ req, onClose, onSuccess }) {
       {/* Section 18: Wage Confirmation Form */}
       <div>
         <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", marginBottom: "0.35rem" }}>
-          Wage Confirmation (Section 18):
+          Wage Confirmation:
         </label>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.4rem", marginBottom: "0.5rem" }}>
           {["Confirmed", "Different", "Cannot Disclose"].map(choice => (
@@ -495,7 +495,7 @@ function DetailDrawer({ req, onClose, onSuccess }) {
       {/* Section 19: Job Role Confirmation */}
       <div>
         <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#475569", textTransform: "uppercase", marginBottom: "0.35rem" }}>
-          Job Role Confirmation (Section 19):
+          Job Role Confirmation:
         </label>
         <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
           <button

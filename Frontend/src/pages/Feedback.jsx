@@ -162,7 +162,7 @@ export default function Feedback() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <MessageSquare size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            {isEmployer ? "EMPLOYER FEEDBACK & CURRICULUM INPUT (B11)" : "TRAINEE SKILL RELEVANCE & FEEDBACK INTELLIGENCE (SECTIONS 27-30, 37)"}
+            {isEmployer ? "EMPLOYER FEEDBACK & CURRICULUM INPUT" : "TRAINEE SKILL RELEVANCE & FEEDBACK INTELLIGENCE"}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -311,7 +311,7 @@ export default function Feedback() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
               <Layers size={20} color="#2563eb" />
               <h3 style={{ margin: 0, fontSize: "1.15rem", color: "#0f172a" }}>
-                How Your Feedback Feeds Skill Intelligence (Section 29 Flow)
+                How Your Feedback Feeds Skill Intelligence
               </h3>
             </div>
             <p style={{ margin: "0 0 1.25rem 0", fontSize: "0.85rem", color: "#64748b" }}>
@@ -354,7 +354,7 @@ export default function Feedback() {
             {/* Question 1: Was Training Relevant? (Section 37) - 5-Star Relevance Rating */}
             <div style={{ marginBottom: "1.75rem" }}>
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.5rem" }}>
-                1. Was your training programme relevant to your actual workplace tasks? (Section 37)
+                1. Was your training programme relevant to your actual workplace tasks?
               </label>
               <div style={{ background: "#f8fafc", padding: "1.25rem 1.5rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
@@ -439,7 +439,7 @@ export default function Feedback() {
             {/* Question 2: What was missing? (Section 27) */}
             <div style={{ marginBottom: "1.5rem" }}>
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                2. Which technical skill did you feel was missing or needed deeper coverage? (Section 27)
+                2. Which technical skill did you feel was missing or needed deeper coverage?
               </label>
               <input
                 type="text"
@@ -504,7 +504,7 @@ export default function Feedback() {
           {recentFeedbackList.length > 0 && (
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
               <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", margin: "0 0 1rem 0" }}>
-                My Submitted Feedback &amp; Processing Status (Section 30)
+                My Submitted Feedback &amp; Processing Status
               </h3>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>

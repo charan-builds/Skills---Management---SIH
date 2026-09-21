@@ -109,7 +109,7 @@ export default function WageRetention() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <TrendingUp size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            LONGITUDINAL IMPACT TRACKING (C8, C9, C12)
+            LONGITUDINAL IMPACT TRACKING
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -140,7 +140,7 @@ export default function WageRetention() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
                 <DollarSign size={20} color="#16a34a" />
-                <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>Update Current Wage (C8)</h3>
+                <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>Update Current Wage</h3>
               </div>
               <p style={{ margin: "0 0 1.25rem 0", color: "#64748b", fontSize: "0.85rem" }}>
                 Received an appraisal or promotion? Enter your updated gross monthly compensation.
@@ -213,7 +213,7 @@ export default function WageRetention() {
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
               <Clock size={20} color="#2563eb" />
-              <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>Periodic Retention Check-in (C9)</h3>
+              <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>Periodic Retention Check-in</h3>
             </div>
             <p style={{ margin: "0 0 1.25rem 0", color: "#64748b", fontSize: "0.85rem" }}>
               Periodic verification ensuring government outcome integrity.
@@ -273,7 +273,7 @@ export default function WageRetention() {
               <form onSubmit={handleRetentionSubmit}>
                 <div style={{ marginBottom: "1rem" }}>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Primary Reason for Leaving (C12 Attrition)
+                    Primary Reason for Leaving
                   </label>
                   <select
                     value={attritionReason}

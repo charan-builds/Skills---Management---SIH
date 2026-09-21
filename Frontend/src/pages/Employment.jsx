@@ -76,7 +76,7 @@ export default function Employment() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
             <TrendingUp size={18} color="#2563eb" />
             <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              LONGITUDINAL TRACKING & WAGE APPRECIATION (A3, A4, A5)
+              LONGITUDINAL TRACKING & WAGE APPRECIATION
             </span>
           </div>
           <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -195,7 +195,7 @@ export default function Employment() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: "1.15rem", color: "#0f172a" }}>
-                    Longitudinal Employment Retention Curve (A3)
+                    Longitudinal Employment Retention Curve
                   </h3>
                   <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
                     Track cohort retention stability from initial hiring day through 12 months.
@@ -244,7 +244,7 @@ export default function Employment() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: "1.15rem", color: "#0f172a" }}>
-                    Wage Progression & Growth Curve (A4)
+                    Wage Progression & Growth Curve
                   </h3>
                   <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
                     Average monthly compensation appraisals across 3M, 6M, and 12M checkpoints.

@@ -103,7 +103,7 @@ export default function TrainingHistory() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <BookOpen size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            VERIFIED ACADEMIC & VOCATIONAL CREDENTIALS (SECTIONS 9, 10)
+            VERIFIED ACADEMIC & VOCATIONAL CREDENTIALS
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>

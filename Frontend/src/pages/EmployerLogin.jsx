@@ -133,7 +133,7 @@ export default function EmployerLogin() {
               Skilling Outcomes Intelligence Platform
             </h1>
             <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-              Authorised Organisation & Employer Gateway (Sections 3–5)
+              Authorised Organisation & Employer Gateway
             </span>
           </div>
         </div>
@@ -221,7 +221,7 @@ export default function EmployerLogin() {
                   Select Demonstration Organisation
                 </h2>
                 <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: "0 0 1.25rem 0" }}>
-                  Each organization maintains strict multi-tenant data boundaries. Employer A never accesses records from Employer B (Section 4).
+                  Each organization maintains strict multi-tenant data boundaries. Employer A never accesses records from Employer B.
                 </p>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -382,7 +382,7 @@ export default function EmployerLogin() {
             <div style={{ padding: "2rem" }}>
               <div style={{ marginBottom: "1.5rem" }}>
                 <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                  Organisation Onboarding (Section 3)
+                  Organisation Onboarding
                 </span>
                 <h2 style={{ fontSize: "1.3rem", fontWeight: 800, margin: "0.25rem 0 0.4rem 0", color: "#f1f5f9" }}>
                   Register Organisation for Outcome Verification

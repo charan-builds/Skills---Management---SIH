@@ -61,7 +61,7 @@ export default function SkillGaps() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Target size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            LABOUR MARKET ALIGNMENT & CURRICULUM INTELLIGENCE (A6, A7, A16, A17)
+            LABOUR MARKET ALIGNMENT & CURRICULUM INTELLIGENCE
           </span>
         </div>
         <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
@@ -90,7 +90,7 @@ export default function SkillGaps() {
             gap: "0.4rem"
           }}
         >
-          <BarChart3 size={16} /> Ranked Skill Gaps (A6)
+          <BarChart3 size={16} /> Ranked Skill Gaps
         </button>
 
         <button
@@ -109,7 +109,7 @@ export default function SkillGaps() {
             gap: "0.4rem"
           }}
         >
-          <Layers size={16} /> Demand vs Supply (A16)
+          <Layers size={16} /> Demand vs Supply
         </button>
 
         <button
@@ -128,7 +128,7 @@ export default function SkillGaps() {
             gap: "0.4rem"
           }}
         >
-          <BookOpen size={16} /> Curriculum-Skill Mapping (A17)
+          <BookOpen size={16} /> Curriculum-Skill Mapping
         </button>
 
         <button
@@ -147,7 +147,7 @@ export default function SkillGaps() {
             gap: "0.4rem"
           }}
         >
-          <CheckCircle size={16} /> Training Relevance Matrix (A7)
+          <CheckCircle size={16} /> Training Relevance Matrix
         </button>
       </div>
 
@@ -167,7 +167,7 @@ export default function SkillGaps() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
                   <div>
                     <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.2rem", color: "#0f172a" }}>
-                      Ranked Skill Gaps (A6)
+                      Ranked Skill Gaps
                     </h3>
                     <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
                       Aggregated frequency of reported skill deficits across candidates and employer feedback. Click any row or bar to inspect drilldown.
@@ -326,7 +326,7 @@ export default function SkillGaps() {
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <div style={{ marginBottom: "1.5rem" }}>
               <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.2rem", color: "#0f172a" }}>
-                Industry Demand vs Training Supply Matrix (A16)
+                Industry Demand vs Training Supply Matrix
               </h3>
               <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
                 Macro comparison of training institute supply versus verified employer open positions across sectors.
@@ -391,7 +391,7 @@ export default function SkillGaps() {
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <div style={{ marginBottom: "1.5rem" }}>
               <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.2rem", color: "#0f172a" }}>
-                Curriculum to Skill Competency Delta (A17)
+                Curriculum to Skill Competency Delta
               </h3>
               <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
                 Target syllabus proficiency benchmarks compared against observed candidate assessment grades.
@@ -464,7 +464,7 @@ export default function SkillGaps() {
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <div style={{ marginBottom: "1.5rem" }}>
               <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.2rem", color: "#0f172a" }}>
-                Training Relevance vs Employment Rate Correlation (A7)
+                Training Relevance vs Employment Rate Correlation
               </h3>
               <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
                 Multi-quadrant correlation measuring whether high-placement programmes also deliver high curriculum relevance in day-to-day employment.

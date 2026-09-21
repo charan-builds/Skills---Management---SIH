@@ -106,7 +106,7 @@ export default function EmployerFeedback() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <MessageSquare size={20} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            ENTERPRISE SKILL INTELLIGENCE & CURRICULUM FEEDBACK (SECTIONS 21–24)
+            ENTERPRISE SKILL INTELLIGENCE & CURRICULUM FEEDBACK
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.4rem 0" }}>
@@ -400,7 +400,7 @@ export default function EmployerFeedback() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
               <ShieldCheck size={18} color="#15803d" />
               <strong style={{ fontSize: "0.85rem", color: "#166534" }}>
-                Data Integrity &amp; Provenance Separation (Section 21)
+                Data Integrity &amp; Provenance Separation
               </strong>
             </div>
             <p style={{ margin: 0, fontSize: "0.8rem", color: "#166534", lineHeight: 1.5 }}>

@@ -78,7 +78,7 @@ export default function SkillGoals() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Target size={20} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            OCCUPATIONAL BENCHMARK ENGINE (SECTIONS 21-25, 34-35)
+            OCCUPATIONAL BENCHMARK ENGINE
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>

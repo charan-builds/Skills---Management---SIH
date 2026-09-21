@@ -87,7 +87,7 @@ export default function Districts() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
             <Map size={18} color="#2563eb" />
             <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              GEOGRAPHIC OUTCOME INTELLIGENCE (A11, SECTION 22)
+              GEOGRAPHIC OUTCOME INTELLIGENCE
             </span>
           </div>
           <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>

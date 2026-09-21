@@ -208,7 +208,7 @@ export default function Dashboard() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
             <div>
               <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.2rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <TrendingUp size={20} color="#2563eb" /> Training to Employment Funnel (A2)
+                <TrendingUp size={20} color="#2563eb" /> Training to Employment Funnel
               </h3>
               <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
                 Dynamic progression from enrolment through long-term career engagement. Click any funnel stage to inspect the candidate cohort.

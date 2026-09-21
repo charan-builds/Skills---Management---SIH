@@ -92,7 +92,7 @@ export default function TraineeOutcomes() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
             <PieChart size={20} color="#2563eb" />
             <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              PERSONAL OUTCOME & INCOME PROGRESSION (SECTIONS 14, 15, 31-33, 44)
+              PERSONAL OUTCOME & INCOME PROGRESSION
             </span>
           </div>
           <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>

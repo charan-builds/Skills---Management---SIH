@@ -88,7 +88,7 @@ export default function Providers() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
             <Building2 size={18} color="#2563eb" />
             <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              INSTITUTIONAL ACCOUNTABILITY & LEAGUE TABLE (A10, SECTION 21)
+              INSTITUTIONAL ACCOUNTABILITY & LEAGUE TABLE
             </span>
           </div>
           <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
