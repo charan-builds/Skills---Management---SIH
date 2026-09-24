@@ -66,6 +66,10 @@ export default function LandingPage() {
     document.getElementById("lp-views")?.scrollIntoView({ behavior: "smooth" });
   const handleHowVerification = () =>
     document.getElementById("lp-verification")?.scrollIntoView({ behavior: "smooth" });
+  const handlePortalSignIn = (portalRole) => {
+    changeRole(portalRole);
+    openSignIn();
+  };
 
   /* ── Demo fill (identical to Login.jsx) ── */
   const handleDemoFill = (demoRole) => {
@@ -406,6 +410,7 @@ export default function LandingPage() {
                 <div>Provider accountability league tables</div>
                 <div>District-level resource-allocation flags</div>
                 <div>DPDP-compliant outcome exports</div>
+                <button type="button" className="lp-portal-link" onClick={() => handlePortalSignIn("admin")}>Open government portal <ArrowRight size={14} /></button>
               </div>
             </div>
             <div className="lp-view-row">
@@ -415,6 +420,7 @@ export default function LandingPage() {
                 <div>Verification requests inbox</div>
                 <div>Workforce retention benchmarking</div>
                 <div>Curriculum feedback to training bodies</div>
+                <button type="button" className="lp-portal-link" onClick={() => handlePortalSignIn("employer")}>Open employer portal <ArrowRight size={14} /></button>
               </div>
             </div>
             <div className="lp-view-row">
@@ -424,6 +430,7 @@ export default function LandingPage() {
                 <div>Two-tap milestone check-ins</div>
                 <div>Verified vs. self-reported skill evidence</div>
                 <div>Consent given, reviewed, and revocable</div>
+                <button type="button" className="lp-portal-link" onClick={() => handlePortalSignIn("trainee")}>Open trainee portal <ArrowRight size={14} /></button>
               </div>
             </div>
           </div>

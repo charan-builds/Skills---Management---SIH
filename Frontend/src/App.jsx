@@ -8,7 +8,6 @@ import TraineeLayout from "./layouts/TraineeLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Shared/Auth
-import Login from "./pages/Login";
 import LandingPage from "./pages/LandingPage";
 
 // Admin Pages
@@ -58,7 +57,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
+        {/* The landing page owns sign-in; preserve old links by returning them to it. */}
+        <Route path="/login" element={<Navigate to="/" replace />} />
 
         {/* ADMIN ROUTES */}
         <Route path="/admin/*" element={<ProtectedRoute role="admin"><AdminLayout><Routes>

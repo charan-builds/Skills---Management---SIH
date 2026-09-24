@@ -22,7 +22,7 @@ export default function EmployerNav() {
     localStorage.removeItem("organizationId");
     localStorage.removeItem("organizationName");
     localStorage.removeItem("employerEmail");
-    navigate("/login");
+    navigate("/");
   };
 
   const navItems = [

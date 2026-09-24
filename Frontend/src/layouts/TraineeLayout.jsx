@@ -49,7 +49,7 @@ export default function TraineeLayout({ children }) {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/");
   };
 
   return (

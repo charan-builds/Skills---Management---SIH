@@ -60,7 +60,7 @@ export default function EmployerLayout({ children }) {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/");
   };
 
   const orgName = currentEmployer?.name || localStorage.getItem("organizationName") || "Tata Consultancy Services";

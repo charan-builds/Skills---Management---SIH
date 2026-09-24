@@ -45,7 +45,7 @@ function AdminLayoutInner({ children }) {
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    navigate("/");
   };
 
   // Compute live scope count from authoritative 800 relational dataset

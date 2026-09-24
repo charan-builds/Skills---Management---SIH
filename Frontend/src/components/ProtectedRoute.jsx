@@ -6,7 +6,7 @@ function ProtectedRoute({ children, role }) {
 
   // Not logged in or missing token
   if (!loggedInRole || !token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Wrong role
@@ -19,7 +19,7 @@ function ProtectedRoute({ children, role }) {
       return <Navigate to="/admin" replace />;
     }
 
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;

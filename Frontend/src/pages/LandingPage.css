@@ -409,6 +409,23 @@
 .lp-view-feats div:first-child {
   border-top: none;
 }
+.lp-portal-link {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--lp-green);
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 0;
+}
+.lp-portal-link:hover {
+  color: var(--lp-text);
+}
 
 /* ── STATS BANNER (full-width) ── */
 .lp-banner {
