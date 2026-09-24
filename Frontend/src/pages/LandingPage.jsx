@@ -249,9 +249,6 @@ export default function LandingPage() {
               className="lp-logo-img"
               onError={(e) => { e.target.style.display = "none"; }}
             />
-            <span className="lp-logo-text">
-              Skill2Impact<span className="lp-logo-dot">.</span>
-            </span>
           </div>
 
           <div className="lp-nav-links">
@@ -280,10 +277,6 @@ export default function LandingPage() {
           <div className="lp-hero-grid">
 
             <div className="lp-hero-left">
-              <div className="lp-eyebrow">
-                <span className="lp-dash" />
-                SIH 2026 · Problem Statement 26135 · Team ApexCoders
-              </div>
               <h1 className="lp-headline">
                 Turning skills into{" "}
                 <span className="lp-blue">measurable</span> impact.

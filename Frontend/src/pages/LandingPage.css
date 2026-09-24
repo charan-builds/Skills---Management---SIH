@@ -496,7 +496,6 @@
 
 /* ── FOOTER ── */
 .lp-footer {
-  border-top: 1px solid var(--lp-card-border);
   padding: 30px 0;
   color: var(--lp-text-dim2);
   font-size: 13px;
