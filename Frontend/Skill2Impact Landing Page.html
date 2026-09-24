@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skill2Impact — Turning skills into measurable impact</title>
+<style>
+  :root{
+    --bg:#0a0f16;
+    --bg-2:#0d1420;
+    --card:#0f1824;
+    --card-border:#1c2733;
+    --text:#f2f4f7;
+    --text-dim:#93a1b3;
+    --text-dim2:#6b7686;
+    --accent-green:#3ecf8e;
+    --accent-orange:#e5a15a;
+    --accent-blue:#5b8bb0;
+    --panel-blue-1:#16304a;
+    --panel-blue-2:#2e5c72;
+    --btn-blue:#2b4d68;
+    --btn-blue-border:#3c6280;
+    box-sizing:border-box;
+  }
+  *{box-sizing:inherit;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--text);}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    line-height:1.5;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  h1,h2,h3{
+    font-family:Georgia,"Times New Roman",serif;
+    font-weight:400;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 40px;}
+  @media (max-width:800px){.wrap{padding:0 20px;}}
+
+  /* NAV */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(10,15,22,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--card-border);
+  }
+  nav{
+    display:flex;align-items:center;justify-content:space-between;
+    max-width:1200px;margin:0 auto;padding:18px 40px;
+  }
+  .logo{font-family:Georgia,serif;font-weight:700;font-size:19px;}
+  .logo .dot{color:var(--accent-green);}
+  .nav-links{display:flex;gap:34px;font-size:14.5px;color:var(--text-dim);}
+  .nav-links a:hover{color:var(--text);}
+  .nav-right{display:flex;gap:12px;align-items:center;}
+  .btn{
+    display:inline-block;font-size:14px;font-weight:600;
+    padding:9px 18px;border-radius:6px;cursor:pointer;border:1px solid transparent;
+    white-space:nowrap;
+  }
+  .btn-outline{border-color:#2a3644;color:var(--text);background:transparent;}
+  .btn-outline:hover{background:#131c27;}
+  .btn-primary{background:var(--btn-blue);border-color:var(--btn-blue-border);color:#fff;}
+  .btn-primary:hover{background:#33597a;}
+  @media (max-width:900px){.nav-links{display:none;}}
+
+  /* HERO */
+  .hero{padding:88px 0 60px;}
+  .eyebrow{
+    display:flex;align-items:center;gap:10px;
+    color:var(--accent-green);font-size:13.5px;font-weight:600;
+    letter-spacing:.02em;margin-bottom:22px;
+  }
+  .eyebrow .dash{width:22px;height:1px;background:var(--accent-green);display:inline-block;}
+  .eyebrow.orange{color:var(--accent-orange);}
+  .eyebrow.orange .dash{background:var(--accent-orange);}
+
+  .hero-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:60px;align-items:start;}
+  @media (max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+
+  h1.headline{font-size:52px;line-height:1.12;margin-bottom:22px;}
+  h1.headline .blue{color:#7fa9c4;}
+  .lede{color:var(--text-dim);font-size:16.5px;max-width:540px;margin-bottom:32px;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn-lg{padding:13px 22px;font-size:15px;}
+
+  .stat-card{
+    background:linear-gradient(135deg,var(--panel-blue-1),var(--panel-blue-2));
+    border-radius:10px;padding:26px 28px;
+  }
+  .stat-card .label{font-size:13px;color:#b9c9d6;margin-bottom:20px;}
+  .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 20px;margin-bottom:20px;}
+  .stat-num{font-size:30px;font-weight:600;font-family:Georgia,serif;margin-bottom:2px;}
+  .stat-sub{font-size:12.5px;color:#a9bccb;}
+  .stat-divider{border-top:1px solid rgba(255,255,255,0.15);margin:6px 0 16px;}
+  .verif-label{font-size:12.5px;color:#a9bccb;margin-bottom:10px;}
+  .verif-path{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;}
+  .verif-badge{background:rgba(255,255,255,0.08);padding:5px 11px;border-radius:5px;}
+
+  /* SECTION generic */
+  section{padding:70px 0;border-top:1px solid var(--card-border);}
+  .section-head{max-width:640px;margin-bottom:36px;}
+  h2.section-title{font-size:34px;line-height:1.22;margin-bottom:16px;}
+  .section-desc{color:var(--text-dim);font-size:15.5px;}
+
+  /* THE GAP */
+  .gap-table{
+    display:grid;grid-template-columns:1fr 1fr;
+    border:1px solid var(--card-border);border-radius:8px;overflow:hidden;
+  }
+  @media (max-width:700px){.gap-table{grid-template-columns:1fr;}}
+  .gap-col{padding:26px 30px;}
+  .gap-col:first-child{border-right:1px solid var(--card-border);}
+  @media (max-width:700px){.gap-col:first-child{border-right:none;border-bottom:1px solid var(--card-border);}}
+  .gap-col h4{font-size:14px;color:var(--text-dim);font-weight:600;margin-bottom:16px;}
+  .gap-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--card-border);font-size:15px;}
+  .gap-item:first-of-type{border-top:none;}
+  .dot{width:9px;height:9px;border-radius:50%;flex:none;}
+  .dot.on{background:var(--accent-green);}
+  .dot.off{border:1.5px solid var(--accent-orange);background:transparent;}
+
+  /* VERIFICATION ENGINE */
+  .tier{
+    display:grid;grid-template-columns:70px 1fr;gap:20px;
+    padding:32px 0;border-top:1px solid var(--card-border);
+  }
+  .tier:first-of-type{border-top:none;}
+  .tier-num{font-family:Georgia,serif;font-size:26px;color:var(--accent-orange);}
+  .tier h3{font-size:19px;margin-bottom:10px;font-weight:600;font-family:-apple-system,sans-serif;}
+  .tier p{color:var(--text-dim);font-size:15px;max-width:640px;margin-bottom:14px;}
+  .tag{
+    display:inline-block;background:rgba(62,207,142,0.12);color:var(--accent-green);
+    font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:5px;
+  }
+
+  /* THREE CONNECTED VIEWS */
+  .views-table{border:1px solid var(--card-border);border-radius:8px;overflow:hidden;}
+  .view-row{
+    display:grid;grid-template-columns:220px 1fr 1fr;gap:24px;
+    padding:26px 28px;border-top:1px solid var(--card-border);
+  }
+  .view-row:first-child{border-top:none;}
+  @media (max-width:800px){.view-row{grid-template-columns:1fr;gap:10px;}}
+  .view-role{font-family:Georgia,serif;font-size:19px;margin-bottom:4px;}
+  .view-sub{font-size:13px;color:var(--accent-blue);}
+  .view-desc{color:var(--text-dim);font-size:14.5px;}
+  .view-feats div{
+    padding:9px 0;border-top:1px solid var(--card-border);font-size:14px;
+  }
+  .view-feats div:first-child{border-top:none;}
+
+  /* STATS BANNER */
+  .banner{
+    background:linear-gradient(135deg,var(--panel-blue-1),var(--panel-blue-2));
+    border-top:none;
+  }
+  .banner .stat-grid4{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:36px;
+  }
+  @media (max-width:800px){.banner .stat-grid4{grid-template-columns:1fr 1fr;}}
+  .banner .stat-num{font-size:36px;}
+  .banner .stat-sub{font-size:13.5px;color:#c3d3e0;}
+  .banner-foot{
+    margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.15);
+    font-size:13px;color:#a9bccb;
+  }
+
+  /* PRIVACY */
+  .privacy-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:36px;}
+  @media (max-width:800px){.privacy-grid{grid-template-columns:1fr;}}
+  .privacy-grid h4{font-size:15.5px;font-weight:700;margin-bottom:10px;}
+  .privacy-grid p{color:var(--text-dim);font-size:14.5px;}
+
+  /* CTA */
+  .cta{
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;
+    padding:60px 0;
+  }
+  .cta h2{font-size:30px;margin-bottom:8px;}
+  .cta p{color:var(--text-dim);font-size:15px;}
+
+  footer{border-top:1px solid var(--card-border);padding:30px 0;color:var(--text-dim2);font-size:13px;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">Skill2Impact <span class="dot">.</span></div>
+    <div class="nav-links">
+      <a href="#problem">The problem</a>
+      <a href="#verification">How verification works</a>
+      <a href="#views">Three portals</a>
+      <a href="#privacy">Privacy</a>
+    </div>
+    <div class="nav-right">
+      <a class="btn btn-outline" id="signinBtn">Sign in</a>
+      <a class="btn btn-primary">Open prototype</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" style="border-top:none;">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow"><span class="dash"></span>SIH 2026 · Problem Statement 26135 · Team ApexCoders</div>
+        <h1 class="headline">Turning skills into <span class="blue">measurable</span> impact.</h1>
+        <p class="lede">Training systems track enrolment, attendance and certification well. What happens after — the job, the wage, the years that follow — usually disappears. Skill2Impact is a consent-based, longitudinal outcome platform built for the Government of Maharashtra to close that gap.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg">See the three portals</a>
+          <a class="btn btn-outline btn-lg">How verification works</a>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="label">Live outcome snapshot — Maharashtra cohort</div>
+        <div class="stat-grid">
+          <div><div class="stat-num">800</div><div class="stat-sub">Trainees tracked</div></div>
+          <div><div class="stat-num">66%</div><div class="stat-sub">Employment rate</div></div>
+          <div><div class="stat-num">77%</div><div class="stat-sub">6-month retention</div></div>
+          <div><div class="stat-num">₹29,976</div><div class="stat-sub">Average wage</div></div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="verif-label">Verification path</div>
+        <div class="verif-path">
+          <span class="verif-badge">EPFO match</span> →
+          <span class="verif-badge">Partner HRIS</span> →
+          <span class="verif-badge">Employer confirm</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE GAP -->
+  <section id="problem">
+    <div class="section-head">
+      <div class="eyebrow orange"><span class="dash"></span>The gap</div>
+      <h2 class="section-title">Training is tracked. Impact isn't.</h2>
+      <p class="section-desc">Trainees change phone numbers. Employers don't report consistently. Different programmes use different identifiers for the same person. The result: nobody can reliably say what training actually leads to.</p>
+    </div>
+
+    <div class="gap-table">
+      <div class="gap-col">
+        <h4>What government already knows</h4>
+        <div class="gap-item"><span class="dot on"></span>Enrolment</div>
+        <div class="gap-item"><span class="dot on"></span>Attendance</div>
+        <div class="gap-item"><span class="dot on"></span>Assessment scores</div>
+        <div class="gap-item"><span class="dot on"></span>Certification</div>
+      </div>
+      <div class="gap-col">
+        <h4>What stays unclear</h4>
+        <div class="gap-item"><span class="dot off"></span>Employment and retention</div>
+        <div class="gap-item"><span class="dot off"></span>Wage progression</div>
+        <div class="gap-item"><span class="dot off"></span>Relevance of the training itself</div>
+        <div class="gap-item"><span class="dot off"></span>Reasons for non-placement</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERIFICATION ENGINE -->
+  <section id="verification">
+    <div class="section-head">
+      <div class="eyebrow orange"><span class="dash"></span>Verification engine</div>
+      <h2 class="section-title">Three tiers, so no single source has to be perfect.</h2>
+      <p class="section-desc">Instead of asking every employer to manually confirm every trainee, outcomes are verified automatically wherever possible, and only fall back to a person when they have to.</p>
+    </div>
+
+    <div class="tier">
+      <div class="tier-num">01</div>
+      <div>
+        <h3>EPFO auto-match</h3>
+        <p>Aadhaar/UAN is checked against India's Employees' Provident Fund records — the same formal-employment database every company with 20+ staff is legally required to report to. No partnership needed, and it covers most of the formal workforce automatically.</p>
+        <span class="tag">Broad, automatic coverage</span>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-num">02</div>
+      <div>
+        <h3>Partner HRIS integration</h3>
+        <p>For organisations that connect their own HR system — Workday, BambooHR, Darwinbox — a deterministic five-point match confirms employment in real time, without waiting on EPFO's monthly reporting cycle.</p>
+        <span class="tag">Fast, for connected employers</span>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-num">03</div>
+      <div>
+        <h3>Direct employer confirmation</h3>
+        <p>Anyone the first two tiers miss — small businesses, informal work, apprenticeships not yet on formal payroll — gets a two-tap confirmation request sent straight to the named employer. Nobody is left permanently unverified.</p>
+        <span class="tag">Universal fallback</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE CONNECTED VIEWS -->
+  <section id="views">
+    <div class="section-head">
+      <div class="eyebrow orange"><span class="dash"></span>Three connected views</div>
+      <h2 class="section-title">One record, seen differently by everyone who needs it.</h2>
+      <p class="section-desc">A trainee, their employer, and the government are looking at the same underlying outcome data — each through the lens relevant to their role.</p>
+    </div>
+
+    <div class="views-table">
+      <div class="view-row">
+        <div>
+          <div class="view-role">Government</div>
+          <div class="view-sub">Admin dashboard</div>
+        </div>
+        <div class="view-desc">Cohort, course, provider and district analytics; root-cause diagnostics on non-placement; policy recommendations with an evidence trail.</div>
+        <div class="view-feats">
+          <div>Provider accountability league tables</div>
+          <div>District-level resource-allocation flags</div>
+          <div>DPDP-compliant outcome exports</div>
+        </div>
+      </div>
+
+      <div class="view-row">
+        <div>
+          <div class="view-role">Employer</div>
+          <div class="view-sub">Organisation portal</div>
+        </div>
+        <div class="view-desc">Confirm or dispute trainee claims, report the skills your hiring managers actually find missing, and manage HR-system integrations.</div>
+        <div class="view-feats">
+          <div>Verification requests inbox</div>
+          <div>Workforce retention benchmarking</div>
+          <div>Curriculum feedback to training bodies</div>
+        </div>
+      </div>
+
+      <div class="view-row">
+        <div>
+          <div class="view-role">Trainee</div>
+          <div class="view-sub">Personal intelligence</div>
+        </div>
+        <div class="view-desc">See your own outcome record, log a new role or wage change in seconds, and control exactly what data is shared and why.</div>
+        <div class="view-feats">
+          <div>Two-tap milestone check-ins</div>
+          <div>Verified vs. self-reported skill evidence</div>
+          <div>Consent given, reviewed, and revocable</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- STATS BANNER (full width) -->
+<section class="banner">
+  <div class="wrap">
+    <div class="eyebrow orange"><span class="dash"></span>Why this matters</div>
+    <h2 class="section-title">Outcome data at a scale that means something.</h2>
+    <div class="stat-grid4">
+      <div><div class="stat-num">645</div><div class="stat-sub">Certified this cohort</div></div>
+      <div><div class="stat-num">380</div><div class="stat-sub">Formally placed</div></div>
+      <div><div class="stat-num">5</div><div class="stat-sub">Training providers benchmarked</div></div>
+      <div><div class="stat-num">41%</div><div class="stat-sub">Follow-up response rate</div></div>
+    </div>
+    <div class="banner-foot">Figures shown are from the Skill2Impact prototype's simulated Maharashtra cohort, used to demonstrate the analytics pipeline end to end.</div>
+  </div>
+</section>
+
+<main class="wrap">
+  <!-- PRIVACY -->
+  <section id="privacy">
+    <div class="section-head">
+      <div class="eyebrow orange"><span class="dash"></span>Built for consent, not surveillance</div>
+      <h2 class="section-title">Verified doesn't mean exposed.</h2>
+      <p class="section-desc">The system is designed to prove outcomes without holding more personal data than it needs to.</p>
+    </div>
+    <div class="privacy-grid">
+      <div>
+        <h4>Consent first</h4>
+        <p>Every trainee explicitly opts in to outcome tracking and can review or revoke that consent at any time from their own dashboard.</p>
+      </div>
+      <div>
+        <h4>Identity, hashed</h4>
+        <p>Aadhaar numbers are converted to a one-way hash the moment they're captured. The system links records across programmes without ever storing the raw number.</p>
+      </div>
+      <div>
+        <h4>Aggregated by default</h4>
+        <p>Analytics shared with government departments are aggregated and anonymised — individual records are never sold, monetised, or handed to third-party recruiters.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div>
+      <h2>Ready to look under the hood?</h2>
+      <p>Walk through the live prototype across all three portals.</p>
+    </div>
+    <a class="btn btn-primary btn-lg">Open the prototype</a>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Skill2Impact — SIH 2026 · Problem Statement 26135 · Team ApexCoders</div>
+</footer>
+
+<!-- SIGN IN MODAL -->
+<div id="modalOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:center;justify-content:center;">
+  <div style="background:#0d1420;border:1px solid var(--card-border);border-radius:10px;padding:32px;width:410px;max-width:90vw;max-height:88vh;overflow:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+      <h3 style="font-family:Georgia,serif;font-size:22px;">Welcome back</h3>
+      <span id="closeModal" style="cursor:pointer;color:var(--text-dim);font-size:18px;">&times;</span>
+    </div>
+    <p style="color:var(--text-dim);font-size:14px;margin-bottom:20px;">Choose your role to continue</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:20px;">
+      <div class="role-opt" style="text-align:center;padding:12px 4px;border:1px solid var(--card-border);border-radius:6px;font-size:13px;cursor:pointer;">Government / Admin</div>
+      <div class="role-opt" style="text-align:center;padding:12px 4px;border:1px solid var(--card-border);border-radius:6px;font-size:13px;cursor:pointer;">Employer</div>
+      <div class="role-opt active" style="text-align:center;padding:12px 4px;border:1px solid var(--accent-orange);background:rgba(229,161,90,0.15);border-radius:6px;font-size:13px;cursor:pointer;color:var(--accent-orange);">Trainee</div>
+    </div>
+
+    <label style="font-size:13px;display:block;margin-bottom:6px;">Registered phone or email</label>
+    <input type="text" placeholder="you@example.com" style="width:100%;padding:11px;background:#0a0f16;border:1px solid var(--card-border);border-radius:6px;color:var(--text);margin-bottom:16px;">
+
+    <label style="font-size:13px;display:block;margin-bottom:6px;">Password</label>
+    <input type="password" placeholder="••••••••" style="width:100%;padding:11px;background:#0a0f16;border:1px solid var(--card-border);border-radius:6px;color:var(--text);margin-bottom:20px;">
+
+    <button class="btn btn-primary" style="width:100%;padding:13px;margin-bottom:18px;">Sign in as Trainee</button>
+
+    <div style="text-align:center;font-size:12.5px;color:var(--text-dim);margin-bottom:14px;">Quick demo login</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <button class="btn btn-outline" style="padding:9px 4px;font-size:12.5px;">Demo Admin</button>
+      <button class="btn btn-outline" style="padding:9px 4px;font-size:12.5px;">Demo Trainee</button>
+      <button class="btn btn-outline" style="padding:9px 4px;font-size:12.5px;">Demo Employer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const overlay = document.getElementById('modalOverlay');
+  document.getElementById('signinBtn').addEventListener('click', ()=> overlay.style.display='flex');
+  document.getElementById('closeModal').addEventListener('click', ()=> overlay.style.display='none');
+  overlay.addEventListener('click', (e)=>{ if(e.target===overlay) overlay.style.display='none'; });
+  document.querySelectorAll('.role-opt').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      document.querySelectorAll('.role-opt').forEach(o=>{
+        o.style.borderColor='var(--card-border)'; o.style.background='transparent'; o.style.color='var(--text)';
+      });
+      el.style.borderColor='var(--accent-orange)'; el.style.background='rgba(229,161,90,0.15)'; el.style.color='var(--accent-orange)';
+    });
+  });
+</script>
+
+</body>
+</html>

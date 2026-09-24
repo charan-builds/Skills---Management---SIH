@@ -9,6 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 // Shared/Auth
 import Login from "./pages/Login";
+import LandingPage from "./pages/LandingPage";
 
 // Admin Pages
 import Dashboard from "./pages/Dashboard";
@@ -56,6 +57,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
 
         {/* ADMIN ROUTES */}
@@ -128,8 +130,8 @@ function App() {
           <Route path="*" element={<Navigate to="/trainee" replace />} />
         </Routes></TraineeLayout></ProtectedRoute>} />
 
-        {/* ROOT REDIRECT */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* ROOT REDIRECT — unknown paths go to landing page */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
