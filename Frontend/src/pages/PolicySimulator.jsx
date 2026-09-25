@@ -889,12 +889,6 @@ export default function PolicySimulator() {
                     </ul>
 
                     <div style={{ background: "white", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.3rem" }}>
-                        <Sparkles size={16} color="#7c3aed" />
-                        <span style={{ fontSize: "0.8rem", fontWeight: 800, color: "#7c3aed", textTransform: "uppercase" }}>
-                          AI-Assisted Executive Synthesis
-                        </span>
-                      </div>
                       <p style={{ margin: 0, fontSize: "0.88rem", color: "#334155", fontStyle: "italic", lineHeight: "1.5" }}>
                         "{simulationResult.explanation.ai_synthesis}"
                       </p>
