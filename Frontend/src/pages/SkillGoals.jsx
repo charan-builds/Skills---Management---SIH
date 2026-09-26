@@ -203,12 +203,7 @@ export default function SkillGoals() {
 
         {/* AI Grounded Synthesis Banner (Section 26 & 46) */}
         <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%)", borderRadius: "12px", border: "1px solid #bbf7d0", padding: "1.25rem 1.5rem", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
-            <Sparkles size={16} color="#16a34a" />
-            <strong style={{ fontSize: "0.85rem", color: "#166534", textTransform: "uppercase" }}>
-              Evidence-Based Benchmark Analysis
-            </strong>
-          </div>
+          
           <p style={{ margin: 0, fontSize: "0.9rem", color: "#1f2937", lineHeight: 1.6 }}>
             {benchmarkAnalysis?.ai_insights}
           </p>
