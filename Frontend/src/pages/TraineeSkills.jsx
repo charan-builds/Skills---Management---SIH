@@ -117,12 +117,7 @@ export default function TraineeSkills() {
 
         {/* AI Evidence Synthesis Banner (Section 26) */}
         <div style={{ background: "linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)", borderRadius: "14px", border: "1px solid #bfdbfe", padding: "1.5rem", marginBottom: "2rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
-            <Sparkles size={18} color="#2563eb" />
-            <strong style={{ fontSize: "0.95rem", color: "#1e3a8a", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              Skill & Outcome Evidence Insights
-            </strong>
-          </div>
+          
           <p style={{ margin: 0, fontSize: "0.95rem", color: "#1e293b", lineHeight: 1.6 }}>
             {skillsData?.ai_insights}
           </p>
