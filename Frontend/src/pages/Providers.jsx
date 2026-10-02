@@ -40,7 +40,7 @@ export default function Providers() {
 
   useEffect(() => {
     loadData();
-  }, [filters, storeState]);
+  }, [filters, storeState.last_updated]);
 
   const handleSort = (field) => {
     if (sortField === field) {

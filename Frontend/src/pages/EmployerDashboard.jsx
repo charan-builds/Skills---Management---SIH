@@ -9,8 +9,10 @@ import { DataStateWrapper } from "../components/common/DataStateComponents";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { mockStore } from "../services/mockStore";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmployerDashboard() {
+  const { t } = useLanguage();
   const storeState = usePlatformStore();
   const organizationId = localStorage.getItem("organizationId") || "EMP-DEMO-001";
   const organizationName = localStorage.getItem("organizationName") || "Tata Consultancy Services";
@@ -138,14 +140,14 @@ export default function EmployerDashboard() {
                 style={{ background: "white", borderRadius: "12px", padding: "1.25rem", border: "1px solid #e2e8f0", cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", transition: "transform 0.15s" }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Pending Verification</span>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("employer_dashboard.pending_verifications", "Pending Verification")}</span>
                   <AlertCircle size={18} color="#f59e0b" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: stats.pending_verifications_count > 0 ? "#b45309" : "#0f172a" }}>
                   <CountUp value={stats.pending_verifications_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#2563eb", fontWeight: 600, marginTop: "0.35rem" }}>
-                  Review claims &rarr;
+                  {t("employer_dashboard.review_claims", "Review claims →")}
                 </div>
               </div>
 
@@ -155,56 +157,56 @@ export default function EmployerDashboard() {
                 style={{ background: "white", borderRadius: "12px", padding: "1.25rem", border: "1px solid #e2e8f0", cursor: "pointer", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Verified Workforce</span>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("employer_dashboard.verified_workforce", "Verified Workforce")}</span>
                   <CheckCircle2 size={18} color="#16a34a" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#166534" }}>
                   <CountUp value={stats.verified_workforce_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
-                  Active confirmed roster
+                  {t("employer_dashboard.active_roster", "Active confirmed roster")}
                 </div>
               </div>
 
               {/* Rejected Claims */}
               <div style={{ background: "white", borderRadius: "12px", padding: "1.25rem", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Rejected Claims</span>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("employer_dashboard.rejected_claims", "Rejected Claims")}</span>
                   <XCircle size={18} color="#ef4444" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#b91c1c" }}>
                   <CountUp value={stats.rejected_claims_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
-                  Non-qualifying records
+                  {t("employer_dashboard.non_qualifying", "Non-qualifying records")}
                 </div>
               </div>
 
               {/* Correction Requests */}
               <div style={{ background: "white", borderRadius: "12px", padding: "1.25rem", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Correction Requests</span>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("employer_dashboard.correction_requests", "Correction Requests")}</span>
                   <AlertTriangle size={18} color="#f97316" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#c2410c" }}>
                   <CountUp value={stats.correction_requests_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
-                  Awaiting candidate resubmission
+                  {t("employer_dashboard.awaiting_resubmission", "Awaiting candidate resubmission")}
                 </div>
               </div>
 
               {/* 6M Retention */}
               <div style={{ background: "white", borderRadius: "12px", padding: "1.25rem", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>6M Retention Benchmark</span>
+                  <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("employer_dashboard.retention_benchmark", "6M Retention Benchmark")}</span>
                   <TrendingUp size={18} color="#10b981" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#0f172a" }}>
                   <CountUp value={stats.six_month_retention} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
-                  Wage Confirmed: {stats.wage_confirmation_rate}
+                  {t("employer_dashboard.wage_confirmed", "Wage Confirmed:")} {stats.wage_confirmation_rate}
                 </div>
               </div>
             </div>
@@ -218,9 +220,9 @@ export default function EmployerDashboard() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
                   <div>
                     <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.15rem", fontWeight: 800, color: "#0f172a" }}>
-                      Workforce Status Distribution
+                      {t("employer_dashboard.workforce_distribution", "Workforce Status Distribution")}
                     </h3>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Current employment status of verified graduates</span>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>{t("employer_dashboard.workforce_distribution_sub", "Current employment status of verified graduates")}</span>
                   </div>
                   <button onClick={() => navigate("/employer/workforce")} style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 600, fontSize: "0.85rem", cursor: "pointer" }}>
                     Roster &rarr;
@@ -246,28 +248,28 @@ export default function EmployerDashboard() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#16a34a" }} />
-                        Currently Employed
+                        {t("employer_dashboard.currently_employed", "Currently Employed")}
                       </span>
                       <strong style={{ color: "#0f172a" }}><CountUp value={workforce.employed} /></strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#f59e0b" }} />
-                        Resigned
+                        {t("employer_dashboard.resigned", "Resigned")}
                       </span>
                       <strong style={{ color: "#0f172a" }}><CountUp value={workforce.resigned} /></strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#ef4444" }} />
-                        Terminated
+                        {t("employer_dashboard.terminated", "Terminated")}
                       </span>
                       <strong style={{ color: "#0f172a" }}><CountUp value={workforce.terminated} /></strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#3b82f6" }} />
-                        Contract Completed
+                        {t("employer_dashboard.contract_completed", "Contract Completed")}
                       </span>
                       <strong style={{ color: "#0f172a" }}><CountUp value={workforce.contract_completed} /></strong>
                     </div>

@@ -41,7 +41,7 @@ export default function Districts() {
 
   useEffect(() => {
     loadData();
-  }, [filters, storeState]);
+  }, [filters, storeState.last_updated]);
 
   const handleSort = (field) => {
     if (sortField === field) {

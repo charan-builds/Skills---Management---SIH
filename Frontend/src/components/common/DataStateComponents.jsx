@@ -1,4 +1,5 @@
 import { AlertCircle, Loader2, Database, ShieldAlert } from 'lucide-react';
+import { useLanguage } from "../../context/LanguageContext";
 
 export function LoadingState({ message = "Loading..." }) {
   return (
@@ -166,6 +167,7 @@ export function DataStateWrapper({
  * Transparent mode indicator banner.
  */
 export function ModeBanner({ mode = "Simulation / Development Mode" }) {
+  const { t } = useLanguage();
   return (
     <div style={{
       background: 'linear-gradient(90deg, #f0fdf4 0%, #ecfeff 100%)',
@@ -182,11 +184,11 @@ export function ModeBanner({ mode = "Simulation / Development Mode" }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }}></span>
-        <span><strong>Environment:</strong> {mode}</span>
-        <span style={{ color: '#15803d', fontWeight: 400 }}>• Cross-panel reactive state synchronization active</span>
+        <span><strong>{t("common.environment", "Environment:")}</strong> {t(mode, mode)}</span>
+        <span style={{ color: '#15803d', fontWeight: 400 }}>• {t("common.reactive_sync", "Cross-panel reactive state synchronization active")}</span>
       </div>
       <span style={{ fontSize: '0.75rem', color: '#15803d', background: '#dcfce7', padding: '2px 8px', borderRadius: '4px' }}>
-        Mock Service Adapter
+        {t("common.mock_adapter", "Mock Service Adapter")}
       </span>
     </div>
   );

@@ -56,7 +56,7 @@ export default function Employment() {
 
   useEffect(() => {
     loadData();
-  }, [filters, storeState]);
+  }, [filters, storeState.last_updated]);
 
   const formatCurrency = (val) => {
     if (val === null || val === undefined) return "N/A";

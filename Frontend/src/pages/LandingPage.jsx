@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, BarChart3, Building2, Check, CheckCircle2, ChevronDown, ShieldCheck, Sparkles, Target, TrendingUp, UserRound, Users } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import CountUp from "../components/common/CountUp";
+import LanguageSelector from "../components/common/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 import "./LandingPage.css";
 
 const portals = [
@@ -13,14 +15,16 @@ const portals = [
 const steps = [["01", "Check in", "Trainees update employment and outcome status."], ["02", "Verify", "Employer and verified sources validate employment information."], ["03", "Track", "3 / 6 / 12-month follow-ups capture retention, wages and relevance."], ["04", "Analyze", "Identify skill gaps, outcome trends and provider performance."], ["05", "Act", "Simulate interventions and support corrective action."]];
 
 export default function LandingPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate(); const [modal, setModal] = useState(false); const [role, setRole] = useState("admin");
   const scroll = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   const login = (selected = "admin") => { setRole(selected); setModal(true); };
   const enter = () => { localStorage.setItem("userRole", role); localStorage.setItem("sih_token", `demo_${role}_jwt_token_verified`); if (role === "trainee") localStorage.setItem("traineeId", "TR-0001"); if (role === "employer") { localStorage.setItem("organizationId", "EMP-DEMO-001"); localStorage.setItem("organizationName", "Tata Consultancy Services"); } navigate(role === "admin" ? "/admin" : `/${role}`); };
   return <div className="s2i-page">
-    <header className="s2i-nav"><button className="s2i-brand" onClick={() => scroll("home")}><img src="/skill2impact-logo.png" alt="Skill2Impact" /><span>From Skills to Measurable Employment Impact</span></button><nav><button onClick={() => scroll("home")}>Home</button><button onClick={() => scroll("how")}>How It Works</button><button onClick={() => scroll("dashboards")}>Dashboards</button><button onClick={() => scroll("impact")}>Impact</button><button className="s2i-login" onClick={() => login()}>Login <ArrowRight size={16} /></button></nav></header>
+    <header className="s2i-nav"><button className="s2i-brand" onClick={() => scroll("home")}><img src="/skill2impact-logo.png" alt="Skill2Impact" /><span>{t("landing.brand_tagline", "From Skills to Measurable Employment Impact")}</span></button><nav><button onClick={() => scroll("home")}>{t("landing.home", "Home")}</button><button onClick={() => scroll("how")}>{t("landing.how_it_works", "How It Works")}</button><button onClick={() => scroll("dashboards")}>{t("landing.dashboards", "Dashboards")}</button><button onClick={() => scroll("impact")}>{t("landing.impact", "Impact")}</button><LanguageSelector compact />
+      <button className="s2i-login" onClick={() => login()}>{t("landing.login", "Login")} <ArrowRight size={16} /></button></nav></header>
     <main id="home">
-      <section className="s2i-hero s2i-container"><div><p className="s2i-kicker">Skilling Outcome Intelligence Platform</p><h1>Beyond certification.<br /><span>Track what happens next.</span></h1><p className="s2i-lede">Connect training data with employment, retention, wage progression and skill relevance — and turn outcome intelligence into actionable policy decisions.</p><div className="s2i-actions"><button className="s2i-primary" onClick={() => scroll("dashboards")}>Explore Platform <ArrowRight size={17} /></button><button className="s2i-secondary" onClick={() => login()}>Login</button></div><div className="s2i-journey">Train <ArrowRight /> Certify <ArrowRight /> Employ <ArrowRight /> Retain <ArrowRight /> Improve</div></div><LiveOutcome /></section>
+      <section className="s2i-hero s2i-container"><div><p className="s2i-kicker">{t("landing.kicker", "Skilling Outcome Intelligence Platform")}</p><h1>{t("landing.hero_title", "Beyond certification.")}<br /><span>{t("landing.hero_span", "Track what happens next.")}</span></h1><p className="s2i-lede">{t("landing.hero_lede", "Connect training data with employment, retention, wage progression and skill relevance — and turn outcome intelligence into actionable policy decisions.")}</p><div className="s2i-actions"><button className="s2i-primary" onClick={() => scroll("dashboards")}>{t("landing.explore_platform", "Explore Platform")} <ArrowRight size={17} /></button><button className="s2i-secondary" onClick={() => login()}>Login</button></div><div className="s2i-journey">Train <ArrowRight /> Certify <ArrowRight /> Employ <ArrowRight /> Retain <ArrowRight /> Improve</div></div><LiveOutcome /></section>
       <section className="s2i-section s2i-container"><Heading label="The outcome gap" title={<>Training is tracked. <span>Impact isn't.</span></>} /><div className="s2i-gap-grid"><Gap title="What is already tracked" items={["Enrolment", "Attendance", "Assessment", "Certification"]} /><Gap title="What remains unclear" items={["Employment & Retention", "Non-placement / Attrition", "Wage Progression", "Skill Relevance"]} unclear /></div><p className="s2i-bridge">Skill2Impact connects these missing outcomes into a longitudinal view of skilling impact.</p></section>
       <section className="s2i-section s2i-soft" id="how"><div className="s2i-container"><Heading center label="How it works" title={<>From Training Data to <span>Measurable Impact</span></>} /><div className="s2i-steps">{steps.map(([n,t,d],i) => <article className="s2i-step" key={t}><b>{n}</b><i>{i < 4 ? <ChevronDown /> : <Target />}</i><h3>{t}</h3><p>{d}</p></article>)}</div></div></section>
       <section className="s2i-section s2i-container" id="dashboards"><Heading label="Connected dashboards" title={<>One Platform. <span>Three Perspectives.</span></>} text="Each portal serves the people who create, verify and act on outcome intelligence." /><div className="s2i-dashboard-grid">{portals.map(([key,title,Icon,img,items]) => <article className="s2i-dashboard" key={key}><div className="s2i-card-title"><Icon /><div><h3>{title}</h3><p>{title === "Government" ? "Outcome intelligence" : `${title} portal`}</p></div></div><img src={img} alt={`Actual Skill2Impact ${title} dashboard`} /><ul>{items.map(x => <li key={x}><Check />{x}</li>)}</ul><button onClick={() => login(key)}>Open {title} portal <ArrowRight /></button></article>)}</div></section>
@@ -46,17 +50,18 @@ function LiveOutcome() {
     return () => { active = false; };
   }, [store.last_updated]);
   const stats = Object.fromEntries((dashboard?.stats || []).map(stat => [stat.id, stat]));
+  const { t } = useLanguage();
   const values = [
-    [stats.trained?.value ?? "—", "Trainees tracked"],
-    [stats.rate?.value ?? "—", "Employment rate"],
-    [stats.retention?.value ?? "—", "6-month retention"],
-    [stats.wage?.value ?? "—", "Average wage"],
+    [stats.trained?.value ?? "—", t("landing.trainees_tracked", "Trainees tracked")],
+    [stats.rate?.value ?? "—", t("landing.employment_rate", "Employment rate")],
+    [stats.retention?.value ?? "—", t("landing.retention_6m", "6-month retention")],
+    [stats.wage?.value ?? "—", t("landing.average_wage", "Average wage")],
   ];
   return <aside className="s2i-live-outcome" aria-live="polite">
-    <div className="s2i-live-title"><span>Live outcome snapshot</span><i /> <span>Maharashtra cohort</span></div>
-    <div className="s2i-live-grid">{values.map(([value, label]) => <div key={label}><strong><CountUp value={value} /></strong><span>{label}</span></div>)}</div>
+    <div className="s2i-live-title"><span>{t("landing.live_snapshot", "Live outcome snapshot")}</span><i /> <span>{t("landing.maharashtra_cohort", "Maharashtra cohort")}</span></div>
+    <div className="s2i-live-grid">{values.map(([value, label]) => <div key={label}><CountUp value={value} as="strong" /><span>{label}</span></div>)}</div>
     <div className="s2i-live-divider" />
-    <p>Verification path</p>
+    <p>{t("landing.verification_path", "Verification path")}</p>
     <div className="s2i-live-path"><span>EPFO match</span><ArrowRight /><span>Partner HRIS</span><ArrowRight /><span>Employer confirm</span></div>
     <small>{dashboard ? "Updates as outcome records change" : "Connecting to live outcome data"}</small>
   </aside>;

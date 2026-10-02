@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { LanguageProvider } from "./context/LanguageContext";
 import "./App.css";
 
 // Layouts
@@ -54,7 +55,8 @@ import TraineeOutcomes from "./pages/TraineeOutcomes";
 
 function App() {
   return (
-    <BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
         {/* The landing page owns sign-in; preserve old links by returning them to it. */}
@@ -134,6 +136,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </LanguageProvider>
   );
 }
 

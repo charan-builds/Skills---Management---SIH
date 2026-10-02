@@ -10,8 +10,10 @@ import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import DataTable from "../components/common/DataTable";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const { filters } = useFilters();
   const store = usePlatformStore();
   const [dashboardData, setDashboardData] = useState(null);
@@ -124,10 +126,10 @@ export default function Dashboard() {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
         <div>
           <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-            Executive Outcome Dashboard
+            {t("admin_dashboard.title", "Executive Outcome Dashboard")}
           </h1>
           <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-            Real-time longitudinal indicators monitoring training completion, verified placement velocity, and wage retention across 800 relational records.
+            {t("admin_dashboard.subtitle", "Real-time longitudinal indicators monitoring training completion, verified placement velocity, and wage retention across 800 relational records.")}
           </p>
         </div>
 
@@ -147,7 +149,7 @@ export default function Dashboard() {
               gap: "0.4rem"
             }}
           >
-            Generate Report
+            {t("admin_dashboard.generate_report", "Generate Report")}
           </Link>
         </div>
       </div>
@@ -186,7 +188,29 @@ export default function Dashboard() {
             >
               <div>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
-                  <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "#475569" }}>{kpi.title}</span>
+                  <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "#475569" }}>
+                    {(() => {
+                      const map = {
+                        "Total Trainees": t("admin_dashboard.total_trainees", "Total Trainees"),
+                        "Total Trained": t("admin_dashboard.total_trained", "Total Trained"),
+                        "Certified": t("admin_dashboard.certified", "Certified"),
+                        "Placed": t("admin_dashboard.placed", "Placed"),
+                        "Employment Rate": t("admin_dashboard.employment_rate", "Employment Rate"),
+                        "Self-Employed": t("admin_dashboard.self_employed", "Self-Employed"),
+                        "Apprentices": t("admin_dashboard.apprentices", "Apprentices"),
+                        "Unemployed": t("admin_dashboard.unemployed", "Unemployed"),
+                        "6-Month Retention": t("admin_dashboard.retention_6m", "6-Month Retention"),
+                        "6M Retention": t("admin_dashboard.retention_6m", "6M Retention"),
+                        "Average Wage": t("admin_dashboard.average_wage", "Average Wage"),
+                        "Follow-up Completion": t("admin_dashboard.follow_up_completion", "Follow-up Completion"),
+                        "Training Completion": t("admin_dashboard.training_completion", "Training Completion"),
+                        "Placement Rate": t("admin_dashboard.placement_rate", "Placement Rate"),
+                        "Employer Partners": t("admin_dashboard.employer_partners", "Employer Partners"),
+                        "Wage Growth": t("admin_dashboard.wage_growth", "Wage Growth")
+                      };
+                      return map[kpi.title] || t(kpi.title, kpi.title);
+                    })()}
+                  </span>
                   <div style={{ background: "#f8fafc", padding: "5px", borderRadius: "6px" }}>
                     {getKpiIcon(kpi.icon)}
                   </div>
@@ -197,7 +221,7 @@ export default function Dashboard() {
               </div>
               {kpi.change && (
                 <div style={{ fontSize: "0.72rem", color: "#16a34a", fontWeight: 600, marginTop: "0.4rem", display: "flex", alignItems: "center", gap: "0.2rem" }}>
-                  <ArrowUpRight size={13} /> {kpi.change}
+                  <ArrowUpRight size={13} /> {t(kpi.change, kpi.change)}
                 </div>
               )}
             </div>
@@ -209,10 +233,10 @@ export default function Dashboard() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
             <div>
               <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.2rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                <TrendingUp size={20} color="#2563eb" /> Training to Employment Funnel
+                <TrendingUp size={20} color="#2563eb" /> {t("admin_dashboard.longitudinal_funnel", "Training to Employment Funnel")}
               </h3>
               <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
-                Dynamic progression from enrolment through long-term career engagement. Click any funnel stage to inspect the candidate cohort.
+                {t("admin_dashboard.funnel_subtitle", "Dynamic progression from enrolment through long-term career engagement. Click any funnel stage to inspect the candidate cohort.")}
               </p>
             </div>
           </div>

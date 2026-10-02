@@ -14,17 +14,33 @@ const wait = (ms = MOCK_DELAY) => new Promise(resolve => setTimeout(resolve, ms)
 
 /**
  * Hook for components to reactively subscribe to the shared platform store.
+ *
+ * KEY STABILITY DESIGN:
+ * - We track only `last_updated` (a string timestamp) as the change signal.
+ * - We return `mockStore.getState()` — the LIVE object — so array fields like
+ *   `.trainees` and `.programmes` are always the exact same reference between
+ *   real store mutations. This prevents spurious re-renders from:
+ *   (a) LanguageSelector dropdown open/close state changes
+ *   (b) React layout re-renders propagating to data-loading useEffects
  */
 export function usePlatformStore() {
-  const [state, setState] = useState(() => mockStore.getState());
+  // Track only the timestamp to decide when to re-render
+  const [lastUpdated, setLastUpdated] = useState(() => mockStore.getState().last_updated);
 
   useEffect(() => {
     return mockStore.subscribe(newState => {
-      setState({ ...newState });
+      setLastUpdated(prev => {
+        // Only trigger re-render if data actually changed
+        if (prev === newState.last_updated) return prev;
+        return newState.last_updated;
+      });
     });
   }, []);
 
-  return state;
+  // Always return the live store reference — stable array/object refs
+  // eslint-disable-next-line no-unused-vars
+  void lastUpdated; // consumed to register dependency; store ref is always live
+  return mockStore.getState();
 }
 
 class PlatformService {

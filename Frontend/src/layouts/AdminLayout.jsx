@@ -9,22 +9,24 @@ import "../../src/App.css";
 import { FilterProvider, useFilters } from "../context/FilterContext";
 import { usePlatformStore, platformService } from "../services/platformService";
 import { ModeBanner } from "../components/common/DataStateComponents";
+import LanguageSelector from "../components/common/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 
 const adminMenuItems = [
-  { label: "Dashboard", path: "/admin", icon: LayoutDashboard },
-  { label: "Trainees", path: "/admin/trainees", icon: Users },
-  { label: "Programme Outcomes", path: "/admin/outcomes", icon: BarChart3 },
-  { label: "Employment Over Time", path: "/admin/employment", icon: Briefcase },
-  { label: "Skills Missing in Jobs", path: "/admin/skill-gaps", icon: Target },
-  { label: "Programme Performance", path: "/admin/programmes", icon: GraduationCap },
-  { label: "Training Provider Performance", path: "/admin/providers", icon: Building2 },
-  { label: "District Performance", path: "/admin/districts", icon: Map },
-  { label: "Cohort Comparison", path: "/admin/cohorts", icon: Users2 },
-  { label: "Follow-Up Management", path: "/admin/follow-ups", icon: PhoneCall },
-  { label: "Key Findings & Insights", path: "/admin/interventions", icon: GitBranch },
-  { label: "Policy Simulator", path: "/admin/policy-simulator", icon: Sliders },
-  { label: "Employer Verification", path: "/admin/employers", icon: ShieldCheck },
-  { label: "Reports", path: "/admin/reports", icon: FileText }
+  { key: "dashboard", label: "Dashboard", path: "/admin", icon: LayoutDashboard },
+  { key: "trainees", label: "Trainees", path: "/admin/trainees", icon: Users },
+  { key: "outcomes", label: "Programme Outcomes", path: "/admin/outcomes", icon: BarChart3 },
+  { key: "employment", label: "Employment Over Time", path: "/admin/employment", icon: Briefcase },
+  { key: "skill_gaps", label: "Skills Missing in Jobs", path: "/admin/skill-gaps", icon: Target },
+  { key: "programmes", label: "Programme Performance", path: "/admin/programmes", icon: GraduationCap },
+  { key: "providers", label: "Training Provider Performance", path: "/admin/providers", icon: Building2 },
+  { key: "districts", label: "District Performance", path: "/admin/districts", icon: Map },
+  { key: "cohorts", label: "Cohort Comparison", path: "/admin/cohorts", icon: Users2 },
+  { key: "follow_up", label: "Follow-Up Management", path: "/admin/follow-ups", icon: PhoneCall },
+  { key: "interventions", label: "Key Findings & Insights", path: "/admin/interventions", icon: GitBranch },
+  { key: "policy_simulator", label: "Policy Simulator", path: "/admin/policy-simulator", icon: Sliders },
+  { key: "employer_verification", label: "Employer Verification", path: "/admin/employers", icon: ShieldCheck },
+  { key: "reports", label: "Reports", path: "/admin/reports", icon: FileText }
 ];
 
 export default function AdminLayout({ children }) {
@@ -36,6 +38,7 @@ export default function AdminLayout({ children }) {
 }
 
 function AdminLayoutInner({ children }) {
+  const { t } = useLanguage();
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
@@ -100,8 +103,8 @@ function AdminLayoutInner({ children }) {
             <Filter size={18} color="white" />
           </div>
           <div style={{ whiteSpace: "nowrap", overflow: "hidden" }}>
-            <strong style={{ fontSize: "0.95rem", color: "#f8fafc", display: "block" }}>Admin Intelligence</strong>
-            <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>National Skilling Platform</span>
+            <strong style={{ fontSize: "0.95rem", color: "#f8fafc", display: "block" }}>{t("nav.admin_intelligence", "Admin Intelligence")}</strong>
+            <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>{t("nav.national_skilling_platform", "National Skilling Platform")}</span>
           </div>
         </div>
 
@@ -130,7 +133,7 @@ function AdminLayoutInner({ children }) {
                 }}
               >
                 <Icon size={20} style={{ flexShrink: 0 }} />
-                <span>{item.label}</span>
+                <span>{t(`admin_nav.${item.key}`, item.label)}</span>
               </Link>
             );
           })}
@@ -161,28 +164,31 @@ function AdminLayoutInner({ children }) {
               <Menu size={22} color="#0f172a" />
             </button>
             <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1e293b" }}>
-              National Skilling Framework • Admin Intelligence
+              {t("nav.national_skilling_framework", "National Skilling Framework • Admin Intelligence")}
             </span>
           </div>
 
-          <div className="admin-profile-wrapper">
-            <button className="admin-profile-button" onClick={() => setProfileOpen(!profileOpen)} type="button">
-              <div className="admin-avatar">A</div>
-              <div className="admin-profile-text">
-                <strong>Admin</strong>
-                <span>Government Officer</span>
-              </div>
-              <ChevronDown size={16} className={profileOpen ? "profile-chevron open" : "profile-chevron"} />
-            </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+            <LanguageSelector />
 
-            {profileOpen && (
-              <div className="admin-profile-dropdown">
-                <button type="button" onClick={handleLogout} className="logout-menu-item">
-                  <LogOut size={17} />
-                  <span>Logout</span>
-                </button>
-              </div>
-            )}
+            <div className="admin-profile-wrapper">
+              <button className="admin-profile-button" onClick={() => setProfileOpen(!profileOpen)} type="button">
+                <div className="admin-avatar">A</div>
+                <div className="admin-profile-text">
+                  <strong>{t("nav.admin", "Admin")}</strong>
+                  <span>{t("nav.government_officer", "Government Officer")}</span>
+                </div>
+                <ChevronDown size={16} className={profileOpen ? "profile-chevron open" : "profile-chevron"} />
+              </button>
+              {profileOpen && (
+                <div className="admin-profile-dropdown">
+                  <button type="button" onClick={handleLogout} className="logout-menu-item">
+                    <LogOut size={17} />
+                    <span>{t("common.logout", "Logout")}</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         
@@ -201,9 +207,9 @@ function AdminLayoutInner({ children }) {
                   <Filter size={18} />
                 </div>
                 <div>
-                  <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>Global Analytical Scope Filter</strong>
+                  <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>{t("admin_dashboard.scope_filter_title", "Global Analytical Scope Filter")}</strong>
                   <span style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>
-                    Cascades across all KPIs, outcome funnels, longitudinal curves, and drilldowns.
+                    {t("admin_dashboard.scope_filter_subtitle", "Cascades across all KPIs, outcome funnels, longitudinal curves, and drilldowns.")}
                   </span>
                 </div>
               </div>
@@ -218,7 +224,7 @@ function AdminLayoutInner({ children }) {
                   borderRadius: '12px',
                   border: `1px solid ${scopeCount === 0 ? '#fca5a5' : '#bbf7d0'}`
                 }}>
-                  {scopeCount} / {totalTrainees} Trainees in Scope ({scopePct}%)
+                  {scopeCount} / {totalTrainees} {t("admin_dashboard.trainees_in_scope", "Trainees in Scope")} ({scopePct}%)
                 </span>
 
                 {activeFilterCount > 0 && (
@@ -238,7 +244,7 @@ function AdminLayoutInner({ children }) {
                       gap: '0.3rem'
                     }}
                   >
-                    <RefreshCw size={12} /> Clear All Filters ({activeFilterCount})
+                    <RefreshCw size={12} /> {t("admin_dashboard.clear_all_filters", "Clear All Filters")} ({activeFilterCount})
                   </button>
                 )}
               </div>
@@ -252,14 +258,16 @@ function AdminLayoutInner({ children }) {
             }}>
               {/* 1. Cohort */}
               <div>
-                <label htmlFor="filter-cohort" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>Cohort</label>
+                <label htmlFor="filter-cohort" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>
+                  {t("common.cohort", "Cohort")}
+                </label>
                 <select 
                   id="filter-cohort"
                   value={filters.cohort} 
                   onChange={e => updateFilter('cohort', e.target.value)} 
                   style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
                 >
-                  <option value="">All Cohorts</option>
+                  <option value="">{t("common.all_cohorts", "All Cohorts")}</option>
                   <option value="2024-Q1">2024-Q1</option>
                   <option value="2023-Q4">2023-Q4</option>
                   <option value="2023-Q3">2023-Q3</option>
@@ -269,32 +277,36 @@ function AdminLayoutInner({ children }) {
 
               {/* 2. Programme */}
               <div>
-                <label htmlFor="filter-course" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>Programme</label>
+                <label htmlFor="filter-course" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>
+                  {t("common.programme", "Programme")}
+                </label>
                 <select 
                   id="filter-course"
                   value={filters.course || filters.programme || ""} 
                   onChange={e => updateFilter('course', e.target.value)} 
                   style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
                 >
-                  <option value="">All Programmes</option>
-                  <option value="Cloud Infrastructure & DevOps">Cloud Infrastructure & DevOps</option>
-                  <option value="Full Stack Web Engineering">Full Stack Web Engineering</option>
-                  <option value="Automotive Precision & EV Systems">Automotive Precision & EV</option>
-                  <option value="Patient Care & Healthcare Operations">Patient Care Operations</option>
-                  <option value="Renewable Energy & Solar Grid">Renewable Solar Grid</option>
+                  <option value="">{t("common.all_programmes", "All Programmes")}</option>
+                  <option value="Cloud Infrastructure & DevOps">{t("Cloud Infrastructure & DevOps", "Cloud Infrastructure & DevOps")}</option>
+                  <option value="Full Stack Web Engineering">{t("Full Stack Web Engineering", "Full Stack Web Engineering")}</option>
+                  <option value="Automotive Precision & EV Systems">{t("Automotive Precision & EV Systems", "Automotive Precision & EV")}</option>
+                  <option value="Patient Care & Healthcare Operations">{t("Patient Care & Healthcare Operations", "Patient Care Operations")}</option>
+                  <option value="Renewable Energy & Solar Grid">{t("Renewable Energy & Solar Grid", "Renewable Solar Grid")}</option>
                 </select>
               </div>
 
               {/* 3. Provider */}
               <div>
-                <label htmlFor="filter-provider" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>Training Provider</label>
+                <label htmlFor="filter-provider" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>
+                  {t("common.training_provider", "Training Provider")}
+                </label>
                 <select 
                   id="filter-provider"
                   value={filters.provider} 
                   onChange={e => updateFilter('provider', e.target.value)} 
                   style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
                 >
-                  <option value="">All Providers</option>
+                  <option value="">{t("common.all_providers", "All Providers")}</option>
                   <option value="TATA STRIVE">TATA STRIVE</option>
                   <option value="Tech Mahindra Foundation">Tech Mahindra Foundation</option>
                   <option value="Don Bosco Tech Society">Don Bosco Tech</option>
@@ -305,70 +317,78 @@ function AdminLayoutInner({ children }) {
 
               {/* 4. District */}
               <div>
-                <label htmlFor="filter-district" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>District</label>
+                <label htmlFor="filter-district" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>
+                  {t("common.district", "District")}
+                </label>
                 <select 
                   id="filter-district"
                   value={filters.district} 
                   onChange={e => updateFilter('district', e.target.value)} 
                   style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
                 >
-                  <option value="">All Districts</option>
-                  <option value="Mumbai">Mumbai</option>
-                  <option value="Pune">Pune</option>
-                  <option value="Nagpur">Nagpur</option>
-                  <option value="Nashik">Nashik</option>
-                  <option value="Thane">Thane</option>
+                  <option value="">{t("common.all_districts", "All Districts")}</option>
+                  <option value="Mumbai">{t("Mumbai", "Mumbai")}</option>
+                  <option value="Pune">{t("Pune", "Pune")}</option>
+                  <option value="Nagpur">{t("Nagpur", "Nagpur")}</option>
+                  <option value="Nashik">{t("Nashik", "Nashik")}</option>
+                  <option value="Thane">{t("Thane", "Thane")}</option>
                   <option value="Guntur">Guntur</option>
                 </select>
               </div>
 
               {/* 5. Gender */}
               <div>
-                <label htmlFor="filter-gender" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>Gender</label>
+                <label htmlFor="filter-gender" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>
+                  {t("common.gender", "Gender")}
+                </label>
                 <select 
                   id="filter-gender"
                   value={filters.gender || ""} 
                   onChange={e => updateFilter('gender', e.target.value)} 
                   style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
                 >
-                  <option value="">All Genders</option>
-                  <option value="Female">Female</option>
-                  <option value="Male">Male</option>
-                  <option value="Other">Other</option>
+                  <option value="">{t("common.all_genders", "All Genders")}</option>
+                  <option value="Female">{t("Female", "Female")}</option>
+                  <option value="Male">{t("Male", "Male")}</option>
+                  <option value="Other">{t("Other", "Other")}</option>
                 </select>
               </div>
 
               {/* 6. Age Group */}
               <div>
-                <label htmlFor="filter-age-group" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>Age Group</label>
+                <label htmlFor="filter-age-group" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>
+                  {t("common.age_group", "Age Group")}
+                </label>
                 <select 
                   id="filter-age-group"
                   value={filters.ageGroup || ""} 
                   onChange={e => updateFilter('ageGroup', e.target.value)} 
                   style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
                 >
-                  <option value="">All Ages</option>
-                  <option value="18-21">18-21 years</option>
-                  <option value="22-25">22-25 years</option>
-                  <option value="26-30">26-30 years</option>
-                  <option value="31+">31+ years</option>
+                  <option value="">{t("common.all_ages", "All Ages")}</option>
+                  <option value="18-21">{t("18-21 years", "18-21 years")}</option>
+                  <option value="22-25">{t("22-25 years", "22-25 years")}</option>
+                  <option value="26-30">{t("26-30 years", "26-30 years")}</option>
+                  <option value="31+">{t("31+ years", "31+ years")}</option>
                 </select>
               </div>
 
               {/* 7. Category */}
               <div>
-                <label htmlFor="filter-category" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>Category</label>
+                <label htmlFor="filter-category" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: '#475569', marginBottom: '0.2rem' }}>
+                  {t("common.category", "Category")}
+                </label>
                 <select 
                   id="filter-category"
                   value={filters.category || ""} 
                   onChange={e => updateFilter('category', e.target.value)} 
                   style={{ width: '100%', padding: '0.45rem', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '0.8rem' }}
                 >
-                  <option value="">All Categories</option>
-                  <option value="General">General</option>
-                  <option value="OBC">OBC</option>
-                  <option value="SC">SC</option>
-                  <option value="ST">ST</option>
+                  <option value="">{t("common.all_categories", "All Categories")}</option>
+                  <option value="General">{t("General", "General")}</option>
+                  <option value="OBC">{t("OBC", "OBC")}</option>
+                  <option value="SC">{t("SC", "SC")}</option>
+                  <option value="ST">{t("ST", "ST")}</option>
                 </select>
               </div>
             </div>

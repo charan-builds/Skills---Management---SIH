@@ -9,22 +9,25 @@ import {
 } from "lucide-react";
 import "../../src/App.css";
 import { ModeBanner } from "../components/common/DataStateComponents";
+import LanguageSelector from "../components/common/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 import { usePlatformStore } from "../services/platformService";
 
 const traineeMenuItems = [
-  { label: "Home", path: "/trainee", icon: LayoutDashboard },
-  { label: "My Profile", path: "/trainee/profile", icon: User },
-  { label: "My Training", path: "/trainee/training", icon: BookOpen },
-  { label: "My Outcomes", path: "/trainee/outcomes", icon: PieChart },
-  { label: "My Skills", path: "/trainee/skills", icon: Zap },
-  { label: "Skill Goals", path: "/trainee/skill-goals", icon: Target },
-  { label: "Employment Journey", path: "/trainee/employment-journey", icon: Milestone },
-  { label: "Follow-Ups", path: "/trainee/follow-ups", icon: Bell },
-  { label: "Feedback", path: "/trainee/feedback", icon: MessageSquare },
-  { label: "Privacy & Consent", path: "/trainee/consent", icon: ShieldCheck }
+  { key: "dashboard", label: "Home", path: "/trainee", icon: LayoutDashboard },
+  { key: "my_profile", label: "My Profile", path: "/trainee/profile", icon: User },
+  { key: "training_journey", label: "My Training", path: "/trainee/training", icon: BookOpen },
+  { key: "employment_status", label: "My Outcomes", path: "/trainee/outcomes", icon: PieChart },
+  { key: "accredited_skills", label: "My Skills", path: "/trainee/skills", icon: Zap },
+  { key: "skill_goals", label: "Skill Goals", path: "/trainee/skill-goals", icon: Target },
+  { key: "employment_journey", label: "Employment Journey", path: "/trainee/employment-journey", icon: Milestone },
+  { key: "follow_ups", label: "Follow-Ups", path: "/trainee/follow-ups", icon: Bell },
+  { key: "feedback", label: "Feedback", path: "/trainee/feedback", icon: MessageSquare },
+  { key: "verification_consent", label: "Privacy & Consent", path: "/trainee/consent", icon: ShieldCheck }
 ];
 
 export default function TraineeLayout({ children }) {
+  const { t } = useLanguage();
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const location = useLocation();
@@ -126,7 +129,7 @@ export default function TraineeLayout({ children }) {
                 }}
               >
                 <Icon size={20} style={{ flexShrink: 0 }} />
-                <span>{item.label}</span>
+                <span>{t(`trainee_nav.${item.key}`, item.label)}</span>
               </Link>
             );
           })}
@@ -157,7 +160,7 @@ export default function TraineeLayout({ children }) {
               <Menu size={22} color="#0f172a" />
             </button>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>Trainee Persona:</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#475569' }}>{t("nav.trainee_persona", "Trainee Persona:")}</span>
               <select
                 value={currentTraineeId}
                 onChange={(e) => handleTraineeSwitch(e.target.value)}
@@ -191,6 +194,7 @@ export default function TraineeLayout({ children }) {
               </span>
             </div>
 
+            <LanguageSelector />
             <div className="admin-profile-wrapper">
               <button className="admin-profile-button" onClick={() => setProfileOpen(!profileOpen)} type="button">
                 <div className="admin-avatar" style={{ background: '#2563eb', color: 'white' }}>
@@ -210,11 +214,11 @@ export default function TraineeLayout({ children }) {
                   </div>
                   <button type="button" onClick={() => { setProfileOpen(false); navigate("/trainee/profile"); }} className="logout-menu-item" style={{ color: '#334155' }}>
                     <User size={15} />
-                    <span>View Profile</span>
+                    <span>{t("nav.view_profile", "View Profile")}</span>
                   </button>
                   <button type="button" onClick={handleLogout} className="logout-menu-item">
                     <LogOut size={15} />
-                    <span>Logout</span>
+                    <span>{t("common.logout", "Logout")}</span>
                   </button>
                 </div>
               )}

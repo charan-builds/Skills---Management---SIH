@@ -1,0 +1,141 @@
+/* Global Language Selector Styles */
+.lang-selector-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  font-family: inherit;
+}
+
+.lang-selector-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e293b;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.3;
+}
+
+.lang-selector-btn:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.lang-selector-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.lang-selector-btn.open {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  background: #ffffff;
+}
+
+.lang-globe-icon {
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.lang-chevron {
+  color: #64748b;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 2px;
+}
+
+.lang-chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.lang-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 155px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow:
+    0 12px 28px rgba(15, 23, 42, 0.12),
+    0 4px 8px rgba(15, 23, 42, 0.04);
+  padding: 5px;
+  margin: 0;
+  list-style: none;
+  z-index: 10005;
+  animation: langDropdownFade 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes langDropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lang-option-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #334155;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  font-family: inherit;
+}
+
+.lang-option-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.lang-option-btn.selected {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.lang-option-btn .check-icon {
+  color: #2563eb;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+/* Compact version for Landing page or constrained headers */
+.lang-selector-wrapper.compact .lang-selector-btn {
+  padding: 5px 9px;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .lang-selector-btn span.lang-name-text {
+    display: none;
+  }
+  .lang-selector-btn {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+}

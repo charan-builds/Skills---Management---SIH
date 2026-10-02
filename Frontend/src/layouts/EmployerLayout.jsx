@@ -7,17 +7,19 @@ import {
 } from "lucide-react";
 import "../../src/App.css";
 import { ModeBanner } from "../components/common/DataStateComponents";
+import LanguageSelector from "../components/common/LanguageSelector";
+import { useLanguage } from "../context/LanguageContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { mockStore } from "../services/mockStore";
 
 // Section 41: Simplified, human-readable employer terminology
 const employerMenuItems = [
-  { label: "Dashboard", path: "/employer", icon: LayoutDashboard },
-  { label: "Verification Requests", path: "/employer/verifications", icon: CheckCircle2 },
-  { label: "Verified Workforce", path: "/employer/workforce", icon: Users },
-  { label: "Skills We Need", path: "/employer/feedback", icon: MessageSquare },
-  { label: "Employment Data Integration", path: "/employer/integrations", icon: GitBranch },
-  { label: "Organisation Profile", path: "/employer/profile", icon: Building }
+  { key: "dashboard", label: "Dashboard", path: "/employer", icon: LayoutDashboard },
+  { key: "verify_claims", label: "Verification Requests", path: "/employer/verifications", icon: CheckCircle2 },
+  { key: "verified_workforce", label: "Verified Workforce", path: "/employer/workforce", icon: Users },
+  { key: "skill_demand", label: "Skills We Need", path: "/employer/feedback", icon: MessageSquare },
+  { key: "hris_integrations", label: "Employment Data Integration", path: "/employer/integrations", icon: GitBranch },
+  { key: "company_profile", label: "Organisation Profile", path: "/employer/profile", icon: Building }
 ];
 
 const DEMO_EMPLOYERS = [
@@ -30,6 +32,7 @@ const DEMO_EMPLOYERS = [
 ];
 
 export default function EmployerLayout({ children }) {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -141,7 +144,7 @@ export default function EmployerLayout({ children }) {
                 }}
               >
                 <Icon size={20} style={{ flexShrink: 0 }} />
-                <span>{item.label}</span>
+                <span>{t(`employer_nav.${item.key}`, item.label)}</span>
               </Link>
             );
           })}
@@ -172,7 +175,7 @@ export default function EmployerLayout({ children }) {
               <Menu size={22} color="#0f172a" />
             </button>
             <span style={{ fontWeight: 800, fontSize: "0.95rem", color: "#1e293b", letterSpacing: "0.3px" }}>
-              ORGANISATION PORTAL
+              {t("nav.organisation_portal", "ORGANISATION PORTAL")}
             </span>
           </div>
 
@@ -181,7 +184,7 @@ export default function EmployerLayout({ children }) {
             {/* Multi-tenant employer selector */}
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
-                Switch Employer:
+                {t("nav.switch_employer", "Switch Employer:")}
               </span>
               <select
                 value={currentOrgId}
@@ -209,19 +212,20 @@ export default function EmployerLayout({ children }) {
             <div style={{ display: "flex", alignItems: "center" }}>
               {verificationStatus === "Verified" ? (
                 <span title="Read-only badge verified by State Skilling Authority" style={{ background: "#dcfce7", color: "#15803d", border: "1px solid #86efac", fontSize: "0.8rem", fontWeight: 700, padding: "4px 10px", borderRadius: "14px", display: "flex", alignItems: "center", gap: "5px" }}>
-                  <ShieldCheck size={14} /> Verified Organisation
+                  <ShieldCheck size={14} /> {t("nav.verified_org", "Verified Organisation")}
                 </span>
               ) : verificationStatus === "Pending" ? (
                 <span title="Read-only badge: Awaiting State Skilling Authority review" style={{ background: "#fef3c7", color: "#b45309", border: "1px solid #fcd34d", fontSize: "0.8rem", fontWeight: 700, padding: "4px 10px", borderRadius: "14px", display: "flex", alignItems: "center", gap: "5px" }}>
-                  <Clock size={14} /> Verification Pending
+                  <Clock size={14} /> {t("nav.verification_pending", "Verification Pending")}
                 </span>
               ) : (
                 <span title="Read-only badge: Rejected by State Skilling Authority" style={{ background: "#fee2e2", color: "#b91c1c", border: "1px solid #fca5a5", fontSize: "0.8rem", fontWeight: 700, padding: "4px 10px", borderRadius: "14px", display: "flex", alignItems: "center", gap: "5px" }}>
-                  <XCircle size={14} /> Verification Rejected
+                  <XCircle size={14} /> {t("nav.verification_rejected", "Verification Rejected")}
                 </span>
               )}
             </div>
 
+            <LanguageSelector />
             <div className="admin-profile-wrapper">
               <button className="admin-profile-button" onClick={() => setProfileOpen(!profileOpen)} type="button">
                 <div className="admin-avatar" style={{ background: "#2563eb", color: "white", fontWeight: 700 }}>
@@ -237,11 +241,11 @@ export default function EmployerLayout({ children }) {
                   </div>
                   <button type="button" onClick={() => { setProfileOpen(false); navigate("/employer/profile"); }} className="logout-menu-item" style={{ color: "#334155" }}>
                     <Building size={15} />
-                    <span>Organisation Details</span>
+                    <span>{t("common.profile", "Organisation Details")}</span>
                   </button>
                   <button type="button" onClick={handleLogout} className="logout-menu-item" style={{ color: "#dc2626" }}>
                     <LogOut size={15} />
-                    <span>Logout</span>
+                    <span>{t("common.logout", "Logout")}</span>
                   </button>
                 </div>
               )}

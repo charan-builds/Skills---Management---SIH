@@ -8,6 +8,7 @@ import { platformService, usePlatformStore } from "../services/platformService";
 import { useFilters } from "../context/FilterContext";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
@@ -28,6 +29,7 @@ const INTERVENTION_OPTIONS = [
 ];
 
 export default function PolicySimulator() {
+  const { t } = useLanguage();
   const { filters } = useFilters();
   const store = usePlatformStore();
 
@@ -249,7 +251,7 @@ export default function PolicySimulator() {
       Projected: simulationResult.projected.placement_rate
     },
     {
-      metric: "Employment Rate (%)",
+      metric: `${t("policy_simulator.employment_rate", "Employment Rate")} (%)`,
       Baseline: simulationResult.baseline.employment_rate,
       Projected: simulationResult.projected.employment_rate
     },
@@ -284,7 +286,7 @@ export default function PolicySimulator() {
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.4rem 0" }}>
-          Policy Simulator
+          {t("policy_simulator.title", "Policy Simulator")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
           Explore how hypothetical program changes could affect training and employment outcomes before implementation.
@@ -350,7 +352,7 @@ export default function PolicySimulator() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem" }}>
                 <div style={{ background: "white", padding: "1.15rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.3rem" }}>
-                    Current Placement Rate
+                    {t("policy_simulator.placement_rate", "Current Placement Rate")}
                   </span>
                   <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a" }}>
                     <CountUp value={baseline.placement_rate} suffix="%" />
@@ -360,7 +362,7 @@ export default function PolicySimulator() {
 
                 <div style={{ background: "white", padding: "1.15rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.3rem" }}>
-                    Employment Rate
+                    {t("policy_simulator.employment_rate", "Employment Rate")}
                   </span>
                   <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a" }}>
                     <CountUp value={baseline.employment_rate} suffix="%" />
@@ -370,7 +372,7 @@ export default function PolicySimulator() {
 
                 <div style={{ background: "white", padding: "1.15rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.3rem" }}>
-                    Training Completion
+                    {t("policy_simulator.completion_rate", "Training Completion")}
                   </span>
                   <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a" }}>
                     <CountUp value={baseline.completion_rate} suffix="%" />
@@ -380,7 +382,7 @@ export default function PolicySimulator() {
 
                 <div style={{ background: "white", padding: "1.15rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.3rem" }}>
-                    Average Monthly Income
+                    {t("policy_simulator.average_income", "Average Monthly Income")}
                   </span>
                   <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a" }}>
                     <CountUp value={baseline.average_income} prefix="₹" />
@@ -390,7 +392,7 @@ export default function PolicySimulator() {
 
                 <div style={{ background: "white", padding: "1.15rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.3rem" }}>
-                    Active Trainees
+                    {t("policy_simulator.total_trainees", "Active Trainees")}
                   </span>
                   <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a" }}>
                     <CountUp value={baseline.total_trainees} />
@@ -400,7 +402,7 @@ export default function PolicySimulator() {
 
                 <div style={{ background: "white", padding: "1.15rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <span style={{ fontSize: "0.78rem", color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.3rem" }}>
-                    Employer Partners
+                    {t("policy_simulator.employer_partners", "Employer Partners")}
                   </span>
                   <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a" }}>
                     <CountUp value={baseline.employer_partners} />
@@ -947,7 +949,7 @@ export default function PolicySimulator() {
                         ))}
                       </tr>
                       <tr style={{ borderBottom: "1px solid #e2e8f0" }}>
-                        <td style={{ padding: "0.75rem 1rem", fontWeight: 700, color: "#334155" }}>Employment Rate</td>
+                        <td style={{ padding: "0.75rem 1rem", fontWeight: 700, color: "#334155" }}>{t("policy_simulator.employment_rate", "Employment Rate")}</td>
                         <td style={{ padding: "0.75rem 1rem", fontWeight: 700, color: "#0f172a", background: "#f8fafc" }}><CountUp value={baseline.employment_rate} suffix="%" /></td>
                         {comparisonList.map(sc => (
                           <td key={sc.id} style={{ padding: "0.75rem 1rem", fontWeight: 700, color: "#0f172a" }}>
