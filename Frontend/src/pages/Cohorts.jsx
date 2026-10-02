@@ -4,6 +4,7 @@ import { platformService, usePlatformStore } from "../services/platformService";
 import { useFilters } from "../context/FilterContext";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import DataTable from "../components/common/DataTable";
+import CountUp from "../components/common/CountUp";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
@@ -110,7 +111,7 @@ export default function Cohorts() {
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Trained in Scope</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
-                  {activeCohort.trained}
+                  <CountUp value={activeCohort.trained} />
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#2563eb", fontWeight: 600 }}>Cohort {activeCohort.cohort}</span>
               </div>
@@ -118,7 +119,7 @@ export default function Cohorts() {
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Completion Rate</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
-                  {activeCohort.completion_rate}
+                  <CountUp value={activeCohort.completion_rate} />
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Passed assessments</span>
               </div>
@@ -126,7 +127,7 @@ export default function Cohorts() {
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Placement Velocity</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#2563eb", marginTop: "0.2rem" }}>
-                  {activeCohort.placement_rate}
+                  <CountUp value={activeCohort.placement_rate} />
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Formal employment</span>
               </div>
@@ -134,7 +135,7 @@ export default function Cohorts() {
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>6M Retention Benchmark</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
-                  {activeCohort.retention_6m}
+                  <CountUp value={activeCohort.retention_6m} />
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Sustained in role</span>
               </div>
@@ -142,7 +143,7 @@ export default function Cohorts() {
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Wage Growth</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
-                  {activeCohort.wage_growth}
+                  <CountUp value={activeCohort.wage_growth} />
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Appraisal delta</span>
               </div>

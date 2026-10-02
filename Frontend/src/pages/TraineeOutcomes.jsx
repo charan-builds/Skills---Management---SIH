@@ -5,6 +5,7 @@ import {
 } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 
 export default function TraineeOutcomes() {
   const store = usePlatformStore();
@@ -175,7 +176,7 @@ export default function TraineeOutcomes() {
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Wage Growth</span>
               <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#7c3aed", marginTop: "0.2rem" }}>
-                {hasWageData && wageMetrics.growth_percentage ? `↑ +${wageMetrics.growth_percentage}%` : "+0%"}
+                {hasWageData && wageMetrics.growth_percentage ? <><CountUp value={wageMetrics.growth_percentage} prefix="↑ +" suffix="%" /></> : "+0%"}
               </div>
             </div>
 
@@ -205,7 +206,7 @@ export default function TraineeOutcomes() {
                 <div>
                   <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>STARTING WAGE</span>
                   <div style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a" }}>
-                    ₹{Number(wageMetrics.initial_wage || (wageHistory[0]?.amount || 0)).toLocaleString()}
+                    <CountUp value={Number(wageMetrics.initial_wage || (wageHistory[0]?.amount || 0))} prefix="₹" />
                   </div>
                 </div>
 
@@ -214,7 +215,7 @@ export default function TraineeOutcomes() {
                 <div>
                   <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>CURRENT WAGE</span>
                   <div style={{ fontSize: "1.2rem", fontWeight: 800, color: "#15803d" }}>
-                    ₹{Number(currentWageValue).toLocaleString()}
+                    <CountUp value={Number(currentWageValue)} prefix="₹" />
                   </div>
                 </div>
 

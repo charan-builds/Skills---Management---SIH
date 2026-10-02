@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowRight, Filter } from "lucide-react";
+import CountUp from "../../components/common/CountUp";
 
 export default function ImpactEmploymentFunnel({ traineesData }) {
   if (!traineesData || traineesData.length === 0) return null;
@@ -30,7 +31,7 @@ export default function ImpactEmploymentFunnel({ traineesData }) {
         {funnelStages.map((stage, idx) => (
           <React.Fragment key={stage.label}>
             <div className="funnel-stage">
-              <span className="funnel-value">{stage.value}</span>
+              <span className="funnel-value"><CountUp value={stage.value} /></span>
               <span className="funnel-label">{stage.label}</span>
             </div>
             {idx < funnelStages.length - 1 && (

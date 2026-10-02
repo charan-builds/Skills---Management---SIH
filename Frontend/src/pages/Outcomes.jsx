@@ -11,6 +11,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 
 export default function Outcomes() {
   const { filters } = useFilters();
@@ -96,7 +97,7 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Total Trained</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
-                  {summary?.total_trained?.toLocaleString() || 0}
+                  <CountUp value={summary?.total_trained ?? 0} />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>Enrolled Pool</span>
               </div>
@@ -104,7 +105,7 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Certified Pass</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#2563eb", marginTop: "0.2rem" }}>
-                  {summary?.certified?.toLocaleString() || 0}
+                  <CountUp value={summary?.certified ?? 0} />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#64748b" }}>
                   {Math.round(((summary?.certified || 0) / (summary?.total_trained || 1)) * 100)}% pass rate
@@ -114,7 +115,7 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Placed (Employed)</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
-                  {summary?.employed?.toLocaleString() || 0}
+                  <CountUp value={summary?.employed ?? 0} />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600 }}>Formal Corporate Jobs</span>
               </div>
@@ -122,7 +123,7 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Self-Employed</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0d9488", marginTop: "0.2rem" }}>
-                  {summary?.self_employed?.toLocaleString() || 0}
+                  <CountUp value={summary?.self_employed ?? 0} />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#0d9488" }}>Commercial Enterprises</span>
               </div>
@@ -130,7 +131,7 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Apprentices</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#7c3aed", marginTop: "0.2rem" }}>
-                  {summary?.apprentices?.toLocaleString() || 0}
+                  <CountUp value={summary?.apprentices ?? 0} />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#7c3aed" }}>Industrial Contracts</span>
               </div>
@@ -138,7 +139,7 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Unemployed</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#f59e0b", marginTop: "0.2rem" }}>
-                  {summary?.unemployed?.toLocaleString() || 0}
+                  <CountUp value={summary?.unemployed ?? 0} />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>Seeking Placement</span>
               </div>
@@ -146,7 +147,7 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Employment Rate</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
-                  {summary?.employment_percentage}%
+                  <CountUp value={summary?.employment_percentage ?? 0} suffix="%" />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#16a34a" }}>Active in Economy</span>
               </div>
@@ -154,9 +155,9 @@ export default function Outcomes() {
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>6M Retention</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
-                  {summary?.retention_6m_percentage}%
+                  <CountUp value={summary?.retention_6m_percentage ?? 0} suffix="%" />
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#64748b" }}>3M: {summary?.retention_3m_percentage}% • 12M: {summary?.retention_12m_percentage}%</span>
+                <span style={{ fontSize: "0.7rem", color: "#64748b" }}>3M: <CountUp value={summary?.retention_3m_percentage ?? 0} suffix="%" /> • 12M: <CountUp value={summary?.retention_12m_percentage ?? 0} suffix="%" /></span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>

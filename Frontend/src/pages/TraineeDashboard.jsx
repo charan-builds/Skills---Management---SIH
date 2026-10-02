@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 
 export default function TraineeDashboard() {
   const navigate = useNavigate();
@@ -334,7 +335,7 @@ export default function TraineeDashboard() {
             <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.25rem" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#166534", textTransform: "uppercase" }}>Strong Evidence Skills</span>
               <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", margin: "0.3rem 0" }}>
-                {skillsIntel?.verified_skills?.length || 0} Accredited Skills
+                <CountUp value={skillsIntel?.verified_skills?.length ?? 0} /> Accredited Skills
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
                 {(skillsIntel?.verified_skills || []).slice(0, 3).map(s => s.skill).join(", ") || "Foundational Coursework"}

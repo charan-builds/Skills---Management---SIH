@@ -7,6 +7,7 @@ import {
   Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 
 export default function Employment() {
   const { filters } = useFilters();
@@ -155,7 +156,7 @@ export default function Employment() {
                 </span>
               </div>
               <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a" }}>
-                {retention.retention_3m.observed}%
+                <CountUp value={retention.retention_3m.observed} suffix="%" />
               </div>
               <span style={{ fontSize: "0.75rem", color: "#64748b" }}>National Standard: 70%</span>
             </div>
@@ -168,7 +169,7 @@ export default function Employment() {
                 </span>
               </div>
               <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#2563eb" }}>
-                {retention.retention_6m.observed}%
+                <CountUp value={retention.retention_6m.observed} suffix="%" />
               </div>
               <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Key Funding Milestone Target</span>
             </div>
@@ -181,7 +182,7 @@ export default function Employment() {
                 </span>
               </div>
               <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a" }}>
-                {retention.retention_12m.observed}%
+                <CountUp value={retention.retention_12m.observed} suffix="%" />
               </div>
               <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Long-term Career Stability</span>
             </div>

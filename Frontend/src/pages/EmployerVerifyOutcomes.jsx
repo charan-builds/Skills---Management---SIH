@@ -4,6 +4,7 @@ import {
   Play, RotateCcw, Zap, Layers, Mail, CheckCircle2, ArrowRight, RefreshCw, Info, HelpCircle
 } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
+import CountUp from "../components/common/CountUp";
 import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 
@@ -221,7 +222,7 @@ export default function EmployerVerifyOutcomes() {
             </p>
             {checkSummary && (
               <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#15803d" }}>
-                ✓ {checkSummary.tier1_epfo} Candidate(s) Verified via EPFO
+                ✓ <CountUp value={checkSummary.tier1_epfo} /> Candidate(s) Verified via EPFO
               </div>
             )}
           </div>
@@ -242,7 +243,7 @@ export default function EmployerVerifyOutcomes() {
             </p>
             {checkSummary && (
               <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#1d4ed8" }}>
-                ✓ {checkSummary.tier3_hris} Candidate(s) Verified via HRIS
+                ✓ <CountUp value={checkSummary.tier3_hris} /> Candidate(s) Verified via HRIS
               </div>
             )}
           </div>

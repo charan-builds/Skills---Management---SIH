@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, BarChart3, Building2, Check, CheckCircle2, ChevronDown, ShieldCheck, Sparkles, Target, TrendingUp, UserRound, Users } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
+import CountUp from "../components/common/CountUp";
 import "./LandingPage.css";
 
 const portals = [
@@ -53,7 +54,7 @@ function LiveOutcome() {
   ];
   return <aside className="s2i-live-outcome" aria-live="polite">
     <div className="s2i-live-title"><span>Live outcome snapshot</span><i /> <span>Maharashtra cohort</span></div>
-    <div className="s2i-live-grid">{values.map(([value, label]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div>
+    <div className="s2i-live-grid">{values.map(([value, label]) => <div key={label}><strong><CountUp value={value} /></strong><span>{label}</span></div>)}</div>
     <div className="s2i-live-divider" />
     <p>Verification path</p>
     <div className="s2i-live-path"><span>EPFO match</span><ArrowRight /><span>Partner HRIS</span><ArrowRight /><span>Employer confirm</span></div>

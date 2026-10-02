@@ -9,6 +9,7 @@ import { useFilters } from "../context/FilterContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import DataTable from "../components/common/DataTable";
+import CountUp from "../components/common/CountUp";
 
 export default function Dashboard() {
   const { filters } = useFilters();
@@ -191,7 +192,7 @@ export default function Dashboard() {
                   </div>
                 </div>
                 <div className="kpi-value" style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0f172a" }}>
-                  {kpi.value}
+                  <CountUp value={kpi.value} />
                 </div>
               </div>
               {kpi.change && (
@@ -245,10 +246,10 @@ export default function Dashboard() {
                   {stage.label}
                 </strong>
                 <div className="funnel-step-count" style={{ fontSize: "1.75rem", fontWeight: 800, color: stage.color, marginBottom: "0.25rem" }}>
-                  {stage.count.toLocaleString()}
+                  <CountUp value={stage.count} />
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>
-                  {stage.percentage}% of cohort
+                  <CountUp value={stage.percentage} suffix="%" /> of cohort
                 </span>
               </div>
             ))}

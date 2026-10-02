@@ -4,6 +4,7 @@ import { useFilters } from "../context/FilterContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 
 export default function Reports() {
   const { filters, updateFilter, clearFilters, activeFilterCount } = useFilters();
@@ -246,19 +247,19 @@ export default function Reports() {
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "1rem" }}>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Placement Rate</span>
-                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#16a34a" }}>{scopeSummary.placement_rate}%</div>
+                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#16a34a" }}><CountUp value={scopeSummary.placement_rate} suffix="%" /></div>
               </div>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>6M Retention</span>
-                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#2563eb" }}>{scopeSummary.retention_6m}%</div>
+                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#2563eb" }}><CountUp value={scopeSummary.retention_6m} suffix="%" /></div>
               </div>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Mean Wage</span>
-                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a" }}>₹{scopeSummary.avg_wage.toLocaleString()}</div>
+                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a" }}><CountUp value={scopeSummary.avg_wage} prefix="₹" /></div>
               </div>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Self-Employed</span>
-                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0d9488" }}>{scopeSummary.selfEmployed}</div>
+                <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0d9488" }}><CountUp value={scopeSummary.selfEmployed} /></div>
               </div>
             </div>
           )}

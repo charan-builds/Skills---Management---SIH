@@ -9,6 +9,7 @@ import {
 import { useFilters } from "../context/FilterContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 
 export default function FollowUpManagement() {
   const navigate = useNavigate();
@@ -179,7 +180,7 @@ export default function FollowUpManagement() {
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
           <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Total Milestone Checks</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
-            {summary.total_followups.toLocaleString()}
+            <CountUp value={summary.total_followups} />
           </div>
           <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>In Filtered Scope</span>
         </div>
@@ -187,7 +188,7 @@ export default function FollowUpManagement() {
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #fef3c7" }}>
           <span style={{ fontSize: "0.75rem", color: "#b45309", fontWeight: 600 }}>Due Now (Actionable)</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#b45309", marginTop: "0.2rem" }}>
-            {summary.due.toLocaleString()}
+            <CountUp value={summary.due} />
           </div>
           <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>Awaiting Response</span>
         </div>
@@ -195,7 +196,7 @@ export default function FollowUpManagement() {
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #f3e8ff" }}>
           <span style={{ fontSize: "0.75rem", color: "#7e22ce", fontWeight: 600 }}>Needs Verification</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#7e22ce", marginTop: "0.2rem" }}>
-            {(summary.needs_verification || 0).toLocaleString()}
+            <CountUp value={summary.needs_verification ?? 0} />
           </div>
           <span style={{ fontSize: "0.7rem", color: "#7e22ce", fontWeight: 700 }}>Pending Review</span>
         </div>
@@ -203,7 +204,7 @@ export default function FollowUpManagement() {
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #fee2e2" }}>
           <span style={{ fontSize: "0.75rem", color: "#dc2626", fontWeight: 600 }}>Needs Assistance / Errors</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#dc2626", marginTop: "0.2rem" }}>
-            {summary.needs_assistance.toLocaleString()}
+            <CountUp value={summary.needs_assistance} />
           </div>
           <span style={{ fontSize: "0.7rem", color: "#dc2626", fontWeight: 700 }}>Delivery / Contact Failed</span>
         </div>
@@ -211,7 +212,7 @@ export default function FollowUpManagement() {
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #dcfce7" }}>
           <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Completed</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
-            {summary.completed.toLocaleString()}
+            <CountUp value={summary.completed} />
           </div>
           <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600 }}>Verified & Archived</span>
         </div>

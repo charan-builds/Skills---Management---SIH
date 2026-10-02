@@ -1,4 +1,5 @@
 
+import CountUp from "../../components/common/CountUp";
 export default function ImpactExecutiveSummary({ dashboardData }) {
   if (!dashboardData) return null;
 
@@ -27,7 +28,7 @@ export default function ImpactExecutiveSummary({ dashboardData }) {
       {stats.map(s => (
         <div key={s.label} className="exec-stat">
           <span>{s.label}</span>
-          <strong>{s.value}</strong>
+          <strong><CountUp value={s.value} /></strong>
         </div>
       ))}
     </div>

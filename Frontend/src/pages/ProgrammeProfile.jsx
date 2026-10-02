@@ -7,6 +7,7 @@ import {
 import { usePlatformStore, platformService } from "../services/platformService";
 import { useFilters } from "../context/FilterContext";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
@@ -121,10 +122,10 @@ export default function ProgrammeProfile() {
                 <div style={{ background: "#f8fafc", padding: "1rem 1.5rem", borderRadius: "10px", border: "1px solid #e2e8f0", textAlign: "right" }}>
                   <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>Trainees in Scope</span>
                   <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#2563eb" }}>
-                    {metrics?.total || 0}
+                    <CountUp value={metrics?.total ?? 0} />
                   </div>
                   <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>
-                    {metrics?.breakdown?.completed || 0} completed
+                    <CountUp value={metrics?.breakdown?.completed ?? 0} /> completed
                   </span>
                 </div>
               </div>
@@ -135,7 +136,7 @@ export default function ProgrammeProfile() {
               {(metrics?.stats || []).slice(0, 6).map((s) => (
                 <div key={s.title} className="kpi-card" style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                   <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{s.title}</span>
-                  <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>{s.value}</div>
+                  <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}><CountUp value={s.value} /></div>
                   <span style={{ fontSize: "0.7rem", color: "#16a34a" }}>{s.change}</span>
                 </div>
               ))}

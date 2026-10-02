@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import CountUp from "../components/common/CountUp";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
@@ -220,7 +221,7 @@ export default function TraineeProfileView() {
                 <div style={{ fontSize: "1.15rem", fontWeight: 800, color: trainee.training_status === "Completed" ? "#15803d" : "#b91c1c", marginTop: "0.2rem" }}>
                   {trainee.training_status === "Completed" ? "✓ Completed" : "✗ Dropped Out"}
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#64748b" }}>Score: {trainee.assessment_score}%</span>
+                <span style={{ fontSize: "0.7rem", color: "#64748b" }}>Score: <CountUp value={trainee.assessment_score} suffix="%" /></span>
               </div>
 
               <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
@@ -261,7 +262,7 @@ export default function TraineeProfileView() {
                   {trainee.wage_metrics?.current_wage > 0 ? `₹${trainee.wage_metrics.initial_wage.toLocaleString()} → ₹${trainee.wage_metrics.current_wage.toLocaleString()}` : "No wage recorded"}
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 700 }}>
-                  {trainee.wage_metrics?.growth_percentage > 0 ? `+${trainee.wage_metrics.growth_percentage}% Increment` : "Baseline"}
+                  {trainee.wage_metrics?.growth_percentage > 0 ? <><CountUp value={trainee.wage_metrics.growth_percentage} prefix="+" suffix="% Increment" /></> : "Baseline"}
                 </span>
               </div>
 

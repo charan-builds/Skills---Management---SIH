@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { mockStore } from "../services/mockStore";
+import CountUp from "../components/common/CountUp";
 
 export default function EmployerDashboard() {
   const storeState = usePlatformStore();
@@ -141,7 +142,7 @@ export default function EmployerDashboard() {
                   <AlertCircle size={18} color="#f59e0b" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: stats.pending_verifications_count > 0 ? "#b45309" : "#0f172a" }}>
-                  {stats.pending_verifications_count}
+                  <CountUp value={stats.pending_verifications_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#2563eb", fontWeight: 600, marginTop: "0.35rem" }}>
                   Review claims &rarr;
@@ -158,7 +159,7 @@ export default function EmployerDashboard() {
                   <CheckCircle2 size={18} color="#16a34a" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#166534" }}>
-                  {stats.verified_workforce_count}
+                  <CountUp value={stats.verified_workforce_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
                   Active confirmed roster
@@ -172,7 +173,7 @@ export default function EmployerDashboard() {
                   <XCircle size={18} color="#ef4444" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#b91c1c" }}>
-                  {stats.rejected_claims_count}
+                  <CountUp value={stats.rejected_claims_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
                   Non-qualifying records
@@ -186,7 +187,7 @@ export default function EmployerDashboard() {
                   <AlertTriangle size={18} color="#f97316" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#c2410c" }}>
-                  {stats.correction_requests_count}
+                  <CountUp value={stats.correction_requests_count} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
                   Awaiting candidate resubmission
@@ -200,7 +201,7 @@ export default function EmployerDashboard() {
                   <TrendingUp size={18} color="#10b981" />
                 </div>
                 <div style={{ fontSize: "2rem", fontWeight: 800, color: "#0f172a" }}>
-                  {stats.six_month_retention}
+                  <CountUp value={stats.six_month_retention} />
                 </div>
                 <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.35rem" }}>
                   Wage Confirmed: {stats.wage_confirmation_rate}
@@ -247,28 +248,28 @@ export default function EmployerDashboard() {
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#16a34a" }} />
                         Currently Employed
                       </span>
-                      <strong style={{ color: "#0f172a" }}>{workforce.employed}</strong>
+                      <strong style={{ color: "#0f172a" }}><CountUp value={workforce.employed} /></strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#f59e0b" }} />
                         Resigned
                       </span>
-                      <strong style={{ color: "#0f172a" }}>{workforce.resigned}</strong>
+                      <strong style={{ color: "#0f172a" }}><CountUp value={workforce.resigned} /></strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#ef4444" }} />
                         Terminated
                       </span>
-                      <strong style={{ color: "#0f172a" }}>{workforce.terminated}</strong>
+                      <strong style={{ color: "#0f172a" }}><CountUp value={workforce.terminated} /></strong>
                     </div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.85rem" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                         <span style={{ width: "10px", height: "10px", borderRadius: "50%", background: "#3b82f6" }} />
                         Contract Completed
                       </span>
-                      <strong style={{ color: "#0f172a" }}>{workforce.contract_completed}</strong>
+                      <strong style={{ color: "#0f172a" }}><CountUp value={workforce.contract_completed} /></strong>
                     </div>
                   </div>
                 </div>

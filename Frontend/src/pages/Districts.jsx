@@ -4,6 +4,7 @@ import { useFilters } from "../context/FilterContext";
 import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import { platformService, usePlatformStore } from "../services/platformService";
+import CountUp from "../components/common/CountUp";
 
 export default function Districts() {
   const { filters, updateFilter } = useFilters();
@@ -144,11 +145,11 @@ export default function Districts() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", margin: "0.75rem 0" }}>
               <div>
                 <span style={{ fontSize: "0.72rem", color: "#64748b" }}>Trained</span>
-                <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a" }}>{d.trainees}</div>
+                <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a" }}><CountUp value={d.trainees} /></div>
               </div>
               <div>
                 <span style={{ fontSize: "0.72rem", color: "#64748b" }}>Employment</span>
-                <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#16a34a" }}>{d.employment_rate}</div>
+                <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#16a34a" }}><CountUp value={d.employment_rate} /></div>
               </div>
             </div>
             <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
@@ -203,7 +204,7 @@ export default function Districts() {
                       Trained <ArrowUpDown size={12} />
                     </div>
                   ),
-                  render: (d) => <strong>{d.trainees}</strong> 
+                  render: (d) => <strong><CountUp value={d.trainees} /></strong> 
                 },
                 { 
                   key: "employment_rate", 
@@ -220,7 +221,7 @@ export default function Districts() {
                       borderRadius: "12px", 
                       fontWeight: 700 
                     }}>
-                      {d.employment_rate}
+                      <CountUp value={d.employment_rate} />
                     </span>
                   ) 
                 },
