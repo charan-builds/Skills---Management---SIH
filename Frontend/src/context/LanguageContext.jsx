@@ -51,6 +51,18 @@ for (const key of Object.keys(DICTIONARY)) {
   LOWER_DICT[key.toLowerCase()] = DICTIONARY[key];
 }
 
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Pre-build boundary patterns to prevent partial word mangling (e.g. "Train" inside "Training")
+const KEY_PATTERN_MAP = new Map();
+for (const key of SORTED_KEYS) {
+  const left = /^[a-zA-Z0-9]/.test(key) ? '(?<![a-zA-Z0-9])' : '';
+  const right = /[a-zA-Z0-9]$/.test(key) ? '(?![a-zA-Z0-9])' : '';
+  KEY_PATTERN_MAP.set(key, `${left}${escapeRegExp(key)}${right}`);
+}
+
 const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
@@ -128,13 +140,13 @@ export function LanguageProvider({ children }) {
       }
     }
 
-    // 4. Compound phrase replacement (longest key first)
+    // 4. Compound phrase replacement (longest key first with strict word boundaries)
     let currentText = trimmed;
     let modified = false;
 
     for (let i = 0; i < SORTED_KEYS.length; i++) {
       const key = SORTED_KEYS[i];
-      if (key.length >= 3 && currentText.includes(key)) {
+      if (key.length >= 2 && currentText.includes(key)) {
         // Ensure we don't accidentally replace inside a preserved proper name
         let shouldSkip = false;
         for (const name of PRESERVED_NAMES) {
@@ -146,8 +158,15 @@ export function LanguageProvider({ children }) {
         if (!shouldSkip) {
           const trans = DICTIONARY[key]?.[targetLang];
           if (trans) {
-            currentText = currentText.split(key).join(trans);
-            modified = true;
+            const pattern = KEY_PATTERN_MAP.get(key);
+            if (pattern) {
+              const regex = new RegExp(pattern, 'g');
+              if (regex.test(currentText)) {
+                regex.lastIndex = 0;
+                currentText = currentText.replace(regex, trans);
+                modified = true;
+              }
+            }
           }
         }
       }

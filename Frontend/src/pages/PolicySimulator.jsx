@@ -417,14 +417,14 @@ export default function PolicySimulator() {
               <div style={{ borderBottom: "1px solid #e2e8f0", paddingBottom: "1rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <div>
                   <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.2rem 0" }}>
-                    Build a What-If Scenario
+                    {t("Build a What-If Scenario", "Build a What-If Scenario")}
                   </h2>
                   <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                    Configure hypothetical intervention parameters to calculate model-based projected outcomes.
+                    {t("Configure hypothetical intervention parameters to calculate model-based projected outcomes.", "Configure hypothetical intervention parameters to calculate model-based projected outcomes.")}
                   </p>
                 </div>
                 <span style={{ fontSize: "0.75rem", padding: "0.3rem 0.75rem", borderRadius: "20px", background: "#f1f5f9", color: "#475569", fontWeight: 700 }}>
-                  Interactive Simulator
+                  {t("Interactive Simulator", "Interactive Simulator")}
                 </span>
               </div>
 
@@ -434,14 +434,14 @@ export default function PolicySimulator() {
                   {/* Scenario Name */}
                   <div>
                     <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                      Scenario Name *
+                      {t("Scenario Name *", "Scenario Name *")}
                     </label>
                     <input
                       type="text"
                       name="scenario_name"
                       value={form.scenario_name}
                       onChange={handleInputChange}
-                      placeholder="e.g. PLC Training Expansion 2026"
+                      placeholder={t("e.g. PLC Training Expansion 2026", "e.g. PLC Training Expansion 2026")}
                       required
                       style={{
                         width: "100%",
@@ -458,7 +458,7 @@ export default function PolicySimulator() {
                   {/* Intervention Type */}
                   <div>
                     <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                      Intervention Type *
+                      {t("Intervention Type *", "Intervention Type *")}
                     </label>
                     <select
                       name="intervention_type"
@@ -476,7 +476,7 @@ export default function PolicySimulator() {
                       }}
                     >
                       {INTERVENTION_OPTIONS.map(opt => (
-                        <option key={opt.id} value={opt.id}>{opt.label}</option>
+                        <option key={opt.id} value={opt.id}>{t(opt.label, opt.label)}</option>
                       ))}
                     </select>
                   </div>
@@ -485,14 +485,14 @@ export default function PolicySimulator() {
                   {(form.intervention_type === "Add Training Module" || form.intervention_type === "Custom Intervention") && (
                     <div>
                       <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                        Module Name
+                        {t("Module Name", "Module Name")}
                       </label>
                       <input
                         type="text"
                         name="module_name"
                         value={form.module_name}
                         onChange={handleInputChange}
-                        placeholder="e.g. PLC Training"
+                        placeholder={t("e.g. PLC Training", "e.g. PLC Training")}
                         style={{
                           width: "100%",
                           padding: "0.6rem 0.85rem",
@@ -508,7 +508,7 @@ export default function PolicySimulator() {
                   {/* Additional Training Hours */}
                   <div>
                     <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                      Additional Training Hours (Target: {120 + Number(form.additional_hours || 0)} hrs)
+                      {t("Additional Training Hours", "Additional Training Hours")} ({t("Target:", "Target:")} {120 + Number(form.additional_hours || 0)} {t("hrs", "hrs")})
                     </label>
                     <input
                       type="number"
@@ -532,7 +532,7 @@ export default function PolicySimulator() {
                   {/* Expected Participants */}
                   <div>
                     <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                      Expected Participating Trainees
+                      {t("Expected Participating Trainees", "Expected Participating Trainees")}
                     </label>
                     <input
                       type="number"
@@ -556,7 +556,7 @@ export default function PolicySimulator() {
                   {/* Estimated Cost Per Trainee */}
                   <div>
                     <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                      Estimated Cost Per Trainee (₹)
+                      {t("Estimated Cost Per Trainee (₹)", "Estimated Cost Per Trainee (₹)")}
                     </label>
                     <input
                       type="number"
@@ -580,7 +580,7 @@ export default function PolicySimulator() {
                   {/* Industry Relevance */}
                   <div>
                     <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                      Employer Demand Relevance
+                      {t("Employer Demand Relevance", "Employer Demand Relevance")}
                     </label>
                     <select
                       name="relevance_level"
@@ -597,9 +597,9 @@ export default function PolicySimulator() {
                         outline: "none"
                       }}
                     >
-                      <option value="High">High Relevance (High Hiring Demand)</option>
-                      <option value="Medium">Medium Relevance (Moderate Demand)</option>
-                      <option value="Low">Low Relevance (Niche Demand)</option>
+                      <option value="High">{t("High Relevance (High Hiring Demand)", "High Relevance (High Hiring Demand)")}</option>
+                      <option value="Medium">{t("Medium Relevance (Moderate Demand)", "Medium Relevance (Moderate Demand)")}</option>
+                      <option value="Low">{t("Low Relevance (Niche Demand)", "Low Relevance (Niche Demand)")}</option>
                     </select>
                   </div>
 
@@ -607,7 +607,7 @@ export default function PolicySimulator() {
                   {(form.intervention_type === "Apprenticeship Program" || form.intervention_type === "Employer Partnership Expansion") && (
                     <div>
                       <label style={{ display: "block", fontSize: "0.82rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                        Participating Companies / Employer Network
+                        {t("Participating Companies / Employer Network", "Participating Companies / Employer Network")}
                       </label>
                       <input
                         type="number"
@@ -652,12 +652,12 @@ export default function PolicySimulator() {
                     {isSimulating ? (
                       <>
                         <div className="spinner" style={{ width: "16px", height: "16px", border: "2px solid white", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                        <span>Running Simulation...</span>
+                        <span>{t("Running Simulation...", "Running Simulation...")}</span>
                       </>
                     ) : (
                       <>
                         <Play size={18} fill="white" />
-                        <span>Run Simulation</span>
+                        <span>{t("Run Simulation", "Run Simulation")}</span>
                       </>
                     )}
                   </button>
@@ -680,7 +680,7 @@ export default function PolicySimulator() {
                     }}
                   >
                     <RotateCcw size={16} />
-                    <span>Reset Scenario</span>
+                    <span>{t("Reset Scenario", "Reset Scenario")}</span>
                   </button>
 
                   {simulationResult && (
@@ -703,7 +703,7 @@ export default function PolicySimulator() {
                         }}
                       >
                         <Save size={16} />
-                        <span>Save Scenario</span>
+                        <span>{t("Save Scenario", "Save Scenario")}</span>
                       </button>
 
                       <button
@@ -724,7 +724,7 @@ export default function PolicySimulator() {
                         }}
                       >
                         <Layers size={16} />
-                        <span>Compare Scenario</span>
+                        <span>{t("Compare Scenario", "Compare Scenario")}</span>
                       </button>
                     </>
                   )}
