@@ -204,10 +204,10 @@ export default function TraineeDashboard() {
         <div style={{ marginBottom: "2rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
             <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-              {t("trainee_dashboard.kpi_certified_skills", "My Current Status")}
+              {t("My Current Status", "My Current Status")}
             </h2>
             <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-              {t("trainee_dashboard.page_subtitle", "Authoritative Personal Situation")}
+              {t("Authoritative Personal Situation", "Authoritative Personal Situation")}
             </span>
           </div>
 
@@ -215,22 +215,22 @@ export default function TraineeDashboard() {
             {/* Training & Certification */}
             <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.25rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Training & Certification</span>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("Training & Certification", "Training & Certification")}</span>
                 <Award size={18} color="#f59e0b" />
               </div>
               <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.25rem" }}>
-                {trainee?.training_status || "Completed"}
+                {t(trainee?.training_status || "Completed", trainee?.training_status || "Completed")}
               </div>
               <div style={{ fontSize: "0.8rem", color: "#166534", fontWeight: 700, marginBottom: "0.75rem" }}>
-                {trainee?.certified ? "✓ Certified Credential Issued" : "Pending Certification"}
+                {trainee?.certified ? t("✓ Certified Credential Issued", "✓ Certified Credential Issued") : t("Pending Certification", "Pending Certification")}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", color: "#64748b", borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
-                <span>Score: {trainee?.assessment_score || 88}%</span>
+                <span>{t("Score:", "Score:")} {trainee?.assessment_score || 88}%</span>
                 <button
                   onClick={() => navigate("/trainee/training")}
                   style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  View <ArrowRight size={13} />
+                  {t("View", "View")} <ArrowRight size={13} />
                 </button>
               </div>
             </div>
@@ -238,24 +238,24 @@ export default function TraineeDashboard() {
             {/* Employment Status */}
             <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.25rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Employment Status</span>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("Employment Status", "Employment Status")}</span>
                 <Briefcase size={18} color="#2563eb" />
               </div>
               <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.25rem" }}>
-                {emp.status ? emp.status.replace("_", " ") : "Unemployed"}
+                {t(emp.status ? emp.status.replace("_", " ") : "Unemployed", emp.status ? emp.status.replace("_", " ") : "Unemployed")}
               </div>
               <div style={{ fontSize: "0.8rem", color: "#475569", marginBottom: "0.75rem" }}>
-                {emp.job_role ? `${emp.job_role} at ${emp.employer_name || "Enterprise"}` : (emp.status_reason || emp.unemployment_reason || "Seeking Placement")}
+                {emp.job_role ? `${t(emp.job_role, emp.job_role)} at ${emp.employer_name || "Enterprise"}` : t(emp.status_reason || emp.unemployment_reason || "Seeking Placement", "Seeking Placement")}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
                 <span style={{ color: emp.verification_status === "Verified" ? "#15803d" : "#b45309", fontWeight: 700 }}>
-                  {emp.verification_status || "Self-Attested"}
+                  {t(emp.verification_status || "Self-Attested", emp.verification_status || "Self-Attested")}
                 </span>
                 <button
                   onClick={() => navigate("/trainee/employment")}
                   style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  Update <ArrowRight size={13} />
+                  {t("common.edit", "Update")} <ArrowRight size={13} />
                 </button>
               </div>
             </div>
@@ -263,24 +263,24 @@ export default function TraineeDashboard() {
             {/* Compensation & Retention */}
             <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.25rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Compensation & Retention</span>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("Compensation & Retention", "Compensation & Retention")}</span>
                 <TrendingUp size={18} color="#7c3aed" />
               </div>
               <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.25rem" }}>
                 {typeof emp.current_wage === "number" && emp.current_wage > 0
                   ? `₹${emp.current_wage.toLocaleString()} / mo`
-                  : (emp.current_wage === 0 ? "₹0 (Unemployed)" : "No wage data available")}
+                  : (emp.current_wage === 0 ? "₹0 (Unemployed)" : t("No wage data available", "No wage data available"))}
               </div>
               <div style={{ fontSize: "0.8rem", color: "#15803d", fontWeight: 600, marginBottom: "0.75rem" }}>
-                {trainee?.retention?.retention_6m === "Retained" ? "✓ 6-Month Retained" : (trainee?.retention?.retention_6m || "In Progress")}
+                {trainee?.retention?.retention_6m === "Retained" ? t("✓ 6-Month Retained", "✓ 6-Month Retained") : t(trainee?.retention?.retention_6m || "In Progress", "In Progress")}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", color: "#64748b", borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
-                <span>Growth: +{trainee?.wage_metrics?.growth_percentage || 0}%</span>
+                <span>{t("Growth:", "Growth:")} +{trainee?.wage_metrics?.growth_percentage || 0}%</span>
                 <button
                   onClick={() => navigate("/trainee/outcomes")}
                   style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  Details <ArrowRight size={13} />
+                  {t("common.details", "Details")} <ArrowRight size={13} />
                 </button>
               </div>
             </div>
@@ -288,29 +288,29 @@ export default function TraineeDashboard() {
             {/* Follow-Up Milestone */}
             <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.25rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Follow-up Check-In</span>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("Follow-up Check-In", "Follow-up Check-In")}</span>
                 <Calendar size={18} color="#16a34a" />
               </div>
               <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.25rem" }}>
-                {nextFollowup ? nextFollowup.milestone : "Completed"}
+                {t(nextFollowup ? nextFollowup.milestone : "Completed", nextFollowup ? nextFollowup.milestone : "Completed")}
               </div>
               <div style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "0.75rem" }}>
-                Status: <strong style={{
+                {t("Status:", "Status:")} <strong style={{
                   color: nextFollowup?.status === "Due" ? "#b45309"
                     : nextFollowup?.status === "Needs Verification" ? "#7e22ce"
                     : (nextFollowup?.status === "Needs Assistance" || nextFollowup?.status === "Contact Error") ? "#b91c1c"
                     : "#15803d"
                 }}>
-                  {nextFollowup?.status || "Up to date"}
+                  {t(nextFollowup?.status || "Up to date", nextFollowup?.status || "Up to date")}
                 </strong> ({nextFollowup?.due_date || "N/A"})
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", color: "#64748b", borderTop: "1px solid #f1f5f9", paddingTop: "0.5rem" }}>
-                <span>{isConsentDeclined ? "Restricted (Opted out)" : "Active"}</span>
+                <span>{isConsentDeclined ? t("Restricted (Opted out)", "Restricted (Opted out)") : t("Active", "Active")}</span>
                 <button
                   onClick={() => navigate("/trainee/follow-ups")}
                   style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "2px" }}
                 >
-                  Open <ArrowRight size={13} />
+                  {t("common.open", "Open")} <ArrowRight size={13} />
                 </button>
               </div>
             </div>
@@ -323,44 +323,44 @@ export default function TraineeDashboard() {
         <div style={{ marginBottom: "2rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
             <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-              My Skill Status & Readiness
+              {t("My Skill Status & Readiness", "My Skill Status & Readiness")}
             </h2>
             <button
               onClick={() => navigate("/trainee/skills")}
               style={{ background: "none", border: "none", color: "#2563eb", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "3px" }}
             >
-              Full Skills Portfolio <ChevronRight size={16} />
+              {t("Full Skills Portfolio", "Full Skills Portfolio")} <ChevronRight size={16} />
             </button>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem" }}>
             <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.25rem" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#166534", textTransform: "uppercase" }}>Strong Evidence Skills</span>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#166534", textTransform: "uppercase" }}>{t("Strong Evidence Skills", "Strong Evidence Skills")}</span>
               <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", margin: "0.3rem 0" }}>
-                <CountUp value={skillsIntel?.verified_skills?.length ?? 0} /> Accredited Skills
+                <CountUp value={skillsIntel?.verified_skills?.length ?? 0} /> {t("Accredited Skills", "Accredited Skills")}
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                {(skillsIntel?.verified_skills || []).slice(0, 3).map(s => s.skill).join(", ") || "Foundational Coursework"}
+                {(skillsIntel?.verified_skills || []).slice(0, 3).map(s => t(s.skill, s.skill)).join(", ") || t("Foundational Coursework", "Foundational Coursework")}
               </p>
             </div>
 
             <div style={{ background: "#ffffff", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.25rem" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#b91c1c", textTransform: "uppercase" }}>Top Priority Skill Gap</span>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#b91c1c", textTransform: "uppercase" }}>{t("Top Priority Skill Gap", "Top Priority Skill Gap")}</span>
               <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#b91c1c", margin: "0.3rem 0" }}>
-                {skillsIntel?.skill_gaps?.[0]?.skill || "No Critical Gaps"}
+                {t(skillsIntel?.skill_gaps?.[0]?.skill || "No Critical Gaps", skillsIntel?.skill_gaps?.[0]?.skill || "No Critical Gaps")}
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                {skillsIntel?.skill_gaps?.[0]?.why_it_matters || "Assessed competencies meet baseline hiring benchmarks."}
+                {t(skillsIntel?.skill_gaps?.[0]?.why_it_matters || "Assessed competencies meet baseline hiring benchmarks.", skillsIntel?.skill_gaps?.[0]?.why_it_matters || "Assessed competencies meet baseline hiring benchmarks.")}
               </p>
             </div>
 
             <div style={{ background: "#eff6ff", borderRadius: "12px", border: "1px solid #bfdbfe", padding: "1.25rem" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase" }}>Target Role Readiness</span>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase" }}>{t("Target Role Readiness", "Target Role Readiness")}</span>
               <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#1e3a8a", margin: "0.3rem 0" }}>
-                {roleBenchmark?.coverage_display || "Target Role Benchmark"}
+                {t(roleBenchmark?.coverage_display || "Target Role Benchmark", roleBenchmark?.coverage_display || "Target Role Benchmark")}
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#2563eb" }}>
-                Benchmark: <strong>{roleBenchmark?.benchmark?.title || "Junior Data Analyst"}</strong>
+                {t("Benchmark:", "Benchmark:")} <strong>{t(roleBenchmark?.benchmark?.title || "Junior Data Analyst", roleBenchmark?.benchmark?.title || "Junior Data Analyst")}</strong>
               </p>
             </div>
           </div>
@@ -373,17 +373,17 @@ export default function TraineeDashboard() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
             <div>
               <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.2rem 0" }}>
-                My Recent Progress Timeline
+                {t("My Recent Progress Timeline", "My Recent Progress Timeline")}
               </h3>
               <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                Chronological sequence from training enrollment to current employment status.
+                {t("Chronological sequence from training enrollment to current employment status.", "Chronological sequence from training enrollment to current employment status.")}
               </p>
             </div>
             <button
               onClick={() => navigate("/trainee/employment-journey")}
               style={{ background: "none", border: "none", color: "#2563eb", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "2px" }}
             >
-              Interactive Journey <ArrowRight size={15} />
+              {t("Interactive Journey", "Interactive Journey")} <ArrowRight size={15} />
             </button>
           </div>
 
@@ -395,10 +395,10 @@ export default function TraineeDashboard() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <strong style={{ fontSize: "0.9rem", color: "#0f172a" }}>{evt.title}</strong>
+                    <strong style={{ fontSize: "0.9rem", color: "#0f172a" }}>{t(evt.title, evt.title)}</strong>
                     <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{evt.date}</span>
                   </div>
-                  <p style={{ margin: "0.15rem 0 0 0", fontSize: "0.8rem", color: "#475569" }}>{evt.description}</p>
+                  <p style={{ margin: "0.15rem 0 0 0", fontSize: "0.8rem", color: "#475569" }}>{t(evt.description, evt.description)}</p>
                 </div>
               </div>
             ))}
@@ -410,7 +410,7 @@ export default function TraineeDashboard() {
         {/* ========================================================================= */}
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
           <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: "0 0 1rem 0" }}>
-            {t("trainee_dashboard.quick_actions_title", "Important Actions")}
+            {t("Important Actions", "Important Actions")}
           </h3>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>
@@ -420,10 +420,10 @@ export default function TraineeDashboard() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
                 <Bell size={18} color="#2563eb" />
-                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>1. Complete Follow-Up</strong>
+                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{t("1. Complete Follow-Up", "1. Complete Follow-Up")}</strong>
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                Answer periodic milestone check-in questions to record employment stability.
+                {t("Answer periodic milestone check-in questions to record employment stability.", "Answer periodic milestone check-in questions to record employment stability.")}
               </p>
             </div>
 
@@ -433,10 +433,10 @@ export default function TraineeDashboard() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
                 <Briefcase size={18} color="#16a34a" />
-                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>2. Update Employment</strong>
+                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{t("2. Update Employment", "2. Update Employment")}</strong>
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                Report new job placement, self-employment venture, or reason for unemployment.
+                {t("Report new job placement, self-employment venture, or reason for unemployment.", "Report new job placement, self-employment venture, or reason for unemployment.")}
               </p>
             </div>
 
@@ -446,10 +446,10 @@ export default function TraineeDashboard() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
                 <TrendingUp size={18} color="#7c3aed" />
-                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>3. Update Wage</strong>
+                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{t("3. Update Wage", "3. Update Wage")}</strong>
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                Log salary increments or promotion compensation to update your wage trajectory.
+                {t("Log salary increments or promotion compensation to update your wage trajectory.", "Log salary increments or promotion compensation to update your wage trajectory.")}
               </p>
             </div>
 
@@ -459,10 +459,10 @@ export default function TraineeDashboard() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
                 <Zap size={18} color="#ea580c" />
-                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>4. Review Skill Gaps</strong>
+                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{t("4. Review Skill Gaps", "4. Review Skill Gaps")}</strong>
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                Inspect verified competencies vs self-reported and employer-observed deficits.
+                {t("Inspect verified competencies vs self-reported and employer-observed deficits.", "Inspect verified competencies vs self-reported and employer-observed deficits.")}
               </p>
             </div>
 
@@ -472,10 +472,10 @@ export default function TraineeDashboard() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
                 <Target size={18} color="#0284c7" />
-                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>5. Review Skill Goals</strong>
+                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{t("5. Review Skill Goals", "5. Review Skill Goals")}</strong>
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                Select an occupational benchmark and view required bridge upskilling modules.
+                {t("Select an occupational benchmark and view required bridge upskilling modules.", "Select an occupational benchmark and view required bridge upskilling modules.")}
               </p>
             </div>
 
@@ -485,10 +485,10 @@ export default function TraineeDashboard() {
             >
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.3rem" }}>
                 <MessageSquare size={18} color="#0d9488" />
-                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>6. Give Training Feedback</strong>
+                <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{t("6. Give Training Feedback", "6. Give Training Feedback")}</strong>
               </div>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                Rate curriculum relevance and report missing skills observed in hiring rounds.
+                {t("Rate curriculum relevance and report missing skills observed in hiring rounds.", "Rate curriculum relevance and report missing skills observed in hiring rounds.")}
               </p>
             </div>
           </div>
