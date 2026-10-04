@@ -150,28 +150,28 @@ export default function TraineeOutcomes() {
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("trainee_outcomes.status_training", "Training")}</span>
               <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#15803d", marginTop: "0.2rem" }}>
-                ✓ {trainee?.training_status || "Completed"}
+                ✓ {t(trainee?.training_status || "Completed", trainee?.training_status || "Completed")}
               </div>
             </div>
 
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("trainee_outcomes.status_certification", "Certification")}</span>
               <div style={{ fontSize: "1.1rem", fontWeight: 800, color: trainee?.certified ? "#15803d" : "#b45309", marginTop: "0.2rem" }}>
-                {trainee?.certified ? "✓ Certified" : "Pending"}
+                {trainee?.certified ? `✓ ${t("Certified", "Certified")}` : t("Pending", "Pending")}
               </div>
             </div>
 
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("trainee_outcomes.status_employment", "Employment")}</span>
               <div style={{ fontSize: "1.1rem", fontWeight: 800, color: emp.status === "EMPLOYED" ? "#2563eb" : "#0f172a", marginTop: "0.2rem" }}>
-                {emp.status ? emp.status.replace("_", " ") : "Unemployed"}
+                {emp.status ? t(emp.status, emp.status.replace("_", " ")) : t("Unemployed", "Unemployed")}
               </div>
             </div>
 
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("trainee_outcomes.status_retention", "Retention")}</span>
               <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "#15803d", marginTop: "0.2rem" }}>
-                {retention.retention_6m === "Retained" ? "✓ 6M Retained" : (retention.retention_6m || "Upcoming")}
+                {retention.retention_6m === "Retained" ? `✓ ${t("6M Retained", "6M Retained")}` : t(retention.retention_6m || "Upcoming", retention.retention_6m || "Upcoming")}
               </div>
             </div>
 
@@ -185,7 +185,7 @@ export default function TraineeOutcomes() {
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("trainee_outcomes.status_skill_relevance", "Skill Relevance")}</span>
               <div style={{ fontSize: "1rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
-                {outcomeSummary.skill_relevance || "Relevant"}
+                {t(outcomeSummary.skill_relevance || "Relevant", outcomeSummary.skill_relevance || "Relevant")}
               </div>
             </div>
           </div>
@@ -263,7 +263,7 @@ export default function TraineeOutcomes() {
                         ₹{p.amount.toLocaleString()}
                       </text>
                       <text x={p.x} y={chartHeight - padding + 18} textAnchor="middle" fill="#64748b" fontSize="11" fontWeight="600">
-                        {p.stage}
+                        {t(p.stage, p.stage)}
                       </text>
                     </g>
                   ))}
@@ -283,7 +283,7 @@ export default function TraineeOutcomes() {
                 <tbody>
                   {wageHistory.map((w, idx) => (
                     <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "0.75rem 1rem", fontWeight: 700, color: "#0f172a" }}>{w.stage}</td>
+                      <td style={{ padding: "0.75rem 1rem", fontWeight: 700, color: "#0f172a" }}>{t(w.stage, w.stage)}</td>
                       <td style={{ padding: "0.75rem 1rem", color: "#64748b" }}>{w.date}</td>
                       <td style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#15803d" }}>₹{w.amount.toLocaleString()}</td>
                       <td style={{ padding: "0.75rem 1rem", color: "#1d4ed8" }}>{t("trainee_outcomes.payroll_confirmed", "✓ Payroll Confirmed")}</td>
@@ -310,7 +310,7 @@ export default function TraineeOutcomes() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                 <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b" }}>{t("trainee_outcomes.checkpoint_3m", "3-MONTH CHECKPOINT")}</span>
                 <span style={{ background: "#dcfce7", color: "#15803d", fontSize: "0.75rem", fontWeight: 700, padding: "2px 8px", borderRadius: "6px" }}>
-                  {retention.retention_3m || "Retained"}
+                  {t(retention.retention_3m || "Retained", retention.retention_3m || "Retained")}
                 </span>
               </div>
               <strong style={{ fontSize: "0.95rem", color: "#0f172a", display: "block", marginBottom: "0.25rem" }}>
@@ -326,7 +326,7 @@ export default function TraineeOutcomes() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                 <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b" }}>{t("trainee_outcomes.checkpoint_6m", "6-MONTH CHECKPOINT")}</span>
                 <span style={{ background: "#dcfce7", color: "#15803d", fontSize: "0.75rem", fontWeight: 700, padding: "2px 8px", borderRadius: "6px" }}>
-                  {retention.retention_6m || "Retained"}
+                  {t(retention.retention_6m || "Retained", retention.retention_6m || "Retained")}
                 </span>
               </div>
               <strong style={{ fontSize: "0.95rem", color: "#0f172a", display: "block", marginBottom: "0.25rem" }}>
@@ -342,7 +342,7 @@ export default function TraineeOutcomes() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
                 <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b" }}>{t("trainee_outcomes.checkpoint_12m", "12-MONTH CHECKPOINT")}</span>
                 <span style={{ background: "#eff6ff", color: "#1d4ed8", fontSize: "0.75rem", fontWeight: 700, padding: "2px 8px", borderRadius: "6px" }}>
-                  {retention.retention_12m || "Upcoming"}
+                  {t(retention.retention_12m || "Upcoming", retention.retention_12m || "Upcoming")}
                 </span>
               </div>
               <strong style={{ fontSize: "0.95rem", color: "#0f172a", display: "block", marginBottom: "0.25rem" }}>

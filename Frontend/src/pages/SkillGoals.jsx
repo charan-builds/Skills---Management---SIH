@@ -165,15 +165,15 @@ export default function SkillGoals() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.25rem", alignItems: "center" }}>
             {/* Current State */}
             <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("skill_goals.current_starting_point", "Current Starting Point")}</span>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{t("Current Starting Point", "Current Starting Point")}</span>
               <h4 style={{ margin: "0.3rem 0 0.2rem 0", fontSize: "1.1rem", color: "#0f172a" }}>
-                {currentRole}
+                {t(currentRole, currentRole)}
               </h4>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#64748b" }}>
-                {currentEmployer} • {traineeProfile?.programme_name}
+                {currentEmployer} • {t(traineeProfile?.programme_name, traineeProfile?.programme_name)}
               </p>
               <div style={{ marginTop: "0.75rem", fontSize: "0.8rem", color: "#15803d", fontWeight: 600 }}>
-                ✓ {benchmarkAnalysis?.supported_count || 0} {t("skill_goals.supported_competencies_suffix", "Supported Competencies")}
+                ✓ {benchmarkAnalysis?.supported_count || 0} {t("Supported Competencies", "Supported Competencies")}
               </div>
             </div>
 
@@ -183,21 +183,21 @@ export default function SkillGoals() {
                 <ArrowRight size={20} />
               </div>
               <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb" }}>
-                {t("skill_goals.bridging_gaps_prefix", "BRIDGING")} {(benchmarkAnalysis?.total_count || 0) - (benchmarkAnalysis?.supported_count || 0)} {t("skill_goals.bridging_gaps_suffix", "SKILL GAPS")}
+                {t("BRIDGING", "BRIDGING")} {(benchmarkAnalysis?.total_count || 0) - (benchmarkAnalysis?.supported_count || 0)} {t("SKILL GAPS", "SKILL GAPS")}
               </div>
             </div>
 
             {/* Target Role */}
             <div style={{ background: "#eff6ff", padding: "1.25rem", borderRadius: "10px", border: "1px solid #bfdbfe" }}>
-              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase" }}>{t("skill_goals.target_benchmark_label", "Target Benchmark")}</span>
+              <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase" }}>{t("Target Benchmark", "Target Benchmark")}</span>
               <h4 style={{ margin: "0.3rem 0 0.2rem 0", fontSize: "1.1rem", color: "#1e3a8a" }}>
-                {benchmark?.title}
+                {t(benchmark?.title, benchmark?.title)}
               </h4>
               <p style={{ margin: 0, fontSize: "0.8rem", color: "#3b82f6" }}>
-                {benchmark?.sector} • {benchmark?.nsqf_level}
+                {t(benchmark?.sector, benchmark?.sector)} • {benchmark?.nsqf_level}
               </p>
               <div style={{ marginTop: "0.75rem", fontSize: "0.8rem", color: "#1e40af", fontWeight: 700 }}>
-                {t("skill_goals.readiness_label", "Readiness:")} {benchmarkAnalysis?.coverage_percentage}% {t("skill_goals.supported_suffix", "Supported")}
+                {t("Readiness:", "Readiness:")} {benchmarkAnalysis?.coverage_percentage}% {t("Supported", "Supported")}
               </div>
             </div>
           </div>
@@ -206,7 +206,20 @@ export default function SkillGoals() {
         {/* AI Grounded Synthesis Banner (Section 26 & 46) */}
         <div style={{ background: "linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%)", borderRadius: "12px", border: "1px solid #bbf7d0", padding: "1.25rem 1.5rem", marginBottom: "2rem" }}>
           <p style={{ margin: 0, fontSize: "0.9rem", color: "#1f2937", lineHeight: 1.6 }}>
-            {benchmarkAnalysis?.ai_insights}
+            {benchmarkAnalysis?.benchmark ? (
+              <>
+                {t("Occupational comparison against", "Occupational comparison against")} <strong>{t(benchmarkAnalysis.benchmark.title, benchmarkAnalysis.benchmark.title)}</strong> {t("indicates", "indicates")} <strong>{benchmarkAnalysis.coverage_percentage}% {t("readiness", "readiness")}</strong> ({benchmarkAnalysis.supported_count} {t("of", "of")} {benchmarkAnalysis.total_count} {t("competencies verified", "competencies verified")}).{" "}
+                {benchmarkAnalysis.skill_gaps?.length > 0 ? (
+                  <>
+                    {t("Bridging the", "Bridging the")} <strong>{benchmarkAnalysis.skill_gaps.length} {t("missing competencies", "missing competencies")}</strong> {t("via targeted bridge modules will elevate your profile to full occupational alignment.", "via targeted bridge modules will elevate your profile to full occupational alignment.")}
+                  </>
+                ) : (
+                  t("Your competencies fully satisfy all occupational requirements for this role.", "Your competencies fully satisfy all occupational requirements for this role.")
+                )}
+              </>
+            ) : (
+              t(benchmarkAnalysis?.ai_insights, benchmarkAnalysis?.ai_insights)
+            )}
           </p>
         </div>
 
@@ -237,9 +250,9 @@ export default function SkillGoals() {
                 {evaluatedSkills.map((sk, idx) => (
                   <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
                     <td style={{ padding: "0.9rem 1rem", fontWeight: 700, color: "#0f172a" }}>
-                      {sk.skill}
+                      {t(sk.skill, sk.skill)}
                       <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b", fontWeight: 400 }}>
-                        {sk.category}
+                        {t(sk.category, sk.category)}
                       </span>
                     </td>
 
@@ -252,7 +265,7 @@ export default function SkillGoals() {
                         background: sk.importance === "Critical" ? "#fee2e2" : sk.importance === "High" ? "#fef3c7" : "#eff6ff",
                         color: sk.importance === "Critical" ? "#b91c1c" : sk.importance === "High" ? "#b45309" : "#1d4ed8"
                       }}>
-                        {sk.importance}
+                        {t(sk.importance, sk.importance)}
                       </span>
                     </td>
 
@@ -261,8 +274,8 @@ export default function SkillGoals() {
                     </td>
 
                     <td style={{ padding: "0.9rem 1rem", color: "#475569" }}>
-                      <div>{sk.current_evidence}</div>
-                      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{sk.evidence_source}</span>
+                      <div>{t(sk.current_evidence, sk.current_evidence)}</div>
+                      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t(sk.evidence_source, sk.evidence_source)}</span>
                     </td>
 
                     <td style={{ padding: "0.9rem 1rem" }}>
@@ -287,7 +300,7 @@ export default function SkillGoals() {
                         fontWeight: 700,
                         color: sk.priority === "Satisfied" ? "#16a34a" : sk.priority?.includes("High") ? "#dc2626" : "#d97706"
                       }}>
-                        {sk.priority}
+                        {t(sk.priority, sk.priority)}
                       </span>
                     </td>
                   </tr>
@@ -317,7 +330,7 @@ export default function SkillGoals() {
               {recommendations.map((rec, i) => (
                 <div key={i} style={{ border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1.25rem", background: "#f8fafc" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                    <strong style={{ fontSize: "1rem", color: "#0f172a" }}>{rec.skill}</strong>
+                    <strong style={{ fontSize: "1rem", color: "#0f172a" }}>{t(rec.skill, rec.skill)}</strong>
                     <span style={{
                       fontSize: "0.75rem",
                       fontWeight: 700,
@@ -326,21 +339,21 @@ export default function SkillGoals() {
                       background: rec.priority?.includes("High") ? "#fee2e2" : "#fef3c7",
                       color: rec.priority?.includes("High") ? "#b91c1c" : "#b45309"
                     }}>
-                      {rec.priority}
+                      {t(rec.priority, rec.priority)}
                     </span>
                   </div>
 
                   <p style={{ margin: "0 0 0.75rem 0", fontSize: "0.8rem", color: "#475569", lineHeight: 1.5 }}>
-                    {rec.reason}
+                    {t(rec.reason, rec.reason)}
                   </p>
 
                   <div style={{ background: "white", padding: "0.75rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                     <div style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("skill_goals.curriculum_bridge_label", "Curriculum Bridge Module:")}</div>
                     <div style={{ fontWeight: 700, fontSize: "0.85rem", color: "#2563eb", marginTop: "0.2rem" }}>
-                      {rec.recommended_module}
+                      {t(rec.recommended_module, rec.recommended_module)}
                     </div>
                     <div style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "0.3rem" }}>
-                      {t("skill_goals.duration_label", "Duration:")} {rec.duration} • {t("skill_goals.nsqf_aligned", "NSQF Aligned")}
+                      {t("skill_goals.duration_label", "Duration:")} {t(rec.duration, rec.duration)} • {t("skill_goals.nsqf_aligned", "NSQF Aligned")}
                     </div>
                   </div>
                 </div>

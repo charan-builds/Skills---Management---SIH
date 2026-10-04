@@ -418,7 +418,7 @@ export default function Feedback() {
                           : "#64748b"
                     }}
                   >
-                    — {relevanceInterpretations[hoverRating || traineeRelevanceRating] || "Not Selected"}
+                    — {t(relevanceInterpretations[hoverRating || traineeRelevanceRating] || "Not Selected", relevanceInterpretations[hoverRating || traineeRelevanceRating] || "Not Selected")}
                   </span>
                   <span
                     style={{
@@ -515,12 +515,12 @@ export default function Feedback() {
                     <div>
                       <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{fb.skill}</strong>
                       <span style={{ fontSize: "0.8rem", color: "#64748b", display: "block" }}>
-                        {t("feedback.category_label", "Category:")} {fb.gap_type} • Recorded on {fb.timestamp?.split("T")[0] || "Recent"}
+                        {t("feedback.category_label", "Category:")} {t(fb.gap_type, fb.gap_type)} • {t("feedback.recorded_on", "Recorded on")} {fb.timestamp?.split("T")[0] || t("feedback.recent", "Recent")}
                       </span>
                     </div>
 
                     <span style={{ background: "#dcfce7", color: "#166534", padding: "4px 10px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                      ✓ {fb.status || "Included in Skill Intelligence"}
+                      ✓ {t(fb.status || "Included in Skill Intelligence", fb.status || "Included in Skill Intelligence")}
                     </span>
                   </div>
                 ))}

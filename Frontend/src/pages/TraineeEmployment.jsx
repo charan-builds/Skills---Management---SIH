@@ -50,39 +50,39 @@ export default function TraineeEmployment() {
     switch (currentStatus) {
       case "EMPLOYED":
         return {
-          label: "Reason / Context for Employment Status",
-          description: "Explain how you secured this role, relevant skills used, or any notes on your placement.",
-          placeholder: "e.g. Secured full-time employment through campus placement drive based on cloud infrastructure skills."
+          label: t("trainee_employment.reason_employed_label", "Reason / Context for Employment Status"),
+          description: t("trainee_employment.reason_employed_desc", "Explain how you secured this role, relevant skills used, or any notes on your placement."),
+          placeholder: t("trainee_employment.reason_employed_ph", "e.g. Secured full-time employment through campus placement drive based on cloud infrastructure skills.")
         };
       case "SELF_EMPLOYED":
         return {
-          label: "Reason / Context for Self-Employment Venture",
-          description: "Explain your venture rationale, freelance client base, or motivation for self-employment.",
-          placeholder: "e.g. Established independent tech consultancy focusing on web development for local businesses."
+          label: t("trainee_employment.reason_self_employed_label", "Reason / Context for Self-Employment Venture"),
+          description: t("trainee_employment.reason_self_employed_desc", "Explain your venture rationale, freelance client base, or motivation for self-employment."),
+          placeholder: t("trainee_employment.reason_self_employed_ph", "e.g. Established independent tech consultancy focusing on web development for local businesses.")
         };
       case "APPRENTICESHIP":
         return {
-          label: "Reason / Context for Apprenticeship",
-          description: "Explain your learning objectives or transition path to full-time employment.",
-          placeholder: "e.g. Selected apprenticeship to gain practical industrial plant experience in renewable energy."
+          label: t("trainee_employment.reason_apprentice_label", "Reason / Context for Apprenticeship"),
+          description: t("trainee_employment.reason_apprentice_desc", "Explain your learning objectives or transition path to full-time employment."),
+          placeholder: t("trainee_employment.reason_apprentice_ph", "e.g. Selected apprenticeship to gain practical industrial plant experience in renewable energy.")
         };
       case "UNEMPLOYED":
         return {
-          label: "Reason / Context for Seeking Job",
-          description: "Explain the reason or provide personal context for your current job search (e.g. skill gaps, interview experiences).",
-          placeholder: "e.g. I am currently looking for a job because I lack experience with the technical skills required in recent interviews."
+          label: t("trainee_employment.reason_unemployed_label", "Reason / Context for Seeking Job"),
+          description: t("trainee_employment.reason_unemployed_desc", "Explain the reason or provide personal context for your current job search (e.g. skill gaps, interview experiences)."),
+          placeholder: t("trainee_employment.reason_unemployed_ph", "e.g. I am currently looking for a job because I lack experience with the technical skills required in recent interviews.")
         };
       case "STUDYING_FURTHER":
         return {
-          label: "Reason / Context for Further Education",
-          description: "Explain why you chose to pursue advanced education and future career plans.",
-          placeholder: "e.g. Enrolled in higher technical diploma to qualify for specialized engineering roles."
+          label: t("trainee_employment.reason_studying_label", "Reason / Context for Further Education"),
+          description: t("trainee_employment.reason_studying_desc", "Explain why you chose to pursue advanced education and future career plans."),
+          placeholder: t("trainee_employment.reason_studying_ph", "e.g. Enrolled in higher technical diploma to qualify for specialized engineering roles.")
         };
       default:
         return {
-          label: "Reason / Comments on Current Status",
-          description: "Provide additional context or explanation regarding your current status.",
-          placeholder: "Describe the reason or context for your current employment status..."
+          label: t("trainee_employment.reason_default_label", "Reason / Comments on Current Status"),
+          description: t("trainee_employment.reason_default_desc", "Provide additional context or explanation regarding your current status."),
+          placeholder: t("trainee_employment.reason_default_ph", "Describe the reason or context for your current employment status...")
         };
     }
   };
@@ -233,16 +233,16 @@ export default function TraineeEmployment() {
               <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("trainee_employment.active_declared_status", "Active Declared Status:")}</span>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.25rem" }}>
                 <strong style={{ fontSize: "1.2rem", color: "#0f172a" }}>
-                  {currentEmp.status.replace("_", " ")}
+                  {t(currentEmp.status, currentEmp.status.replace("_", " "))}
                 </strong>
                 {currentEmp.employer_name && (
-                  <span style={{ color: "#475569" }}>at {currentEmp.employer_name}</span>
+                  <span style={{ color: "#475569" }}>{t("trainee_employment.at_prefix", "at")} {currentEmp.employer_name}</span>
                 )}
               </div>
               {(currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason) && (
                 <div style={{ marginTop: "0.4rem", fontSize: "0.85rem", color: "#475569", background: "#f8fafc", padding: "0.4rem 0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                  <span style={{ fontWeight: 600, color: "#334155" }}>{t("trainee_employment.recorded_context", "Recorded Context / Reason: ")}</span>
-                  <span style={{ fontStyle: "italic" }}>"{currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason}"</span>
+                  <span style={{ fontWeight: 600, color: "#334155" }}>{t("trainee_employment.recorded_context", "Recorded Context / Reason:")} </span>
+                  <span style={{ fontStyle: "italic" }}>"{t(currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason, currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason)}"</span>
                 </div>
               )}
             </div>
@@ -259,7 +259,7 @@ export default function TraineeEmployment() {
                   fontWeight: 700
                 }}
               >
-                {currentEmp.verification_status || "Pending"}
+                {t(currentEmp.verification_status || "Pending", currentEmp.verification_status || "Pending")}
               </span>
             </div>
           </div>
@@ -569,13 +569,13 @@ export default function TraineeEmployment() {
                   onChange={(e) => setUnemploymentReason(e.target.value)}
                   style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
                 >
-                  <option value="Lack of required skills">Lack of required skills (technical gaps in hiring interviews)</option>
-                  <option value="No suitable jobs">No suitable jobs matching profile in district</option>
-                  <option value="Location issues">Location / Relocation constraints</option>
-                  <option value="Salary too low">Offered compensation was below threshold</option>
-                  <option value="Lack of experience">Employers demanded prior experience</option>
-                  <option value="Further education">Preparing for higher education</option>
-                  <option value="Other">Other personal/family reasons</option>
+                  <option value="Lack of required skills">{t("trainee_employment.opt_lack_skills", "Lack of required skills (technical gaps in hiring interviews)")}</option>
+                  <option value="No suitable jobs">{t("trainee_employment.opt_no_jobs", "No suitable jobs matching profile in district")}</option>
+                  <option value="Location issues">{t("trainee_employment.opt_location", "Location / Relocation constraints")}</option>
+                  <option value="Salary too low">{t("trainee_employment.opt_salary_low", "Offered compensation was below threshold")}</option>
+                  <option value="Lack of experience">{t("trainee_employment.opt_lack_experience", "Employers demanded prior experience")}</option>
+                  <option value="Further education">{t("trainee_employment.opt_further_education", "Preparing for higher education")}</option>
+                  <option value="Other">{t("trainee_employment.opt_other", "Other personal/family reasons")}</option>
                 </select>
               </div>
 

@@ -317,12 +317,12 @@ export default function FollowUps() {
                           fontWeight: 700
                         }}
                       >
-                        {isNeedsVerification ? "Pending Verification" : isNeedsAssistance ? "Action Needed (Errors)" : fu.status}
+                        {isNeedsVerification ? t("follow_ups.pending_verification", "Pending Verification") : isNeedsAssistance ? t("follow_ups.action_needed_errors", "Action Needed (Errors)") : t(fu.status, fu.status)}
                       </span>
                     </div>
 
                     <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.2rem", color: "#0f172a" }}>
-                      {fu.milestone} Check-in
+                      {t(fu.milestone, fu.milestone)} {t("follow_ups.checkin_suffix", "Check-in")}
                     </h3>
 
                     <div style={{ fontSize: "0.85rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.5rem" }}>
@@ -402,7 +402,7 @@ export default function FollowUps() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                   <div>
                     <h3 style={{ margin: 0, fontSize: "1.25rem", color: "#0f172a" }}>
-                      {activeCheckin.milestone} {t("follow_ups.modal_checkin_title", "Outcome Check-in")}
+                      {t(activeCheckin.milestone, activeCheckin.milestone)} {t("follow_ups.modal_checkin_title", "Outcome Check-in")}
                     </h3>
                     <span style={{ fontSize: "0.8rem", color: "#64748b" }}>{t("follow_ups.modal_checkin_subtitle", "Outcome-focused career & wage progression assessment")}</span>
                   </div>
@@ -542,12 +542,12 @@ export default function FollowUps() {
                           onChange={(e) => setAttritionReason(e.target.value)}
                           style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                         >
-                          <option value="Low salary / inadequate compensation">Low salary / inadequate compensation</option>
-                          <option value="Relocation / location mismatch">Relocation / location mismatch</option>
-                          <option value="Lack of required skills / failed technical assessment">Lack of required skills / failed technical assessment</option>
-                          <option value="Family / personal reasons">Family / personal reasons</option>
-                          <option value="Company downsized / contract completed">Company downsized / contract completed</option>
-                          <option value="Enrolled in higher studies / competitive exams">Enrolled in higher studies / competitive exams</option>
+                          <option value="Low salary / inadequate compensation">{t("follow_ups.opt_attrition_low_salary", "Low salary / inadequate compensation")}</option>
+                          <option value="Relocation / location mismatch">{t("follow_ups.opt_attrition_relocation", "Relocation / location mismatch")}</option>
+                          <option value="Lack of required skills / failed technical assessment">{t("follow_ups.opt_attrition_lack_skills", "Lack of required skills / failed technical assessment")}</option>
+                          <option value="Family / personal reasons">{t("follow_ups.opt_attrition_family", "Family / personal reasons")}</option>
+                          <option value="Company downsized / contract completed">{t("follow_ups.opt_attrition_company", "Company downsized / contract completed")}</option>
+                          <option value="Enrolled in higher studies / competitive exams">{t("follow_ups.opt_attrition_studies", "Enrolled in higher studies / competitive exams")}</option>
                         </select>
                       </div>
 

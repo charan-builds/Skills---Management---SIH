@@ -206,7 +206,7 @@ export default function WageRetention() {
 
             <div style={{ marginTop: "1.5rem", borderTop: "1px solid #f1f5f9", paddingTop: "1rem" }}>
               <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                {t("wage_retention.active_base_label", "Active Base:")} <strong>₹{emp?.current_wage?.toLocaleString() || "Not Disclosed"}</strong>
+                {t("wage_retention.active_base_label", "Active Base:")} <strong>{emp?.current_wage ? `₹${emp.current_wage.toLocaleString()}` : t("wage_retention.not_disclosed", "Not Disclosed")}</strong>
               </span>
             </div>
           </div>
@@ -380,7 +380,7 @@ export default function WageRetention() {
                   }}
                 >
                   <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>
-                    {item.stage}
+                    {t(item.stage, item.stage)}
                   </span>
                   <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", margin: "0.25rem 0" }}>
                     ₹{item.amount?.toLocaleString()}

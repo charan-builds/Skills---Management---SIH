@@ -93,14 +93,14 @@ export default function TraineeProfile() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <User size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            CANDIDATE DEMOGRAPHICS & PROFILE
+            {t("trainee_profile.badge", "CANDIDATE DEMOGRAPHICS & PROFILE")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Trainee Profile & Settings
+          {t("trainee_profile.title", "Trainee Profile & Settings")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Manage your personal information, domicile district, and verified contact coordinates.
+          {t("trainee_profile.subtitle", "Manage your personal information, domicile district, and verified contact coordinates.")}
         </p>
       </div>
 
@@ -110,14 +110,14 @@ export default function TraineeProfile() {
         data={trainee}
         onRetry={loadData}
         isDataAvailable={(d) => Boolean(d)}
-        isEmptyDetails={`No profile found for ID: ${effectiveId}`}
+        isEmptyDetails={t("trainee_profile.empty_profile", `No profile found for ID: ${effectiveId}`)}
       >
         {trainee && (
           <div>
             {savedSuccess && (
               <div style={{ background: "#dcfce7", border: "1px solid #86efac", color: "#166534", padding: "0.85rem 1.25rem", borderRadius: "8px", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <CheckCircle2 size={18} />
-                <strong>Profile updated and synchronized successfully!</strong>
+                <strong>{t("trainee_profile.success_updated", "Profile updated and synchronized successfully!")}</strong>
               </div>
             )}
 
@@ -130,13 +130,13 @@ export default function TraineeProfile() {
                 <div>
                   <h3 style={{ margin: 0, fontSize: "1.25rem", color: "#0f172a" }}>{formData.name}</h3>
                   <span style={{ fontSize: "0.85rem", color: "#64748b" }}>
-                    ID: <strong>{trainee.id}</strong> • Enrolled in: <strong>{trainee.programme_name}</strong>
+                    {t("trainee_profile.id_label", "ID:")} <strong>{trainee.id}</strong> • {t("trainee_profile.enrolled_in", "Enrolled in:")} <strong>{trainee.programme_name}</strong>
                   </span>
                 </div>
               </div>
 
               <span style={{ background: "#dcfce7", color: "#15803d", padding: "4px 12px", borderRadius: "20px", fontSize: "0.8rem", fontWeight: 700 }}>
-                Consent: {trainee.consent?.status || "GIVEN"}
+                {t("trainee_profile.consent_label", "Consent:")} {t(trainee.consent?.status || "GIVEN", trainee.consent?.status || "GIVEN")}
               </span>
             </div>
 
@@ -145,7 +145,7 @@ export default function TraineeProfile() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginBottom: "1.5rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Full Legal Name
+                    {t("trainee_profile.full_name", "Full Legal Name")}
                   </label>
                   <input
                     type="text"
@@ -158,7 +158,7 @@ export default function TraineeProfile() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Phone Number
+                    {t("trainee_profile.phone_number", "Phone Number")}
                   </label>
                   <input
                     type="text"
@@ -171,7 +171,7 @@ export default function TraineeProfile() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Email Address
+                    {t("trainee_profile.email_address", "Email Address")}
                   </label>
                   <input
                     type="email"
@@ -184,7 +184,7 @@ export default function TraineeProfile() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Date of Birth (DOB)
+                    {t("trainee_profile.dob", "Date of Birth (DOB)")}
                   </label>
                   <input
                     type="date"
@@ -197,40 +197,40 @@ export default function TraineeProfile() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Gender
+                    {t("trainee_profile.gender", "Gender")}
                   </label>
                   <select
                     value={formData.gender}
                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                     style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
                   >
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
+                    <option value="Male">{t("Male", "Male")}</option>
+                    <option value="Female">{t("Female", "Female")}</option>
+                    <option value="Other">{t("Other", "Other")}</option>
                   </select>
                 </div>
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Domicile District
+                    {t("trainee_profile.district", "Domicile District")}
                   </label>
                   <select
                     value={formData.district}
                     onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                     style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
                   >
-                    <option value="Mumbai">Mumbai</option>
-                    <option value="Pune">Pune</option>
-                    <option value="Nagpur">Nagpur</option>
-                    <option value="Nashik">Nashik</option>
-                    <option value="Thane">Thane</option>
+                    <option value="Mumbai">{t("Mumbai", "Mumbai")}</option>
+                    <option value="Pune">{t("Pune", "Pune")}</option>
+                    <option value="Nagpur">{t("Nagpur", "Nagpur")}</option>
+                    <option value="Nashik">{t("Nashik", "Nashik")}</option>
+                    <option value="Thane">{t("Thane", "Thane")}</option>
                   </select>
                 </div>
               </div>
 
               <div style={{ marginBottom: "1.75rem" }}>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Residential Address
+                  {t("trainee_profile.address", "Residential Address")}
                 </label>
                 <textarea
                   value={formData.address}
@@ -251,10 +251,10 @@ export default function TraineeProfile() {
                         </div>
                         <div>
                           <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#166534", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                            Master-ID Cryptographically Linked (SHA-256)
+                            {t("trainee_profile.master_id_linked", "Master-ID Cryptographically Linked (SHA-256)")}
                           </span>
                           <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", marginTop: "0.1rem" }}>
-                            Aadhaar linked: •••• •••• {formData.aadhaar_last4 || "9012"}
+                            {t("trainee_profile.aadhaar_linked_prefix", "Aadhaar linked:")} •••• •••• {formData.aadhaar_last4 || "9012"}
                           </div>
                         </div>
                       </div>
@@ -272,11 +272,11 @@ export default function TraineeProfile() {
                           cursor: "pointer"
                         }}
                       >
-                        Update Aadhaar
+                        {t("trainee_profile.btn_update_aadhaar", "Update Aadhaar")}
                       </button>
                     </div>
                     <p style={{ margin: "0.6rem 0 0 0", fontSize: "0.78rem", color: "#15803d", lineHeight: "1.45" }}>
-                      ✓ Enables automated EPFO employment verification and links cross-programme skilling records. Stored strictly as a one-way SHA-256 hash — raw Aadhaar is never saved or exposed.
+                      {t("trainee_profile.epfo_desc", "✓ Enables automated EPFO employment verification and links cross-programme skilling records. Stored strictly as a one-way SHA-256 hash — raw Aadhaar is never saved or exposed.")}
                     </p>
                   </div>
                 ) : (
@@ -284,7 +284,7 @@ export default function TraineeProfile() {
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.4rem" }}>
                       <ShieldCheck size={18} color="#2563eb" />
                       <label style={{ fontSize: "0.85rem", fontWeight: 800, color: "#0f172a" }}>
-                        Aadhaar Number (for Employment Verification & Master-ID Linking)
+                        {t("trainee_profile.aadhaar_label", "Aadhaar Number (for Employment Verification & Master-ID Linking)")}
                       </label>
                     </div>
 
@@ -326,13 +326,13 @@ export default function TraineeProfile() {
                             whiteSpace: "nowrap"
                           }}
                         >
-                          Cancel
+                          {t("trainee_profile.btn_cancel", "Cancel")}
                         </button>
                       )}
                     </div>
 
                     <p style={{ margin: "0.55rem 0 0 0", fontSize: "0.78rem", color: "#64748b", lineHeight: "1.45" }}>
-                      🔒 <strong>Privacy Assurance:</strong> Used only to verify your employment status via EPFO and merge your records across PMKVY, state, or NGO programs. Stored as a secure one-way SHA-256 cryptographic hash — never displayed in full again.
+                      🔒 <strong>{t("trainee_profile.privacy_assurance_title", "Privacy Assurance:")}</strong> {t("trainee_profile.privacy_assurance_desc", "Used only to verify your employment status via EPFO and merge your records across PMKVY, state, or NGO programs. Stored as a secure one-way SHA-256 cryptographic hash — never displayed in full again.")}
                     </p>
                   </div>
                 )}
@@ -357,7 +357,7 @@ export default function TraineeProfile() {
                   }}
                 >
                   <Save size={18} />
-                  {saving ? "Saving Changes..." : "Save Profile Details"}
+                  {saving ? t("trainee_profile.btn_saving", "Saving Changes...") : t("trainee_profile.btn_save", "Save Profile Details")}
                 </button>
               </div>
             </form>

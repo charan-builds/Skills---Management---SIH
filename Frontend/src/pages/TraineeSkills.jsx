@@ -120,7 +120,20 @@ export default function TraineeSkills() {
         {/* AI Evidence Synthesis Banner (Section 26) */}
         <div style={{ background: "linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)", borderRadius: "14px", border: "1px solid #bfdbfe", padding: "1.5rem", marginBottom: "2rem" }}>
           <p style={{ margin: 0, fontSize: "0.95rem", color: "#1e293b", lineHeight: 1.6 }}>
-            {skillsData?.ai_insights}
+            {skillsData?.verified_skills?.length > 0 ? (
+              <>
+                {t("Based on available evidence from", "Based on available evidence from")} <strong>{skillsData.provider_name}</strong>, {t("your strongest certified competencies are", "your strongest certified competencies are")} <strong>{skillsData.verified_skills.slice(0, 3).map(v => t(v.skill, v.skill)).join(", ")}</strong>.{" "}
+                {skillsData.skill_gaps?.length > 0 ? (
+                  <>
+                    {t("For career progression,", "For career progression,")} <strong>{t(skillsData.skill_gaps[0].skill, skillsData.skill_gaps[0].skill)}</strong> {t("is identified as a priority focus area based on correlated trainee and employer feedback.", "is identified as a priority focus area based on correlated trainee and employer feedback.")}
+                  </>
+                ) : (
+                  t("Your assessed competencies align strongly with your completed programme, with zero critical workplace deficiencies currently reported.", "Your assessed competencies align strongly with your completed programme, with zero critical workplace deficiencies currently reported.")
+                )}
+              </>
+            ) : (
+              t(skillsData?.ai_insights, skillsData?.ai_insights)
+            )}
           </p>
         </div>
 
@@ -202,17 +215,17 @@ export default function TraineeSkills() {
               {verified.map((v, i) => (
                 <div key={i} style={{ border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1.25rem", background: "#f8fafc" }}>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                    <strong style={{ fontSize: "1rem", color: "#0f172a" }}>{v.skill}</strong>
+                    <strong style={{ fontSize: "1rem", color: "#0f172a" }}>{t(v.skill, v.skill)}</strong>
                     <span style={{ background: "#eff6ff", color: "#1d4ed8", fontSize: "0.75rem", fontWeight: 700, padding: "2px 8px", borderRadius: "6px" }}>
-                      {v.proficiency_score}% {t("trainee_skills.evaluated_suffix", "Evaluated")}
+                      {v.proficiency_score}% {t("Evaluated", "Evaluated")}
                     </span>
                   </div>
                   <div style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "0.75rem" }}>
-                    {t("trainee_skills.module_label", "Module:")} {v.module_name} ({v.duration_weeks} {t("trainee_skills.weeks_abbr", "Wks")})
+                    {t("Module:", "Module:")} {t(v.module_name, v.module_name)} ({v.duration_weeks} {t("Wks", "Wks")})
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.75rem", color: "#475569", borderTop: "1px solid #e2e8f0", paddingTop: "0.5rem" }}>
-                    <span>{t("trainee_skills.source_label", "Source:")} {v.evidence_source}</span>
-                    <span style={{ color: "#15803d", fontWeight: 700 }}>{t("trainee_skills.accredited_badge", "✓ Accredited")}</span>
+                    <span>{t("Source:", "Source:")} {t(v.evidence_source, v.evidence_source)}</span>
+                    <span style={{ color: "#15803d", fontWeight: 700 }}>{t("✓ Accredited", "✓ Accredited")}</span>
                   </div>
                 </div>
               ))}
@@ -242,10 +255,10 @@ export default function TraineeSkills() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.5rem" }}>
                     <div>
                       <h4 style={{ margin: "0 0 0.25rem 0", fontSize: "1.05rem", color: "#0f172a" }}>
-                        {gap.skill}
+                        {t(gap.skill, gap.skill)}
                       </h4>
                       <p style={{ margin: 0, fontSize: "0.85rem", color: "#475569" }}>
-                        {gap.why_it_matters}
+                        {t(gap.why_it_matters, gap.why_it_matters)}
                       </p>
                     </div>
 
@@ -257,16 +270,16 @@ export default function TraineeSkills() {
                       background: gap.priority?.includes("High") ? "#fee2e2" : "#fef3c7",
                       color: gap.priority?.includes("High") ? "#b91c1c" : "#b45309"
                     }}>
-                      {gap.priority}
+                      {t(gap.priority, gap.priority)}
                     </span>
                   </div>
 
                   <div style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", marginTop: "0.75rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
                     <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                      <strong>{t("trainee_skills.evidence_sources_label", "Evidence Sources:")}</strong> {gap.evidence_sources?.join(" • ")}
+                      <strong>{t("trainee_skills.evidence_sources_label", "Evidence Sources:")}</strong> {gap.evidence_sources?.map(s => t(s, s)).join(" • ")}
                     </div>
                     <div style={{ fontSize: "0.8rem", color: "#2563eb", fontWeight: 600 }}>
-                      {t("trainee_skills.suggested_label", "Suggested:")} {gap.suggested_module}
+                      {t("Suggested Bridge Module:", "Suggested Bridge Module:")} {t(gap.suggested_module, gap.suggested_module)}
                     </div>
                   </div>
                 </div>

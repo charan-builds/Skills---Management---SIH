@@ -1301,5 +1301,320 @@ export const DICTIONARY = {
   "Reason / Context for Self-Employment Venture": { hi: "स्व-रोजगार उद्यम का कारण / संदर्भ", mr: "स्वयंरोजगार उपक्रमाचे कारण / संदर्भ" },
   "Reason / Context for Apprenticeship": { hi: "शिक्षुता का कारण / संदर्भ", mr: "शिकाऊ उमेदवारीचे कारण / संदर्भ" },
   "Reason / Context for Seeking Job": { hi: "नौकरी की तलाश का कारण / संदर्भ", mr: "नोकरी शोधण्याचे कारण / संदर्भ" },
-  "Reason / Context for Further Education": { hi: "आगे की शिक्षा का कारण / संदर्भ", mr: "पुढील शिक्षणाचे कारण / संदर्भ" }
+  "Reason / Context for Further Education": { hi: "आगे की शिक्षा का कारण / संदर्भ", mr: "पुढील शिक्षणाचे कारण / संदर्भ" },
+
+  // AI Evidence Synthesis & Box Messages
+  "Based on available evidence from": { hi: "उपलब्ध साक्ष्य के आधार पर", mr: "उपलब्ध पुराव्यांच्या आधारे" },
+  "your strongest certified competencies are": { hi: "आपकी सबसे मजबूत प्रमाणित दक्षताएं हैं", mr: "तुमच्या सर्वात मजबूत प्रमाणित क्षमता आहेत" },
+  "For career progression,": { hi: "करियर की प्रगति के लिए,", mr: "करिअरच्या प्रगतीसाठी," },
+  "is identified as a priority focus area based on correlated trainee and employer feedback.": {
+    hi: "प्रशिक्षु और नियोक्ता की सहसंबद्ध प्रतिक्रिया के आधार पर प्राथमिकता क्षेत्र के रूप में पहचाना गया है।",
+    mr: "प्रशिक्षणार्थी आणि नियोक्त्यांच्या परस्पर अभिप्रायाच्या आधारे प्राधान्य क्षेत्र म्हणून ओळखले गेले आहे."
+  },
+  "Your assessed competencies align strongly with your completed programme, with zero critical workplace deficiencies currently reported.": {
+    hi: "आपकी मूल्यांकित दक्षताएं आपके पूर्ण किए गए कार्यक्रम के साथ दृढ़ता से संरेखित हैं, और वर्तमान में कोई महत्वपूर्ण कार्यस्थल कमी रिपोर्ट नहीं की गई है।",
+    mr: "तुमच्या मूल्यांकन केलेल्या क्षमता तुमच्या पूर्ण केलेल्या कार्यक्रमाशी सुसंगत आहेत, आणि सध्या कोणतीही गंभीर त्रुटी नोंदवलेली नाही."
+  },
+  "Some partial training records exist, but coursework evaluations are incomplete. Complete remaining module assessments to establish verified skill benchmarks.": {
+    hi: "कुछ आंशिक प्रशिक्षण रिकॉर्ड मौजूद हैं, लेकिन कोर्सवर्क मूल्यांकन अधूरा है। सत्यापित कौशल बेंचमार्क स्थापित करने के लिए शेष मॉड्यूल मूल्यांकन पूरा करें।",
+    mr: "काही अंशतः प्रशिक्षण नोंदी अस्तित्वात आहेत, परंतु अभ्यासक्रम मूल्यमापन अपूर्ण आहे. पडताळणी केलेले कौशल्य निकष स्थापित करण्यासाठी उर्वरित मॉड्यूल मूल्यांकन पूर्ण करा."
+  },
+  "No verified assessment records are currently attached to this profile. Complete a certified programme to establish evidence-backed skill profiles.": {
+    hi: "वर्तमान में इस प्रोफ़ाइल से कोई सत्यापित मूल्यांकन रिकॉर्ड संलग्न नहीं है। साक्ष्य-समर्थित कौशल प्रोफ़ाइल स्थापित करने के लिए एक प्रमाणित कार्यक्रम पूरा करें।",
+    mr: "सध्या या प्रोफाइलशी कोणत्याही पडताळणी केलेल्या मूल्यमापन नोंदी जोडलेल्या नाहीत. पुरावा-आधारित कौशल्य प्रोफाइल तयार करण्यासाठी प्रमाणित कार्यक्रम पूर्ण करा."
+  },
+
+  // Target Role & Skill Benchmarks
+  "Occupational comparison against": { hi: "के विरुद्ध व्यावसायिक तुलना", mr: "विरुद्ध व्यावसायिक तुलना" },
+  "indicates": { hi: "दर्शाता है", mr: "दर्शवते" },
+  "readiness": { hi: "तत्परता", mr: "सज्जता" },
+  "competencies verified": { hi: "दक्षताएं सत्यापित", mr: "क्षमता पडताळल्या" },
+  "Bridging the": { hi: "को पाटना", mr: "भरून काढणे" },
+  "missing competencies": { hi: "अनुपलब्ध दक्षताएं", mr: "गहाळ क्षमता" },
+  "via targeted bridge modules will elevate your profile to full occupational alignment.": {
+    hi: "लक्षित ब्रिज मॉड्यूल के माध्यम से आपकी प्रोफ़ाइल को पूर्ण व्यावसायिक संरेखण तक ले जाएगा।",
+    mr: "लक्षित ब्रिज मॉड्यूल्सद्वारे तुमचे प्रोफाइल पूर्ण व्यावसायिक संरेखनापर्यंत पोहोचवेल."
+  },
+  "Your competencies fully satisfy all occupational requirements for this role.": {
+    hi: "आपकी दक्षताएं इस भूमिका के लिए सभी व्यावसायिक आवश्यकताओं को पूरी तरह से संतुष्ट करती हैं।",
+    mr: "तुमच्या क्षमता या भूमिकेसाठी सर्व व्यावसायिक गरजा पूर्णपणे पूर्ण करतात."
+  },
+
+  // Common Skills & Modules in Trainee Role
+  "Emergency Triage": { hi: "आपातकालीन ट्राइएज", mr: "आणीबाणी ट्रायज" },
+  "Diagnostics Equipment": { hi: "निदान उपकरण", mr: "निदान उपकरणे" },
+  "EHR Management": { hi: "ईएचआर प्रबंधन", mr: "EHR व्यवस्थापन" },
+  "Dialysis Equipment Handling": { hi: "डायलिसिस उपकरण हैंडलिंग", mr: "डायलिसिस उपकरण हाताळणी" },
+  "Patient Vital Monitoring": { hi: "मरीज की महत्वपूर्ण निगरानी", mr: "रुग्ण तपासणी देखरेख" },
+  "Clinical Phlebotomy & Sampling": { hi: "क्लिनिकल फ्लेबोटोमी और नमूनाकरण", mr: "क्लिनिकल फ्लेबोटोमी आणि नमुने गोळा करणे" },
+  "Infection Control Protocols": { hi: "संक्रमण नियंत्रण प्रोटोकॉल", mr: "संसर्ग नियंत्रण नियम" },
+  "PLC Programming & Calibration": { hi: "पीएलसी प्रोग्रामिंग और कैलिब्रेशन", mr: "PLC प्रोग्रामिंग आणि कॅलिब्रेशन" },
+  "CNC Machine Operation": { hi: "सीएनसी मशीन संचालन", mr: "CNC मशीन ऑपरेशन" },
+  "Welding & Fabrication": { hi: "वेल्डिंग और फैब्रिकेशन", mr: "वेल्डिंग आणि फॅब्रिकेशन" },
+  "Full Stack Web Development": { hi: "फुल स्टैक वेब डेवलपमेंट", mr: "फुल स्टॅक वेब डेव्हलपमेंट" },
+  "Cloud Architecture": { hi: "क्लाउड आर्किटेक्चर", mr: "क्लाउड आर्किटेक्चर" },
+  "Cybersecurity Fundamentals": { hi: "साइबर सुरक्षा मूल बातें", mr: "सायबर सुरक्षा मूलभूत तत्त्वे" },
+  "Solar PV Installation": { hi: "सोलर पीवी इंस्टॉलेशन", mr: "सोलर पीव्ही इन्स्टॉलेशन" },
+  "EV Battery Maintenance": { hi: "ईवी बैटरी रखरखाव", mr: "EV बॅटरी देखभाल" },
+  "Evaluated": { hi: "मूल्यांकित", mr: "मूल्यांकन केले" },
+  "Module:": { hi: "मॉड्यूल:", mr: "मॉड्यूल:" },
+  "Wks": { hi: "सप्ताह", mr: "आठवडे" },
+  "Source:": { hi: "स्रोत:", mr: "स्रोत:" },
+  "✓ Accredited": { hi: "✓ मान्यता प्राप्त", mr: "✓ मान्यताप्राप्त" },
+  "Suggested Bridge Module:": { hi: "सुझाया गया ब्रिज मॉड्यूल:", mr: "सुचवलेले ब्रिज मॉड्यूल:" },
+  "Actionable Gap": { hi: "कार्रवाई योग्य अंतर", mr: "कृतीयोग्य तूट" },
+  "Supported": { hi: "समर्थित", mr: "समर्थित" },
+  "Needs Improvement": { hi: "सुधार की आवश्यकता", mr: "सुधारणा आवश्यक" },
+  "Gap": { hi: "अंतर", mr: "तूट" },
+  "Satisfied": { hi: "संतुष्ट", mr: "समाधानी" },
+  "Critical": { hi: "गंभीर", mr: "गंभीर" },
+  "High Priority": { hi: "उच्च प्राथमिकता", mr: "उच्च प्राधान्य" },
+  "Medium Priority": { hi: "मध्यम प्राथमिकता", mr: "मध्यम प्राधान्य" },
+  "Low Priority": { hi: "निम्न प्राथमिकता", mr: "कमी प्राधान्य" },
+  "Supported Competencies": { hi: "समर्थित दक्षताएं", mr: "समर्थित क्षमता" },
+  "SKILL GAPS": { hi: "कौशल अंतर", mr: "कौशल्य तूट" },
+  "BRIDGING": { hi: "पाटना", mr: "भरून काढणे" },
+  "Proficiency": { hi: "प्रवीणता", mr: "प्रवीणता" },
+  "Current Starting Point": { hi: "वर्तमान प्रारंभिक बिंदु", mr: "सध्याचा सुरुवातीचा बिंदू" },
+  "Target Benchmark": { hi: "लक्षित बेंचमार्क", mr: "लक्षित निकष" },
+  "Readiness:": { hi: "तत्परता:", mr: "सज्जता:" },
+  "Select Occupational Target Role Benchmark:": { hi: "व्यावसायिक लक्षित भूमिका बेंचमार्क चुनें:", mr: "व्यावसायिक लक्षित भूमिका निकष निवडा:" },
+  "BENCHMARK COVERAGE": { hi: "बेंचमार्क कवरेज", mr: "निकष व्याप्ती" },
+  "TYPICAL WAGE BAND": { hi: "विशिष्ट वेतन बैंड", mr: "विशिष्ट वेतन श्रेणी" },
+  "Occupational Focus:": { hi: "व्यावसायिक फोकस:", mr: "व्यावसायिक भर:" },
+  "Career Transition Pathway & Progression": { hi: "करियर संक्रमण मार्ग और प्रगति", mr: "करिअर संक्रमण मार्ग आणि प्रगती" },
+  "Occupational Skill Requirements & Evidence Comparison": { hi: "व्यावसायिक कौशल आवश्यकताएं और साक्ष्य तुलना", mr: "व्यावसायिक कौशल्य आवश्यकता आणि पुरावा तुलना" },
+  "Comparing required occupational skills against your verified coursework and workplace assessments.": {
+    hi: "आपके सत्यापित कोर्सवर्क और कार्यस्थल मूल्यांकन के विरुद्ध आवश्यक व्यावसायिक कौशल की तुलना।",
+    mr: "तुमच्या पडताळणी केलेल्या अभ्यासक्रम आणि कार्यस्थळ मूल्यमापनासह आवश्यक व्यावसायिक कौशल्यांची तुलना."
+  },
+
+  // Trainee Profile
+  "CANDIDATE DEMOGRAPHICS & PROFILE": { hi: "उम्मीदवार जनसांख्यिकी और प्रोफ़ाइल", mr: "उमेदवार लोकसंख्याशास्त्र आणि प्रोफाइल" },
+  "Trainee Profile & Settings": { hi: "प्रशिक्षु प्रोफ़ाइल और सेटिंग्स", mr: "प्रशिक्षणार्थी प्रोफाइल आणि सेटिंग्ज" },
+  "Manage your personal information, domicile district, and verified contact coordinates.": {
+    hi: "अपनी व्यक्तिगत जानकारी, अधिवास जिला और सत्यापित संपर्क विवरण प्रबंधित करें।",
+    mr: "तुमची वैयक्तिक माहिती, अधिवास जिल्हा आणि पडताळणी केलेले संपर्क तपशील व्यवस्थापित करा."
+  },
+  "Profile updated and synchronized successfully!": {
+    hi: "प्रोफ़ाइल सफलतापूर्वक अपडेट और सिंक्रनाइज़ की गई!",
+    mr: "प्रोफाइल यशस्वीरित्या अपडेट आणि समक्रमित केले!"
+  },
+  "Full Legal Name": { hi: "पूरा कानूनी नाम", mr: "पूर्ण कायदेशीर नाव" },
+  "Phone Number": { hi: "फ़ोन नंबर", mr: "फोन नंबर" },
+  "Email Address": { hi: "ईमेल पता", mr: "ईमेल पत्ता" },
+  "Date of Birth (DOB)": { hi: "जन्म तिथि (DOB)", mr: "जन्मतारीख (DOB)" },
+  "Gender": { hi: "लिंग", mr: "लिंग" },
+  "Male": { hi: "पुरुष", mr: "पुरुष" },
+  "Female": { hi: "महिला", mr: "महिला" },
+  "Other": { hi: "अन्य", mr: "इतर" },
+  "Domicile District": { hi: "मूल निवास ज़िला", mr: "अधिवास जिल्हा" },
+  "Residential Address": { hi: "आवासीय पता", mr: "निवासी पत्ता" },
+  "Master-ID Cryptographically Linked (SHA-256)": { hi: "मास्टर-आईडी क्रिप्टोग्राफ़िक रूप से लिंक (SHA-256)", mr: "मास्टर-आयडी क्रिप्टोग्राफिकली लिंक केले (SHA-256)" },
+  "Update Aadhaar": { hi: "आधार अपडेट करें", mr: "आधार अपडेट करा" },
+  "Aadhaar Number (for Employment Verification & Master-ID Linking)": { hi: "आधार नंबर (रोज़गार सत्यापन और मास्टर-आईडी लिंकिंग के लिए)", mr: "आधार क्रमांक (रोजगार पडताळणी आणि मास्टर-आयडी लिंकिंगसाठी)" },
+  "Save Profile Details": { hi: "प्रोफ़ाइल विवरण सहेजें", mr: "प्रोफाइल तपशील जतन करा" },
+  "Saving Changes...": { hi: "परिवर्तन सहेजे जा रहे हैं...", mr: "बदल जतन करत आहे..." },
+
+  // Trainee Employment
+  "Reason / Context for Employment Status": { hi: "रोज़गार स्थिति का कारण / संदर्भ", mr: "रोजगार स्थितीचे कारण / संदर्भ" },
+  "Explain how you secured this role, relevant skills used, or any notes on your placement.": {
+    hi: "बताएं कि आपने यह पद कैसे प्राप्त किया, उपयोग किए गए प्रासंगिक कौशल, या अपने प्लेसमेंट पर कोई नोट।",
+    mr: "तुम्हाला ही भूमिका कशी मिळाली, वापरलेली संबंधित कौशल्ये किंवा तुमच्या प्लेसमेंटवरील नोंदी स्पष्ट करा."
+  },
+  "e.g. Secured full-time employment through campus placement drive based on cloud infrastructure skills.": {
+    hi: "उदा. क्लाउड इंफ्रास्ट्रक्चर कौशल के आधार पर कैंपस प्लेसमेंट ड्राइव के माध्यम से पूर्णकालिक रोज़गार प्राप्त किया।",
+    mr: "उदा. क्लाउड इन्फ्रास्ट्रक्चर कौशल्यांवर आधारित कॅम्पस प्लेसमेंट ड्राइव्हद्वारे पूर्णवेळ रोजगार मिळवला."
+  },
+  "Reason / Context for Self-Employment Venture": { hi: "स्व-रोज़गार उद्यम का कारण / संदर्भ", mr: "स्वयंरोजगार उपक्रमाचे कारण / संदर्भ" },
+  "Explain your venture rationale, freelance client base, or motivation for self-employment.": {
+    hi: "अपने उद्यम के कारण, फ्रीलांस ग्राहक आधार, या स्व-रोज़गार की प्रेरणा को समझाएं।",
+    mr: "तुमच्या उपक्रमाचे कारण, फ्रीलान्स ग्राहक आधार किंवा स्वयंरोजगाराची प्रेरणा स्पष्ट करा."
+  },
+  "Reason / Context for Apprenticeship": { hi: "शिक्षुता (अप्रेंटिसशिप) का कारण / संदर्भ", mr: "शिकाऊ उमेदवारीचे कारण / संदर्भ" },
+  "Explain your learning objectives or transition path to full-time employment.": {
+    hi: "अपने सीखने के उद्देश्यों या पूर्णकालिक रोज़गार के संक्रमण पथ को समझाएं।",
+    mr: "तुमचे शिकण्याचे उद्दिष्ट किंवा पूर्णवेळ रोजगाराचा संक्रमण मार्ग स्पष्ट करा."
+  },
+  "Reason / Context for Seeking Job": { hi: "नौकरी की तलाश का कारण / संदर्भ", mr: "नोकरी शोधण्याचे कारण / संदर्भ" },
+  "Explain the reason or provide personal context for your current job search (e.g. skill gaps, interview experiences).": {
+    hi: "कारण समझाएं या अपनी वर्तमान नौकरी की तलाश के लिए व्यक्तिगत संदर्भ प्रदान करें (जैसे कौशल अंतर, साक्षात्कार अनुभव)।",
+    mr: "कारण स्पष्ट करा किंवा तुमच्या सध्याच्या नोकरीच्या शोधासाठी वैयक्तिक संदर्भ द्या (उदा. कौशल्य अंतर, मुलाखतीचे अनुभव)."
+  },
+  "Reason / Context for Further Education": { hi: "उच्च शिक्षा का कारण / संदर्भ", mr: "पुढील शिक्षणाचे कारण / संदर्भ" },
+  "Explain why you chose to pursue advanced education and future career plans.": {
+    hi: "समझाएं कि आपने उच्च शिक्षा और भविष्य की करियर योजनाओं को क्यों चुना।",
+    mr: "तुम्ही उच्च शिक्षण आणि भविष्यातील करिअर योजना का निवडल्या ते स्पष्ट करा."
+  },
+  "Reason / Comments on Current Status": { hi: "वर्तमान स्थिति पर कारण / टिप्पणियां", mr: "सध्याच्या स्थितीवर कारण / टिप्पण्या" },
+  "Provide additional context or explanation regarding your current status.": {
+    hi: "अपनी वर्तमान स्थिति के संबंध में अतिरिक्त संदर्भ या स्पष्टीकरण प्रदान करें।",
+    mr: "तुमच्या सध्याच्या स्थितीबाबत अतिरिक्त संदर्भ किंवा स्पष्टीकरण द्या."
+  },
+  "Describe the reason or context for your current employment status...": {
+    hi: "अपनी वर्तमान रोज़गार स्थिति का कारण या संदर्भ बताएं...",
+    mr: "तुमच्या सध्याच्या रोजगार स्थितीचे कारण किंवा संदर्भ वर्णन करा..."
+  },
+  "Active Declared Status:": { hi: "सक्रिय घोषित स्थिति:", mr: "सक्रिय घोषित स्थिती:" },
+  "Recorded Context / Reason:": { hi: "दर्ज संदर्भ / कारण:", mr: "नोंदवलेला संदर्भ / कारण:" },
+  "Verification State:": { hi: "सत्यापन स्थिति:", mr: "पडताळणी स्थिती:" },
+  "Correction Requested": { hi: "सुधार का अनुरोध किया गया", mr: "दुरुस्तीची विनंती केली" },
+  "Correction Requested Notice": { hi: "सुधार अनुरोध सूचना", mr: "दुरुस्ती विनंती सूचना" },
+  "Employer Requested Information Correction": { hi: "नियोक्ता ने जानकारी सुधार का अनुरोध किया", mr: "नियोक्त्याने माहिती दुरुस्तीची विनंती केली" },
+  "Lack of required skills (technical gaps in hiring interviews)": {
+    hi: "आवश्यक कौशल की कमी (साक्षात्कार में तकनीकी अंतर)",
+    mr: "आवश्यक कौशल्यांचा अभाव (मुलाखतींमध्ये तांत्रिक तूट)"
+  },
+  "No suitable jobs matching profile in district": {
+    hi: "जिले में प्रोफ़ाइल से मेल खाने वाली कोई उपयुक्त नौकरी नहीं",
+    mr: "जिल्ह्यात प्रोफाइलशी जुळणाऱ्या योग्य नोकऱ्या नाहीत"
+  },
+  "Location / Relocation constraints": { hi: "स्थान / स्थानांतरण बाधाएं", mr: "स्थान / स्थलांतर अडचणी" },
+  "Offered compensation was below threshold": { hi: "प्रस्तावित वेतन सीमा से कम था", mr: "ऑफर केलेले वेतन अपेक्षेपेक्षा कमी होते" },
+  "Employers demanded prior experience": { hi: "नियोक्ताओं ने पूर्व अनुभव की मांग की", mr: "नियोक्त्यांनी पूर्वीच्या अनुभवाची मागणी केली" },
+  "Preparing for higher education": { hi: "उच्च शिक्षा की तैयारी", mr: "उच्च शिक्षणाची तयारी" },
+  "Other personal/family reasons": { hi: "अन्य व्यक्तिगत/पारिवारिक कारण", mr: "इतर वैयक्तिक/कौटुंबिक कारणे" },
+
+  // Wage Retention & Progression
+  "Periodic Retention Check-in": { hi: "आवधिक प्रतिधारण (रिटेंशन) चेक-इन", mr: "नियतकालिक टिकून राहणे (रिटेन्शन) तपासणी" },
+  "Periodic verification ensuring government outcome integrity.": {
+    hi: "सरकारी परिणाम सत्यनिष्ठा सुनिश्चित करने वाला आवधिक सत्यापन।",
+    mr: "शासकीय परिणाम सत्यता सुनिश्चित करणारी नियतकालिक पडताळणी."
+  },
+  "Yes, Still Working": { hi: "हाँ, अभी भी कार्यरत हैं", mr: "होय, अजूनही काम करत आहे" },
+  "No, Left Employment": { hi: "नहीं, रोज़गार छोड़ दिया", mr: "नाही, रोजगार सोडला" },
+  "Changed Job": { hi: "नौकरी बदली", mr: "नोकरी बदलली" },
+  "Update Current Wage": { hi: "वर्तमान वेतन अपडेट करें", mr: "सध्याचे वेतन अपडेट करा" },
+  "Record Wage Increase": { hi: "वेतन वृद्धि दर्ज करें", mr: "वेतनवाढ नोंदवा" },
+  "Record Exit Status": { hi: "कार्यमुक्ति स्थिति दर्ज करें", mr: "बाहेर पडण्याची स्थिती नोंदवा" },
+  "Save New Employment": { hi: "नया रोज़गार सहेजें", mr: "नवीन रोजगार जतन करा" },
+  "Your Wage Growth Trajectory (Authoritative Timeline)": { hi: "आपका वेतन वृद्धि प्रक्षेपवक्र (प्रामाणिक समयरेखा)", mr: "तुमचा वेतन वाढीचा आलेख (अधिकृत टाइमलाइन)" },
+  "Initial Placement Wage": { hi: "प्रारंभिक प्लेसमेंट वेतन", mr: "सुरुवातीचे प्लेसमेंट वेतन" },
+  "3-Month Appraisal": { hi: "3-महीने का मूल्यांकन", mr: "३ महिन्यांचे मूल्यमापन" },
+  "6-Month Review": { hi: "6-महीने की समीक्षा", mr: "६ महिन्यांचा आढावा" },
+  "12-Month Annual Appraisal": { hi: "12-महीने का वार्षिक मूल्यांकन", mr: "१२ महिन्यांचे वार्षिक मूल्यमापन" },
+  "Promotion / Role Elevation": { hi: "पदोन्नति / भूमिका में वृद्धि", mr: "पदोन्नती / भूमिका वाढ" },
+  "Periodic Wage Update": { hi: "आवधिक वेतन अपडेट", mr: "नियतकालिक वेतन अपडेट" },
+  "Low salary / Insufficient compensation": { hi: "कम वेतन / अपर्याप्त मुआवज़ा", mr: "कमी पगार / अपुरी भरपाई" },
+  "Found better opportunity elsewhere": { hi: "अन्यत्र बेहतर अवसर मिला", mr: "इतरत्र चांगली संधी मिळाली" },
+  "Skill mismatch with daily responsibilities": { hi: "दैनिक जिम्मेदारियों के साथ कौशल बेमेल", mr: "दैनंदिन जबाबदाऱ्यांशी कौशल्य विसंगती" },
+  "Poor working conditions": { hi: "खराब कामकाजी परिस्थितियां", mr: "कामाच्या वाईट परिस्थिती" },
+  "Relocation / Distance & transport issues": { hi: "स्थानांतरण / दूरी और परिवहन संबंधी समस्याएं", mr: "स्थलांतर / अंतर आणि वाहतूक समस्या" },
+  "Contract / Temporary tenure ended": { hi: "अनुबंध / अस्थायी कार्यकाल समाप्त", mr: "करार / तात्पुरता कार्यकाळ संपला" },
+  "Personal or family commitments": { hi: "व्यक्तिगत या पारिवारिक प्रतिबद्धताएं", mr: "वैयक्तिक किंवा कौटुंबिक कारणे" },
+  "Other reasons": { hi: "अन्य कारण", mr: "इतर कारणे" },
+
+  // Follow-ups
+  "Periodic Outcome Follow-ups": { hi: "आवधिक परिणाम फॉलो-अप", mr: "नियतकालिक निकाल पाठपुरावा" },
+  "Mandatory milestone check-ins ensuring continuous support, wage tracking, and state career assistance.": {
+    hi: "निरंतर सहायता, वेतन ट्रैकिंग और राज्य करियर सहायता सुनिश्चित करने वाले अनिवार्य मील का पत्थर चेक-इन।",
+    mr: "सतत सहाय्य, वेतन ट्रॅकिंग आणि राज्य करिअर मदत सुनिश्चित करणारे अनिवार्य टप्पा चेक-इन."
+  },
+  "Outcome Check-in": { hi: "परिणाम चेक-इन", mr: "निकाल तपासणी" },
+  "Outcome-focused career & wage progression assessment": { hi: "परिणाम-केंद्रित करियर और वेतन प्रगति मूल्यांकन", mr: "निकाल-केंद्रित करिअर आणि वेतन प्रगती मूल्यमापन" },
+  "1. Are you currently working?": { hi: "1. क्या आप वर्तमान में कार्यरत हैं?", mr: "१. तुम्ही सध्या काम करत आहात का?" },
+  "Yes, currently working": { hi: "हाँ, वर्तमान में कार्यरत हैं", mr: "होय, सध्या काम करत आहे" },
+  "No, not working": { hi: "नहीं, कार्यरत नहीं हैं", mr: "नाही, काम करत नाही" },
+  "Yes — Still with same employer": { hi: "हाँ — अभी भी उसी नियोक्ता के साथ हैं", mr: "होय — अजूनही त्याच नियोक्त्याकडे आहे" },
+  "No — Changed job to a new employer": { hi: "नहीं — नए नियोक्ता के पास नौकरी बदली", mr: "नाही — नवीन नियोक्त्याकडे नोकरी बदलली" },
+  "Yes — Core skills directly applied daily": { hi: "हाँ — मुख्य कौशल सीधे दैनिक रूप से लागू होते हैं", mr: "होय — मुख्य कौशल्ये दररोज थेट वापरली जातात" },
+  "Partially — Some modules useful, others missing": { hi: "आंशिक रूप से — कुछ मॉड्यूल उपयोगी, अन्य अनुपस्थित", mr: "अंशतः — काही मॉड्यूल्स उपयुक्त, इतर गहाळ" },
+  "No — Job role requires completely different skills": { hi: "नहीं — नौकरी की भूमिका के लिए पूरी तरह से अलग कौशल की आवश्यकता है", mr: "नाही — नोकरीच्या भूमिकेसाठी पूर्णपणे वेगळी कौशल्ये आवश्यक आहेत" },
+  "Low salary / inadequate compensation": { hi: "कम वेतन / अपर्याप्त मुआवज़ा", mr: "कमी पगार / अपुरी भरपाई" },
+  "Relocation / location mismatch": { hi: "स्थानांतरण / स्थान बेमेल", mr: "स्थलांतर / स्थान विसंगती" },
+  "Lack of required skills / failed technical assessment": { hi: "आवश्यक कौशल की कमी / तकनीकी मूल्यांकन में असफल", mr: "आवश्यक कौशल्यांचा अभाव / तांत्रिक मूल्यमापनात अयशस्वी" },
+  "Family / personal reasons": { hi: "पारिवारिक / व्यक्तिगत कारण", mr: "कौटुंबिक / वैयक्तिक कारणे" },
+  "Company downsized / contract completed": { hi: "कंपनी में छंटनी / अनुबंध पूरा हुआ", mr: "कंपनीने कर्मचारी कमी केले / करार पूर्ण झाला" },
+  "Enrolled in higher studies / competitive exams": { hi: "उच्च अध्ययन / प्रतियोगी परीक्षाओं में नामांकित", mr: "उच्च शिक्षण / स्पर्धा परीक्षांमध्ये प्रवेश घेतला" },
+  "Yes — Connect me to state employment drives": { hi: "हाँ — मुझे राज्य रोज़गार मेलों से जोड़ें", mr: "होय — मला राज्य रोजगार मोहिमांशी जोडा" },
+  "No — Not actively seeking at this time": { hi: "नहीं — इस समय सक्रिय रूप से तलाश नहीं कर रहे हैं", mr: "नाही — सध्या सक्रियपणे शोधत नाही" },
+  "Pre-fill Check-in": { hi: "चेक-इन पूर्व-भरें", mr: "तपासणी आधीच भरा" },
+  "Complete Check-in Now": { hi: "अब चेक-इन पूरा करें", mr: "आता तपासणी पूर्ण करा" },
+  "Pending Verification": { hi: "सत्यापन लंबित", mr: "पडताळणी प्रलंबित" },
+  "Response Submitted (Awaiting Nodal Review)": { hi: "प्रतिक्रिया सबमिट की गई (नोडल समीक्षा की प्रतीक्षा)", mr: "प्रतिसाद सबमिट केला (नोडल पुनरावलोकनाची प्रतीक्षा)" },
+  "Completed on": { hi: "को पूर्ण हुआ", mr: "रोजी पूर्ण झाले" },
+  "Due Date:": { hi: "नियत तिथि:", mr: "देय तारीख:" },
+
+  // Feedback & Relevance
+  "My Training Relevance & Skill Feedback": { hi: "मेरी प्रशिक्षण प्रासंगिकता और कौशल प्रतिक्रिया", mr: "माझी प्रशिक्षण सुसंगतता आणि कौशल्य अभिप्राय" },
+  "Report training relevance and missing workplace skills. Your reports feed Skill Intelligence as trainee-perceived evidence without overwriting verified credentials.": {
+    hi: "प्रशिक्षण प्रासंगिकता और कार्यस्थल में अनुपस्थित कौशल की रिपोर्ट करें। आपकी रिपोर्ट सत्यापित प्रमाण-पत्रों को अधिलेखित किए बिना प्रशिक्षु-कथित साक्ष्य के रूप में कौशल इंटेलिजेंस को पोषित करती है।",
+    mr: "प्रशिक्षण सुसंगतता आणि कार्यस्थळावरील गहाळ कौशल्यांची नोंद करा. तुमचे अहवाल पडताळणी केलेली प्रमाणपत्रे न बदलता प्रशिक्षणार्थी-अनुभवी पुरावा म्हणून कौशल्य इंटेलिजन्सला पुरवले जातात."
+  },
+  "How Your Feedback Feeds Skill Intelligence": { hi: "आपकी प्रतिक्रिया कौशल इंटेलिजेंस को कैसे पोषित करती है", mr: "तुमचा अभिप्राय कौशल्य इंटेलिजन्सला कसा मदत करतो" },
+  "We synthesize three independent evidence sources to determine upskilling priorities without altering your verified credentials.": {
+    hi: "हम आपके सत्यापित क्रेडेंशियल्स में बदलाव किए बिना अपस्किलिंग प्राथमिकताओं को निर्धारित करने के लिए तीन स्वतंत्र साक्ष्य स्रोतों को संश्लेषित करते हैं।",
+    mr: "आम्ही तुमची पडताळणी केलेली प्रमाणपत्रे न बदलता कौशल्यवाढीचे प्राधान्यक्रम ठरवण्यासाठी तीन स्वतंत्र पुरावे एकत्र करतो."
+  },
+  "STEP 1: TRAINEE": { hi: "चरण 1: प्रशिक्षु", mr: "पायरी १: प्रशिक्षणार्थी" },
+  "Reports Missing Skill": { hi: "अनुपस्थित कौशल की रिपोर्ट करता है", mr: "गहाळ कौशल्याची नोंद करतो" },
+  "STEP 2: EMPLOYER": { hi: "चरण 2: नियोक्ता", mr: "पायरी २: नियोक्ता" },
+  "Observes Deficit": { hi: "कमी का अवलोकन करता है", mr: "तुटीचे निरीक्षण करतो" },
+  "STEP 3: BENCHMARK": { hi: "चरण 3: बेंचमार्क", mr: "पायरी ३: निकष" },
+  "Target Role Confirms": { hi: "लक्षित भूमिका पुष्टि करती है", mr: "लक्षित भूमिका पुष्टी करते" },
+  "RESULT: INTELLIGENCE": { hi: "परिणाम: इंटेलिजेंस", mr: "निकाल: इंटेलिजन्स" },
+  "High-Priority Gap": { hi: "उच्च-प्राथमिकता अंतर", mr: "उच्च-प्राधान्य तूट" },
+  "Submit Training Relevance & Skill Observations": { hi: "प्रशिक्षण प्रासंगिकता और कौशल अवलोकन सबमिट करें", mr: "प्रशिक्षण सुसंगतता आणि कौशल्य निरीक्षणे सबमिट करा" },
+  "1. Was your training programme relevant to your actual workplace tasks?": {
+    hi: "1. क्या आपका प्रशिक्षण कार्यक्रम आपके वास्तविक कार्यस्थल कार्यों के लिए प्रासंगिक था?",
+    mr: "१. तुमचा प्रशिक्षण कार्यक्रम तुमच्या प्रत्यक्ष कामाच्या ठिकाणच्या कामांशी सुसंगत होता का?"
+  },
+  "Not Selected": { hi: "चयनित नहीं", mr: "निवडले नाही" },
+  "Not Relevant": { hi: "प्रासंगिक नहीं", mr: "सुसंगत नाही" },
+  "Slightly Relevant": { hi: "थोड़ा प्रासंगिक", mr: "किंचित सुसंगत" },
+  "Moderately Relevant": { hi: "मध्यम प्रासंगिक", mr: "मध्यम सुसंगत" },
+  "Highly Relevant": { hi: "अत्यधिक प्रासंगिक", mr: "अत्यंत सुसंगत" },
+  "Fully Relevant": { hi: "पूरी तरह प्रासंगिक", mr: "पूर्णपणे सुसंगत" },
+  "Numerical Score:": { hi: "संख्यात्मक स्कोर:", mr: "संख्यात्मक स्कोअर:" },
+  "2. Which technical skill did you feel was missing or needed deeper coverage?": {
+    hi: "2. आपको किस तकनीकी कौशल की कमी महसूस हुई या अधिक कवरेज की आवश्यकता थी?",
+    mr: "२. तुम्हाला कोणते तांत्रिक कौशल्य गहाळ किंवा अधिक सखोल आवश्यक वाटले?"
+  },
+  "3. Nature of this Skill Gap:": { hi: "3. इस कौशल अंतर की प्रकृति:", mr: "३. या कौशल्य तुटीचे स्वरूप:" },
+  "Missing entirely from coursework syllabus": { hi: "पाठ्यक्रम से पूरी तरह अनुपस्थित", mr: "अभ्यासक्रमातून पूर्णपणे गहाळ" },
+  "Curriculum taught older tooling version": { hi: "पाठ्यक्रम में पुराने उपकरण संस्करण सिखाए गए", mr: "अभ्यासक्रमात जुनी साधने शिकवली गेली" },
+  "Theory covered, but lacked practical production labs": { hi: "सिद्धांत पढ़ाया गया, लेकिन व्यावहारिक उत्पादन प्रयोगशालाओं की कमी थी", mr: "सिद्धांत शिकवला, पण प्रत्यक्ष प्रात्यक्षिक लॅबचा अभाव होता" },
+  "Required for senior/specialist workplace tasks": { hi: "वरिष्ठ/विशेषज्ञ कार्यस्थल कार्यों के लिए आवश्यक", mr: "वरिष्ठ/विशेषज्ञ कामांसाठी आवश्यक" },
+  "4. Detailed Observations / Interview Experience:": { hi: "4. विस्तृत अवलोकन / साक्षात्कार अनुभव:", mr: "४. तपशीलवार निरीक्षणे / मुलाखतीचा अनुभव:" },
+  "Submit Skill Observation": { hi: "कौशल अवलोकन सबमिट करें", mr: "कौशल्य निरीक्षण सबमिट करा" },
+  "Synthesizing...": { hi: "संश्लेषण हो रहा है...", mr: "संश्लेषण करत आहे..." },
+  "My Submitted Feedback & Processing Status": { hi: "मेरी सबमिट की गई प्रतिक्रिया और प्रसंस्करण स्थिति", mr: "माझा सबमिट केलेला अभिप्राय आणि प्रक्रिया स्थिती" },
+  "Included in Skill Intelligence": { hi: "कौशल इंटेलिजेंस में शामिल", mr: "कौशल्य इंटेलिजन्समध्ये समाविष्ट" },
+
+  // Outcomes & Certification
+  "My Personal Outcomes": { hi: "मेरे व्यक्तिगत परिणाम", mr: "माझे वैयक्तिक निकाल" },
+  "Real-world vocational results, salary increments over time, and sustained milestone retention checks.": {
+    hi: "वास्तविक दुनिया के व्यावसायिक परिणाम, समय के साथ वेतन वृद्धि, और निरंतर मील के पत्थर प्रतिधारण जांच।",
+    mr: "वास्तविक व्यावसायिक निकाल, कालांतराने झालेली वेतनवाढ आणि टिकून राहण्याच्या टप्प्यांची तपासणी."
+  },
+  "Where Am I Now? (Status Summary)": { hi: "मैं अब कहाँ हूँ? (स्थिति सारांश)", mr: "मी आता कुठे आहे? (स्थिती सारांश)" },
+  "Log Wage Increment": { hi: "वेतन वृद्धि दर्ज करें", mr: "वेतनवाढ नोंदवा" },
+  "STARTING WAGE": { hi: "प्रारंभिक वेतन", mr: "सुरुवातीचे वेतन" },
+  "CURRENT WAGE": { hi: "वर्तमान वेतन", mr: "सध्याचे वेतन" },
+  "NET APPRECIATION": { hi: "शुद्ध वृद्धि", mr: "एकूण वाढ" },
+  "Appraisal / Event": { hi: "मूल्यांकन / कार्यक्रम", mr: "मूल्यमापन / प्रसंग" },
+  "Reported Monthly Wage": { hi: "रिपोर्ट किया गया मासिक वेतन", mr: "नोंदवलेला मासिक पगार" },
+  "✓ Payroll Confirmed": { hi: "✓ पेरोल पुष्टीकृत", mr: "✓ पेरोल पुष्टी केली" },
+  "Retention Milestones & Continuous Employment": { hi: "प्रतिधारण मील के पत्थर और निरंतर रोज़गार", mr: "टिकून राहण्याचे टप्पे आणि सतत रोजगार" },
+  "Validation of job continuity at mandatory 3-month, 6-month, and 12-month intervals.": {
+    hi: "अनिवार्य 3-महीने, 6-महीने और 12-महीने के अंतराल पर नौकरी की निरंतरता का सत्यापन।",
+    mr: "अनिवार्य ३-महिने, ६-महिने आणि १२-महिन्यांच्या अंतराने नोकरीच्या सातत्याची पडताळणी."
+  },
+  "3-MONTH CHECKPOINT": { hi: "3-महीने का चेकपॉइंट", mr: "३ महिन्यांचा चेकपॉईंट" },
+  "6-MONTH CHECKPOINT": { hi: "6-महीने का चेकपॉइंट", mr: "६ महिन्यांचा चेकपॉईंट" },
+  "12-MONTH CHECKPOINT": { hi: "12-महीने का चेकपॉइंट", mr: "१२ महिन्यांचा चेकपॉईंट" },
+  "Initial Role Stability": { hi: "प्रारंभिक भूमिका स्थिरता", mr: "सुरुवातीची भूमिका स्थिरता" },
+  "Mid-Term Sustenance": { hi: "मध्यम-अवधि निरंतरता", mr: "मध्यम मुदतीचे सातत्य" },
+  "Long-Term Career Anchor": { hi: "दीर्घकालिक करियर आधार", mr: "दीर्घकालीन करिअर आधार" },
+  "6M retention verified. Eligible for state training impact accreditation.": {
+    hi: "6M प्रतिधारण सत्यापित। राज्य प्रशिक्षण प्रभाव मान्यता के लिए पात्र।",
+    mr: "६ महिन्यांचे टिकून राहणे पडताळले. राज्य प्रशिक्षण प्रभाव मान्यतेसाठी पात्र."
+  },
+  "Longitudinal 1-year evaluation following programme completion.": {
+    hi: "कार्यक्रम पूरा होने के बाद 1 वर्ष का अनुदैर्ध्य मूल्यांकन।",
+    mr: "कार्यक्रम पूर्ण झाल्यानंतर १ वर्षाचे मूल्यांकन."
+  },
+  "✓ Training Completed & Certified": { hi: "✓ प्रशिक्षण पूर्ण और प्रमाणित", mr: "✓ प्रशिक्षण पूर्ण आणि प्रमाणित" },
+  "Coursework In Progress": { hi: "कोर्सवर्क प्रगति पर है", mr: "अभ्यासक्रम सुरू आहे" },
+  "Digital Attestation Notice:": { hi: "डिजिटल साक्ष्यांकन सूचना:", mr: "डिजिटल प्रमाणीकरण सूचना:" }
 };

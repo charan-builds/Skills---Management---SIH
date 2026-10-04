@@ -260,7 +260,7 @@ export default function TrainingHistory() {
                         gap: "0.3rem"
                       }}
                     >
-                      <CheckCircle2 size={13} color="#2563eb" /> {skill}
+                      <CheckCircle2 size={13} color="#2563eb" /> {t(skill, skill)}
                     </span>
                   ))}
                 </div>
@@ -269,7 +269,7 @@ export default function TrainingHistory() {
 
             {/* Read-only verification notice */}
             <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", fontSize: "0.8rem", color: "#64748b" }}>
-              <strong>Digital Attestation Notice:</strong> {t("training_history.digital_attestation_notice", "These records are cryptographically attested by the affiliated state Sector Skill Council and cannot be edited directly. To report corrections, contact your training center administrator.")}
+              <strong>{t("training_history.digital_attestation_title", "Digital Attestation Notice:")}</strong> {t("training_history.digital_attestation_notice", "These records are cryptographically attested by the affiliated state Sector Skill Council and cannot be edited directly. To report corrections, contact your training center administrator.")}
             </div>
           </div>
         )}
