@@ -29,9 +29,38 @@ const INTERVENTION_OPTIONS = [
 ];
 
 export default function PolicySimulator() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { filters } = useFilters();
   const store = usePlatformStore();
+
+  const getLocalizedExplanation = (result) => {
+    if (!result) return { why_statements: [], ai_synthesis: "" };
+    if (language === "hi") {
+      const modName = form.module_name ? `"${form.module_name}"` : t(form.intervention_type, form.intervention_type);
+      return {
+        why_statements: [
+          `हस्तक्षेप सीधे कार्यक्षेत्र में ${result.impact.affected_trainees.toLocaleString()} प्रशिक्षुओं के कौशल अंतराल को लक्षित करता है।`,
+          `${form.additional_hours || 20} अतिरिक्त प्रशिक्षण घंटे जोड़ने से व्यावहारिक दक्षता और तकनीकी मूल्यांकन स्कोर में सुधार होता है।`,
+          `${form.relevance_level === "High" ? "उच्च" : form.relevance_level === "Medium" ? "मध्यम" : "निम्न"} उद्योग मांग के साथ मजबूत संरेखण पंजीकृत भागीदार नियोक्ताओं के बीच भर्ती गति को बढ़ाता है।`,
+          `अनुमानित परियोजना प्रभाव प्रति उम्मीदवार ₹${(result.impact.total_cost / Math.max(result.impact.affected_trainees, 1)).toLocaleString()} की औसत लागत पर +${result.projected.placement_delta_pct}% प्लेसमेंट वृद्धि प्रदान करता है।`
+        ],
+        ai_synthesis: `${modName} (${form.additional_hours || 20} घंटे) जोड़ने से कार्यक्रम प्लेसमेंट ${result.baseline.placement_rate}% से बढ़कर लगभग ${result.projected.placement_rate}% (+${result.projected.placement_delta_pct} प्रतिशत अंक) होने का मॉडल-आधारित अनुमान है। ${result.impact.affected_trainees.toLocaleString()} लक्षित प्रशिक्षुओं में, मॉडल ₹${(result.impact.total_cost / 10000000).toFixed(2)} करोड़ के कुल कार्यक्रम निवेश के साथ ${result.impact.additional_placements.toLocaleString()} अतिरिक्त औपचारिक प्लेसमेंट का अनुमान लगाता है।`
+      };
+    }
+    if (language === "mr") {
+      const modName = form.module_name ? `"${form.module_name}"` : t(form.intervention_type, form.intervention_type);
+      return {
+        why_statements: [
+          `हस्तक्षेप थेट कार्यकक्षेत ${result.impact.affected_trainees.toLocaleString()} प्रशिक्षणार्थ्यांच्या कौशल्य अंतराला लक्ष्य करतो.`,
+          `${form.additional_hours || 20} अतिरिक्त प्रशिक्षण तास जोडल्याने व्यावहारिक क्षमता आणि तांत्रिक मूल्यमापन गुणांमध्ये सुधारणा होते.`,
+          `${form.relevance_level === "High" ? "उच्च" : form.relevance_level === "Medium" ? "मध्यम" : "कमी"} उद्योग मागणीसह मजबूत संरेखन नोंदणीकृत भागीदार नियोक्त्यांमध्ये भरतीचा वेग वाढवतो.`,
+          `अंदाजित प्रकल्प प्रभाव प्रति उमेदवार सरासरी ₹${(result.impact.total_cost / Math.max(result.impact.affected_trainees, 1)).toLocaleString()} खर्चात +${result.projected.placement_delta_pct}% प्लेसमेंट वाढ देतो.`
+        ],
+        ai_synthesis: `${modName} (${form.additional_hours || 20} तास) जोडल्याने कार्यक्रम प्लेसमेंट ${result.baseline.placement_rate}% वरून अंदाजे ${result.projected.placement_rate}% (+${result.projected.placement_delta_pct} टक्केवारी गुण) पर्यंत सुधारण्याचे मॉडेल अंदाज आहे. ${result.impact.affected_trainees.toLocaleString()} लक्ष्यित प्रशिक्षणार्थ्यांमध्ये, मॉडेल ₹${(result.impact.total_cost / 10000000).toFixed(2)} कोटींच्या एकूण कार्यक्रम गुंतवणुकीसह ${result.impact.additional_placements.toLocaleString()} अतिरिक्त औपचारिक प्लेसमेंटचा अंदाज लावते.`
+      };
+    }
+    return result.explanation;
+  };
 
   const [baseline, setBaseline] = useState(null);
   const [loadingBaseline, setLoadingBaseline] = useState(true);
@@ -843,12 +872,12 @@ export default function PolicySimulator() {
                     <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                       <h5 style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.8rem 0", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                         <Users size={16} color="#2563eb" />
-                        Trainee Impact
+                        {t("Trainee Impact", "Trainee Impact")}
                       </h5>
                       <ul style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.85rem", color: "#334155", lineHeight: "1.6" }}>
-                        <li><strong>+<CountUp value={simulationResult.impact.additional_placements} /></strong> additional formal job placements.</li>
-                        <li><strong>+{simulationResult.impact.additional_employed.toLocaleString()}</strong> overall economic outcomes (including self-employed).</li>
-                        <li>Average monthly income projected at <strong>₹{simulationResult.projected.average_income.toLocaleString()}</strong> (+₹{simulationResult.projected.income_delta.toLocaleString()}).</li>
+                        <li><strong>+<CountUp value={simulationResult.impact.additional_placements} /></strong> {t("additional formal job placements.", "additional formal job placements.")}</li>
+                        <li><strong>+{simulationResult.impact.additional_employed.toLocaleString()}</strong> {t("overall economic outcomes (including self-employed).", "overall economic outcomes (including self-employed).")}</li>
+                        <li>{t("Average monthly income projected at", "Average monthly income projected at")} <strong>₹{simulationResult.projected.average_income.toLocaleString()}</strong> (+₹{simulationResult.projected.income_delta.toLocaleString()}).</li>
                       </ul>
                     </div>
 
@@ -856,12 +885,12 @@ export default function PolicySimulator() {
                     <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                       <h5 style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.8rem 0", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                         <Award size={16} color="#16a34a" />
-                        Employer Impact
+                        {t("Employer Impact", "Employer Impact")}
                       </h5>
                       <ul style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.85rem", color: "#334155", lineHeight: "1.6" }}>
-                        <li>Skill relevance score rises to <strong>{simulationResult.projected.job_relevance}%</strong>.</li>
-                        <li>Employer satisfaction rate increases to <strong>{simulationResult.projected.employer_satisfaction}%</strong>.</li>
-                        <li>Expands industry-ready candidates for key partner hiring pools.</li>
+                        <li>{t("Skill relevance score rises to", "Skill relevance score rises to")} <strong>{simulationResult.projected.job_relevance}%</strong>.</li>
+                        <li>{t("Employer satisfaction rate increases to", "Employer satisfaction rate increases to")} <strong>{simulationResult.projected.employer_satisfaction}%</strong>.</li>
+                        <li>{t("Expands industry-ready candidates for key partner hiring pools.", "Expands industry-ready candidates for key partner hiring pools.")}</li>
                       </ul>
                     </div>
 
@@ -869,12 +898,12 @@ export default function PolicySimulator() {
                     <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                       <h5 style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.8rem 0", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                         <DollarSign size={16} color="#0284c7" />
-                        Program & Efficiency Impact
+                        {t("Program & Efficiency Impact", "Program & Efficiency Impact")}
                       </h5>
                       <ul style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.85rem", color: "#334155", lineHeight: "1.6" }}>
-                        <li>Completion rate improves to <strong>{simulationResult.projected.completion_rate}%</strong> (+{simulationResult.projected.completion_delta_pct}%).</li>
-                        <li>Total budget required: <strong>₹{(simulationResult.impact.total_cost / 10000000).toFixed(2)} Cr</strong>.</li>
-                        <li>Cost efficiency: <strong>₹{simulationResult.impact.cost_per_additional_placement.toLocaleString()}</strong> per additional placed candidate.</li>
+                        <li>{t("Completion rate improves to", "Completion rate improves to")} <strong>{simulationResult.projected.completion_rate}%</strong> (+{simulationResult.projected.completion_delta_pct}%).</li>
+                        <li>{t("Total budget required:", "Total budget required:")} <strong>₹{(simulationResult.impact.total_cost / 10000000).toFixed(2)} Cr</strong>.</li>
+                        <li>{t("Cost efficiency:", "Cost efficiency:")} <strong>₹{simulationResult.impact.cost_per_additional_placement.toLocaleString()}</strong> {t("per additional placed candidate.", "per additional placed candidate.")}</li>
                       </ul>
                     </div>
                   </div>
@@ -883,17 +912,17 @@ export default function PolicySimulator() {
                   <div style={{ background: "#f1f5f9", padding: "1.25rem", borderRadius: "10px", border: "1px solid #cbd5e1", marginBottom: "1.5rem" }}>
                     <h4 style={{ fontSize: "1rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.6rem 0", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                       <HelpCircle size={18} color="#2563eb" />
-                      Why did the projection change?
+                      {t("Why did the projection change?", "Why did the projection change?")}
                     </h4>
                     <ul style={{ margin: "0 0 1rem 0", paddingLeft: "1.2rem", fontSize: "0.88rem", color: "#334155", lineHeight: "1.6" }}>
-                      {simulationResult.explanation.why_statements.map((stmt, idx) => (
+                      {getLocalizedExplanation(simulationResult).why_statements.map((stmt, idx) => (
                         <li key={idx} style={{ marginBottom: "0.3rem" }}>{stmt}</li>
                       ))}
                     </ul>
 
                     <div style={{ background: "white", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                       <p style={{ margin: 0, fontSize: "0.88rem", color: "#334155", fontStyle: "italic", lineHeight: "1.5" }}>
-                        "{simulationResult.explanation.ai_synthesis}"
+                        "{getLocalizedExplanation(simulationResult).ai_synthesis}"
                       </p>
                     </div>
                   </div>
@@ -901,13 +930,13 @@ export default function PolicySimulator() {
                   {/* ── SIMULATION ASSUMPTIONS ── */}
                   <div style={{ background: "#fafafa", padding: "1rem", borderRadius: "8px", border: "1px solid #e5e5e5" }}>
                     <span style={{ fontSize: "0.8rem", fontWeight: 800, color: "#525252", display: "block", marginBottom: "0.4rem" }}>
-                      Simulation Assumptions & Operational Bounds:
+                      {t("Simulation Assumptions & Operational Bounds:", "Simulation Assumptions & Operational Bounds:")}
                     </span>
                     <ul style={{ margin: 0, paddingLeft: "1.2rem", fontSize: "0.78rem", color: "#656565", lineHeight: "1.5" }}>
-                      <li>Projections are derived from historical patterns and input intervention weights for decision support.</li>
-                      <li>Results represent estimated scenario outcomes, not guaranteed future placements.</li>
-                      <li>Actual outcomes depend on employer market demand and trainee adoption in target districts.</li>
-                      <li>Cost calculations assume the selected intervention reaches 100% of the specified participating trainees.</li>
+                      <li>{t("Projections are derived from historical patterns and input intervention weights for decision support.", "Projections are derived from historical patterns and input intervention weights for decision support.")}</li>
+                      <li>{t("Results represent estimated scenario outcomes, not guaranteed future placements.", "Results represent estimated scenario outcomes, not guaranteed future placements.")}</li>
+                      <li>{t("Actual outcomes depend on employer market demand and trainee adoption in target districts.", "Actual outcomes depend on employer market demand and trainee adoption in target districts.")}</li>
+                      <li>{t("Cost calculations assume the selected intervention reaches 100% of the specified participating trainees.", "Cost calculations assume the selected intervention reaches 100% of the specified participating trainees.")}</li>
                     </ul>
                   </div>
 

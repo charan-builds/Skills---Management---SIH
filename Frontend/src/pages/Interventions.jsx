@@ -5,9 +5,11 @@ import {
 } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { useFilters } from "../context/FilterContext";
+import { useLanguage } from "../context/LanguageContext";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 
 export default function Interventions() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const { filters } = useFilters();
 
@@ -178,20 +180,20 @@ export default function Interventions() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Sparkles size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            EVIDENCE-BASED OUTCOME INTELLIGENCE & POLICY RECOMMENDATIONS
+            {t("EVIDENCE-BASED OUTCOME INTELLIGENCE & POLICY RECOMMENDATIONS", "EVIDENCE-BASED OUTCOME INTELLIGENCE & POLICY RECOMMENDATIONS")}
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Key Findings & Insights
+              {t("Key Findings & Insights", "Key Findings & Insights")}
             </h1>
             <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-              Evidence-derived analytical findings with measurable baselines, affected scopes, and traceable audit data.
+              {t("Evidence-derived analytical findings with measurable baselines, affected scopes, and traceable audit data.", "Evidence-derived analytical findings with measurable baselines, affected scopes, and traceable audit data.")}
             </p>
           </div>
           <div style={{ background: "#f8fafc", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.85rem" }}>
-            <span style={{ color: "#64748b" }}>Active Insight Cards: </span>
+            <span style={{ color: "#64748b" }}>{t("Active Insight Cards:", "Active Insight Cards:")} </span>
             <strong style={{ color: "#2563eb" }}>{insights.length}</strong>
           </div>
         </div>
@@ -235,7 +237,7 @@ export default function Interventions() {
                         fontWeight: 800,
                         textTransform: "uppercase"
                       }}>
-                        {ins.type}
+                        {t(ins.type, ins.type)}
                       </span>
                       <span style={{ fontSize: "0.75rem", fontFamily: "monospace", color: "#64748b" }}>{ins.id}</span>
                     </div>
@@ -249,7 +251,7 @@ export default function Interventions() {
                         fontSize: "0.7rem",
                         fontWeight: 700
                       }}>
-                        {ins.priority}
+                        {t(ins.priority, ins.priority)}
                       </span>
                       <span style={{
                         background: isAdopted ? "#dcfce7" : "#e0e7ff",
@@ -259,38 +261,38 @@ export default function Interventions() {
                         fontSize: "0.7rem",
                         fontWeight: 700
                       }}>
-                        {isAdopted ? "Adopted" : ins.status}
+                        {isAdopted ? t("Adopted", "Adopted") : t(ins.status, ins.status)}
                       </span>
                     </div>
                   </div>
 
                   <h3 style={{ margin: "0 0 0.4rem 0", fontSize: "1.2rem", fontWeight: 800, color: "#0f172a" }}>
-                    {ins.title}
+                    {t(ins.title, ins.title)}
                   </h3>
 
                   {/* Metric & Comparison Grid */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", background: "#f8fafc", padding: "0.85rem", borderRadius: "8px", border: "1px solid #f1f5f9", marginBottom: "0.85rem", fontSize: "0.82rem" }}>
                     <div>
-                      <span style={{ color: "#64748b", display: "block" }}>Observed Metric:</span>
-                      <strong style={{ color: "#0f172a", fontSize: "0.95rem" }}>{ins.metric}</strong>
+                      <span style={{ color: "#64748b", display: "block" }}>{t("Observed Metric:", "Observed Metric:")}</span>
+                      <strong style={{ color: "#0f172a", fontSize: "0.95rem" }}>{t(ins.metric, ins.metric)}</strong>
                     </div>
                     <div>
-                      <span style={{ color: "#64748b", display: "block" }}>Comparison / Baseline:</span>
-                      <span style={{ color: "#334155" }}>{ins.comparison}</span>
+                      <span style={{ color: "#64748b", display: "block" }}>{t("Comparison / Baseline:", "Comparison / Baseline:")}</span>
+                      <span style={{ color: "#334155" }}>{t(ins.comparison, ins.comparison)}</span>
                     </div>
                   </div>
 
                   {/* Evidence & Scope */}
                   <div style={{ fontSize: "0.85rem", color: "#334155", marginBottom: "0.85rem", lineHeight: 1.4 }}>
-                    <strong>Evidence:</strong> {ins.evidence}
+                    <strong>{t("Evidence:", "Evidence:")}</strong> {t(ins.evidence, ins.evidence)}
                   </div>
                   <div style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "1rem" }}>
-                    <strong>Affected Scope:</strong> {ins.affected_scope}
+                    <strong>{t("Affected Scope:", "Affected Scope:")}</strong> {t(ins.affected_scope, ins.affected_scope)}
                   </div>
 
                   {/* Recommended Action */}
                   <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "8px", padding: "0.75rem 1rem", marginBottom: "1rem", fontSize: "0.85rem", color: "#1e3a8a" }}>
-                    <strong>Recommended Policy / Investigation:</strong> {ins.recommended_action}
+                    <strong>{t("Recommended Policy / Investigation:", "Recommended Policy / Investigation:")}</strong> {t(ins.recommended_action, ins.recommended_action)}
                   </div>
 
                   {/* Action Bar */}
@@ -310,7 +312,7 @@ export default function Interventions() {
                         cursor: "pointer"
                       }}
                     >
-                      <Eye size={14} /> View Traceable Evidence
+                      <Eye size={14} /> {t("View Traceable Evidence", "View Traceable Evidence")}
                     </button>
 
                     <button
@@ -332,7 +334,7 @@ export default function Interventions() {
                       }}
                     >
                       {isAdopted ? <Check size={14} /> : <Zap size={14} />}
-                      {isAdopted ? "Action Adopted" : "Adopt Action"}
+                      {isAdopted ? t("Action Adopted", "Action Adopted") : t("Adopt Action", "Adopt Action")}
                     </button>
                   </div>
                 </div>
@@ -346,10 +348,10 @@ export default function Interventions() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem", marginBottom: "1rem" }}>
                 <div>
                   <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#2563eb", textTransform: "uppercase" }}>
-                    INSIGHT TRACEABILITY AUDIT
+                    {t("INSIGHT TRACEABILITY AUDIT", "INSIGHT TRACEABILITY AUDIT")}
                   </span>
                   <h4 style={{ margin: "0.2rem 0 0 0", fontSize: "1.1rem", color: "#0f172a" }}>
-                    Evidence Dossier: {selectedInsight.id}
+                    {t("Evidence Dossier:", "Evidence Dossier:")} {selectedInsight.id}
                   </h4>
                 </div>
                 <button
@@ -362,46 +364,46 @@ export default function Interventions() {
 
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", fontSize: "0.82rem" }}>
                 <div>
-                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>1. Reported Gap Frequency</span>
+                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("1. Reported Gap Frequency", "1. Reported Gap Frequency")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                    <strong style={{ color: "#2563eb", fontSize: "1.1rem" }}>{selectedInsight.evidence_details?.reported_gap_count}</strong> candidates flagged this competency deficit
+                    <strong style={{ color: "#2563eb", fontSize: "1.1rem" }}>{selectedInsight.evidence_details?.reported_gap_count}</strong> {t("candidates flagged this competency deficit", "candidates flagged this competency deficit")}
                   </div>
                 </div>
 
                 <div>
-                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>2. Affected Programmes</span>
+                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("2. Affected Programmes", "2. Affected Programmes")}</span>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.3rem" }}>
                     {(selectedInsight.evidence_details?.affected_programmes || []).map(p => (
                       <span key={p} style={{ background: "#eff6ff", color: "#1d4ed8", padding: "2px 7px", borderRadius: "4px", fontSize: "0.75rem", fontWeight: 600 }}>
-                        {p}
+                        {t(p, p)}
                       </span>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>3. Verified Employer Feedback</span>
+                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("3. Verified Employer Feedback", "3. Verified Employer Feedback")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#334155", fontStyle: "italic", lineHeight: 1.4 }}>
                     "{selectedInsight.evidence_details?.employer_reports}"
                   </div>
                 </div>
 
                 <div>
-                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>4. Candidate Survey Signals</span>
+                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("4. Candidate Survey Signals", "4. Candidate Survey Signals")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#334155", lineHeight: 1.4 }}>
                     {selectedInsight.evidence_details?.trainee_reports}
                   </div>
                 </div>
 
                 <div>
-                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>5. Curriculum vs Target Audit</span>
+                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("5. Curriculum vs Target Audit", "5. Curriculum vs Target Audit")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#0f172a", fontWeight: 600 }}>
                     {selectedInsight.evidence_details?.curriculum_coverage}
                   </div>
                 </div>
 
                 <div>
-                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>6. Demand vs Supply Matrix</span>
+                  <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("6. Demand vs Supply Matrix", "6. Demand vs Supply Matrix")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#0f172a" }}>
                     {selectedInsight.evidence_details?.demand_vs_supply}
                   </div>
