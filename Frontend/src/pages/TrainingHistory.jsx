@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { BookOpen, Award, Building2, Calendar, CheckCircle2, Download, Eye, X, ShieldCheck, FileCheck } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function TrainingHistory() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const traineeId = localStorage.getItem("traineeId") || "TR-0001";
   const [trainee, setTrainee] = useState(null);
@@ -103,14 +105,14 @@ export default function TrainingHistory() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <BookOpen size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            VERIFIED ACADEMIC & VOCATIONAL CREDENTIALS
+            {t("training_history.badge", "VERIFIED ACADEMIC & VOCATIONAL CREDENTIALS")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Training History & Certification
+          {t("training_history.title", "Training History & Certification")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Authoritative records of enrolled courses, accredited assessment outcomes, and verifiable completion certificates.
+          {t("training_history.subtitle", "Authoritative records of enrolled courses, accredited assessment outcomes, and verifiable completion certificates.")}
         </p>
       </div>
 
@@ -120,7 +122,7 @@ export default function TrainingHistory() {
         data={trainee}
         onRetry={loadData}
         isDataAvailable={(d) => Boolean(d)}
-        isEmptyDetails="No training history records available."
+        isEmptyDetails={t("training_history.empty_history", "No training history records available.")}
       >
         {trainee && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -138,13 +140,13 @@ export default function TrainingHistory() {
                     display: "inline-block",
                     marginBottom: "0.5rem"
                   }}>
-                    {isCertified ? "✓ Training Completed & Certified" : "Coursework In Progress"}
+                    {isCertified ? t("training_history.status_certified", "✓ Training Completed & Certified") : t("training_history.status_in_progress", "Coursework In Progress")}
                   </span>
                   <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
                     {trainee.programme_name}
                   </h2>
                   <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
-                    Programme Code: {trainee.programme_id} • Cohort: {trainee.cohort}
+                    {t("training_history.programme_code", "Programme Code:")} {trainee.programme_id} • {t("training_history.cohort_label", "Cohort:")} {trainee.cohort}
                   </p>
                 </div>
 
@@ -167,7 +169,7 @@ export default function TrainingHistory() {
                           gap: "0.4rem"
                         }}
                       >
-                        <Eye size={16} /> View Certificate
+                        <Eye size={16} /> {t("training_history.btn_view_certificate", "View Certificate")}
                       </button>
 
                       <button
@@ -186,12 +188,12 @@ export default function TrainingHistory() {
                           gap: "0.4rem"
                         }}
                       >
-                        <Download size={16} /> Download Certificate (.svg)
+                        <Download size={16} /> {t("training_history.btn_download_certificate", "Download Certificate (.svg)")}
                       </button>
                     </>
                   ) : (
                     <span style={{ fontSize: "0.85rem", color: "#94a3b8", fontStyle: "italic", padding: "0.5rem 0" }}>
-                      Certificate not available
+                      {t("training_history.cert_not_available", "Certificate not available")}
                     </span>
                   )}
                 </div>
@@ -201,7 +203,7 @@ export default function TrainingHistory() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem", background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "1.5rem" }}>
                 <div>
                   <span style={{ fontSize: "0.8rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                    <Building2 size={14} /> Training Provider
+                    <Building2 size={14} /> {t("training_history.training_provider", "Training Provider")}
                   </span>
                   <strong style={{ color: "#0f172a", fontSize: "0.95rem", display: "block", marginTop: "0.2rem" }}>
                     {trainee.provider_name}
@@ -210,7 +212,7 @@ export default function TrainingHistory() {
 
                 <div>
                   <span style={{ fontSize: "0.8rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                    <Calendar size={14} /> Completion Date
+                    <Calendar size={14} /> {t("training_history.completion_date", "Completion Date")}
                   </span>
                   <strong style={{ color: "#0f172a", fontSize: "0.95rem", display: "block", marginTop: "0.2rem" }}>
                     {trainee.completion_date || "2023-04-20"}
@@ -219,19 +221,19 @@ export default function TrainingHistory() {
 
                 <div>
                   <span style={{ fontSize: "0.8rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                    <Award size={14} /> Certificate Credential ID
+                    <Award size={14} /> {t("training_history.certificate_credential_id", "Certificate Credential ID")}
                   </span>
                   <strong style={{ color: isCertified ? "#2563eb" : "#94a3b8", fontSize: "0.95rem", display: "block", marginTop: "0.2rem" }}>
-                    {isCertified ? trainee.certificate_id : "Not issued"}
+                    {isCertified ? trainee.certificate_id : t("training_history.not_issued", "Not issued")}
                   </strong>
                 </div>
 
                 <div>
                   <span style={{ fontSize: "0.8rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                    <CheckCircle2 size={14} /> Capstone Score
+                    <CheckCircle2 size={14} /> {t("training_history.capstone_score", "Capstone Score")}
                   </span>
                   <strong style={{ color: "#15803d", fontSize: "0.95rem", display: "block", marginTop: "0.2rem" }}>
-                    {trainee.assessment_score || 88}% (Merit)
+                    {trainee.assessment_score || 88}% {t("training_history.merit_badge", "(Merit)")}
                   </strong>
                 </div>
               </div>
@@ -239,7 +241,7 @@ export default function TrainingHistory() {
               {/* Skills Mastered */}
               <div>
                 <h4 style={{ margin: "0 0 0.75rem 0", fontSize: "0.95rem", color: "#0f172a" }}>
-                  Verified Competencies & Modules Completed:
+                  {t("training_history.verified_competencies_title", "Verified Competencies & Modules Completed:")}
                 </h4>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                   {(trainee.skills || []).map((skill) => (
@@ -267,7 +269,7 @@ export default function TrainingHistory() {
 
             {/* Read-only verification notice */}
             <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", fontSize: "0.8rem", color: "#64748b" }}>
-              <strong>Digital Attestation Notice:</strong> These records are cryptographically attested by the affiliated state Sector Skill Council and cannot be edited directly. To report corrections, contact your training center administrator.
+              <strong>Digital Attestation Notice:</strong> {t("training_history.digital_attestation_notice", "These records are cryptographically attested by the affiliated state Sector Skill Council and cannot be edited directly. To report corrections, contact your training center administrator.")}
             </div>
           </div>
         )}
@@ -286,50 +288,50 @@ export default function TrainingHistory() {
 
               <div style={{ textAlign: "center", borderBottom: "2px solid #f59e0b", paddingBottom: "1.5rem", marginBottom: "2rem" }}>
                 <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#2563eb", letterSpacing: "2px", textTransform: "uppercase" }}>
-                  NATIONAL SKILLING OUTCOMES PLATFORM
+                  {t("training_history.cert_modal_platform", "NATIONAL SKILLING OUTCOMES PLATFORM")}
                 </span>
                 <h2 style={{ fontSize: "2rem", fontWeight: 900, color: "#0f172a", margin: "0.5rem 0 0.2rem 0", fontFamily: "Georgia, serif" }}>
-                  Certificate of Completion
+                  {t("training_history.cert_modal_title", "Certificate of Completion")}
                 </h2>
                 <div style={{ fontSize: "0.75rem", color: "#94a3b8", letterSpacing: "1px" }}>
-                  ACCREDITED SIMULATION CREDENTIAL (DEMO ARTIFACT)
+                  {t("training_history.cert_modal_simulation_subtitle", "ACCREDITED SIMULATION CREDENTIAL (DEMO ARTIFACT)")}
                 </div>
               </div>
 
               <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-                <p style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.95rem" }}>This is to certify that</p>
+                <p style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.95rem" }}>{t("training_history.cert_modal_certify_that", "This is to certify that")}</p>
                 <h3 style={{ margin: "0 0 0.75rem 0", fontSize: "2rem", fontWeight: 800, color: "#1e3a8a", fontFamily: "Georgia, serif" }}>
                   {trainee?.name}
                 </h3>
                 <p style={{ margin: "0 0 0.5rem 0", color: "#475569", fontSize: "0.95rem" }}>
-                  has demonstrated verified competency in the accredited programme
+                  {t("training_history.cert_modal_demonstrated", "has demonstrated verified competency in the accredited programme")}
                 </p>
                 <strong style={{ fontSize: "1.25rem", color: "#0f172a", display: "block", margin: "0.25rem 0" }}>
                   {trainee?.programme_name}
                 </strong>
                 <p style={{ margin: "0.5rem 0 0 0", color: "#64748b", fontSize: "0.85rem" }}>
-                  Administered by {trainee?.provider_name}
+                  {t("training_history.cert_modal_administered", "Administered by")} {trainee?.provider_name}
                 </p>
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "1.5rem", fontSize: "0.85rem" }}>
                 <div>
-                  <span style={{ color: "#64748b" }}>Date of Completion:</span>
+                  <span style={{ color: "#64748b" }}>{t("training_history.cert_modal_date", "Date of Completion:")}</span>
                   <strong style={{ display: "block", color: "#0f172a" }}>{trainee?.completion_date || "2023-04-20"}</strong>
                 </div>
                 <div>
-                  <span style={{ color: "#64748b" }}>Assessment Score:</span>
-                  <strong style={{ display: "block", color: "#15803d" }}>{trainee?.assessment_score || 88}% (Merit)</strong>
+                  <span style={{ color: "#64748b" }}>{t("training_history.cert_modal_score", "Assessment Score:")}</span>
+                  <strong style={{ display: "block", color: "#15803d" }}>{trainee?.assessment_score || 88}% {t("training_history.merit_badge", "(Merit)")}</strong>
                 </div>
                 <div>
-                  <span style={{ color: "#64748b" }}>Credential ID:</span>
+                  <span style={{ color: "#64748b" }}>{t("training_history.cert_modal_credential_id", "Credential ID:")}</span>
                   <strong style={{ display: "block", color: "#2563eb" }}>{trainee?.certificate_id}</strong>
                 </div>
               </div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
                 <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-                  Simulation Data: Not a statutory government certificate.
+                  {t("training_history.cert_modal_disclaimer", "Simulation Data: Not a statutory government certificate.")}
                 </span>
                 <button
                   onClick={handleDownloadCertificate}
@@ -347,7 +349,7 @@ export default function TrainingHistory() {
                     gap: "0.4rem"
                   }}
                 >
-                  <Download size={16} /> Download This Certificate (.svg)
+                  <Download size={16} /> {t("training_history.cert_modal_btn_download", "Download This Certificate (.svg)")}
                 </button>
               </div>
             </div>

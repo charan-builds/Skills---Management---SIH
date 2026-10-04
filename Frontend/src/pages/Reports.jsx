@@ -1,12 +1,14 @@
 import { useState, useEffect, useMemo } from "react";
 import { FileDown, FileText, Table, CheckCircle2, Filter, Download, Sparkles, RefreshCw } from "lucide-react";
 import { useFilters } from "../context/FilterContext";
+import { useLanguage } from "../context/LanguageContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import CountUp from "../components/common/CountUp";
 
 export default function Reports() {
+  const { t } = useLanguage();
   const { filters, updateFilter, clearFilters, activeFilterCount } = useFilters();
   const store = usePlatformStore();
   const [downloading, setDownloading] = useState(false);
@@ -139,14 +141,14 @@ export default function Reports() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <FileText size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            EXECUTIVE REPORTING & COMPLIANT DATA EXPORT
+            {t("reports.admin_badge", "EXECUTIVE REPORTING & COMPLIANT DATA EXPORT")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Outcome Reports & Data Export
+          {t("reports.page_title", "Outcome Reports & Data Export")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Generate government compliance reports matching the exact scope defined by your active global filters.
+          {t("reports.page_subtitle", "Generate government compliance reports matching the exact scope defined by your active global filters.")}
         </p>
       </div>
 
@@ -154,32 +156,32 @@ export default function Reports() {
         {/* Scope Config & Export Controller */}
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", height: "fit-content" }}>
           <h3 style={{ margin: "0 0 0.4rem 0", fontSize: "1.15rem", color: "#0f172a" }}>
-            Report Generation Scope
+            {t("reports.scope_title", "Report Generation Scope")}
           </h3>
           <p style={{ margin: "0 0 1.25rem 0", fontSize: "0.8rem", color: "#64748b" }}>
-            The export dataset automatically mirrors the active global filter scope.
+            {t("reports.scope_subtitle", "The export dataset automatically mirrors the active global filter scope.")}
           </p>
 
           <div className="report-scope-card" style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0", marginBottom: "1.5rem", fontSize: "0.8rem" }}>
-            <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem" }}>Current Analytical Scope:</div>
-            <div><strong>Cohort:</strong> {filters.cohort || "All Cohorts"}</div>
-            <div><strong>Programme:</strong> {filters.course || filters.programme || "All Programmes"}</div>
-            <div><strong>Provider:</strong> {filters.provider || "All Providers"}</div>
-            <div><strong>District:</strong> {filters.district || "All Districts"}</div>
-            <div><strong>Gender:</strong> {filters.gender || "All Genders"}</div>
-            <div><strong>Age Group:</strong> {filters.ageGroup || "All Ages"}</div>
-            <div><strong>Category:</strong> {filters.category || "All Categories"}</div>
+            <div style={{ fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem" }}>{t("reports.current_scope", "Current Analytical Scope:")}</div>
+            <div><strong>{t("common.cohort", "Cohort")}:</strong> {filters.cohort || t("reports.all_cohorts", "All Cohorts")}</div>
+            <div><strong>{t("common.programme", "Programme")}:</strong> {filters.course || filters.programme || t("reports.all_programmes", "All Programmes")}</div>
+            <div><strong>{t("common.provider", "Provider")}:</strong> {filters.provider || t("reports.all_providers", "All Providers")}</div>
+            <div><strong>{t("common.district", "District")}:</strong> {filters.district || t("reports.all_districts", "All Districts")}</div>
+            <div><strong>{t("common.gender", "Gender")}:</strong> {filters.gender || t("reports.all_genders", "All Genders")}</div>
+            <div><strong>{t("common.age_group", "Age Group")}:</strong> {filters.ageGroup || t("reports.all_ages", "All Ages")}</div>
+            <div><strong>{t("common.category", "Category")}:</strong> {filters.category || t("reports.all_categories", "All Categories")}</div>
 
             <div style={{ marginTop: "0.75rem", paddingTop: "0.75rem", borderTop: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontWeight: 700, color: "#2563eb" }}>
-                Records in Scope: {scopedTrainees.length}
+                {t("reports.records_in_scope", "Records in Scope:")} {scopedTrainees.length}
               </span>
               {activeFilterCount > 0 && (
                 <button
                   onClick={clearFilters}
                   style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer", fontSize: "0.75rem", textDecoration: "underline" }}
                 >
-                  Reset Scope
+                  {t("reports.reset_scope", "Reset Scope")}
                 </button>
               )}
             </div>
@@ -187,12 +189,12 @@ export default function Reports() {
 
           <div style={{ marginBottom: "1.5rem" }}>
             <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-              Export Format
+              {t("reports.export_format", "Export Format")}
             </label>
             <div style={{ display: "flex", gap: "0.5rem" }}>
               {[
-                { key: "csv", label: "CSV Dataset (.csv)" },
-                { key: "json", label: "JSON Feed (.json)" }
+                { key: "csv", label: t("reports.csv_format", "CSV Dataset (.csv)") },
+                { key: "json", label: t("reports.json_format", "JSON Feed (.json)") }
               ].map((f) => (
                 <button
                   type="button"
@@ -236,7 +238,7 @@ export default function Reports() {
             }}
           >
             <Download size={18} />
-            {downloading ? "Compiling Dataset..." : `Download ${selectedFormat.toUpperCase()} Report (${scopedTrainees.length})`}
+            {downloading ? t("reports.compiling_dataset", "Compiling Dataset...") : `${t("reports.download_report", "Download Report")} (${selectedFormat.toUpperCase()} - ${scopedTrainees.length})`}
           </button>
         </div>
 
@@ -246,19 +248,19 @@ export default function Reports() {
           {scopeSummary && (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "1rem" }}>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Placement Rate</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("reports.placement_rate", "Placement Rate")}</span>
                 <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#16a34a" }}><CountUp value={scopeSummary.placement_rate} suffix="%" /></div>
               </div>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>6M Retention</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("reports.retention_6m", "6M Retention")}</span>
                 <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#2563eb" }}><CountUp value={scopeSummary.retention_6m} suffix="%" /></div>
               </div>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Mean Wage</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("reports.mean_wage", "Mean Wage")}</span>
                 <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a" }}><CountUp value={scopeSummary.avg_wage} prefix="₹" /></div>
               </div>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Self-Employed</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("reports.self_employed", "Self-Employed")}</span>
                 <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0d9488" }}><CountUp value={scopeSummary.selfEmployed} /></div>
               </div>
             </div>
@@ -269,10 +271,10 @@ export default function Reports() {
             <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <h3 style={{ margin: "0 0 0.2rem 0", fontSize: "1.1rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <Table size={18} color="#2563eb" /> Live Scope Data Preview ({scopedTrainees.length} records)
+                  <Table size={18} color="#2563eb" /> {t("reports.live_preview_title", "Live Scope Data Preview")} ({scopedTrainees.length} records)
                 </h3>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>
-                  DPDP compliance threshold enforced: Aggregated records meeting minimum verification standards.
+                  {t("reports.live_preview_subtitle", "DPDP compliance threshold enforced: Aggregated records meeting minimum verification standards.")}
                 </span>
               </div>
             </div>
@@ -284,36 +286,36 @@ export default function Reports() {
                 data={scopedTrainees}
                 onRetry={() => setLoading(false)}
                 isDataAvailable={(d) => d && d.length > 0}
-                isEmptyDetails="No records match current report scope. Please adjust filter parameters."
+                isEmptyDetails={t("reports.empty_details", "No records match current report scope. Please adjust filter parameters.")}
               >
                 <DataTable
                   columns={[
-                    { key: "id", label: "Trainee ID", render: (t) => <strong>{t.id}</strong> },
-                    { key: "name", label: "Candidate Name", render: (t) => <strong style={{ color: "#0f172a" }}>{t.name}</strong> },
-                    { key: "district", label: "District", render: (t) => t.district },
-                    { key: "programme_name", label: "Programme", render: (t) => t.programme_name },
-                    { key: "provider_name", label: "Provider", render: (t) => t.provider_name },
-                    { key: "cohort", label: "Cohort", render: (t) => t.cohort },
+                    { key: "id", label: t("reports.col_trainee_id", "Trainee ID"), render: (tItem) => <strong>{tItem.id}</strong> },
+                    { key: "name", label: t("reports.col_candidate_name", "Candidate Name"), render: (tItem) => <strong style={{ color: "#0f172a" }}>{tItem.name}</strong> },
+                    { key: "district", label: t("reports.col_district", "District"), render: (tItem) => tItem.district },
+                    { key: "programme_name", label: t("reports.col_programme", "Programme"), render: (tItem) => tItem.programme_name },
+                    { key: "provider_name", label: t("reports.col_provider", "Provider"), render: (tItem) => tItem.provider_name },
+                    { key: "cohort", label: t("reports.col_cohort", "Cohort"), render: (tItem) => tItem.cohort },
                     {
                       key: "status",
-                      label: "Status",
-                      render: (t) => (
+                      label: t("reports.col_status", "Status"),
+                      render: (tItem) => (
                         <span style={{
-                          background: t.employment?.status === "EMPLOYED" ? "#dcfce7" : t.employment?.status === "UNEMPLOYED" ? "#fee2e2" : "#fef3c7",
-                          color: t.employment?.status === "EMPLOYED" ? "#166534" : t.employment?.status === "UNEMPLOYED" ? "#991b1b" : "#b45309",
+                          background: tItem.employment?.status === "EMPLOYED" ? "#dcfce7" : tItem.employment?.status === "UNEMPLOYED" ? "#fee2e2" : "#fef3c7",
+                          color: tItem.employment?.status === "EMPLOYED" ? "#166534" : tItem.employment?.status === "UNEMPLOYED" ? "#991b1b" : "#b45309",
                           padding: "2px 8px",
                           borderRadius: "10px",
                           fontSize: "0.72rem",
                           fontWeight: 700
                         }}>
-                          {t.employment?.status || "ENROLLED"}
+                          {tItem.employment?.status || "ENROLLED"}
                         </span>
                       )
                     },
                     {
                       key: "wage",
-                      label: "Current Wage",
-                      render: (t) => t.employment?.current_wage > 0 ? `₹${t.employment.current_wage.toLocaleString()}` : "N/A"
+                      label: t("reports.col_wage", "Current Wage"),
+                      render: (tItem) => tItem.employment?.current_wage > 0 ? `₹${tItem.employment.current_wage.toLocaleString()}` : "N/A"
                     }
                   ]}
                   data={scopedTrainees.slice(0, 20)}

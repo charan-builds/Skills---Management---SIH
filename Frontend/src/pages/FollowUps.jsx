@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Bell, CheckCircle2, Clock, Calendar, AlertCircle, PhoneCall, Send, ChevronRight, User, ShieldCheck } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 
 export default function FollowUps() {
+  const { t } = useLanguage();
   const location = useLocation();
   const isAdmin = location.pathname.includes("/admin") || localStorage.getItem("userRole") === "admin";
   const store = usePlatformStore();
@@ -87,16 +89,16 @@ export default function FollowUps() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Bell size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            ASSISTED FOLLOW-UP & RETENTION VERIFICATION (FEATURES 5, 6, 7, 21, C10)
+            {t("follow_ups.badge", "ASSISTED FOLLOW-UP & RETENTION VERIFICATION (FEATURES 5, 6, 7, 21, C10)")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          {isAdmin ? "State Assisted Follow-up Oversight" : "Periodic Outcome Follow-ups"}
+          {isAdmin ? t("follow_ups.admin_title", "State Assisted Follow-up Oversight") : t("follow_ups.trainee_title", "Periodic Outcome Follow-ups")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
           {isAdmin
-            ? "Track automated omnichannel outreach, call-center verification, and 3M/6M/12M response completion across districts."
-            : "Mandatory milestone check-ins ensuring continuous support, wage tracking, and state career assistance."}
+            ? t("follow_ups.admin_subtitle", "Track automated omnichannel outreach, call-center verification, and 3M/6M/12M response completion across districts.")
+            : t("follow_ups.trainee_subtitle", "Mandatory milestone check-ins ensuring continuous support, wage tracking, and state career assistance.")}
         </p>
       </div>
 
@@ -111,8 +113,8 @@ export default function FollowUps() {
         /* ADMIN ASSISTED FOLLOW-UP OVERVIEW (Feature 21) */
         <div>
           {(() => {
-            const allFollowups = (store.trainees || []).flatMap(t =>
-              (t.follow_ups || []).map(fu => ({ ...fu, trainee: t }))
+            const allFollowups = (store.trainees || []).flatMap(tItem =>
+              (tItem.follow_ups || []).map(fu => ({ ...fu, trainee: tItem }))
             );
             const totalCount = allFollowups.length;
             const completedCount = allFollowups.filter(f => f.status === "Completed").length;
@@ -131,15 +133,15 @@ export default function FollowUps() {
               <>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
                   <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Total Cohort Trainees</span>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("follow_ups.kpi_total_cohort", "Total Cohort Trainees")}</span>
                     <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
                       {store.trainees.length}
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: "#2563eb" }}>{totalCount} Total Checkpoints</span>
+                    <span style={{ fontSize: "0.75rem", color: "#2563eb" }}>{totalCount} {t("follow_ups.total_checkpoints", "Total Checkpoints")}</span>
                   </div>
 
                   <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #fef3c7" }}>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Actionable Follow-ups</span>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("follow_ups.kpi_actionable", "Actionable Follow-ups")}</span>
                     <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#b45309", marginTop: "0.2rem" }}>
                       {dueCount + needsVerificationCount + needsAssistanceCount}
                     </div>
@@ -149,12 +151,12 @@ export default function FollowUps() {
                   </div>
 
                   <div style={{ background: "white", padding: "1.25rem", borderRadius: "10px", border: "1px solid #dcfce7" }}>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Verified Response Rate</span>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("follow_ups.kpi_verified_response_rate", "Verified Response Rate")}</span>
                     <div style={{ fontSize: "1.7rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
                       {dynamicResponseRate}%
                     </div>
                     <span style={{ fontSize: "0.75rem", color: "#16a34a" }}>
-                      {completedCount} of {actionableCount} Actionable Checkpoints
+                      {completedCount} of {actionableCount} {t("follow_ups.actionable_checkpoints", "Actionable Checkpoints")}
                     </span>
                   </div>
                 </div>
@@ -163,17 +165,17 @@ export default function FollowUps() {
                   <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
                       <h3 style={{ margin: 0, fontSize: "1.05rem", color: "#0f172a" }}>
-                        Active Actionable Follow-up Queue (Pending Actions & Escalations)
+                        {t("follow_ups.queue_title", "Active Actionable Follow-up Queue (Pending Actions & Escalations)")}
                       </h3>
                       <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                        Live stream of check-ins requiring verification, candidate reminder, or call center outreach.
+                        {t("follow_ups.queue_subtitle", "Live stream of check-ins requiring verification, candidate reminder, or call center outreach.")}
                       </span>
                     </div>
                     <button
                       onClick={() => window.location.href = "/admin/follow-ups"}
                       style={{ padding: "0.45rem 0.85rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}
                     >
-                      Open Full Governance Desk &rarr;
+                      {t("follow_ups.btn_open_desk", "Open Full Governance Desk →")}
                     </button>
                   </div>
                   <div style={{ padding: "1rem 1.5rem" }}>
@@ -233,7 +235,7 @@ export default function FollowUps() {
                               }}
                             >
                               {isNV ? <ShieldCheck size={13} /> : <PhoneCall size={13} />}
-                              {isNV ? "Verify Claim" : isNA ? "Assisted Outreach" : "Trigger Reminder"}
+                              {isNV ? t("follow_ups.btn_verify_claim", "Verify Claim") : isNA ? t("follow_ups.btn_assisted_outreach", "Assisted Outreach") : t("follow_ups.btn_trigger_reminder", "Trigger Reminder")}
                             </button>
                           </div>
                         </div>
@@ -260,9 +262,9 @@ export default function FollowUps() {
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                 <AlertCircle size={20} color="#b91c1c" />
                 <div>
-                  <strong style={{ color: "#991b1b", fontSize: "0.9rem" }}>Follow-up Participation is Restricted</strong>
+                  <strong style={{ color: "#991b1b", fontSize: "0.9rem" }}>{t("follow_ups.consent_restricted_title", "Follow-up Participation is Restricted")}</strong>
                   <p style={{ margin: 0, fontSize: "0.8rem", color: "#7f1d1d" }}>
-                    You have declined outcome tracking consent. Periodic check-in questionnaires are disabled until consent is granted.
+                    {t("follow_ups.consent_restricted_desc", "You have declined outcome tracking consent. Periodic check-in questionnaires are disabled until consent is granted.")}
                   </p>
                 </div>
               </div>
@@ -270,7 +272,7 @@ export default function FollowUps() {
                 onClick={() => window.location.href = "/trainee/consent"}
                 style={{ padding: "0.5rem 1rem", background: "#b91c1c", color: "white", border: "none", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}
               >
-                Manage Consent in Privacy Settings →
+                {t("follow_ups.btn_manage_consent", "Manage Consent in Privacy Settings →")}
               </button>
             </div>
           )}
@@ -302,7 +304,7 @@ export default function FollowUps() {
                   <div>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
                       <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>
-                        Milestone
+                        {t("follow_ups.milestone_label", "Milestone")}
                       </span>
                       <span
                         style={{
@@ -324,7 +326,7 @@ export default function FollowUps() {
                     </h3>
 
                     <div style={{ fontSize: "0.85rem", color: "#64748b", display: "flex", alignItems: "center", gap: "0.4rem", marginBottom: "0.5rem" }}>
-                      <Calendar size={14} /> Due Date: {fu.due_date}
+                      <Calendar size={14} /> {t("follow_ups.due_date_label", "Due Date:")} {fu.due_date}
                     </div>
 
                     {fu.notes && (
@@ -337,11 +339,11 @@ export default function FollowUps() {
                   <div style={{ marginTop: "1.25rem", borderTop: "1px solid #f1f5f9", paddingTop: "0.75rem" }}>
                     {isCompleted ? (
                       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#16a34a", fontSize: "0.85rem", fontWeight: 700 }}>
-                        <CheckCircle2 size={16} /> Completed on {fu.completed_date}
+                        <CheckCircle2 size={16} /> {t("follow_ups.completed_on", "Completed on")} {fu.completed_date}
                       </div>
                     ) : isNeedsVerification ? (
                       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#7e22ce", fontSize: "0.85rem", fontWeight: 700 }}>
-                        <Clock size={16} /> Response Submitted (Awaiting Nodal Review)
+                        <Clock size={16} /> {t("follow_ups.pending_nodal_review", "Response Submitted (Awaiting Nodal Review)")}
                       </div>
                     ) : (
                       <button
@@ -370,7 +372,7 @@ export default function FollowUps() {
                         }}
                       >
                         <span>
-                          {isDeclined ? "Restricted (Consent Declined)" : isNeedsAssistance ? "Update Contact & Check-in" : (isDue ? "Complete Check-in Now" : "Pre-fill Check-in")}
+                          {isDeclined ? t("follow_ups.btn_restricted_consent", "Restricted (Consent Declined)") : isNeedsAssistance ? t("follow_ups.btn_update_contact", "Update Contact & Check-in") : (isDue ? t("follow_ups.btn_complete_now", "Complete Check-in Now") : t("follow_ups.btn_prefill", "Pre-fill Check-in"))}
                         </span>
                         <ChevronRight size={16} />
                       </button>
@@ -400,9 +402,9 @@ export default function FollowUps() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                   <div>
                     <h3 style={{ margin: 0, fontSize: "1.25rem", color: "#0f172a" }}>
-                      {activeCheckin.milestone} Outcome Check-in
+                      {activeCheckin.milestone} {t("follow_ups.modal_checkin_title", "Outcome Check-in")}
                     </h3>
-                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Outcome-focused career & wage progression assessment</span>
+                    <span style={{ fontSize: "0.8rem", color: "#64748b" }}>{t("follow_ups.modal_checkin_subtitle", "Outcome-focused career & wage progression assessment")}</span>
                   </div>
                   <button onClick={() => setActiveCheckin(null)} style={{ background: "none", border: "none", fontSize: "1.2rem", color: "#64748b", cursor: "pointer" }}>✕</button>
                 </div>
@@ -411,7 +413,7 @@ export default function FollowUps() {
                   {/* Step 1: Are you currently working? (Section 18) */}
                   <div style={{ marginBottom: "1.25rem", background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                     <label style={{ display: "block", fontSize: "0.9rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem" }}>
-                      1. Are you currently working?
+                      {t("follow_ups.q1_working_label", "1. Are you currently working?")}
                     </label>
                     <div style={{ display: "flex", gap: "1rem" }}>
                       <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontWeight: 600, fontSize: "0.9rem", color: isWorking ? "#2563eb" : "#475569" }}>
@@ -421,7 +423,7 @@ export default function FollowUps() {
                           checked={isWorking}
                           onChange={() => setIsWorking(true)}
                         />
-                        Yes, currently working
+                        {t("follow_ups.opt_yes_working", "Yes, currently working")}
                       </label>
                       <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontWeight: 600, fontSize: "0.9rem", color: !isWorking ? "#b91c1c" : "#475569" }}>
                         <input
@@ -430,7 +432,7 @@ export default function FollowUps() {
                           checked={!isWorking}
                           onChange={() => setIsWorking(false)}
                         />
-                        No, not working
+                        {t("follow_ups.opt_no_working", "No, not working")}
                       </label>
                     </div>
                   </div>
@@ -440,15 +442,15 @@ export default function FollowUps() {
                     <>
                       <div style={{ marginBottom: "1rem" }}>
                         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                          Are you with the same employer ({trainee?.employment?.employer_name || "previous employer"})?
+                          {t("follow_ups.same_employer_label", "Are you with the same employer ({name})?").replace("{name}", trainee?.employment?.employer_name || "previous employer")}
                         </label>
                         <select
                           value={sameEmployer ? "yes" : "no"}
                           onChange={(e) => setSameEmployer(e.target.value === "yes")}
                           style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                         >
-                          <option value="yes">Yes — Still with {trainee?.employment?.employer_name || "same employer"}</option>
-                          <option value="no">No — Changed job to a new employer</option>
+                          <option value="yes">{t("follow_ups.opt_same_employer_yes", "Yes — Still with same employer")}</option>
+                          <option value="no">{t("follow_ups.opt_same_employer_no", "No — Changed job to a new employer")}</option>
                         </select>
                       </div>
 
@@ -456,7 +458,7 @@ export default function FollowUps() {
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem", background: "#f1f5f9", padding: "0.75rem", borderRadius: "6px" }}>
                           <div>
                             <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.25rem" }}>
-                              New Employer Name
+                              {t("follow_ups.new_employer_label", "New Employer Name")}
                             </label>
                             <input
                               type="text"
@@ -469,7 +471,7 @@ export default function FollowUps() {
                           </div>
                           <div>
                             <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.25rem" }}>
-                              New Job Role
+                              {t("follow_ups.new_role_label", "New Job Role")}
                             </label>
                             <input
                               type="text"
@@ -485,7 +487,7 @@ export default function FollowUps() {
 
                       <div style={{ marginBottom: "1rem" }}>
                         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                          Current Monthly Gross Wage (₹)
+                          {t("follow_ups.current_wage_label", "Current Monthly Gross Wage (₹)")}
                         </label>
                         <input
                           type="number"
@@ -499,22 +501,22 @@ export default function FollowUps() {
 
                       <div style={{ marginBottom: "1rem" }}>
                         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                          Are the skills from your training useful in your current work?
+                          {t("follow_ups.training_relevance_label", "Are the skills from your training useful in your current work?")}
                         </label>
                         <select
                           value={trainingRelevance}
                           onChange={(e) => setTrainingRelevance(e.target.value)}
                           style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                         >
-                          <option value="Yes">Yes — Core skills directly applied daily</option>
-                          <option value="Partially">Partially — Some modules useful, others missing</option>
-                          <option value="No">No — Job role requires completely different skills</option>
+                          <option value="Yes">{t("follow_ups.opt_relevance_yes", "Yes — Core skills directly applied daily")}</option>
+                          <option value="Partially">{t("follow_ups.opt_relevance_partially", "Partially — Some modules useful, others missing")}</option>
+                          <option value="No">{t("follow_ups.opt_relevance_no", "No — Job role requires completely different skills")}</option>
                         </select>
                       </div>
 
                       <div style={{ marginBottom: "1.25rem" }}>
                         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                          Which skills were missing from your training? (Optional)
+                          {t("follow_ups.missing_skills_label", "Which skills were missing from your training? (Optional)")}
                         </label>
                         <input
                           type="text"
@@ -523,7 +525,7 @@ export default function FollowUps() {
                           placeholder="e.g. Docker / Kubernetes / Cloud Lab hands-on"
                           style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                         />
-                        <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Feeds curriculum alignment analytics.</span>
+                        <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("follow_ups.missing_skills_hint", "Feeds curriculum alignment analytics.")}</span>
                       </div>
                     </>
                   )}
@@ -533,7 +535,7 @@ export default function FollowUps() {
                     <>
                       <div style={{ marginBottom: "1rem" }}>
                         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                          What is the primary reason you are currently not working?
+                          {t("follow_ups.primary_reason_not_working", "What is the primary reason you are currently not working?")}
                         </label>
                         <select
                           value={attritionReason}
@@ -551,27 +553,27 @@ export default function FollowUps() {
 
                       <div style={{ marginBottom: "1rem" }}>
                         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                          Are you actively seeking placement assistance?
+                          {t("follow_ups.seeking_placement_label", "Are you actively seeking placement assistance?")}
                         </label>
                         <select
                           value={seekingPlacement ? "yes" : "no"}
                           onChange={(e) => setSeekingPlacement(e.target.value === "yes")}
                           style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                         >
-                          <option value="yes">Yes — Connect me to state employment drives</option>
-                          <option value="no">No — Not actively seeking at this time</option>
+                          <option value="yes">{t("follow_ups.opt_seeking_yes", "Yes — Connect me to state employment drives")}</option>
+                          <option value="no">{t("follow_ups.opt_seeking_no", "No — Not actively seeking at this time")}</option>
                         </select>
                       </div>
 
                       <div style={{ marginBottom: "1.25rem" }}>
                         <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                          Additional notes or support needed:
+                          {t("follow_ups.additional_notes_label", "Additional notes or support needed:")}
                         </label>
                         <textarea
                           value={checkinNotes}
                           onChange={(e) => setCheckinNotes(e.target.value)}
                           rows={2}
-                          placeholder="Tell us what assistance would help you transition back to employment..."
+                          placeholder={t("follow_ups.additional_notes_placeholder", "Tell us what assistance would help you transition back to employment...")}
                           style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                         />
                       </div>
@@ -584,14 +586,14 @@ export default function FollowUps() {
                       onClick={() => setActiveCheckin(null)}
                       style={{ padding: "0.6rem 1.25rem", background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "6px", fontWeight: 600, cursor: "pointer" }}
                     >
-                      Cancel
+                      {t("follow_ups.btn_cancel", "Cancel")}
                     </button>
                     <button
                       type="submit"
                       disabled={submitting}
                       style={{ padding: "0.6rem 1.5rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}
                     >
-                      {submitting ? "Submitting..." : "Submit Follow-Up Response"}
+                      {submitting ? t("follow_ups.btn_submitting", "Submitting...") : t("follow_ups.btn_submit_response", "Submit Follow-Up Response")}
                     </button>
                   </div>
                 </form>

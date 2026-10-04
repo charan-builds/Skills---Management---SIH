@@ -9,8 +9,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 function InterventionImpact() {
+  const { t } = useLanguage();
   const [impactData, setImpactData] = useState({
     interventionName: null,
     skillMatchBefore: null,
@@ -82,10 +84,10 @@ function InterventionImpact() {
     <div className="dashboard">
       <div className="dashboard-header">
         <div>
-          <p className="page-label">INTERVENTION IMPACT</p>
-          <h1>Intervention Impact</h1>
+          <p className="page-label">{t("intervention_impact.badge", "INTERVENTION IMPACT")}</p>
+          <h1>{t("intervention_impact.page_title", "Intervention Impact")}</h1>
           <p className="page-description">
-            Compare outcomes before and after the intervention.
+            {t("intervention_impact.page_subtitle", "Compare outcomes before and after the intervention.")}
           </p>
         </div>
       </div>
@@ -97,37 +99,37 @@ function InterventionImpact() {
           data={impactData}
           onRetry={fetchImpact}
           isDataAvailable={(d) => d && d.interventionName !== null}
-          isEmptyDetails="No intervention impact data found."
+          isEmptyDetails={t("intervention_impact.empty_impact", "No intervention impact data found.")}
         >
           <div className="impact-header">
             <div>
-              <p className="page-label">INTERVENTION</p>
+              <p className="page-label">{t("interventions.col_intervention", "INTERVENTION")}</p>
               <h2>{impactData.interventionName || "Unknown Intervention"}</h2>
             </div>
 
             {impactData.skillMatchChange !== null && (
               <div className="impact-success">
                 <CheckCircle2 size={18} />
-                Evidence available
+                {t("intervention_impact.evidence_available", "Evidence available")}
               </div>
             )}
           </div>
 
           <div className="impact-table">
             <div className="impact-row impact-heading">
-              <span>Outcome</span>
-              <span>Before</span>
-              <span>After</span>
-              <span>Change</span>
+              <span>{t("intervention_impact.col_outcome", "Outcome")}</span>
+              <span>{t("intervention_impact.col_before", "Before")}</span>
+              <span>{t("intervention_impact.col_after", "After")}</span>
+              <span>{t("intervention_impact.col_change", "Change")}</span>
             </div>
 
             <div className="impact-row">
               <div className="impact-outcome">
                 <Target size={19} />
-                <strong>Skill Match</strong>
+                <strong>{t("intervention_impact.metric_skill_match", "Skill Match")}</strong>
               </div>
 
-              <span>{impactData.skillMatchBefore || "Insufficient Data"}</span>
+              <span>{impactData.skillMatchBefore || t("intervention_impact.insufficient_data", "Insufficient Data")}</span>
               <strong className="after-value">{impactData.skillMatchAfter || "No Data"}</strong>
               <span className="improvement">{impactData.skillMatchChange || "N/A"}</span>
             </div>
@@ -135,10 +137,10 @@ function InterventionImpact() {
             <div className="impact-row">
               <div className="impact-outcome">
                 <Clock3 size={19} />
-                <strong>12M Retention</strong>
+                <strong>{t("intervention_impact.metric_retention_12m", "12M Retention")}</strong>
               </div>
 
-              <span>{impactData.retentionBefore || "Insufficient Data"}</span>
+              <span>{impactData.retentionBefore || t("intervention_impact.insufficient_data", "Insufficient Data")}</span>
               <strong className="after-value">{impactData.retentionAfter || "No Data"}</strong>
               <span className="improvement">{impactData.retentionChange || "N/A"}</span>
             </div>
@@ -146,10 +148,10 @@ function InterventionImpact() {
             <div className="impact-row">
               <div className="impact-outcome">
                 <IndianRupee size={19} />
-                <strong>Wage Growth</strong>
+                <strong>{t("intervention_impact.metric_wage_growth", "Wage Growth")}</strong>
               </div>
 
-              <span>{impactData.wageGrowthBefore || "Insufficient Data"}</span>
+              <span>{impactData.wageGrowthBefore || t("intervention_impact.insufficient_data", "Insufficient Data")}</span>
               <strong className="after-value">{impactData.wageGrowthAfter || "No Data"}</strong>
               <span className="improvement">{impactData.wageGrowthChange || "N/A"}</span>
             </div>
@@ -159,10 +161,10 @@ function InterventionImpact() {
             <TrendingUp size={20} />
 
             <div>
-              <strong>Observed Change</strong>
+              <strong>{t("intervention_impact.observed_change_title", "Observed Change")}</strong>
               <p>
                 {impactData.skillMatchChange !== null 
-                  ? "Changes were observed in outcomes following the intervention date."
+                  ? t("intervention_impact.observed_change_desc", "Changes were observed in outcomes following the intervention date.")
                   : "Awaiting sufficient longitudinal outcome data to observe change."}
               </p>
             </div>

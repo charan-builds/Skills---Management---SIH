@@ -7,8 +7,10 @@ import {
   Save,
   Server
 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Settings() {
+  const { t } = useLanguage();
   const [profile, setProfile] = useState({
     name: "Dr. K. V. Raman",
     title: "Principal Director of Skilling Intelligence",
@@ -39,14 +41,14 @@ export default function Settings() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
             <SettingsIcon size={18} color="#2563eb" />
             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              ADMINISTRATION & SYSTEM PREFERENCES
+              {t("admin_settings.badge", "ADMINISTRATION & SYSTEM PREFERENCES")}
             </span>
           </div>
           <h1 style={{ fontSize: '1.95rem', fontWeight: 800, color: '#0f172a', margin: '0 0 0.35rem 0' }}>
-            Admin Profile & Governance Settings
+            {t("admin_settings.page_title", "Admin Profile & Governance Settings")}
           </h1>
           <p className="page-description" style={{ margin: 0, color: '#64748b', fontSize: '0.95rem' }}>
-            Manage directorate profile credentials, system notification thresholds, and data governance policies.
+            {t("admin_settings.page_subtitle", "Manage directorate profile credentials, system notification thresholds, and data governance policies.")}
           </p>
         </div>
       </div>
@@ -58,12 +60,12 @@ export default function Settings() {
           <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '2rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.75rem' }}>
               <User size={18} color="#2563eb" />
-              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>Directorate Profile Information</h3>
+              <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 700, color: '#0f172a' }}>{t("admin_settings.profile_info_title", "Directorate Profile Information")}</h3>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>Administrator Name</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>{t("admin_settings.admin_name", "Administrator Name")}</label>
                 <input
                   type="text"
                   value={profile.name}
@@ -73,7 +75,7 @@ export default function Settings() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>Official Title</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>{t("admin_settings.official_title", "Official Title")}</label>
                 <input
                   type="text"
                   value={profile.title}
@@ -83,7 +85,7 @@ export default function Settings() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>Government Email</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>{t("admin_settings.gov_email", "Government Email")}</label>
                 <input
                   type="email"
                   value={profile.email}
@@ -93,7 +95,7 @@ export default function Settings() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>Department / Mission</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>{t("admin_settings.department", "Department / Mission")}</label>
                 <input
                   type="text"
                   value={profile.department}
@@ -103,7 +105,7 @@ export default function Settings() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>Contact Phone</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>{t("admin_settings.phone_number", "Contact Phone")}</label>
                 <input
                   type="text"
                   value={profile.phone}
@@ -113,7 +115,7 @@ export default function Settings() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>State Node Identifier</label>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.4rem' }}>{t("admin_settings.node_id", "State Node Identifier")}</label>
                 <input
                   type="text"
                   value={profile.node_id}
@@ -130,7 +132,7 @@ export default function Settings() {
             <div style={{ background: '#ffffff', borderRadius: '14px', border: '1px solid #e2e8f0', padding: '1.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
                 <Bell size={18} color="#2563eb" />
-                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>Intelligence Alerts</h3>
+                <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>{t("admin_settings.auto_alerts", "Intelligence Alerts")}</h3>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', fontSize: '0.85rem' }}>
@@ -140,11 +142,11 @@ export default function Settings() {
                     checked={profile.auto_alert}
                     onChange={(e) => setProfile({ ...profile, auto_alert: e.target.checked })}
                   />
-                  <span>Automated alerts on skill demand surge ({">"}30%)</span>
+                  <span>{t("admin_settings.auto_alerts", "Automated alerts on skill demand surge (>30%)")}</span>
                 </label>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>Executive Digest Frequency</label>
+                  <label style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 600, color: '#334155' }}>{t("admin_settings.notification_digest", "Executive Digest Frequency")}</label>
                   <select
                     value={profile.email_digest}
                     onChange={(e) => setProfile({ ...profile, email_digest: e.target.value })}
@@ -189,7 +191,7 @@ export default function Settings() {
           <div>
             {savedSuccess && (
               <span style={{ color: '#16a34a', fontWeight: 700, fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <CheckCircle2 size={16} /> Directorate profile and governance configuration saved successfully!
+                <CheckCircle2 size={16} /> {t("admin_settings.save_success", "Directorate profile and governance configuration saved successfully!")}
               </span>
             )}
           </div>
@@ -210,7 +212,7 @@ export default function Settings() {
               gap: '0.4rem'
             }}
           >
-            <Save size={16} /> Save Admin Settings
+            <Save size={16} /> {t("admin_settings.btn_save", "Save Admin Settings")}
           </button>
         </div>
 

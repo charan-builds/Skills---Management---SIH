@@ -8,8 +8,10 @@ import {
 import { useFilters } from "../context/FilterContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Trainees() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { filters } = useFilters();
   const store = usePlatformStore();
@@ -99,24 +101,24 @@ export default function Trainees() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Shield size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            ADMIN POPULATION SURVEILLANCE & OUTCOME INTELLIGENCE
+            {t("trainees.admin_badge", "ADMIN POPULATION SURVEILLANCE & OUTCOME INTELLIGENCE")}
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Trainee Directory
+              {t("trainees.directory_title", "Trainee Directory")}
             </h1>
             <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-              Longitudinal registry of candidates across all state skilling cohorts. Inspect outcomes, wage growth, retention, and individual trajectories.
+              {t("trainees.directory_subtitle", "Longitudinal registry of candidates across all state skilling cohorts. Inspect outcomes, wage growth, retention, and individual trajectories.")}
             </p>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <div style={{ background: "#f8fafc", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.85rem" }}>
-              <span style={{ color: "#64748b" }}>Matched Population: </span>
+              <span style={{ color: "#64748b" }}>{t("trainees.matched_population", "Matched Population:")} </span>
               <strong style={{ color: "#2563eb", fontSize: "1.1rem" }}>{pagination.total}</strong>
-              <span style={{ color: "#94a3b8", fontSize: "0.75rem", marginLeft: "4px" }}>trainees</span>
+              <span style={{ color: "#94a3b8", fontSize: "0.75rem", marginLeft: "4px" }}>{t("trainees.matched_suffix", "trainees")}</span>
             </div>
           </div>
         </div>
@@ -131,7 +133,7 @@ export default function Trainees() {
             <input
               type="text"
               id="trainee-search-input"
-              placeholder="Search by ID, candidate name, programme, provider, district, or employer..."
+              placeholder={t("trainees.search_placeholder", "Search by ID, candidate name, programme, provider, district, or employer...")}
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
               style={{
@@ -152,11 +154,11 @@ export default function Trainees() {
               onChange={(e) => { setOutcomeStatus(e.target.value); setPage(1); }}
               style={{ width: "100%", padding: "0.55rem 0.75rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "white" }}
             >
-              <option value="">All Current Outcomes</option>
-              <option value="employed">Employed</option>
-              <option value="self_employed">Self-Employed</option>
-              <option value="apprenticeship">Apprenticeship</option>
-              <option value="unemployed">Unemployed</option>
+              <option value="">{t("trainees.all_outcomes", "All Current Outcomes")}</option>
+              <option value="employed">{t("status.employed", "Employed")}</option>
+              <option value="self_employed">{t("trainees.self_employed", "Self-Employed")}</option>
+              <option value="apprenticeship">{t("trainees.apprentice", "Apprenticeship")}</option>
+              <option value="unemployed">{t("status.unemployed", "Unemployed")}</option>
             </select>
           </div>
 
@@ -168,9 +170,9 @@ export default function Trainees() {
               onChange={(e) => { setTrainingStatus(e.target.value); setPage(1); }}
               style={{ width: "100%", padding: "0.55rem 0.75rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "white" }}
             >
-              <option value="">All Training Status</option>
-              <option value="Completed">Completed</option>
-              <option value="Dropped Out">Dropped Out</option>
+              <option value="">{t("trainees.all_training", "All Training Status")}</option>
+              <option value="Completed">{t("status.completed", "Completed")}</option>
+              <option value="Dropped Out">{t("status.dropped", "Dropped Out")}</option>
             </select>
           </div>
 
@@ -182,9 +184,9 @@ export default function Trainees() {
               onChange={(e) => { setRetentionStatus(e.target.value); setPage(1); }}
               style={{ width: "100%", padding: "0.55rem 0.75rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "white" }}
             >
-              <option value="">All Retention</option>
-              <option value="Retained">6M Retained</option>
-              <option value="Left Employment">Left Employment</option>
+              <option value="">{t("trainees.all_retention", "All Retention")}</option>
+              <option value="Retained">{t("trainees.retained", "6M Retained")}</option>
+              <option value="Left Employment">{t("trainees.exited", "Left Employment")}</option>
             </select>
           </div>
 
@@ -196,11 +198,11 @@ export default function Trainees() {
               onChange={(e) => { setRiskIndicator(e.target.value); setPage(1); }}
               style={{ width: "100%", padding: "0.55rem 0.75rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "white" }}
             >
-              <option value="">All Attention Levels</option>
-              <option value="High">High Attention Needed</option>
-              <option value="Moderate">Moderate Skill Gap</option>
-              <option value="Stable">Stable Retention</option>
-              <option value="Optimal">Optimal Impact</option>
+              <option value="">{t("trainees.all_risks", "All Attention Levels")}</option>
+              <option value="High">{t("trainees.high_attention", "High Attention Needed")}</option>
+              <option value="Moderate">{t("trainees.moderate_gap", "Moderate Skill Gap")}</option>
+              <option value="Stable">{t("trainees.stable_retention", "Stable Retention")}</option>
+              <option value="Optimal">{t("trainees.optimal_impact", "Optimal Impact")}</option>
             </select>
           </div>
 
@@ -223,7 +225,7 @@ export default function Trainees() {
                 cursor: "pointer"
               }}
             >
-              <X size={14} /> Clear
+              <X size={14} /> {t("common.clear", "Clear")}
             </button>
           )}
         </div>
@@ -245,41 +247,41 @@ export default function Trainees() {
                 <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", color: "#475569" }}>
                   <th style={{ padding: "0.85rem 1rem", fontWeight: 700, cursor: "pointer" }} onClick={() => handleSort("id")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Trainee ID <ArrowUpDown size={12} />
+                      {t("trainees.col_id", "Trainee ID")} <ArrowUpDown size={12} />
                     </div>
                   </th>
                   <th style={{ padding: "0.85rem 1rem", fontWeight: 700, cursor: "pointer" }} onClick={() => handleSort("name")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Candidate Identity <ArrowUpDown size={12} />
+                      {t("trainees.col_name", "Candidate Identity")} <ArrowUpDown size={12} />
                     </div>
                   </th>
-                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>Programme & Provider</th>
-                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>District & Cohort</th>
-                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>Current Outcome</th>
-                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>Employer & Role</th>
+                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>{t("trainees.col_programme", "Programme & Provider")}</th>
+                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>{t("trainees.col_district", "District & Cohort")}</th>
+                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>{t("trainees.col_status", "Current Outcome")}</th>
+                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>{t("trainees.col_employer", "Employer & Role")}</th>
                   <th style={{ padding: "0.85rem 1rem", fontWeight: 700, cursor: "pointer" }} onClick={() => handleSort("wage")}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Latest Wage <ArrowUpDown size={12} />
+                      {t("trainees.col_wage", "Latest Wage")} <ArrowUpDown size={12} />
                     </div>
                   </th>
-                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>Retention (6M)</th>
-                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>Risk Status</th>
-                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700, textAlign: "right" }}>Actions</th>
+                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>{t("trainees.col_retention", "Retention (6M)")}</th>
+                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700 }}>{t("trainees.col_risk", "Risk Status")}</th>
+                  <th style={{ padding: "0.85rem 1rem", fontWeight: 700, textAlign: "right" }}>{t("trainees.col_actions", "Actions")}</th>
                 </tr>
               </thead>
               <tbody>
-                {trainees.map((t) => {
-                  const emp = t.employment;
+                {trainees.map((trainee) => {
+                  const emp = trainee.employment;
                   const isEmployed = emp?.status === "EMPLOYED";
                   const isApprentice = emp?.status === "APPRENTICESHIP";
                   const isSelf = emp?.status === "SELF_EMPLOYED";
                   const isUnemployed = emp?.status === "UNEMPLOYED";
 
                   return (
-                    <tr key={t.id} style={{ borderBottom: "1px solid #f1f5f9" }} className="hover-row">
+                    <tr key={trainee.id} style={{ borderBottom: "1px solid #f1f5f9" }} className="hover-row">
                       {/* ID */}
                       <td style={{ padding: "0.85rem 1rem", fontWeight: 700, color: "#2563eb", fontFamily: "monospace" }}>
-                        {t.id}
+                        {trainee.id}
                       </td>
 
                       {/* Identity */}
@@ -289,20 +291,20 @@ export default function Trainees() {
                             width: "32px",
                             height: "32px",
                             borderRadius: "50%",
-                            background: t.gender === "Female" ? "#fce7f3" : "#eff6ff",
-                            color: t.gender === "Female" ? "#be185d" : "#1d4ed8",
+                            background: trainee.gender === "Female" ? "#fce7f3" : "#eff6ff",
+                            color: trainee.gender === "Female" ? "#be185d" : "#1d4ed8",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             fontWeight: 700,
                             fontSize: "0.85rem"
                           }}>
-                            {t.name.charAt(0)}
+                            {trainee.name.charAt(0)}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 700, color: "#0f172a" }}>{t.name}</div>
+                            <div style={{ fontWeight: 700, color: "#0f172a" }}>{trainee.name}</div>
                             <div style={{ fontSize: "0.72rem", color: "#64748b" }}>
-                              {t.gender} • Age {t.age} • {t.category}
+                              {t(`common.${trainee.gender?.toLowerCase()}`, trainee.gender)} • {t("trainees.age", "Age")} {trainee.age} • {trainee.category}
                             </div>
                           </div>
                         </div>
@@ -310,41 +312,41 @@ export default function Trainees() {
 
                       {/* Programme & Provider */}
                       <td style={{ padding: "0.85rem 1rem" }}>
-                        <div style={{ fontWeight: 600, color: "#1e293b" }}>{t.programme_name}</div>
-                        <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{t.provider_name}</div>
+                        <div style={{ fontWeight: 600, color: "#1e293b" }}>{trainee.programme_name}</div>
+                        <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{trainee.provider_name}</div>
                       </td>
 
                       {/* District & Cohort */}
                       <td style={{ padding: "0.85rem 1rem" }}>
-                        <div style={{ fontWeight: 600, color: "#334155" }}>{t.district}</div>
-                        <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{t.cohort}</div>
+                        <div style={{ fontWeight: 600, color: "#334155" }}>{trainee.district}</div>
+                        <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{trainee.cohort}</div>
                       </td>
 
                       {/* Outcome Status */}
                       <td style={{ padding: "0.85rem 1rem" }}>
                         {isEmployed && (
                           <span style={{ background: "#dcfce7", color: "#15803d", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                            Employed
+                            {t("status.employed", "Employed")}
                           </span>
                         )}
                         {isSelf && (
                           <span style={{ background: "#ccfbf1", color: "#0f766e", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                            Self-Employed
+                            {t("trainees.self_employed", "Self-Employed")}
                           </span>
                         )}
                         {isApprentice && (
                           <span style={{ background: "#f3e8ff", color: "#7e22ce", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                            Apprentice
+                            {t("trainees.apprentice", "Apprentice")}
                           </span>
                         )}
                         {isUnemployed && (
                           <span style={{ background: "#fef3c7", color: "#b45309", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                            Unemployed
+                            {t("status.unemployed", "Unemployed")}
                           </span>
                         )}
                         {!isEmployed && !isSelf && !isApprentice && !isUnemployed && (
                           <span style={{ background: "#f1f5f9", color: "#475569", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                            {t.employment?.status || "In Training"}
+                            {trainee.employment?.status ? t(`status.${trainee.employment.status.toLowerCase()}`, trainee.employment.status) : t("trainees.in_training", "In Training")}
                           </span>
                         )}
                       </td>
@@ -359,10 +361,10 @@ export default function Trainees() {
                         ) : isSelf ? (
                           <>
                             <div style={{ fontWeight: 600, color: "#0f766e" }}>{emp.business_name || "Enterprise"}</div>
-                            <div style={{ fontSize: "0.72rem", color: "#64748b" }}>Contractor</div>
+                            <div style={{ fontSize: "0.72rem", color: "#64748b" }}>{t("trainees.contractor", "Contractor")}</div>
                           </>
                         ) : (
-                          <span style={{ color: "#94a3b8", fontSize: "0.75rem" }}>N/A (Unplaced)</span>
+                          <span style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("trainees.not_available", "N/A (Unplaced)")}</span>
                         )}
                       </td>
 
@@ -371,9 +373,9 @@ export default function Trainees() {
                         {emp?.current_wage > 0 ? (
                           <div>
                             <strong style={{ color: "#0f172a" }}>₹{emp.current_wage.toLocaleString()}</strong>
-                            {t.wage_metrics?.growth_percentage > 0 && (
+                            {trainee.wage_metrics?.growth_percentage > 0 && (
                               <span style={{ fontSize: "0.7rem", color: "#16a34a", marginLeft: "4px", fontWeight: 700 }}>
-                                +{t.wage_metrics.growth_percentage}%
+                                +{trainee.wage_metrics.growth_percentage}%
                               </span>
                             )}
                           </div>
@@ -384,16 +386,16 @@ export default function Trainees() {
 
                       {/* Retention Status */}
                       <td style={{ padding: "0.85rem 1rem" }}>
-                        {t.retention?.retention_6m === "Retained" ? (
+                        {trainee.retention?.retention_6m === "Retained" ? (
                           <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", color: "#16a34a", fontWeight: 600, fontSize: "0.75rem" }}>
-                            <CheckCircle2 size={13} /> Retained
+                            <CheckCircle2 size={13} /> {t("trainees.retained", "Retained")}
                           </span>
-                        ) : t.retention?.retention_6m === "Left Employment" ? (
+                        ) : trainee.retention?.retention_6m === "Left Employment" ? (
                           <span style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem", color: "#e11d48", fontWeight: 600, fontSize: "0.75rem" }}>
-                            <AlertTriangle size={13} /> Exited
+                            <AlertTriangle size={13} /> {t("trainees.exited", "Exited")}
                           </span>
                         ) : (
-                          <span style={{ color: "#94a3b8", fontSize: "0.75rem" }}>In Progress</span>
+                          <span style={{ color: "#94a3b8", fontSize: "0.75rem" }}>{t("trainees.in_progress", "In Progress")}</span>
                         )}
                       </td>
 
@@ -404,18 +406,18 @@ export default function Trainees() {
                           borderRadius: "4px",
                           fontSize: "0.72rem",
                           fontWeight: 700,
-                          background: t.risk_indicator?.includes("High") ? "#fee2e2" : (t.risk_indicator?.includes("Moderate") ? "#fef3c7" : "#dcfce7"),
-                          color: t.risk_indicator?.includes("High") ? "#b91c1c" : (t.risk_indicator?.includes("Moderate") ? "#b45309" : "#15803d")
+                          background: trainee.risk_indicator?.includes("High") ? "#fee2e2" : (trainee.risk_indicator?.includes("Moderate") ? "#fef3c7" : "#dcfce7"),
+                          color: trainee.risk_indicator?.includes("High") ? "#b91c1c" : (trainee.risk_indicator?.includes("Moderate") ? "#b45309" : "#15803d")
                         }}>
-                          {t.risk_indicator}
+                          {t(trainee.risk_indicator, trainee.risk_indicator)}
                         </span>
                       </td>
 
                       {/* Actions */}
                       <td style={{ padding: "0.85rem 1rem", textAlign: "right" }}>
                         <button
-                          id={`view-trainee-${t.id}`}
-                          onClick={() => navigate(`/admin/trainees/${t.id}`)}
+                          id={`view-trainee-${trainee.id}`}
+                          onClick={() => navigate(`/admin/trainees/${trainee.id}`)}
                           style={{
                             display: "inline-flex",
                             alignItems: "center",
@@ -430,7 +432,7 @@ export default function Trainees() {
                             cursor: "pointer"
                           }}
                         >
-                          <Eye size={13} /> View Profile
+                          <Eye size={13} /> {t("trainees.view_profile", "View Profile")}
                         </button>
                       </td>
                     </tr>
@@ -443,7 +445,7 @@ export default function Trainees() {
           {/* Pagination Bar */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 1.25rem", borderTop: "1px solid #f1f5f9" }}>
             <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-              Showing page <strong>{page}</strong> of <strong>{pagination.totalPages}</strong> ({pagination.total} records)
+              {t("trainees.showing_page", "Showing page")} <strong>{page}</strong> {t("trainees.of", "of")} <strong>{pagination.totalPages}</strong> ({pagination.total} {t("trainees.records", "records")})
             </span>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -464,7 +466,7 @@ export default function Trainees() {
                   cursor: page <= 1 ? "not-allowed" : "pointer"
                 }}
               >
-                <ChevronLeft size={14} /> Previous
+                <ChevronLeft size={14} /> {t("trainees.previous", "Previous")}
               </button>
 
               <button
@@ -484,7 +486,7 @@ export default function Trainees() {
                   cursor: page >= pagination.totalPages ? "not-allowed" : "pointer"
                 }}
               >
-                Next <ChevronRight size={14} />
+                {t("trainees.next", "Next")} <ChevronRight size={14} />
               </button>
             </div>
           </div>

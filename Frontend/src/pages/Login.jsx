@@ -21,8 +21,10 @@ import { useNavigate } from "react-router-dom";
 import { auth } from "../utils/firebase-config";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { platformService } from "../services/platformService";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Login() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const ENABLE_DEMO_MODE = import.meta.env.VITE_ENABLE_DEMO_MODE !== 'false';
@@ -263,19 +265,17 @@ export default function Login() {
 
             <div className="landing-category-pill">
               <span className="pill-dot" />
-              Evidence-Based Decision Support
+              {t("auth_login.portal_subtitle", "Evidence-Based Decision Support")}
             </div>
 
             <h1 className="landing-headline">
-              Turning Skills Into{" "}
+              {t("landing.hero_title", "Turning Skills Into")}{" "}
               <br />
-              <span className="gradient-text">Measurable Impact</span>
+              <span className="gradient-text">{t("landing.hero_span", "Measurable Impact")}</span>
             </h1>
 
             <p className="landing-description">
-              Skill2Impact connects training programmes, skill outcomes, employment
-              records and employer feedback to help government and programme teams
-              make evidence-based decisions.
+              {t("landing.hero_lede", "Skill2Impact connects training programmes, skill outcomes, employment records and employer feedback to help government and programme teams make evidence-based decisions.")}
             </p>
 
             {/* Feature highlights — 2×2 grid */}
@@ -286,7 +286,7 @@ export default function Login() {
                   <Target size={19} />
                 </div>
                 <div>
-                  <h3>Skill Gap Intelligence</h3>
+                  <h3>{t("admin_nav.skill_gaps", "Skill Gap Intelligence")}</h3>
                   <p>Identify skills missing from training and employment requirements.</p>
                 </div>
               </div>
@@ -296,7 +296,7 @@ export default function Login() {
                   <Briefcase size={19} />
                 </div>
                 <div>
-                  <h3>Employment Outcome Tracking</h3>
+                  <h3>{t("admin_nav.outcomes", "Employment Outcome Tracking")}</h3>
                   <p>Track employment, retention and post-training outcomes longitudinally.</p>
                 </div>
               </div>
@@ -306,7 +306,7 @@ export default function Login() {
                   <ShieldCheck size={19} />
                 </div>
                 <div>
-                  <h3>Employer Verification</h3>
+                  <h3>{t("admin_nav.employer_verification", "Employer Verification")}</h3>
                   <p>Capture and verify employer-side employment and workforce information.</p>
                 </div>
               </div>
@@ -316,7 +316,7 @@ export default function Login() {
                   <GitBranch size={19} />
                 </div>
                 <div>
-                  <h3>Policy What-If Simulation</h3>
+                  <h3>{t("admin_nav.policy_simulator", "Policy What-If Simulation")}</h3>
                   <p>Simulate potential impact of new training modules or policy interventions.</p>
                 </div>
               </div>
@@ -363,8 +363,8 @@ export default function Login() {
 
               {/* Card header */}
               <div className="login-card-header">
-                <h2>Welcome Back</h2>
-                <p>Choose your role to continue</p>
+                <h2>{t("auth_login.portal_title", "Welcome Back")}</h2>
+                <p>{t("auth_login.portal_subtitle", "Choose your role to continue")}</p>
               </div>
 
               {/* Role selector */}
@@ -379,7 +379,7 @@ export default function Login() {
                   </div>
                   <div className="role-card-content">
                     <div className="role-card-title">
-                      <strong>Government / Admin</strong>
+                      <strong>{t("nav.admin", "Government / Admin")}</strong>
                       {role === "admin" && <span className="active-dot" />}
                     </div>
                     <p className="role-card-desc">
@@ -397,7 +397,7 @@ export default function Login() {
                   </div>
                   <div className="role-card-content">
                     <div className="role-card-title">
-                      <strong>Employer</strong>
+                      <strong>{t("nav.employer", "Employer")}</strong>
                       {role === "employer" && <span className="active-dot" />}
                     </div>
                     <p className="role-card-desc">
@@ -415,7 +415,7 @@ export default function Login() {
                   </div>
                   <div className="role-card-content">
                     <div className="role-card-title">
-                      <strong>Trainee</strong>
+                      <strong>{t("nav.trainee", "Trainee")}</strong>
                       {role === "trainee" && <span className="active-dot" />}
                     </div>
                     <p className="role-card-desc">
@@ -428,7 +428,7 @@ export default function Login() {
 
               {/* Divider */}
               <div className="login-role-divider">
-                <span>Sign in as {roleLabel}</span>
+                <span>{t("auth_login.btn_login", "Sign in as")} {roleLabel}</span>
               </div>
 
               {/* Dynamic login form */}
@@ -438,7 +438,7 @@ export default function Login() {
                 {role === "admin" && (
                   <form onSubmit={handleAdminLogin} className="role-form">
                     <div className="form-group">
-                      <label htmlFor="admin-email">Official Email</label>
+                      <label htmlFor="admin-email">{t("auth_login.email_label", "Official Email")}</label>
                       <div className="input-with-icon">
                         <Mail size={16} />
                         <input
@@ -452,7 +452,7 @@ export default function Login() {
                       </div>
                     </div>
                     <div className="form-group">
-                      <label htmlFor="admin-password">Password</label>
+                      <label htmlFor="admin-password">{t("auth_login.password_label", "Password")}</label>
                       <div className="input-with-icon">
                         <LockKeyhole size={16} />
                         <input
@@ -467,7 +467,7 @@ export default function Login() {
                     </div>
                     {error && <div className="form-error-alert">{error}</div>}
                     <button type="submit" className="login-submit-btn">
-                      <span>Sign in as Admin</span>
+                      <span>{t("auth_login.btn_login", "Sign in as Admin")}</span>
                       <ArrowRight size={17} />
                     </button>
                   </form>
@@ -477,7 +477,7 @@ export default function Login() {
                 {role === "employer" && (
                   <form onSubmit={handleEmployerLogin} className="role-form">
                     <div className="form-group">
-                      <label htmlFor="organization-id">Organization ID</label>
+                      <label htmlFor="organization-id">{t("auth_login.org_id_label", "Organization ID")}</label>
                       <div className="input-with-icon">
                         <Building2 size={16} />
                         <input
@@ -491,7 +491,7 @@ export default function Login() {
                       </div>
                     </div>
                     <div className="form-group">
-                      <label htmlFor="employer-email">Official Email</label>
+                      <label htmlFor="employer-email">{t("auth_login.email_label", "Official Email")}</label>
                       <div className="input-with-icon">
                         <Mail size={16} />
                         <input
@@ -505,7 +505,7 @@ export default function Login() {
                       </div>
                     </div>
                     <div className="form-group">
-                      <label htmlFor="employer-password">Password</label>
+                      <label htmlFor="employer-password">{t("auth_login.password_label", "Password")}</label>
                       <div className="input-with-icon">
                         <LockKeyhole size={16} />
                         <input
@@ -520,7 +520,7 @@ export default function Login() {
                     </div>
                     {error && <div className="form-error-alert">{error}</div>}
                     <button type="submit" className="login-submit-btn">
-                      <span>Sign in as Employer</span>
+                      <span>{t("auth_login.btn_login", "Sign in as Employer")}</span>
                       <ArrowRight size={17} />
                     </button>
                   </form>
@@ -530,7 +530,7 @@ export default function Login() {
                 {role === "trainee" && (
                   <form onSubmit={handleTraineeLogin} className="role-form">
                     <div className="form-group">
-                      <label htmlFor="trainee-id">Permanent Trainee ID</label>
+                      <label htmlFor="trainee-id">{t("auth_login.trainee_id_label", "Permanent Trainee ID")}</label>
                       <div className="input-with-icon">
                         <BadgeCheck size={16} />
                         <input
@@ -544,7 +544,7 @@ export default function Login() {
                       </div>
                     </div>
                     <div className="form-group">
-                      <label htmlFor="trainee-email">Registered Email</label>
+                      <label htmlFor="trainee-email">{t("auth_login.email_label", "Registered Email")}</label>
                       <div className="input-with-icon">
                         <Mail size={16} />
                         <input
@@ -558,7 +558,7 @@ export default function Login() {
                       </div>
                     </div>
                     <div className="form-group">
-                      <label htmlFor="trainee-password">Password</label>
+                      <label htmlFor="trainee-password">{t("auth_login.password_label", "Password")}</label>
                       <div className="input-with-icon">
                         <LockKeyhole size={16} />
                         <input
@@ -581,24 +581,7 @@ export default function Login() {
                         {traineeConsentAgreed ? <CheckSquare size={18} /> : <Square size={18} />}
                       </span>
                       <span className="consent-text">
-                        I agree to all applicable{" "}
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); setShowModal("terms"); }}
-                          className="legal-link"
-                        >
-                          Terms &amp; Conditions
-                        </button>
-                        {" "}and{" "}
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); setShowModal("privacy"); }}
-                          className="legal-link"
-                        >
-                          Privacy Policy
-                        </button>
-                        .{" "}
-                        <span className="sub-note">Consent is logged for legal compliance.</span>
+                        {t("auth_login.dpdp_consent_checkbox", "I agree to all applicable Terms & Conditions and Privacy Policy.")}
                       </span>
                     </div>
 
@@ -609,7 +592,7 @@ export default function Login() {
                       className="login-submit-btn"
                       disabled={!traineeConsentAgreed}
                     >
-                      <span>Sign in as Trainee</span>
+                      <span>{t("auth_login.btn_login", "Sign in as Trainee")}</span>
                       <ArrowRight size={17} />
                     </button>
                   </form>
@@ -620,7 +603,7 @@ export default function Login() {
               {/* Demo quick-access */}
               {ENABLE_DEMO_MODE && (
                 <div className="demo-shortcuts-area">
-                  <p className="demo-shortcuts-title">Quick Demo Login</p>
+                  <p className="demo-shortcuts-title">{t("auth_login.demo_quick_fill", "Quick Demo Login")}</p>
                   <div className="demo-buttons-grid">
                     <button
                       type="button"

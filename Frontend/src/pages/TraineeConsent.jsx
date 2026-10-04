@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { ShieldCheck, ShieldAlert, CheckCircle2, XCircle, Clock, Info, AlertTriangle, Lock, FileCheck, KeyRound, User, Globe, Calendar } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function TraineeConsent() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const traineeId = localStorage.getItem("traineeId") || "TR-0001";
   const [trainee, setTrainee] = useState(null);
@@ -56,14 +58,14 @@ export default function TraineeConsent() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <ShieldCheck size={20} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            PRIVACY, CITIZEN DATA RIGHTS & OUTCOME CONSENT
+            {t("trainee_consent.badge", "PRIVACY, CITIZEN DATA RIGHTS & OUTCOME CONSENT")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Privacy & Consent Management
+          {t("trainee_consent.title", "Privacy & Consent Management")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Transparent control over your personal skilling records, employer outcome verification, and periodic career follow-up participation.
+          {t("trainee_consent.subtitle", "Transparent control over your personal skilling records, employer outcome verification, and periodic career follow-up participation.")}
         </p>
       </div>
 
@@ -79,27 +81,27 @@ export default function TraineeConsent() {
         data={trainee}
         onRetry={loadData}
         isDataAvailable={(d) => Boolean(d)}
-        isEmptyDetails="No profile record found."
+        isEmptyDetails={t("trainee_consent.empty_profile", "No profile record found.")}
       >
         {/* Current Consent Status Badge Card */}
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
             <div>
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
-                Active Follow-Up Participation Status
+                {t("trainee_consent.followup_status_label", "Active Follow-Up Participation Status")}
               </span>
               <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginTop: "0.4rem" }}>
                 {isAccepted ? (
                   <span style={{ background: "#dcfce7", color: "#15803d", padding: "6px 14px", borderRadius: "20px", fontSize: "0.95rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "6px" }}>
-                    <CheckCircle2 size={16} /> Follow-Up Consent Accepted
+                    <CheckCircle2 size={16} /> {t("trainee_consent.consent_accepted", "Follow-Up Consent Accepted")}
                   </span>
                 ) : (
                   <span style={{ background: "#fee2e2", color: "#b91c1c", padding: "6px 14px", borderRadius: "20px", fontSize: "0.95rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "6px" }}>
-                    <XCircle size={16} /> Follow-Up Participation Declined
+                    <XCircle size={16} /> {t("trainee_consent.consent_declined", "Follow-Up Participation Declined")}
                   </span>
                 )}
                 <span style={{ color: "#64748b", fontSize: "0.85rem", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <Clock size={14} /> Recorded on: <strong>{consentDate}</strong>
+                  <Clock size={14} /> {t("trainee_consent.recorded_on", "Recorded on:")} <strong>{consentDate}</strong>
                 </span>
               </div>
             </div>
@@ -120,7 +122,7 @@ export default function TraineeConsent() {
                     cursor: saving ? "not-allowed" : "pointer"
                   }}
                 >
-                  {saving ? "Saving..." : "Revoke / Decline Follow-Up Consent"}
+                  {saving ? t("trainee_consent.btn_saving", "Saving...") : t("trainee_consent.btn_revoke_consent", "Revoke / Decline Follow-Up Consent")}
                 </button>
               ) : (
                 <button
@@ -137,7 +139,7 @@ export default function TraineeConsent() {
                     cursor: saving ? "not-allowed" : "pointer"
                   }}
                 >
-                  {saving ? "Saving..." : "Accept & Authorize Follow-Ups"}
+                  {saving ? t("trainee_consent.btn_saving", "Saving...") : t("trainee_consent.btn_accept_consent", "Accept & Authorize Follow-Ups")}
                 </button>
               )}
             </div>
@@ -147,7 +149,7 @@ export default function TraineeConsent() {
             <div style={{ marginTop: "1.25rem", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "8px", padding: "1rem", display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
               <AlertTriangle size={20} color="#b91c1c" style={{ flexShrink: 0, marginTop: "2px" }} />
               <div style={{ fontSize: "0.85rem", color: "#991b1b" }}>
-                <strong>Follow-Up Participation is Restricted:</strong> You have opted out of periodic outcome follow-ups. Milestone check-in surveys at 3M, 6M, and 12M will not prompt you or record your post-training telemetry until consent is reactivated. Your completed training credentials and profile data remain securely preserved.
+                <strong>{t("trainee_consent.restricted_title", "Follow-Up Participation is Restricted:")}</strong> {t("trainee_consent.restricted_desc", "You have opted out of periodic outcome follow-ups. Milestone check-in surveys at 3M, 6M, and 12M will not prompt you or record your post-training telemetry until consent is reactivated. Your completed training credentials and profile data remain securely preserved.")}
               </div>
             </div>
           )}
@@ -160,13 +162,13 @@ export default function TraineeConsent() {
               <FileCheck size={18} color="#2563eb" />
             </div>
             <div>
-              <p style={{ margin: 0, fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>Login Consent — Legal Proof Audit Trail</p>
+              <p style={{ margin: 0, fontWeight: 800, fontSize: "1rem", color: "#0f172a" }}>{t("trainee_consent.audit_title", "Login Consent — Legal Proof Audit Trail")}</p>
               <p style={{ margin: 0, fontSize: "0.78rem", color: "#64748b" }}>
-                Immutable record of your Terms &amp; Privacy acceptance at login · Terms v1.0
+                {t("trainee_consent.audit_subtitle", "Immutable record of your Terms & Privacy acceptance at login · Terms v1.0")}
               </p>
             </div>
             <span style={{ marginLeft: "auto", background: "#dcfce7", color: "#15803d", fontSize: "0.72rem", fontWeight: 700, padding: "3px 10px", borderRadius: "20px", display: "flex", alignItems: "center", gap: "4px" }}>
-              <CheckCircle2 size={12} /> Verified
+              <CheckCircle2 size={12} /> {t("trainee_consent.verified_badge", "Verified")}
             </span>
           </div>
 
@@ -174,7 +176,7 @@ export default function TraineeConsent() {
           {loginProofToken && (
             <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: "10px", padding: "1rem 1.25rem", marginBottom: "1.25rem" }}>
               <p style={{ margin: "0 0 0.35rem 0", fontSize: "0.75rem", fontWeight: 700, color: "#1d4ed8", textTransform: "uppercase", letterSpacing: "0.4px" }}>
-                Current Session Proof Token
+                {t("trainee_consent.current_session_token", "Current Session Proof Token")}
               </p>
               <code style={{ fontSize: "0.8rem", color: "#1e40af", wordBreak: "break-all", fontFamily: "monospace", fontWeight: 600 }}>
                 {loginProofToken}
@@ -197,21 +199,21 @@ export default function TraineeConsent() {
                 >
                   {idx === 0 && (
                     <span style={{ display: "inline-block", background: "#dbeafe", color: "#1d4ed8", fontSize: "0.7rem", fontWeight: 700, padding: "2px 8px", borderRadius: "20px", marginBottom: "0.6rem" }}>
-                      Most Recent Login
+                      {t("trainee_consent.most_recent_login", "Most Recent Login")}
                     </span>
                   )}
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "0.6rem" }}>
                     <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                       <KeyRound size={14} color="#6366f1" style={{ flexShrink: 0, marginTop: "2px" }} />
                       <div>
-                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Proof Token</p>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>{t("trainee_consent.proof_token", "Proof Token")}</p>
                         <code style={{ fontSize: "0.72rem", color: "#1e40af", wordBreak: "break-all" }}>{record.proof_token || "—"}</code>
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                       <Calendar size={14} color="#16a34a" style={{ flexShrink: 0, marginTop: "2px" }} />
                       <div>
-                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Accepted At</p>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>{t("trainee_consent.accepted_at", "Accepted At")}</p>
                         <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a", fontWeight: 600 }}>
                           {record.accepted_at ? new Date(record.accepted_at).toLocaleString() : "—"}
                         </p>
@@ -220,14 +222,14 @@ export default function TraineeConsent() {
                     <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                       <FileCheck size={14} color="#9333ea" style={{ flexShrink: 0, marginTop: "2px" }} />
                       <div>
-                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Terms Version</p>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>{t("trainee_consent.terms_version", "Terms Version")}</p>
                         <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a", fontWeight: 600 }}>{record.terms_version || "v1.0"}</p>
                       </div>
                     </div>
                     <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                       <User size={14} color="#0891b2" style={{ flexShrink: 0, marginTop: "2px" }} />
                       <div>
-                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Consent Type</p>
+                        <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>{t("trainee_consent.consent_type", "Consent Type")}</p>
                         <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a", fontWeight: 600 }}>{record.consent_type || "LOGIN_TERMS_AND_PRIVACY"}</p>
                       </div>
                     </div>
@@ -235,7 +237,7 @@ export default function TraineeConsent() {
                       <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", gridColumn: "1 / -1" }}>
                         <Globe size={14} color="#64748b" style={{ flexShrink: 0, marginTop: "2px" }} />
                         <div>
-                          <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Browser / User Agent</p>
+                          <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>{t("trainee_consent.browser_user_agent", "Browser / User Agent")}</p>
                           <p style={{ margin: 0, fontSize: "0.72rem", color: "#475569", wordBreak: "break-all" }}>{record.user_agent}</p>
                         </div>
                       </div>
@@ -244,7 +246,7 @@ export default function TraineeConsent() {
                       <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem" }}>
                         <Info size={14} color="#64748b" style={{ flexShrink: 0, marginTop: "2px" }} />
                         <div>
-                          <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>Email on Record</p>
+                          <p style={{ margin: 0, fontSize: "0.7rem", color: "#64748b", fontWeight: 600, textTransform: "uppercase" }}>{t("trainee_consent.email_on_record", "Email on Record")}</p>
                           <p style={{ margin: 0, fontSize: "0.78rem", color: "#0f172a" }}>{record.trainee_email}</p>
                         </div>
                       </div>
@@ -257,13 +259,13 @@ export default function TraineeConsent() {
             <div style={{ background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: "10px", padding: "1.5rem", textAlign: "center" }}>
               <ShieldAlert size={28} color="#94a3b8" style={{ marginBottom: "0.5rem" }} />
               <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
-                No login consent records found yet. Records will appear here after your next login.
+                {t("trainee_consent.no_login_records", "No login consent records found yet. Records will appear here after your next login.")}
               </p>
             </div>
           )}
 
           <p style={{ margin: "1rem 0 0 0", fontSize: "0.75rem", color: "#94a3b8", textAlign: "center" }}>
-            This audit log is tamper-evident and stored as legal proof per Section 43A of the IT Act, 2000.
+            {t("trainee_consent.legal_disclaimer", "This audit log is tamper-evident and stored as legal proof per Section 43A of the IT Act, 2000.")}
           </p>
         </div>
 
@@ -275,10 +277,10 @@ export default function TraineeConsent() {
               <Info size={20} color="#2563eb" />
             </div>
             <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.05rem", color: "#0f172a" }}>
-              1. Why Follow-Up Data is Collected
+              {t("trainee_consent.card1_title", "1. Why Follow-Up Data is Collected")}
             </h3>
             <p style={{ margin: 0, fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
-              Public training programmes evaluate vocational outcomes to understand whether graduates transition into sustained employment, achieve fair wages, and benefit from the curriculum. Periodic follow-ups allow policy makers to fund programmes with proven real-world outcomes.
+              {t("trainee_consent.card1_desc", "Public training programmes evaluate vocational outcomes to understand whether graduates transition into sustained employment, achieve fair wages, and benefit from the curriculum. Periodic follow-ups allow policy makers to fund programmes with proven real-world outcomes.")}
             </p>
           </div>
 
@@ -287,10 +289,10 @@ export default function TraineeConsent() {
               <Lock size={20} color="#16a34a" />
             </div>
             <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.05rem", color: "#0f172a" }}>
-              2. What Information is Used
+              {t("trainee_consent.card2_title", "2. What Information is Used")}
             </h3>
             <p style={{ margin: 0, fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
-              Only placement coordinates (employed, self-employed, apprentice, or seeking), corporate employer name, job role, wage bracket, and skill feedback are processed. Individual records are never sold, monetized, or shared with commercial marketers.
+              {t("trainee_consent.card2_desc", "Only placement coordinates (employed, self-employed, apprentice, or seeking), corporate employer name, job role, wage bracket, and skill feedback are processed. Individual records are never sold, monetized, or shared with commercial marketers.")}
             </p>
           </div>
 
@@ -299,10 +301,10 @@ export default function TraineeConsent() {
               <ShieldCheck size={20} color="#9333ea" />
             </div>
             <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.05rem", color: "#0f172a" }}>
-              3. Right to Revoke Anytime
+              {t("trainee_consent.card3_title", "3. Right to Revoke Anytime")}
             </h3>
             <p style={{ margin: 0, fontSize: "0.85rem", color: "#475569", lineHeight: 1.6 }}>
-              You may freely change your consent setting at any moment. When declined, no outcome surveys will be administered, and no telemetry will be collected in the background. Basic profile credentials and training certificates remain fully accessible to you.
+              {t("trainee_consent.card3_desc", "You may freely change your consent setting at any moment. When declined, no outcome surveys will be administered, and no telemetry will be collected in the background. Basic profile credentials and training certificates remain fully accessible to you.")}
             </p>
           </div>
 
@@ -311,13 +313,13 @@ export default function TraineeConsent() {
         {/* Detailed Data Rights Statement */}
         <div style={{ background: "#f8fafc", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.5rem" }}>
           <h4 style={{ margin: "0 0 0.75rem 0", fontSize: "0.95rem", color: "#0f172a" }}>
-            Data Protection & Privacy Safeguards:
+            {t("trainee_consent.safeguards_title", "Data Protection & Privacy Safeguards:")}
           </h4>
           <ul style={{ margin: 0, paddingLeft: "1.25rem", fontSize: "0.85rem", color: "#475569", lineHeight: 1.7 }}>
-            <li>Outcome analytics shared with Government departments are strictly aggregated and anonymized.</li>
-            <li>Employer verification only validates whether you were employed, role title, and tenure.</li>
-            <li>No recruitments, candidate profiling, or third-party ATS pipelines are linked to this platform.</li>
-            <li>You can request a data copy or account archive at any time through state portal administration.</li>
+            <li>{t("trainee_consent.safeguard_1", "Outcome analytics shared with Government departments are strictly aggregated and anonymized.")}</li>
+            <li>{t("trainee_consent.safeguard_2", "Employer verification only validates whether you were employed, role title, and tenure.")}</li>
+            <li>{t("trainee_consent.safeguard_3", "No recruitments, candidate profiling, or third-party ATS pipelines are linked to this platform.")}</li>
+            <li>{t("trainee_consent.safeguard_4", "You can request a data copy or account archive at any time through state portal administration.")}</li>
           </ul>
         </div>
       </DataStateWrapper>

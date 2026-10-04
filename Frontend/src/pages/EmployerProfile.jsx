@@ -3,9 +3,11 @@ import { Building2, ShieldCheck, CheckCircle2, Clock, XCircle, Mail, Phone, MapP
 import EmployerNav from "./Employer/EmployerNav";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { mockStore } from "../services/mockStore";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmployerProfile() {
   const store = usePlatformStore();
+  const { t } = useLanguage();
   const organizationId = localStorage.getItem("organizationId") || "EMP-DEMO-001";
 
   const [employer, setEmployer] = useState(null);
@@ -74,7 +76,7 @@ export default function EmployerProfile() {
       <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
         <EmployerNav />
         <div style={{ maxWidth: "1000px", margin: "0 auto", padding: "3rem 1.5rem", textAlign: "center", color: "#64748b" }}>
-          Loading organization profile...
+          {t("employer_profile.loading_profile", "Loading organization profile...")}
         </div>
       </div>
     );
@@ -93,21 +95,21 @@ export default function EmployerProfile() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
               <Building2 size={18} color="#2563eb" />
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                ORGANISATION PROFILE & VERIFICATION RECORD
+                {t("employer_profile.badge", "ORGANISATION PROFILE & VERIFICATION RECORD")}
               </span>
             </div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Organisation Profile
+              {t("employer_profile.title", "Organisation Profile")}
             </h1>
             <p style={{ color: "#64748b", margin: 0, fontSize: "0.95rem" }}>
-              Corporate identification, authorised representative contact, and state verification status.
+              {t("employer_profile.subtitle", "Corporate identification, authorised representative contact, and state verification status.")}
             </p>
           </div>
 
           {/* Section 5: Read-Only Admin Verification Badge */}
           <div style={{ textAlign: "right" }}>
             <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block", marginBottom: "0.3rem", fontWeight: 600 }}>
-              State Verification Badge
+              {t("employer_profile.state_badge_label", "State Verification Badge")}
             </span>
             {verificationStatus === "Verified" ? (
               <span style={{
@@ -122,7 +124,7 @@ export default function EmployerProfile() {
                 alignItems: "center",
                 gap: "5px"
               }}>
-                <CheckCircle2 size={16} /> Verified Organisation
+                <CheckCircle2 size={16} /> {t("employer_profile.verified_org", "Verified Organisation")}
               </span>
             ) : verificationStatus === "Pending" ? (
               <span style={{
@@ -137,7 +139,7 @@ export default function EmployerProfile() {
                 alignItems: "center",
                 gap: "5px"
               }}>
-                <Clock size={16} /> Verification Pending Admin Review
+                <Clock size={16} /> {t("employer_profile.pending_org", "Verification Pending Admin Review")}
               </span>
             ) : (
               <span style={{
@@ -152,7 +154,7 @@ export default function EmployerProfile() {
                 alignItems: "center",
                 gap: "5px"
               }}>
-                <XCircle size={16} /> Verification Rejected
+                <XCircle size={16} /> {t("employer_profile.rejected_org", "Verification Rejected")}
               </span>
             )}
           </div>
@@ -162,7 +164,7 @@ export default function EmployerProfile() {
         {saveSuccess && (
           <div style={{ background: "#dcfce7", color: "#166534", border: "1px solid #86efac", padding: "0.85rem 1.25rem", borderRadius: "10px", marginBottom: "1.5rem", fontWeight: 600, display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <CheckCircle2 size={18} color="#16a34a" />
-            <span>Organisation profile changes saved successfully!</span>
+            <span>{t("employer_profile.save_success", "Organisation profile changes saved successfully!")}</span>
           </div>
         )}
 
@@ -177,48 +179,48 @@ export default function EmployerProfile() {
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem" }}>
           <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a", margin: "0 0 1.25rem 0", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <ShieldCheck size={18} color="#2563eb" />
-            Authoritative Employer Registry Data
+            {t("employer_profile.authoritative_record_title", "Authoritative Employer Registry Data")}
           </h3>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1.25rem" }}>
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Employer ID</span>
+              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>{t("employer_profile.employer_id", "Employer ID")}</span>
               <strong style={{ fontSize: "1.05rem", color: "#0f172a" }}>{employer.id}</strong>
             </div>
 
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Registration / GSTIN</span>
+              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>{t("employer_profile.registration_gstin", "Registration / GSTIN")}</span>
               <strong style={{ fontSize: "1.05rem", color: "#0f172a" }}>{employer.registration_gst || "27AAACT2727Q1ZB"}</strong>
             </div>
 
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Registration Submitted At</span>
+              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>{t("employer_profile.registration_submitted_at", "Registration Submitted At")}</span>
               <strong style={{ fontSize: "1.05rem", color: "#0f172a" }}>{employer.registration_date || employer.submitted_at || "2023-01-15"}</strong>
             </div>
 
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>Admin Attestation Date</span>
+              <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600, display: "block" }}>{t("employer_profile.admin_attestation_date", "Admin Attestation Date")}</span>
               <strong style={{ fontSize: "1.05rem", color: employer.verified_at ? "#16a34a" : "#b45309" }}>
-                {employer.verified_at || "Pending Review"}
+                {employer.verified_at || t("employer_profile.pending_review", "Pending Review")}
               </strong>
             </div>
           </div>
 
           <div style={{ background: "#f1f5f9", padding: "0.85rem 1rem", borderRadius: "8px", marginTop: "1.25rem", fontSize: "0.8rem", color: "#475569" }}>
-            <strong>Governance Rule:</strong> The verification status badge is strictly controlled by State Skilling Administrators. Employers cannot unilaterally alter their attestation standing.
+            <strong>Governance Rule:</strong> {t("employer_profile.governance_rule", "The verification status badge is strictly controlled by State Skilling Administrators. Employers cannot unilaterally alter their attestation standing.")}
           </div>
         </div>
 
         {/* Profile Edit Form */}
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "2rem" }}>
           <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a", margin: "0 0 1.5rem 0" }}>
-            Maintain Organisation Profile Information
+            {t("employer_profile.edit_form_title", "Maintain Organisation Profile Information")}
           </h3>
 
           <form onSubmit={handleSave} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                Organisation Legal Name *
+                {t("employer_profile.legal_name_label", "Organisation Legal Name *")}
               </label>
               <input
                 type="text"
@@ -231,7 +233,7 @@ export default function EmployerProfile() {
 
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                Industry Sector
+                {t("employer_profile.sector_label", "Industry Sector")}
               </label>
               <select
                 value={formData.sector}
@@ -249,7 +251,7 @@ export default function EmployerProfile() {
 
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                Headquarters / Operating Location
+                {t("employer_profile.location_label", "Headquarters / Operating Location")}
               </label>
               <input
                 type="text"
@@ -261,7 +263,7 @@ export default function EmployerProfile() {
 
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                Primary HRIS / Enterprise System
+                {t("employer_profile.hris_system_label", "Primary HRIS / Enterprise System")}
               </label>
               <input
                 type="text"
@@ -273,7 +275,7 @@ export default function EmployerProfile() {
 
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                Authorised Representative Name *
+                {t("employer_profile.representative_label", "Authorised Representative Name *")}
               </label>
               <input
                 type="text"
@@ -286,7 +288,7 @@ export default function EmployerProfile() {
 
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                Official Verification Email *
+                {t("employer_profile.email_label", "Official Verification Email *")}
               </label>
               <input
                 type="email"
@@ -299,7 +301,7 @@ export default function EmployerProfile() {
 
             <div>
               <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                Contact Phone
+                {t("employer_profile.phone_label", "Contact Phone")}
               </label>
               <input
                 type="tel"
@@ -328,7 +330,7 @@ export default function EmployerProfile() {
                 }}
               >
                 <Save size={16} />
-                {isSaving ? "Saving..." : "Save Profile Changes"}
+                {isSaving ? t("employer_profile.btn_saving", "Saving...") : t("employer_profile.btn_save", "Save Profile Changes")}
               </button>
             </div>
           </form>

@@ -9,8 +9,10 @@ import {
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function TraineeDashboard() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const storeState = usePlatformStore();
   const [traineeId, setTraineeId] = useState(
@@ -75,14 +77,14 @@ export default function TraineeDashboard() {
           <ShieldCheck size={28} color="#2563eb" />
         </div>
         <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.5rem 0" }}>
-          Outcome Tracking Consent & Citizen Privacy
+          {t("trainee_dashboard.consent_pending_title", "Outcome Tracking Consent & Citizen Privacy")}
         </h2>
         <p style={{ color: "#475569", fontSize: "0.95rem", lineHeight: 1.6, margin: "0 0 1.5rem 0" }}>
-          Welcome, <strong>{trainee?.name || "Trainee"}</strong>. We use your outcome information to understand what happens after training and improve national training programmes.
+          {t("trainee_dashboard.welcome", "Welcome,")} <strong>{trainee?.name || "Trainee"}</strong>. {t("trainee_dashboard.consent_pending_desc", "We use your outcome information to understand what happens after training and improve national training programmes.")}
         </p>
 
         <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "1.5rem", fontSize: "0.85rem", color: "#334155", lineHeight: 1.6 }}>
-          <strong style={{ display: "block", marginBottom: "0.5rem", color: "#0f172a" }}>Consent Notice:</strong>
+          <strong style={{ display: "block", marginBottom: "0.5rem", color: "#0f172a" }}>{t("trainee_dashboard.consent_notice_heading", "Consent Notice:")}</strong>
           • Periodic outcome follow-ups are conducted at 3, 6, and 12-month intervals.<br />
           • We verify vocational placement, retention, and wage progression to measure training efficacy.<br />
           • Participation requires your consent. You may change or revoke your preference at any time in Privacy &amp; Consent.<br />
@@ -103,7 +105,7 @@ export default function TraineeDashboard() {
               cursor: "pointer"
             }}
           >
-            Continue Without Follow-Ups / Decline
+            {t("trainee_dashboard.btn_consent_decline", "Continue Without Follow-Ups / Decline")}
           </button>
           <button
             onClick={() => handleConsentAction("GIVEN")}
@@ -118,7 +120,7 @@ export default function TraineeDashboard() {
               cursor: "pointer"
             }}
           >
-            I Agree &amp; Authorize Follow-Ups
+            {t("trainee_dashboard.btn_consent_grant", "I Agree & Authorize Follow-Ups")}
           </button>
         </div>
       </div>
@@ -137,7 +139,7 @@ export default function TraineeDashboard() {
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.3rem" }}>
             <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-              Welcome, {trainee?.name || "Trainee"}
+              {t("trainee_dashboard.welcome", "Welcome,")} {trainee?.name || "Trainee"}
             </h1>
             {isConsentDeclined ? (
               <span style={{ background: "#fee2e2", color: "#b91c1c", fontSize: "0.75rem", fontWeight: 700, padding: "3px 10px", borderRadius: "12px", display: "flex", alignItems: "center", gap: "4px" }}>
@@ -183,7 +185,7 @@ export default function TraineeDashboard() {
               cursor: "pointer"
             }}
           >
-            Privacy &amp; Consent
+            {t("trainee_nav.verification_consent", "Privacy & Consent")}
           </button>
         </div>
       </div>
@@ -202,10 +204,10 @@ export default function TraineeDashboard() {
         <div style={{ marginBottom: "2rem" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
             <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-              My Current Status
+              {t("trainee_dashboard.kpi_certified_skills", "My Current Status")}
             </h2>
             <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-              Authoritative Personal Situation
+              {t("trainee_dashboard.page_subtitle", "Authoritative Personal Situation")}
             </span>
           </div>
 
@@ -408,7 +410,7 @@ export default function TraineeDashboard() {
         {/* ========================================================================= */}
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
           <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: "0 0 1rem 0" }}>
-            Important Actions
+            {t("trainee_dashboard.quick_actions_title", "Important Actions")}
           </h3>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1rem" }}>

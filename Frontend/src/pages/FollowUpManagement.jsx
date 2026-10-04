@@ -10,8 +10,10 @@ import { useFilters } from "../context/FilterContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function FollowUpManagement() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { filters } = useFilters();
   const store = usePlatformStore();
@@ -146,21 +148,21 @@ export default function FollowUpManagement() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <PhoneCall size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            ADMIN OUTCOME GOVERNANCE & FOLLOW-UP MANAGEMENT
+            {t("follow_ups.admin_badge", "ADMIN OUTCOME GOVERNANCE & FOLLOW-UP MANAGEMENT")}
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Follow-Up Management
+              {t("follow_ups.page_title", "Follow-Up Management")}
             </h1>
             <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-              Monitor longitudinal 3M, 6M, and 12M post-training milestone check-ins, resolve pending verifications, outreach errors, and uncontactable candidates.
+              {t("follow_ups.page_subtitle", "Monitor longitudinal 3M, 6M, and 12M post-training milestone check-ins, resolve pending verifications, outreach errors, and uncontactable candidates.")}
             </p>
           </div>
 
           <div style={{ background: "#f8fafc", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.85rem" }}>
-            <span style={{ color: "#64748b" }}>Overall Follow-Up Response Rate: </span>
+            <span style={{ color: "#64748b" }}>{t("follow_ups.overall_response_rate", "Overall Follow-Up Response Rate:")} </span>
             <strong style={{ color: "#16a34a", fontSize: "1.1rem" }}>{summary.response_rate}</strong>
           </div>
         </div>
@@ -178,51 +180,51 @@ export default function FollowUpManagement() {
       {/* KPI Summary Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-          <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Total Milestone Checks</span>
+          <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("follow_ups.total_milestone_checks", "Total Milestone Checks")}</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
             <CountUp value={summary.total_followups} />
           </div>
-          <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>In Filtered Scope</span>
+          <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>{t("follow_ups.in_filtered_scope", "In Filtered Scope")}</span>
         </div>
 
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #fef3c7" }}>
-          <span style={{ fontSize: "0.75rem", color: "#b45309", fontWeight: 600 }}>Due Now (Actionable)</span>
+          <span style={{ fontSize: "0.75rem", color: "#b45309", fontWeight: 600 }}>{t("follow_ups.due_now_kpi", "Due Now (Actionable)")}</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#b45309", marginTop: "0.2rem" }}>
             <CountUp value={summary.due} />
           </div>
-          <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>Awaiting Response</span>
+          <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>{t("follow_ups.awaiting_response", "Awaiting Response")}</span>
         </div>
 
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #f3e8ff" }}>
-          <span style={{ fontSize: "0.75rem", color: "#7e22ce", fontWeight: 600 }}>Needs Verification</span>
+          <span style={{ fontSize: "0.75rem", color: "#7e22ce", fontWeight: 600 }}>{t("follow_ups.needs_verification_kpi", "Needs Verification")}</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#7e22ce", marginTop: "0.2rem" }}>
             <CountUp value={summary.needs_verification ?? 0} />
           </div>
-          <span style={{ fontSize: "0.7rem", color: "#7e22ce", fontWeight: 700 }}>Pending Review</span>
+          <span style={{ fontSize: "0.7rem", color: "#7e22ce", fontWeight: 700 }}>{t("follow_ups.pending_review", "Pending Review")}</span>
         </div>
 
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #fee2e2" }}>
-          <span style={{ fontSize: "0.75rem", color: "#dc2626", fontWeight: 600 }}>Needs Assistance / Errors</span>
+          <span style={{ fontSize: "0.75rem", color: "#dc2626", fontWeight: 600 }}>{t("follow_ups.needs_assistance_kpi", "Needs Assistance / Errors")}</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#dc2626", marginTop: "0.2rem" }}>
             <CountUp value={summary.needs_assistance} />
           </div>
-          <span style={{ fontSize: "0.7rem", color: "#dc2626", fontWeight: 700 }}>Delivery / Contact Failed</span>
+          <span style={{ fontSize: "0.7rem", color: "#dc2626", fontWeight: 700 }}>{t("follow_ups.delivery_failed", "Delivery / Contact Failed")}</span>
         </div>
 
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #dcfce7" }}>
-          <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Completed</span>
+          <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>{t("follow_ups.completed_kpi", "Completed")}</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
             <CountUp value={summary.completed} />
           </div>
-          <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600 }}>Verified & Archived</span>
+          <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600 }}>{t("follow_ups.verified_archived", "Verified & Archived")}</span>
         </div>
 
         <div style={{ background: "white", padding: "1.1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-          <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Upcoming Scheduled</span>
+          <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("follow_ups.upcoming_scheduled", "Upcoming Scheduled")}</span>
           <div style={{ fontSize: "1.6rem", fontWeight: 800, color: "#64748b", marginTop: "0.2rem" }}>
             {summary.upcoming.toLocaleString()}
           </div>
-          <span style={{ fontSize: "0.7rem", color: "#64748b" }}>Future Timeline</span>
+          <span style={{ fontSize: "0.7rem", color: "#64748b" }}>{t("follow_ups.future_timeline", "Future Timeline")}</span>
         </div>
       </div>
 
@@ -231,12 +233,12 @@ export default function FollowUpManagement() {
         {/* Status Navigation Tabs */}
         <div style={{ display: "flex", gap: "0.5rem", borderBottom: "1px solid #e2e8f0", paddingBottom: "0.75rem", marginBottom: "1rem", flexWrap: "wrap" }}>
           {[
-            { key: "all", label: "All Follow-ups", count: summary.total_followups },
-            { key: "due", label: "Due Now", count: summary.due, color: "#b45309", bg: "#fef3c7" },
-            { key: "needs_verification", label: "Needs Verification", count: summary.needs_verification || 0, color: "#7e22ce", bg: "#f3e8ff" },
-            { key: "needs_assistance", label: "Needs Assistance / Errors", count: summary.needs_assistance, color: "#dc2626", bg: "#fee2e2" },
-            { key: "completed", label: "Completed", count: summary.completed, color: "#16a34a", bg: "#dcfce7" },
-            { key: "upcoming", label: "Upcoming", count: summary.upcoming, color: "#64748b", bg: "#f1f5f9" }
+            { key: "all", label: t("follow_ups.tab_all", "All Follow-ups"), count: summary.total_followups },
+            { key: "due", label: t("follow_ups.tab_due", "Due Now"), count: summary.due, color: "#b45309", bg: "#fef3c7" },
+            { key: "needs_verification", label: t("follow_ups.tab_needs_verification", "Needs Verification"), count: summary.needs_verification || 0, color: "#7e22ce", bg: "#f3e8ff" },
+            { key: "needs_assistance", label: t("follow_ups.tab_needs_assistance", "Needs Assistance / Errors"), count: summary.needs_assistance, color: "#dc2626", bg: "#fee2e2" },
+            { key: "completed", label: t("follow_ups.tab_completed", "Completed"), count: summary.completed, color: "#16a34a", bg: "#dcfce7" },
+            { key: "upcoming", label: t("follow_ups.tab_upcoming", "Upcoming"), count: summary.upcoming, color: "#64748b", bg: "#f1f5f9" }
           ].map(tab => (
             <button
               key={tab.key}
@@ -276,7 +278,7 @@ export default function FollowUpManagement() {
             <Search size={16} color="#94a3b8" style={{ position: "absolute", left: "12px", top: "11px" }} />
             <input
               type="text"
-              placeholder="Search candidate name, trainee ID, programme, district..."
+              placeholder={t("follow_ups.search_placeholder", "Search candidate name, trainee ID, programme, district...")}
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               style={{
@@ -290,7 +292,7 @@ export default function FollowUpManagement() {
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Milestone:</span>
+            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("follow_ups.milestone", "Milestone:")}</span>
             <select
               value={milestoneFilter}
               onChange={(e) => { setMilestoneFilter(e.target.value); setPage(1); }}
@@ -303,10 +305,10 @@ export default function FollowUpManagement() {
                 cursor: "pointer"
               }}
             >
-              <option value="All">All Milestones</option>
-              <option value="3">3-Month</option>
-              <option value="6">6-Month</option>
-              <option value="12">12-Month</option>
+              <option value="All">{t("follow_ups.all_milestones", "All Milestones")}</option>
+              <option value="3">{t("follow_ups.milestone_3m", "3-Month")}</option>
+              <option value="6">{t("follow_ups.milestone_6m", "6-Month")}</option>
+              <option value="12">{t("follow_ups.milestone_12m", "12-Month")}</option>
             </select>
           </div>
         </div>
@@ -318,7 +320,7 @@ export default function FollowUpManagement() {
         data={workspace}
         onRetry={loadData}
         isDataAvailable={(d) => Boolean(d && d.records)}
-        isEmptyDetails="No follow-up records found matching the active filters."
+        isEmptyDetails={t("follow_ups.empty_details", "No follow-up records found matching the active filters.")}
       >
         {/* Records Table */}
         <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
@@ -326,20 +328,20 @@ export default function FollowUpManagement() {
             <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", color: "#475569", fontWeight: 700 }}>
-                  <th style={{ padding: "0.85rem 1.25rem" }}>Trainee</th>
-                  <th style={{ padding: "0.85rem 1.25rem" }}>Programme & District</th>
-                  <th style={{ padding: "0.85rem 1.25rem" }}>Milestone</th>
-                  <th style={{ padding: "0.85rem 1.25rem" }}>Due Date</th>
-                  <th style={{ padding: "0.85rem 1.25rem" }}>Status</th>
-                  <th style={{ padding: "0.85rem 1.25rem" }}>Telemetry & Response Notes</th>
-                  <th style={{ padding: "0.85rem 1.25rem", textAlign: "right" }}>Actions</th>
+                  <th style={{ padding: "0.85rem 1.25rem" }}>{t("follow_ups.col_trainee", "Trainee")}</th>
+                  <th style={{ padding: "0.85rem 1.25rem" }}>{t("follow_ups.col_prog_dist", "Programme & District")}</th>
+                  <th style={{ padding: "0.85rem 1.25rem" }}>{t("follow_ups.col_milestone", "Milestone")}</th>
+                  <th style={{ padding: "0.85rem 1.25rem" }}>{t("follow_ups.col_due_date", "Due Date")}</th>
+                  <th style={{ padding: "0.85rem 1.25rem" }}>{t("follow_ups.col_status", "Status")}</th>
+                  <th style={{ padding: "0.85rem 1.25rem" }}>{t("follow_ups.col_notes", "Telemetry & Response Notes")}</th>
+                  <th style={{ padding: "0.85rem 1.25rem", textAlign: "right" }}>{t("follow_ups.col_actions", "Actions")}</th>
                 </tr>
               </thead>
               <tbody>
                 {records.length === 0 ? (
                   <tr>
                     <td colSpan={7} style={{ padding: "3rem", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
-                      No follow-up records match the selected scope criteria.
+                      {t("follow_ups.empty_details", "No follow-up records found matching the active filters.")}
                     </td>
                   </tr>
                 ) : (
@@ -362,7 +364,7 @@ export default function FollowUpManagement() {
                         <td style={{ padding: "1rem 1.25rem" }}>
                           <div style={{ color: "#1e293b", fontWeight: 600 }}>{r.programme_name}</div>
                           <span style={{ color: "#64748b", fontSize: "0.75rem" }}>
-                            District: {r.district} • Cohort: {r.cohort}
+                            {t("districts.col_district", "District")}: {r.district} • Cohort: {r.cohort}
                           </span>
                         </td>
 
@@ -409,14 +411,14 @@ export default function FollowUpManagement() {
                           ) : isNeedsVerification ? (
                             <div>
                               <span style={{ color: "#7e22ce", fontWeight: 700, fontSize: "0.75rem", display: "block" }}>
-                                Self-Reported Check-In (Pending Review)
+                                {t("follow_ups.pending_review", "Self-Reported Check-In (Pending Review)")}
                               </span>
                               <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{r.notes}</span>
                             </div>
                           ) : isDue ? (
                             <div>
                               <span style={{ color: "#b45309", fontWeight: 700, fontSize: "0.75rem", display: "block" }}>
-                                Survey Window Open (Action Required)
+                                {t("follow_ups.awaiting_response", "Survey Window Open (Action Required)")}
                               </span>
                               <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{r.notes}</span>
                             </div>
@@ -444,7 +446,7 @@ export default function FollowUpManagement() {
                                   gap: "0.3rem"
                                 }}
                               >
-                                <Check size={12} /> Verify Outcome
+                                <Check size={12} /> {t("follow_ups.verify_outcome", "Verify Outcome")}
                               </button>
                             )}
 
@@ -465,7 +467,7 @@ export default function FollowUpManagement() {
                                   gap: "0.3rem"
                                 }}
                               >
-                                <PhoneCall size={12} /> Assisted Follow-Up
+                                <PhoneCall size={12} /> {t("follow_ups.assisted_followup", "Assisted Follow-Up")}
                               </button>
                             )}
 
@@ -487,7 +489,7 @@ export default function FollowUpManagement() {
                                     gap: "0.3rem"
                                   }}
                                 >
-                                  <Send size={12} /> Send Reminder
+                                  <Send size={12} /> {t("follow_ups.send_reminder", "Send Reminder")}
                                 </button>
                                 <button
                                   onClick={() => handleOpenAssistedModal(r)}
@@ -505,7 +507,7 @@ export default function FollowUpManagement() {
                                     gap: "0.3rem"
                                   }}
                                 >
-                                  <Phone size={12} /> Conduct Outreach
+                                  <Phone size={12} /> {t("follow_ups.conduct_outreach", "Conduct Outreach")}
                                 </button>
                               </>
                             )}
@@ -523,7 +525,7 @@ export default function FollowUpManagement() {
                                 cursor: "pointer"
                               }}
                             >
-                              View Trainee &rarr;
+                              {t("follow_ups.view_trainee", "View Trainee →")}
                             </button>
                           </div>
                         </td>
@@ -539,7 +541,7 @@ export default function FollowUpManagement() {
           {workspace?.totalPages > 1 && (
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 1.25rem", borderTop: "1px solid #e2e8f0", background: "#f8fafc" }}>
               <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                Showing page {workspace.page} of {workspace.totalPages} ({workspace.total} records)
+                {t("follow_ups.showing_page", "Showing page")} {workspace.page} {t("follow_ups.of", "of")} {workspace.totalPages} ({workspace.total} {t("follow_ups.records", "records")})
               </span>
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 <button
@@ -581,10 +583,10 @@ export default function FollowUpManagement() {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.25rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
               <div>
                 <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>
-                  Government Assisted Follow-Up Desk (Simulation)
+                  {t("follow_ups.modal_badge", "Government Assisted Follow-Up Desk (Simulation)")}
                 </span>
                 <h3 style={{ margin: "0.2rem 0 0 0", fontSize: "1.25rem", color: "#0f172a" }}>
-                  Assisted Outreach: {selectedRecord.trainee_name}
+                  {t("follow_ups.modal_title", "Assisted Outreach:")} {selectedRecord.trainee_name}
                 </h3>
                 <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
                   ID: {selectedRecord.trainee_id} • Phone: {selectedRecord.phone} • {selectedRecord.milestone} Checkpoint
@@ -596,22 +598,22 @@ export default function FollowUpManagement() {
             <form onSubmit={handleSubmitResolution}>
               <div style={{ marginBottom: "1rem" }}>
                 <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Outreach Communication Channel
+                  {t("follow_ups.modal_channel", "Outreach Communication Channel")}
                 </label>
                 <select
                   value={outreachChannel}
                   onChange={(e) => setOutreachChannel(e.target.value)}
                   style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                 >
-                  <option value="Call Center (Assisted Telephone)">Government Call Center (Telephone Agent)</option>
-                  <option value="In-Person Centre Visit">In-Person Training Centre Domicile Visit</option>
-                  <option value="WhatsApp Official Verified Outreach">WhatsApp Official Government Channel</option>
+                  <option value="Call Center (Assisted Telephone)">{t("follow_ups.modal_channel_callcenter", "Government Call Center (Telephone Agent)")}</option>
+                  <option value="In-Person Centre Visit">{t("follow_ups.modal_channel_visit", "In-Person Training Centre Domicile Visit")}</option>
+                  <option value="WhatsApp Official Verified Outreach">{t("follow_ups.modal_channel_whatsapp", "WhatsApp Official Government Channel")}</option>
                 </select>
               </div>
 
               <div style={{ marginBottom: "1.25rem", background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                 <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginBottom: "0.5rem" }}>
-                  Candidate Contact Result
+                  {t("follow_ups.modal_candidate_result", "Candidate Contact Result")}
                 </label>
                 <div style={{ display: "flex", gap: "1rem" }}>
                   <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontSize: "0.85rem", fontWeight: 600, color: captureOutcome ? "#16a34a" : "#475569" }}>
@@ -621,7 +623,7 @@ export default function FollowUpManagement() {
                       checked={captureOutcome}
                       onChange={() => setCaptureOutcome(true)}
                     />
-                    Candidate Reached (Capture Outcome)
+                    {t("follow_ups.modal_candidate_reached", "Candidate Reached (Capture Outcome)")}
                   </label>
                   <label style={{ display: "flex", alignItems: "center", gap: "0.4rem", cursor: "pointer", fontSize: "0.85rem", fontWeight: 600, color: !captureOutcome ? "#b45309" : "#475569" }}>
                     <input
@@ -630,7 +632,7 @@ export default function FollowUpManagement() {
                       checked={!captureOutcome}
                       onChange={() => setCaptureOutcome(false)}
                     />
-                    Outreach Attempt Only (Schedule Retry)
+                    {t("follow_ups.modal_attempt_only", "Outreach Attempt Only (Schedule Retry)")}
                   </label>
                 </div>
               </div>
@@ -639,22 +641,22 @@ export default function FollowUpManagement() {
                 <>
                   <div style={{ marginBottom: "1rem" }}>
                     <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                      Is the candidate currently employed?
+                      {t("follow_ups.modal_is_employed", "Is the candidate currently employed?")}
                     </label>
                     <select
                       value={isEmployed ? "yes" : "no"}
                       onChange={(e) => setIsEmployed(e.target.value === "yes")}
                       style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                     >
-                      <option value="yes">Yes — Active in corporate / contractual employment</option>
-                      <option value="no">No — Unemployed or exited previous employment</option>
+                      <option value="yes">{t("follow_ups.modal_employed_yes", "Yes — Active in corporate / contractual employment")}</option>
+                      <option value="no">{t("follow_ups.modal_employed_no", "No — Unemployed or exited previous employment")}</option>
                     </select>
                   </div>
 
                   {isEmployed ? (
                     <div style={{ marginBottom: "1rem" }}>
                       <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        Confirmed Monthly Gross Compensation (₹)
+                        {t("follow_ups.modal_confirmed_wage", "Confirmed Monthly Gross Compensation (₹)")}
                       </label>
                       <input
                         type="number"
@@ -668,7 +670,7 @@ export default function FollowUpManagement() {
                   ) : (
                     <div style={{ marginBottom: "1rem" }}>
                       <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        Reported Non-Placement / Exit Reason
+                        {t("follow_ups.modal_exit_reason", "Reported Non-Placement / Exit Reason")}
                       </label>
                       <select
                         value={attritionReason}
@@ -689,13 +691,13 @@ export default function FollowUpManagement() {
 
               <div style={{ marginBottom: "1.25rem" }}>
                 <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Assisted Outreach Case Notes
+                  {t("follow_ups.modal_case_notes", "Assisted Outreach Case Notes")}
                 </label>
                 <textarea
                   value={resolutionNotes}
                   onChange={(e) => setResolutionNotes(e.target.value)}
                   rows={2}
-                  placeholder="Record summary of verification conversation..."
+                  placeholder={t("follow_ups.modal_notes_placeholder", "Record summary of verification conversation...")}
                   style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                 />
               </div>
@@ -706,14 +708,14 @@ export default function FollowUpManagement() {
                   onClick={() => setSelectedRecord(null)}
                   style={{ padding: "0.6rem 1.25rem", background: "#f1f5f9", color: "#475569", border: "none", borderRadius: "6px", fontWeight: 600, cursor: "pointer" }}
                 >
-                  Cancel
+                  {t("follow_ups.modal_cancel", "Cancel")}
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
                   style={{ padding: "0.6rem 1.5rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}
                 >
-                  {submitting ? "Recording..." : "Commit Assisted Resolution"}
+                  {submitting ? t("follow_ups.modal_recording", "Recording...") : t("follow_ups.modal_commit", "Commit Assisted Resolution")}
                 </button>
               </div>
             </form>

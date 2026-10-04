@@ -6,8 +6,10 @@ import {
 } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmploymentJourney() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const traineeId = localStorage.getItem("traineeId") || "TR-0001";
 
@@ -46,14 +48,14 @@ export default function EmploymentJourney() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Milestone size={20} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            LONGITUDINAL CAREER TRACKING
+            {t("employment_journey.badge", "LONGITUDINAL CAREER TRACKING")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          My Employment Journey
+          {t("employment_journey.page_title", "My Employment Journey")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Complete chronological trajectory from skilling enrollment to workplace milestones, employer confirmations, and wage progression.
+          {t("employment_journey.page_subtitle", "Complete chronological trajectory from skilling enrollment to workplace milestones, employer confirmations, and wage progression.")}
         </p>
       </div>
 
@@ -62,26 +64,26 @@ export default function EmploymentJourney() {
         data={trainee}
         onRetry={loadData}
         isDataAvailable={(d) => Boolean(d && d.timeline_events)}
-        isEmptyDetails="No employment journey timeline recorded."
+        isEmptyDetails={t("employment_journey.empty_timeline", "No employment journey timeline recorded.")}
       >
         {/* SECTION 1: PROMINENT LAST 6 MONTHS ACTIVITY FEED (Section 13) */}
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
             <div>
               <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.2rem 0" }}>
-                Last 6 Months Activity Log
+                {t("employment_journey.activity_log_title", "Last 6 Months Activity Log")}
               </h3>
               <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                Real-time chronological events, verifications, increments, and follow-ups recorded in the outcome database.
+                {t("employment_journey.activity_log_subtitle", "Real-time chronological events, verifications, increments, and follow-ups recorded in the outcome database.")}
               </p>
             </div>
             <span style={{ fontSize: "0.75rem", fontWeight: 700, background: "#eff6ff", color: "#1d4ed8", padding: "4px 10px", borderRadius: "20px" }}>
-              Active Outcome Telemetry
+              {t("employment_journey.active_telemetry", "Active Outcome Telemetry")}
             </span>
           </div>
 
           {last6Months.length === 0 ? (
-            <p style={{ color: "#94a3b8", fontStyle: "italic", margin: 0 }}>No recent activity within the past 6 months.</p>
+            <p style={{ color: "#94a3b8", fontStyle: "italic", margin: 0 }}>{t("employment_journey.no_recent_activity", "No recent activity within the past 6 months.")}</p>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "1rem" }}>
               {last6Months.map((act, idx) => (
@@ -120,10 +122,10 @@ export default function EmploymentJourney() {
           {/* Left: Interactive Timeline Spine */}
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.5rem 0" }}>
-              Longitudinal Career Journey
+              {t("employment_journey.trajectory_title", "Longitudinal Career Journey")}
             </h3>
             <p style={{ margin: "0 0 1.5rem 0", fontSize: "0.85rem", color: "#64748b" }}>
-              Click any milestone event to inspect verifiable employment coordinates and telemetry.
+              {t("employment_journey.trajectory_subtitle", "Click any milestone event to inspect verifiable employment coordinates and telemetry.")}
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem", position: "relative" }}>
@@ -194,7 +196,7 @@ export default function EmploymentJourney() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
               <FileText size={18} color="#2563eb" />
               <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>
-                Milestone Event Inspector
+                {t("employment_journey.event_details_title", "Milestone Event Inspector")}
               </span>
             </div>
 
@@ -242,7 +244,7 @@ export default function EmploymentJourney() {
         {jobHistory.length > 0 && (
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.5rem 0" }}>
-              Employment History & Roles
+              {t("trainee_profile_view.tab_overview", "Employment History & Roles")}
             </h3>
             <p style={{ margin: "0 0 1.25rem 0", fontSize: "0.85rem", color: "#64748b" }}>
               Sequential job roles recorded during post-training tracking.

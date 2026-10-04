@@ -3,9 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { User, Phone, Mail, Calendar, MapPin, Save, CheckCircle2, ShieldCheck, Briefcase } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function TraineeProfile() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const { traineeId: paramId } = useParams();
   const store = usePlatformStore();
   const effectiveId = paramId || localStorage.getItem("traineeId") || "TR-0001";

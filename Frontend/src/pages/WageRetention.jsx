@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { TrendingUp, Award, CheckCircle, Clock, AlertCircle, RefreshCw, DollarSign, Calendar } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 
 export default function WageRetention() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const traineeId = localStorage.getItem("traineeId") || "TR-0001";
   const [trainee, setTrainee] = useState(null);
@@ -109,14 +111,14 @@ export default function WageRetention() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <TrendingUp size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            LONGITUDINAL IMPACT TRACKING
+            {t("wage_retention.badge", "LONGITUDINAL IMPACT TRACKING")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Wage Progression & Retention Check-in
+          {t("wage_retention.title", "Wage Progression & Retention Check-in")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Track salary increments over time and confirm your active employment status for state retention benchmarking.
+          {t("wage_retention.subtitle", "Track salary increments over time and confirm your active employment status for state retention benchmarking.")}
         </p>
       </div>
 
@@ -125,7 +127,7 @@ export default function WageRetention() {
         data={trainee}
         onRetry={loadData}
         isDataAvailable={(d) => Boolean(d)}
-        isEmptyDetails="No trainee record found."
+        isEmptyDetails={t("wage_retention.empty_record", "No trainee record found.")}
       >
         {successToast && (
           <div style={{ background: "#dcfce7", border: "1px solid #86efac", color: "#166534", padding: "1rem", borderRadius: "8px", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -140,33 +142,33 @@ export default function WageRetention() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
                 <DollarSign size={20} color="#16a34a" />
-                <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>Update Current Wage</h3>
+                <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>{t("wage_retention.wage_update_title", "Update Current Wage")}</h3>
               </div>
               <p style={{ margin: "0 0 1.25rem 0", color: "#64748b", fontSize: "0.85rem" }}>
-                Received an appraisal or promotion? Enter your updated gross monthly compensation.
+                {t("wage_retention.wage_update_desc", "Received an appraisal or promotion? Enter your updated gross monthly compensation.")}
               </p>
 
               <form onSubmit={handleWageSubmit}>
                 <div style={{ marginBottom: "1rem" }}>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Milestone / Event Type
+                    {t("wage_retention.milestone_event_label", "Milestone / Event Type")}
                   </label>
                   <select
                     value={wageStage}
                     onChange={(e) => setWageStage(e.target.value)}
                     style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   >
-                    <option value="3-Month Appraisal">3-Month Performance Review</option>
-                    <option value="6-Month Review">6-Month Review & Raise</option>
-                    <option value="12-Month Annual Appraisal">12-Month Annual Increment</option>
-                    <option value="Promotion / Role Elevation">Promotion / Role Elevation</option>
-                    <option value="Periodic Wage Update">Periodic Wage Update</option>
+                    <option value="3-Month Appraisal">{t("wage_retention.opt_3m_appraisal", "3-Month Performance Review")}</option>
+                    <option value="6-Month Review">{t("wage_retention.opt_6m_review", "6-Month Review & Raise")}</option>
+                    <option value="12-Month Annual Appraisal">{t("wage_retention.opt_12m_annual", "12-Month Annual Increment")}</option>
+                    <option value="Promotion / Role Elevation">{t("wage_retention.opt_promotion", "Promotion / Role Elevation")}</option>
+                    <option value="Periodic Wage Update">{t("wage_retention.opt_periodic_wage", "Periodic Wage Update")}</option>
                   </select>
                 </div>
 
                 <div style={{ marginBottom: "1.25rem" }}>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    New Monthly Gross Wage (₹)
+                    {t("wage_retention.new_wage_label", "New Monthly Gross Wage (₹)")}
                   </label>
                   <input
                     type="number"
@@ -197,14 +199,14 @@ export default function WageRetention() {
                   }}
                 >
                   <TrendingUp size={16} />
-                  {wageSaving ? "Recording..." : "Record Wage Increase"}
+                  {wageSaving ? t("wage_retention.btn_recording_wage", "Recording...") : t("wage_retention.btn_record_wage", "Record Wage Increase")}
                 </button>
               </form>
             </div>
 
             <div style={{ marginTop: "1.5rem", borderTop: "1px solid #f1f5f9", paddingTop: "1rem" }}>
               <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                Active Base: <strong>₹{emp?.current_wage?.toLocaleString() || "Not Disclosed"}</strong>
+                {t("wage_retention.active_base_label", "Active Base:")} <strong>₹{emp?.current_wage?.toLocaleString() || "Not Disclosed"}</strong>
               </span>
             </div>
           </div>
@@ -213,23 +215,23 @@ export default function WageRetention() {
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
               <Clock size={20} color="#2563eb" />
-              <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>Periodic Retention Check-in</h3>
+              <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>{t("wage_retention.retention_checkin_title", "Periodic Retention Check-in")}</h3>
             </div>
             <p style={{ margin: "0 0 1.25rem 0", color: "#64748b", fontSize: "0.85rem" }}>
-              Periodic verification ensuring government outcome integrity.
+              {t("wage_retention.retention_checkin_desc", "Periodic verification ensuring government outcome integrity.")}
             </p>
 
             <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0", marginBottom: "1.25rem" }}>
               <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#0f172a", display: "block" }}>
-                "Are you still working at {employerName}?"
+                {t("wage_retention.retention_question", "\"Are you still working at {name}?\"").replace("{name}", employerName)}
               </span>
             </div>
 
             <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem" }}>
               {[
-                { key: "yes", label: "Yes, Still Working" },
-                { key: "no", label: "No, Left Employment" },
-                { key: "changed", label: "Changed Job" }
+                { key: "yes", label: t("wage_retention.btn_still_working", "Yes, Still Working") },
+                { key: "no", label: t("wage_retention.btn_left_employment", "No, Left Employment") },
+                { key: "changed", label: t("wage_retention.btn_changed_job", "Changed Job") }
               ].map((opt) => (
                 <button
                   type="button"
@@ -256,14 +258,14 @@ export default function WageRetention() {
             {retentionAnswer === "yes" && (
               <form onSubmit={handleRetentionSubmit}>
                 <p style={{ fontSize: "0.85rem", color: "#166534", background: "#dcfce7", padding: "0.75rem", borderRadius: "6px", marginBottom: "1rem" }}>
-                  Great! Clicking confirm will update your active retention record for the ongoing 6M/12M milestone.
+                  {t("wage_retention.retention_yes_note", "Great! Clicking confirm will update your active retention record for the ongoing 6M/12M milestone.")}
                 </p>
                 <button
                   type="submit"
                   disabled={retentionSaving}
                   style={{ width: "100%", padding: "0.75rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}
                 >
-                  {retentionSaving ? "Confirming..." : "Confirm Active Employment"}
+                  {retentionSaving ? t("wage_retention.btn_confirming", "Confirming...") : t("wage_retention.btn_confirm_employment", "Confirm Active Employment")}
                 </button>
               </form>
             )}
@@ -273,21 +275,21 @@ export default function WageRetention() {
               <form onSubmit={handleRetentionSubmit}>
                 <div style={{ marginBottom: "1rem" }}>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Primary Reason for Leaving
+                    {t("wage_retention.reason_leaving_label", "Primary Reason for Leaving")}
                   </label>
                   <select
                     value={attritionReason}
                     onChange={(e) => setAttritionReason(e.target.value)}
                     style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   >
-                    <option value="Low salary">Low salary / Insufficient compensation</option>
-                    <option value="Better opportunity">Found better opportunity elsewhere</option>
-                    <option value="Skill mismatch">Skill mismatch with daily responsibilities</option>
-                    <option value="Poor working conditions">Poor working conditions</option>
-                    <option value="Relocation">Relocation / Distance & transport issues</option>
-                    <option value="Contract ended">Contract / Temporary tenure ended</option>
-                    <option value="Personal reasons">Personal or family commitments</option>
-                    <option value="Other">Other reasons</option>
+                    <option value="Low salary">{t("wage_retention.opt_low_salary", "Low salary / Insufficient compensation")}</option>
+                    <option value="Better opportunity">{t("wage_retention.opt_better_opportunity", "Found better opportunity elsewhere")}</option>
+                    <option value="Skill mismatch">{t("wage_retention.opt_skill_mismatch", "Skill mismatch with daily responsibilities")}</option>
+                    <option value="Poor working conditions">{t("wage_retention.opt_poor_conditions", "Poor working conditions")}</option>
+                    <option value="Relocation">{t("wage_retention.opt_relocation", "Relocation / Distance & transport issues")}</option>
+                    <option value="Contract ended">{t("wage_retention.opt_contract_ended", "Contract / Temporary tenure ended")}</option>
+                    <option value="Personal reasons">{t("wage_retention.opt_personal_reasons", "Personal or family commitments")}</option>
+                    <option value="Other">{t("wage_retention.opt_other_reasons", "Other reasons")}</option>
                   </select>
                 </div>
 
@@ -296,7 +298,7 @@ export default function WageRetention() {
                     value={attritionComments}
                     onChange={(e) => setAttritionComments(e.target.value)}
                     rows={2}
-                    placeholder="Provide additional context if comfortable..."
+                    placeholder={t("wage_retention.attrition_placeholder", "Provide additional context if comfortable...")}
                     style={{ width: "100%", padding: "0.5rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   />
                 </div>
@@ -306,7 +308,7 @@ export default function WageRetention() {
                   disabled={retentionSaving}
                   style={{ width: "100%", padding: "0.75rem", background: "#dc2626", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}
                 >
-                  {retentionSaving ? "Recording..." : "Record Exit Status"}
+                  {retentionSaving ? t("wage_retention.btn_recording_wage", "Recording...") : t("wage_retention.btn_record_exit", "Record Exit Status")}
                 </button>
               </form>
             )}
@@ -320,7 +322,7 @@ export default function WageRetention() {
                     value={newEmployer}
                     onChange={(e) => setNewEmployer(e.target.value)}
                     required
-                    placeholder="New Employer Name"
+                    placeholder={t("wage_retention.new_employer_placeholder", "New Employer Name")}
                     style={{ padding: "0.5rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   />
                   <input
@@ -328,14 +330,14 @@ export default function WageRetention() {
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value)}
                     required
-                    placeholder="New Job Role"
+                    placeholder={t("wage_retention.new_role_placeholder", "New Job Role")}
                     style={{ padding: "0.5rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   />
                   <input
                     type="number"
                     value={newWage}
                     onChange={(e) => setNewWage(e.target.value)}
-                    placeholder="New Monthly Wage (₹)"
+                    placeholder={t("wage_retention.new_monthly_wage_placeholder", "New Monthly Wage (₹)")}
                     style={{ padding: "0.5rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   />
                   <input
@@ -351,7 +353,7 @@ export default function WageRetention() {
                   disabled={retentionSaving}
                   style={{ width: "100%", padding: "0.75rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}
                 >
-                  {retentionSaving ? "Submitting..." : "Save New Employment"}
+                  {retentionSaving ? t("wage_retention.btn_submitting_declaration", "Submitting...") : t("wage_retention.btn_save_new_employment", "Save New Employment")}
                 </button>
               </form>
             )}
@@ -361,7 +363,7 @@ export default function WageRetention() {
         {/* WAGE PROGRESSION TIMELINE (C8) */}
         <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
           <h3 style={{ margin: "0 0 1.25rem 0", fontSize: "1.15rem", color: "#0f172a" }}>
-            Your Wage Growth Trajectory (Authoritative Timeline)
+            {t("wage_retention.wage_trajectory_title", "Your Wage Growth Trajectory (Authoritative Timeline)")}
           </h3>
 
           {wageHistory.length > 0 ? (
@@ -390,7 +392,7 @@ export default function WageRetention() {
               ))}
             </div>
           ) : (
-            <p style={{ color: "#64748b", fontSize: "0.9rem" }}>No wage milestones logged yet.</p>
+            <p style={{ color: "#64748b", fontSize: "0.9rem" }}>{t("wage_retention.no_wage_milestones", "No wage milestones logged yet.")}</p>
           )}
         </div>
       </DataStateWrapper>

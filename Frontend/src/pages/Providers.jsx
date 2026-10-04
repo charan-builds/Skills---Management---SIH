@@ -4,8 +4,10 @@ import { useFilters } from "../context/FilterContext";
 import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import { platformService, usePlatformStore } from "../services/platformService";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Providers() {
+  const { t, formatStatus } = useLanguage();
   const { filters, updateFilter } = useFilters();
   const storeState = usePlatformStore();
   const [providers, setProviders] = useState([]);
@@ -88,14 +90,14 @@ export default function Providers() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
             <Building2 size={18} color="#2563eb" />
             <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              INSTITUTIONAL ACCOUNTABILITY & LEAGUE TABLE
+              {t("providers.admin_badge", "INSTITUTIONAL ACCOUNTABILITY & LEAGUE TABLE")}
             </span>
           </div>
           <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-            Provider Accountability & Benchmarking
+            {t("providers.page_title", "Provider Accountability & Benchmarking")}
           </h1>
           <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-            Transparent institutional performance metrics: training completion rates, placement effectiveness, 6-month retention, and graduate wage progression. Click headers to sort.
+            {t("providers.page_subtitle", "Transparent institutional performance metrics: training completion rates, placement effectiveness, 6-month retention, and graduate wage progression. Click headers to sort.")}
           </p>
         </div>
 
@@ -103,7 +105,7 @@ export default function Providers() {
           <Search size={16} color="#94a3b8" style={{ position: "absolute", left: "12px", top: "12px" }} />
           <input
             type="text"
-            placeholder="Search provider or district..."
+            placeholder={t("providers.search_placeholder", "Search provider or district...")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -120,10 +122,10 @@ export default function Providers() {
       <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", overflow: "hidden" }}>
         <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1.15rem", color: "#0f172a" }}>
-            <Building2 size={20} color="#6366f1" /> Partner Performance League Table
+            <Building2 size={20} color="#6366f1" /> {t("providers.table_title", "Partner Performance League Table")}
           </h3>
           <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-            {filteredProviders.length} registered vocational partners in scope
+            {filteredProviders.length} {t("providers.in_scope", "registered vocational partners in scope")}
           </span>
         </div>
 
@@ -134,13 +136,13 @@ export default function Providers() {
             data={filteredProviders}
             onRetry={loadData}
             isDataAvailable={(d) => d && d.length > 0}
-            isEmptyDetails="No training provider accountability data meets the reporting threshold for this filter."
+            isEmptyDetails={t("providers.empty_details", "No training provider accountability data meets the reporting threshold for this filter.")}
           >
             <DataTable 
               columns={[
                 { 
                   key: "name", 
-                  label: "Training Partner / Agency", 
+                  label: t("providers.col_partner", "Training Partner / Agency"), 
                   render: (p) => (
                     <div>
                       <button
@@ -150,7 +152,7 @@ export default function Providers() {
                         {p.name}
                       </button>
                       <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
-                        District: {p.district} • {p.centres} Certified Centres
+                        {t("common.district", "District")}: {p.district} • {p.centres} {t("providers.certified_centres", "Certified Centres")}
                       </div>
                     </div>
                   )
@@ -159,7 +161,7 @@ export default function Providers() {
                   key: "trained", 
                   label: (
                     <div onClick={() => handleSort("trained")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Trained <ArrowUpDown size={12} />
+                      {t("providers.col_trained", "Trained")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (p) => <strong>{p.trained}</strong> 
@@ -168,7 +170,7 @@ export default function Providers() {
                   key: "completion_rate", 
                   label: (
                     <div onClick={() => handleSort("completion_rate")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Completion % <ArrowUpDown size={12} />
+                      {t("providers.col_completion", "Completion %")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (p) => <span style={{ color: "#334155", fontWeight: 600 }}>{p.completion_rate}</span> 
@@ -177,7 +179,7 @@ export default function Providers() {
                   key: "certification_rate", 
                   label: (
                     <div onClick={() => handleSort("certification_rate")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Certification % <ArrowUpDown size={12} />
+                      {t("providers.col_certification", "Certification %")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (p) => <span style={{ color: "#334155", fontWeight: 600 }}>{p.certification_rate}</span> 
@@ -186,7 +188,7 @@ export default function Providers() {
                   key: "placement_rate", 
                   label: (
                     <div onClick={() => handleSort("placement_rate")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Placement % <ArrowUpDown size={12} />
+                      {t("providers.col_placement", "Placement %")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (p) => (
@@ -205,7 +207,7 @@ export default function Providers() {
                   key: "retention_6m", 
                   label: (
                     <div onClick={() => handleSort("retention_6m")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      6M Retention % <ArrowUpDown size={12} />
+                      {t("providers.col_retention", "6M Retention %")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (p) => <strong>{p.retention_6m}</strong> 
@@ -214,7 +216,7 @@ export default function Providers() {
                   key: "wage_growth", 
                   label: (
                     <div onClick={() => handleSort("wage_growth")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Wage Growth % <ArrowUpDown size={12} />
+                      {t("providers.col_wage", "Wage Growth %")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (p) => (
@@ -259,13 +261,13 @@ export default function Providers() {
             <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>
-                  PROVIDER AUDIT DOSSIER
+                  {t("providers.dossier_badge", "PROVIDER AUDIT DOSSIER")}
                 </span>
                 <h3 style={{ margin: "0.2rem 0 0 0", fontSize: "1.25rem", color: "#0f172a" }}>
                   {selectedProvider.name}
                 </h3>
                 <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                  District: {selectedProvider.district} • Placement: {selectedProvider.placement_rate} • 6M Retention: {selectedProvider.retention_6m}
+                  {t("common.district", "District")}: {selectedProvider.district} • {t("providers.placement", "Placement:")} {selectedProvider.placement_rate} • {t("providers.retention_6m", "6M Retention:")} {selectedProvider.retention_6m}
                 </span>
               </div>
               <button
@@ -279,7 +281,7 @@ export default function Providers() {
             <div style={{ padding: "1.25rem 1.5rem", overflowY: "auto", flex: 1 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                 <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>
-                  Trainee Roster ({providerTrainees.length} in Active Scope)
+                  {t("providers.roster_title", "Trainee Roster")} ({providerTrainees.length} {t("providers.in_active_scope", "in Active Scope")})
                 </strong>
                 <button
                   onClick={() => {
@@ -288,27 +290,27 @@ export default function Providers() {
                   }}
                   style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", padding: "4px 10px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
                 >
-                  Set as Global Filter Scope
+                  {t("providers.set_scope", "Set as Global Filter Scope")}
                 </button>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                {providerTrainees.slice(0, 15).map(t => (
-                  <div key={t.id} style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderRadius: "6px", border: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                {providerTrainees.slice(0, 15).map(tItem => (
+                  <div key={tItem.id} style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderRadius: "6px", border: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
-                      <strong style={{ color: "#0f172a", fontSize: "0.85rem" }}>{t.name}</strong>
-                      <span style={{ fontSize: "0.75rem", color: "#64748b", marginLeft: "0.4rem" }}>({t.id})</span>
-                      <div style={{ fontSize: "0.75rem", color: "#475569" }}>{t.programme_name} • Cohort: {t.cohort}</div>
+                      <strong style={{ color: "#0f172a", fontSize: "0.85rem" }}>{tItem.name}</strong>
+                      <span style={{ fontSize: "0.75rem", color: "#64748b", marginLeft: "0.4rem" }}>({tItem.id})</span>
+                      <div style={{ fontSize: "0.75rem", color: "#475569" }}>{tItem.programme_name} • {t("providers.cohort", "Cohort:")} {tItem.cohort}</div>
                     </div>
                     <span style={{
                       fontSize: "0.7rem",
                       fontWeight: 700,
                       padding: "2px 8px",
                       borderRadius: "10px",
-                      background: t.employment?.status === "EMPLOYED" ? "#dcfce7" : "#fee2e2",
-                      color: t.employment?.status === "EMPLOYED" ? "#166534" : "#991b1b"
+                      background: tItem.employment?.status === "EMPLOYED" ? "#dcfce7" : "#fee2e2",
+                      color: tItem.employment?.status === "EMPLOYED" ? "#166534" : "#991b1b"
                     }}>
-                      {t.employment?.status || "ENROLLED"}
+                      {formatStatus(tItem.employment?.status || "ENROLLED")}
                     </span>
                   </div>
                 ))}
@@ -320,7 +322,7 @@ export default function Providers() {
                 onClick={() => setSelectedProvider(null)}
                 style={{ padding: "0.5rem 1.25rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer" }}
               >
-                Close Dossier
+                {t("providers.close_dossier", "Close Dossier")}
               </button>
             </div>
           </div>

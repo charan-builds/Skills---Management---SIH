@@ -11,8 +11,10 @@ import CountUp from "../components/common/CountUp";
 import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function ProgrammeProfile() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { programmeId: id } = useParams();
   const store = usePlatformStore();
@@ -86,7 +88,7 @@ export default function ProgrammeProfile() {
           marginBottom: "1.5rem"
         }}
       >
-        <ArrowLeft size={16} /> Back to Programmes
+        <ArrowLeft size={16} /> {t("programme_profile.btn_back", "Back to Programmes")}
       </button>
 
       <DataStateWrapper
@@ -95,7 +97,7 @@ export default function ProgrammeProfile() {
         data={programme}
         onRetry={loadProgrammeData}
         isDataAvailable={(d) => Boolean(d)}
-        isEmptyDetails={`No programme records found for: ${id}`}
+        isEmptyDetails={`${t("programme_profile.empty_programme", "No programme records found for:")} ${id}`}
       >
         {programme && (
           <>
@@ -115,17 +117,17 @@ export default function ProgrammeProfile() {
                     {programme.name}
                   </h1>
                   <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-                    Comprehensive outcome evaluation derived strictly from the relational database under current scope.
+                    {t("programme_profile.programme_dossier", "Comprehensive outcome evaluation derived strictly from the relational database under current scope.")}
                   </p>
                 </div>
 
                 <div style={{ background: "#f8fafc", padding: "1rem 1.5rem", borderRadius: "10px", border: "1px solid #e2e8f0", textAlign: "right" }}>
-                  <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>Trainees in Scope</span>
+                  <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block" }}>{t("follow_ups.in_filtered_scope", "Trainees in Scope")}</span>
                   <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#2563eb" }}>
                     <CountUp value={metrics?.total ?? 0} />
                   </div>
                   <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>
-                    <CountUp value={metrics?.breakdown?.completed ?? 0} /> completed
+                    <CountUp value={metrics?.breakdown?.completed ?? 0} /> {t("follow_ups.tab_completed", "completed")}
                   </span>
                 </div>
               </div>
@@ -147,7 +149,7 @@ export default function ProgrammeProfile() {
               {/* Funnel */}
               <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.5rem" }}>
                 <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.1rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <TrendingUp size={18} color="#2563eb" /> Programme Outcome Funnel
+                  <TrendingUp size={18} color="#2563eb" /> {t("programme_profile.outcome_funnel_title", "Programme Outcome Funnel")}
                 </h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                   {(funnel?.stages || []).map((st) => (
@@ -165,7 +167,7 @@ export default function ProgrammeProfile() {
               {/* Wage Progression Curve */}
               <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.5rem" }}>
                 <h3 style={{ margin: "0 0 1rem 0", fontSize: "1.1rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <Banknote size={18} color="#16a34a" /> Programme Wage Growth
+                  <Banknote size={18} color="#16a34a" /> {t("programme_profile.wage_progression_title", "Programme Wage Growth")}
                 </h3>
                 <div style={{ height: "240px" }}>
                   <ResponsiveContainer width="100%" height="100%">
@@ -186,7 +188,7 @@ export default function ProgrammeProfile() {
               {/* Top Skill Gaps */}
               <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.5rem" }}>
                 <h3 style={{ margin: "0 0 0.85rem 0", fontSize: "1.05rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <Target size={16} color="#2563eb" /> Top Skill Gaps
+                  <Target size={16} color="#2563eb" /> {t("programme_profile.skill_gaps_title", "Top Skill Gaps")}
                 </h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {skillGaps.slice(0, 5).map((g) => (
@@ -201,7 +203,7 @@ export default function ProgrammeProfile() {
               {/* Non-Placement Reasons */}
               <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.5rem" }}>
                 <h3 style={{ margin: "0 0 0.85rem 0", fontSize: "1.05rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <AlertTriangle size={16} color="#f59e0b" /> Non-Placement Factors
+                  <AlertTriangle size={16} color="#f59e0b" /> {t("programme_profile.non_placement_reasons_title", "Non-Placement Factors")}
                 </h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {nonPlacement.slice(0, 5).map((r) => (
@@ -216,7 +218,7 @@ export default function ProgrammeProfile() {
               {/* Attrition Drivers */}
               <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.5rem" }}>
                 <h3 style={{ margin: "0 0 0.85rem 0", fontSize: "1.05rem", color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                  <TrendingUp size={16} color="#e11d48" /> Attrition Factors
+                  <TrendingUp size={16} color="#e11d48" /> {t("programme_profile.attrition_reasons_title", "Attrition Factors")}
                 </h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
                   {attrition.slice(0, 5).map((a) => (

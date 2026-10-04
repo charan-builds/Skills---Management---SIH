@@ -9,8 +9,10 @@ import DataValue from "../components/common/DataValue";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { mockStore } from "../services/mockStore";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmployeesOutcomes() {
+  const { t } = useLanguage();
   const storeState = usePlatformStore();
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -163,14 +165,14 @@ export default function EmployeesOutcomes() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
               <Users size={18} color="#2563eb" />
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                ORGANISATION WORKFORCE ROSTER
+                {t("employer_outcomes.badge", "ORGANISATION WORKFORCE ROSTER")}
               </span>
             </div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Verified Workforce
+              {t("employer_outcomes.page_title", "Verified Workforce")}
             </h1>
             <p style={{ color: "#64748b", margin: 0, fontSize: "0.95rem" }}>
-              Employees confirmed at <strong>{organizationName}</strong>. Manage ongoing status lifecycle, wage responses, and role attestations.
+              {t("employer_outcomes.page_subtitle", "Employees confirmed at {org}. Manage ongoing status lifecycle, wage responses, and role attestations.").replace("{org}", organizationName)}
             </p>
           </div>
 
@@ -179,7 +181,7 @@ export default function EmployeesOutcomes() {
               <Search size={16} color="#94a3b8" style={{ position: "absolute", left: "12px", top: "11px" }} />
               <input
                 type="text"
-                placeholder="Search candidate, role or ID..."
+                placeholder={t("employer_outcomes.search_placeholder", "Search candidate, role or ID...")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 style={{
@@ -206,58 +208,64 @@ export default function EmployeesOutcomes() {
         {/* KPI Cards Grid */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
           <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Total Verified Workforce</span>
+            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_outcomes.total_workforce", "Total Verified Workforce")}</span>
             <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", marginTop: "0.25rem" }}>
               {totalVerified}
             </div>
-            <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Attested candidates at this org</span>
+            <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("employer_outcomes.total_workforce_subtitle", "Attested candidates at this org")}</span>
           </div>
 
           <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Currently Employed</span>
+            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_outcomes.currently_employed", "Currently Employed")}</span>
             <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#16a34a", marginTop: "0.25rem" }}>
               {currentlyEmployed}
             </div>
-            <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Active in workforce roster</span>
+            <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>{t("employer_outcomes.currently_employed_subtitle", "Active in workforce roster")}</span>
           </div>
 
           <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Departures & Attrition</span>
+            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_outcomes.departures", "Departures & Attrition")}</span>
             <div style={{ fontSize: "1.85rem", fontWeight: 800, color: attritedCount > 0 ? "#b45309" : "#64748b", marginTop: "0.25rem" }}>
               {attritedCount}
             </div>
-            <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Resigned, terminated, completed</span>
+            <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("employer_outcomes.departures_subtitle", "Resigned, terminated, completed")}</span>
           </div>
 
           <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Workforce Retention Rate</span>
+            <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_outcomes.retention_rate", "Workforce Retention Rate")}</span>
             <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#2563eb", marginTop: "0.25rem" }}>
               {retentionRate}%
             </div>
-            <span style={{ fontSize: "0.75rem", color: "#2563eb", fontWeight: 600 }}>Active retention ratio</span>
+            <span style={{ fontSize: "0.75rem", color: "#2563eb", fontWeight: 600 }}>{t("employer_outcomes.retention_rate_subtitle", "Active retention ratio")}</span>
           </div>
         </div>
 
         {/* Filter Pills */}
         <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
-          {["All", "Currently Employed", "Resigned", "Terminated", "Contract Completed"].map((st) => (
+          {[
+            { key: "All", label: t("employer_outcomes.filter_all", "All") },
+            { key: "Currently Employed", label: t("employer_outcomes.filter_employed", "Currently Employed") },
+            { key: "Resigned", label: t("employer_outcomes.filter_resigned", "Resigned") },
+            { key: "Terminated", label: t("employer_outcomes.filter_terminated", "Terminated") },
+            { key: "Contract Completed", label: t("employer_outcomes.filter_contract_completed", "Contract Completed") }
+          ].map((st) => (
             <button
-              key={st}
-              onClick={() => setStatusFilter(st)}
+              key={st.key}
+              onClick={() => setStatusFilter(st.key)}
               style={{
                 padding: "0.45rem 0.9rem",
                 borderRadius: "20px",
                 fontSize: "0.8rem",
                 fontWeight: 700,
                 border: "1px solid",
-                borderColor: statusFilter === st ? "#2563eb" : "#cbd5e1",
-                background: statusFilter === st ? "#2563eb" : "white",
-                color: statusFilter === st ? "white" : "#475569",
+                borderColor: statusFilter === st.key ? "#2563eb" : "#cbd5e1",
+                background: statusFilter === st.key ? "#2563eb" : "white",
+                color: statusFilter === st.key ? "white" : "#475569",
                 cursor: "pointer",
                 transition: "all 0.15s ease"
               }}
             >
-              {st} {st !== "All" && `(${employees.filter(e => e.employment_status === st).length})`}
+              {st.label} {st.key !== "All" && `(${employees.filter(e => e.employment_status === st.key).length})`}
             </button>
           ))}
         </div>
@@ -270,14 +278,14 @@ export default function EmployeesOutcomes() {
             data={filteredEmployees}
             onRetry={loadEmployees}
             isDataAvailable={(d) => d && d.length > 0}
-            isEmptyDetails="No verified employees found for this organization matching the criteria."
+            isEmptyDetails={t("employer_outcomes.empty_workforce", "No verified employees found for this organization matching the criteria.")}
           >
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.02)" }}>
               <DataTable 
                 columns={[
                   {
                     key: "trainee_name",
-                    label: "Trainee / ID",
+                    label: t("employer_outcomes.col_trainee_id", "Trainee / ID"),
                     render: (e) => (
                       <div>
                         <strong style={{ color: "#0f172a", display: "block" }}>{e.trainee_name}</strong>
@@ -287,22 +295,22 @@ export default function EmployeesOutcomes() {
                   },
                   {
                     key: "role",
-                    label: "Job Role",
+                    label: t("employer_outcomes.col_job_role", "Job Role"),
                     render: (e) => (
                       <div>
                         <span style={{ color: "#0f172a", fontWeight: 600, display: "block" }}>
                           {e.confirmed_role || e.job_role}
                         </span>
                         {e.role_confirmation === "Confirmed" ? (
-                          <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 700 }}>✓ Role Confirmed</span>
+                          <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 700 }}>{t("employer_outcomes.role_confirmed", "✓ Role Confirmed")}</span>
                         ) : e.role_confirmation === "Not Confirmed" ? (
-                          <span style={{ fontSize: "0.7rem", color: "#dc2626", fontWeight: 700 }}>✗ Title Corrected</span>
+                          <span style={{ fontSize: "0.7rem", color: "#dc2626", fontWeight: 700 }}>{t("employer_outcomes.role_corrected", "✗ Title Corrected")}</span>
                         ) : (
                           <button
                             onClick={(evt) => { evt.stopPropagation(); setRoleModalEmployee(e); }}
                             style={{ background: "none", border: "none", color: "#2563eb", fontSize: "0.7rem", fontWeight: 700, cursor: "pointer", padding: 0 }}
                           >
-                            Verify Role →
+                            {t("employer_outcomes.btn_verify_role", "Verify Role →")}
                           </button>
                         )}
                       </div>
@@ -310,12 +318,12 @@ export default function EmployeesOutcomes() {
                   },
                   {
                     key: "joining_date",
-                    label: "Joining Date",
+                    label: t("employer_outcomes.col_joining_date", "Joining Date"),
                     render: (e) => <DataValue value={e.joining_date} zeroState="Not recorded" />
                   },
                   {
                     key: "employment_status",
-                    label: "Employment Status",
+                    label: t("employer_outcomes.col_employment_status", "Employment Status"),
                     render: (e) => {
                       const isEmployed = e.employment_status === "Currently Employed";
                       return (
@@ -336,7 +344,7 @@ export default function EmployeesOutcomes() {
                             title="Update employment lifecycle status"
                             style={{ background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: "4px", padding: "2px 6px", fontSize: "0.7rem", cursor: "pointer", color: "#334155" }}
                           >
-                            Edit
+                            {t("employer_outcomes.btn_edit", "Edit")}
                           </button>
                         </div>
                       );
@@ -344,29 +352,29 @@ export default function EmployeesOutcomes() {
                   },
                   {
                     key: "wage_confirmation",
-                    label: "Wage Status",
+                    label: t("employer_outcomes.col_wage_status", "Wage Status"),
                     render: (e) => {
                       const status = e.wage_confirmation || "Pending";
                       return (
                         <div>
                           {status === "Confirmed" ? (
                             <span style={{ background: "#dbeafe", color: "#1d4ed8", padding: "2px 8px", borderRadius: "10px", fontSize: "0.75rem", fontWeight: 700 }}>
-                              Confirmed (₹{e.wage?.toLocaleString() || "28,000"})
+                              {t("verification_requests.choice_confirmed", "Confirmed")} (₹{e.wage?.toLocaleString() || "28,000"})
                             </span>
                           ) : status === "Cannot Disclose" ? (
                             <span style={{ background: "#f1f5f9", color: "#64748b", padding: "2px 8px", borderRadius: "10px", fontSize: "0.75rem", fontWeight: 700 }}>
-                              Cannot Disclose
+                              {t("verification_requests.choice_cannot_disclose", "Cannot Disclose")}
                             </span>
                           ) : status === "Different" ? (
                             <span style={{ background: "#fef3c7", color: "#b45309", padding: "2px 8px", borderRadius: "10px", fontSize: "0.75rem", fontWeight: 700 }}>
-                              Adjusted (₹{e.wage?.toLocaleString()})
+                              {t("verification_requests.choice_different", "Adjusted")} (₹{e.wage?.toLocaleString()})
                             </span>
                           ) : (
                             <button
                               onClick={(evt) => { evt.stopPropagation(); setWageModalEmployee(e); }}
                               style={{ padding: "3px 8px", background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", cursor: "pointer" }}
                             >
-                              Confirm Wage →
+                              {t("employer_outcomes.btn_confirm_wage", "Confirm Wage →")}
                             </button>
                           )}
                         </div>
@@ -375,16 +383,16 @@ export default function EmployeesOutcomes() {
                   },
                   {
                     key: "verification_status",
-                    label: "Attestation",
+                    label: t("employer_outcomes.col_attestation", "Attestation"),
                     render: (e) => (
                       <span style={{ background: "#dcfce7", color: "#166534", padding: "2px 8px", borderRadius: "10px", fontSize: "0.75rem", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: "3px" }}>
-                        <CheckCircle2 size={11} /> Verified
+                        <CheckCircle2 size={11} /> {t("employer_outcomes.status_verified", "Verified")}
                       </span>
                     )
                   },
                   {
                     key: "actions",
-                    label: "Actions",
+                    label: t("employer_outcomes.col_actions", "Actions"),
                     sortable: false,
                     render: (e) => (
                       <div style={{ display: "flex", gap: "0.4rem" }}>
@@ -404,7 +412,7 @@ export default function EmployeesOutcomes() {
                             gap: "0.25rem"
                           }}
                         >
-                          <Eye size={13} /> View
+                          <Eye size={13} /> {t("employer_outcomes.btn_view", "View")}
                         </button>
                       </div>
                     )

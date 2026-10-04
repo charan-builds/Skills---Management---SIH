@@ -12,8 +12,10 @@ import {
 } from "recharts";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Outcomes() {
+  const { t } = useLanguage();
   const { filters } = useFilters();
   const storeState = usePlatformStore();
 
@@ -63,21 +65,21 @@ export default function Outcomes() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <TrendingUp size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            ADMIN OUTCOME INTELLIGENCE & EVALUATION WORKSPACE
+            {t("outcomes.admin_badge", "ADMIN OUTCOME INTELLIGENCE & EVALUATION WORKSPACE")}
           </span>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem" }}>
           <div>
             <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Programme Outcomes Workspace
+              {t("outcomes.page_title", "Programme Outcomes Workspace")}
             </h1>
             <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-              Holistic outcome evaluation, longitudinal tracking, and evidence-grounded diagnosis for candidate transitions.
+              {t("outcomes.page_subtitle", "Holistic outcome evaluation, longitudinal tracking, and evidence-grounded diagnosis for candidate transitions.")}
             </p>
           </div>
           <div style={{ background: "#f8fafc", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.85rem" }}>
-            <span style={{ color: "#64748b" }}>Active Evaluation Scope: </span>
-            <strong style={{ color: "#2563eb" }}>{workspace?.total || 0}</strong> candidates
+            <span style={{ color: "#64748b" }}>{t("outcomes.active_scope", "Active Evaluation Scope:")} </span>
+            <strong style={{ color: "#2563eb" }}>{workspace?.total || 0}</strong> {t("outcomes.candidates", "candidates")}
           </div>
         </div>
       </div>
@@ -88,72 +90,72 @@ export default function Outcomes() {
         data={workspace}
         onRetry={loadData}
         isDataAvailable={(d) => d && d.data_available}
-        isEmptyDetails="No candidate outcome records found for the selected filter scope."
+        isEmptyDetails={t("outcomes.empty_details", "No candidate outcome records found for the selected filter scope.")}
       >
         {workspace && (
           <>
             {/* Top Summary: 10 Dynamically Calculated KPIs (Section 16) */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Total Trained</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.total_trained", "Total Trained")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.total_trained ?? 0} />
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>Enrolled Pool</span>
+                <span style={{ fontSize: "0.7rem", color: "#2563eb", fontWeight: 600 }}>{t("outcomes.enrolled_pool", "Enrolled Pool")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Certified Pass</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.certified_pass", "Certified Pass")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#2563eb", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.certified ?? 0} />
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#64748b" }}>
-                  {Math.round(((summary?.certified || 0) / (summary?.total_trained || 1)) * 100)}% pass rate
+                  {Math.round(((summary?.certified || 0) / (summary?.total_trained || 1)) * 100)}% {t("outcomes.pass_rate", "pass rate")}
                 </span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Placed (Employed)</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.placed_employed", "Placed (Employed)")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.employed ?? 0} />
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600 }}>Formal Corporate Jobs</span>
+                <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 600 }}>{t("outcomes.formal_corporate_jobs", "Formal Corporate Jobs")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Self-Employed</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.self_employed", "Self-Employed")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0d9488", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.self_employed ?? 0} />
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#0d9488" }}>Commercial Enterprises</span>
+                <span style={{ fontSize: "0.7rem", color: "#0d9488" }}>{t("outcomes.commercial_enterprises", "Commercial Enterprises")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Apprentices</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.apprentices", "Apprentices")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#7c3aed", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.apprentices ?? 0} />
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#7c3aed" }}>Industrial Contracts</span>
+                <span style={{ fontSize: "0.7rem", color: "#7c3aed" }}>{t("outcomes.industrial_contracts", "Industrial Contracts")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Unemployed</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.unemployed", "Unemployed")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#f59e0b", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.unemployed ?? 0} />
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>Seeking Placement</span>
+                <span style={{ fontSize: "0.7rem", color: "#b45309", fontWeight: 600 }}>{t("outcomes.seeking_placement", "Seeking Placement")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Employment Rate</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.employment_rate", "Employment Rate")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.employment_percentage ?? 0} suffix="%" />
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "#16a34a" }}>Active in Economy</span>
+                <span style={{ fontSize: "0.7rem", color: "#16a34a" }}>{t("outcomes.active_in_economy", "Active in Economy")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>6M Retention</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.retention_6m", "6M Retention")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
                   <CountUp value={summary?.retention_6m_percentage ?? 0} suffix="%" />
                 </div>
@@ -161,12 +163,12 @@ export default function Outcomes() {
               </div>
 
               <div style={{ background: "white", padding: "1rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>Average Wage</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{t("outcomes.average_wage", "Average Wage")}</span>
                 <div style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
                   {summary?.average_wage > 0 ? `₹${summary.average_wage.toLocaleString()}` : "N/A"}
                 </div>
                 <span style={{ fontSize: "0.7rem", color: "#16a34a", fontWeight: 700 }}>
-                  +{summary?.wage_growth_percentage}% Increment
+                  +{summary?.wage_growth_percentage}% {t("outcomes.increment", "Increment")}
                 </span>
               </div>
             </div>
@@ -178,14 +180,14 @@ export default function Outcomes() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
                   <div>
                     <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                      <Layers size={18} color="#2563eb" /> 6-Stage Outcome Funnel
+                      <Layers size={18} color="#2563eb" /> {t("outcomes.funnel_title", "6-Stage Outcome Funnel")}
                     </h3>
                     <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
-                      Conversion throughput from initial enrollment to sustained employment.
+                      {t("outcomes.funnel_subtitle", "Conversion throughput from initial enrollment to sustained employment.")}
                     </p>
                   </div>
                   <span style={{ fontSize: "0.75rem", background: "#eff6ff", color: "#1d4ed8", padding: "3px 8px", borderRadius: "6px", fontWeight: 700 }}>
-                    Relational Funnel
+                    {t("outcomes.relational_funnel", "Relational Funnel")}
                   </span>
                 </div>
 
@@ -215,14 +217,14 @@ export default function Outcomes() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                   <div>
                     <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                      <Target size={18} color="#16a34a" /> Outcome Distribution
+                      <Target size={18} color="#16a34a" /> {t("outcomes.distribution_title", "Outcome Distribution")}
                     </h3>
                     <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
-                      Proportional breakdown of active candidates across primary economic destinations.
+                      {t("outcomes.distribution_subtitle", "Proportional breakdown of active candidates across primary economic destinations.")}
                     </p>
                   </div>
                   <span style={{ fontSize: "0.75rem", background: "#f0fdf4", color: "#166534", padding: "3px 8px", borderRadius: "6px", fontWeight: 700 }}>
-                    Donut Breakdown
+                    {t("outcomes.donut_breakdown", "Donut Breakdown")}
                   </span>
                 </div>
 
@@ -259,18 +261,18 @@ export default function Outcomes() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                    <TrendingUp size={18} color="#2563eb" /> Employment Over Time (3M → 6M → 12M Trajectory)
+                    <TrendingUp size={18} color="#2563eb" /> {t("outcomes.time_trend_title", "Employment Over Time (3M → 6M → 12M Trajectory)")}
                   </h3>
                   <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.8rem", color: "#64748b" }}>
-                    Longitudinal cohort retention trajectory compared against state statutory benchmark (68%).
+                    {t("outcomes.time_trend_subtitle", "Longitudinal cohort retention trajectory compared against state statutory benchmark (68%).")}
                   </p>
                 </div>
                 <div style={{ display: "flex", gap: "1rem", fontSize: "0.8rem" }}>
                   <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "#2563eb", fontWeight: 700 }}>
-                    <span style={{ width: "10px", height: "10px", background: "#2563eb", borderRadius: "50%" }}></span> Observed Cohort Rate
+                    <span style={{ width: "10px", height: "10px", background: "#2563eb", borderRadius: "50%" }}></span> {t("outcomes.observed_cohort_rate", "Observed Cohort Rate")}
                   </span>
                   <span style={{ display: "flex", alignItems: "center", gap: "0.3rem", color: "#94a3b8", fontWeight: 700 }}>
-                    <span style={{ width: "10px", height: "10px", background: "#cbd5e1", borderRadius: "50%" }}></span> State Benchmark
+                    <span style={{ width: "10px", height: "10px", background: "#cbd5e1", borderRadius: "50%" }}></span> {t("outcomes.state_benchmark", "State Benchmark")}
                   </span>
                 </div>
               </div>
@@ -282,7 +284,7 @@ export default function Outcomes() {
                     <XAxis dataKey="milestone" tick={{ fontSize: 11 }} />
                     <YAxis domain={[40, 100]} tick={{ fontSize: 11 }} tickFormatter={(v) => `${v}%`} />
                     <Tooltip
-                      formatter={(v, name) => [`${v}%`, name === "rate" ? "Cohort Employment Rate" : "State Benchmark"]}
+                      formatter={(v, name) => [`${v}%`, name === "rate" ? t("outcomes.cohort_employment_rate", "Cohort Employment Rate") : t("outcomes.state_benchmark", "State Benchmark")]}
                       contentStyle={{ borderRadius: "8px", border: "1px solid #cbd5e1" }}
                     />
                     <Line type="monotone" dataKey="rate" name="rate" stroke="#2563eb" strokeWidth={3} dot={{ r: 6, fill: "#2563eb" }} activeDot={{ r: 8 }} />
@@ -297,14 +299,14 @@ export default function Outcomes() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <AlertTriangle size={20} color="#ea580c" /> Why People Don't Get Jobs
+                    <AlertTriangle size={20} color="#ea580c" /> {t("outcomes.why_no_jobs_title", "Why People Don't Get Jobs")}
                   </h3>
                   <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
-                    Distribution of reported non-placement reasons. Click any category segment or pill to open full diagnostic inspection.
+                    {t("outcomes.why_no_jobs_subtitle", "Distribution of reported non-placement reasons. Click any category segment or pill to open full diagnostic inspection.")}
                   </p>
                 </div>
                 <span style={{ fontSize: "0.75rem", background: "#fef3c7", color: "#b45309", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
-                  Interactive Root-Cause Diagnosis
+                  {t("outcomes.root_cause_diagnosis", "Interactive Root-Cause Diagnosis")}
                 </span>
               </div>
 
@@ -346,7 +348,7 @@ export default function Outcomes() {
                 {/* Clickable Reason Pills */}
                 <div>
                   <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
-                    SELECT REASON TO DIAGNOSE
+                    {t("outcomes.select_reason_to_diagnose", "SELECT REASON TO DIAGNOSE")}
                   </span>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
                     {Object.values(nonPlacement?.categories || {}).map((cat) => {
@@ -373,7 +375,7 @@ export default function Outcomes() {
                               {cat.label}
                             </strong>
                             <div style={{ fontSize: "0.72rem", color: "#64748b" }}>
-                              Category: {cat.key}
+                              {t("outcomes.category", "Category:")} {cat.key}
                             </div>
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -395,26 +397,26 @@ export default function Outcomes() {
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                         <span style={{ background: "#ea580c", color: "white", padding: "2px 7px", borderRadius: "4px", fontSize: "0.7rem", fontWeight: 800 }}>
-                          DIAGNOSTIC DETAIL
+                          {t("outcomes.diagnostic_detail", "DIAGNOSTIC DETAIL")}
                         </span>
                         <h4 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
-                          Selected Reason: "{selectedNpData.label}"
+                          {t("outcomes.selected_reason", "Selected Reason:")} "{selectedNpData.label}"
                         </h4>
                       </div>
                       <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
-                        Affecting <strong>{selectedNpData.count}</strong> candidates ({selectedNpData.percentage}% of unplaced group) under current scope.
+                        {t("outcomes.affecting", "Affecting")} <strong>{selectedNpData.count}</strong> {t("outcomes.candidates_unplaced_group", "candidates of unplaced group under current scope.")}
                       </p>
                     </div>
 
                     <span style={{ fontSize: "0.8rem", background: "#ffedd5", color: "#9a3412", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
-                      Evidence-Grounded Root Cause
+                      {t("outcomes.evidence_grounded_root_cause", "Evidence-Grounded Root Cause")}
                     </span>
                   </div>
 
                   {/* Why this area may be lagging explanation */}
                   <div style={{ background: "#fff7ed", border: "1px solid #fdba74", borderRadius: "8px", padding: "1rem", marginBottom: "1.25rem" }}>
                     <div style={{ fontWeight: 800, color: "#9a3412", fontSize: "0.85rem", textTransform: "uppercase", marginBottom: "0.25rem" }}>
-                      WHY THIS AREA MAY BE LAGGING (Evidence-Derived Analysis)
+                      {t("outcomes.why_lagging_analysis", "WHY THIS AREA MAY BE LAGGING (Evidence-Derived Analysis)")}
                     </div>
                     <p style={{ margin: 0, fontSize: "0.9rem", color: "#7c2d12", lineHeight: 1.4 }}>
                       {selectedNpData.lagging_explanation}
@@ -424,7 +426,7 @@ export default function Outcomes() {
                   {/* Geographic & Programme Breakdown */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
                     <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Programmes Affected</span>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>{t("outcomes.programmes_affected", "Programmes Affected")}</span>
                       <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                         {selectedNpData.programmes_affected.slice(0, 4).map(p => (
                           <div key={p.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
@@ -436,7 +438,7 @@ export default function Outcomes() {
                     </div>
 
                     <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Districts Affected</span>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>{t("outcomes.districts_affected", "Districts Affected")}</span>
                       <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                         {selectedNpData.districts_affected.slice(0, 4).map(d => (
                           <div key={d.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
@@ -448,7 +450,7 @@ export default function Outcomes() {
                     </div>
 
                     <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Cohorts Affected</span>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>{t("outcomes.cohorts_affected", "Cohorts Affected")}</span>
                       <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                         {selectedNpData.cohorts_affected.slice(0, 4).map(c => (
                           <div key={c.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
@@ -463,20 +465,20 @@ export default function Outcomes() {
                   {/* Sample Candidate Dossiers */}
                   <div>
                     <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
-                      SAMPLE AFFECTED CANDIDATE RECORDS ({selectedNpData.sample_trainees.length})
+                      {t("outcomes.sample_candidate_records", "SAMPLE AFFECTED CANDIDATE RECORDS")} ({selectedNpData.sample_trainees.length})
                     </span>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "0.75rem", marginTop: "0.5rem" }}>
-                      {selectedNpData.sample_trainees.slice(0, 6).map(t => (
-                        <div key={t.id} style={{ background: "white", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "0.78rem" }}>
+                      {selectedNpData.sample_trainees.slice(0, 6).map(tItem => (
+                        <div key={tItem.id} style={{ background: "white", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "0.78rem" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 700 }}>
-                            <span style={{ color: "#0f172a" }}>{t.name}</span>
-                            <span style={{ color: "#2563eb", fontFamily: "monospace" }}>{t.id}</span>
+                            <span style={{ color: "#0f172a" }}>{tItem.name}</span>
+                            <span style={{ color: "#2563eb", fontFamily: "monospace" }}>{tItem.id}</span>
                           </div>
                           <div style={{ color: "#64748b", marginTop: "2px" }}>
-                            {t.programme} • {t.district}
+                            {tItem.programme} • {tItem.district}
                           </div>
                           <div style={{ color: "#b45309", marginTop: "4px", fontSize: "0.72rem", background: "#fef3c7", padding: "2px 6px", borderRadius: "4px" }}>
-                            Reported barrier: {t.reported_barrier}
+                            {t("outcomes.reported_barrier", "Reported barrier:")} {tItem.reported_barrier}
                           </div>
                         </div>
                       ))}
@@ -491,14 +493,14 @@ export default function Outcomes() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <UserMinus size={20} color="#e11d48" /> Why People Leave Jobs
+                    <UserMinus size={20} color="#e11d48" /> {t("outcomes.why_leave_jobs_title", "Why People Leave Jobs")}
                   </h3>
                   <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
-                    Distribution of reported post-placement attrition drivers. Click any segment to uncover the pattern.
+                    {t("outcomes.why_leave_jobs_subtitle", "Distribution of reported post-placement attrition drivers. Click any segment to uncover the pattern.")}
                   </p>
                 </div>
                 <span style={{ fontSize: "0.75rem", background: "#ffe4e6", color: "#e11d48", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
-                  Interactive Attrition Diagnosis
+                  {t("outcomes.attrition_diagnosis", "Interactive Attrition Diagnosis")}
                 </span>
               </div>
 
@@ -540,7 +542,7 @@ export default function Outcomes() {
                 {/* Clickable Reason Pills */}
                 <div>
                   <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>
-                    SELECT REASON TO EXAMINE PATTERN
+                    {t("outcomes.select_reason_to_examine", "SELECT REASON TO EXAMINE PATTERN")}
                   </span>
                   <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", marginTop: "0.5rem" }}>
                     {Object.values(attrition?.categories || {}).map((cat) => {
@@ -567,7 +569,7 @@ export default function Outcomes() {
                               {cat.label}
                             </strong>
                             <div style={{ fontSize: "0.72rem", color: "#64748b" }}>
-                              Factor: {cat.key}
+                              {t("outcomes.factor", "Factor:")} {cat.key}
                             </div>
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
@@ -589,24 +591,24 @@ export default function Outcomes() {
                     <div>
                       <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                         <span style={{ background: "#e11d48", color: "white", padding: "2px 7px", borderRadius: "4px", fontSize: "0.7rem", fontWeight: 800 }}>
-                          PATTERN ANALYSIS
+                          {t("outcomes.pattern_analysis", "PATTERN ANALYSIS")}
                         </span>
                         <h4 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
-                          Why People Leave Because of {selectedAttData.key}
+                          {t("outcomes.why_leave_because_of", "Why People Leave Because of")} {selectedAttData.key}
                         </h4>
                       </div>
                       <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
-                        Affected Count: <strong>{selectedAttData.count}</strong> departures ({selectedAttData.percentage}% of attrited group).
+                        {t("outcomes.affected_count", "Affected Count:")} <strong>{selectedAttData.count}</strong> {t("outcomes.departures", "departures")} ({selectedAttData.percentage}% {t("outcomes.of_attrited_group", "of attrited group")}).
                       </p>
                     </div>
 
                     <div style={{ display: "flex", gap: "1rem", background: "white", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.8rem" }}>
                       <div>
-                        <span style={{ color: "#64748b" }}>Exit Wage: </span>
+                        <span style={{ color: "#64748b" }}>{t("outcomes.exit_wage", "Exit Wage:")} </span>
                         <strong style={{ color: "#e11d48" }}>₹{selectedAttData.average_wage.toLocaleString()}</strong>
                       </div>
                       <div>
-                        <span style={{ color: "#64748b" }}>Platform Avg: </span>
+                        <span style={{ color: "#64748b" }}>{t("outcomes.platform_avg", "Platform Avg:")} </span>
                         <strong style={{ color: "#16a34a" }}>₹{selectedAttData.platform_average_wage.toLocaleString()}</strong>
                       </div>
                     </div>
@@ -615,7 +617,7 @@ export default function Outcomes() {
                   {/* What pattern are we seeing? explanation */}
                   <div style={{ background: "#fff1f2", border: "1px solid #fecdd3", borderRadius: "8px", padding: "1rem", marginBottom: "1.25rem" }}>
                     <div style={{ fontWeight: 800, color: "#9f1239", fontSize: "0.85rem", textTransform: "uppercase", marginBottom: "0.25rem" }}>
-                      WHAT PATTERN ARE WE SEEING? (Derived Telemetry Findings)
+                      {t("outcomes.what_pattern_seen", "WHAT PATTERN ARE WE SEEING? (Derived Telemetry Findings)")}
                     </div>
                     <p style={{ margin: 0, fontSize: "0.9rem", color: "#881337", lineHeight: 1.4 }}>
                       {selectedAttData.pattern_observed}
@@ -625,7 +627,7 @@ export default function Outcomes() {
                   {/* Distribution across Programmes & Districts */}
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
                     <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Concentration by Programme</span>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>{t("outcomes.concentration_programme", "Concentration by Programme")}</span>
                       <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                         {selectedAttData.programmes_affected.slice(0, 4).map(p => (
                           <div key={p.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
@@ -637,7 +639,7 @@ export default function Outcomes() {
                     </div>
 
                     <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Concentration by District</span>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>{t("outcomes.concentration_district", "Concentration by District")}</span>
                       <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                         {selectedAttData.districts_affected.slice(0, 4).map(d => (
                           <div key={d.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
@@ -649,7 +651,7 @@ export default function Outcomes() {
                     </div>
 
                     <div style={{ background: "white", padding: "0.85rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>Concentration by Provider</span>
+                      <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>{t("outcomes.concentration_provider", "Concentration by Provider")}</span>
                       <div style={{ marginTop: "0.4rem", display: "flex", flexDirection: "column", gap: "0.25rem" }}>
                         {selectedAttData.providers_affected.slice(0, 4).map(pr => (
                           <div key={pr.name} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem" }}>
@@ -669,14 +671,14 @@ export default function Outcomes() {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Shield size={20} color="#2563eb" /> Analytical Outcome Diagnosis (Associated Factors)
+                    <Shield size={20} color="#2563eb" /> {t("outcomes.analytical_diagnosis_title", "Analytical Outcome Diagnosis (Associated Factors)")}
                   </h3>
                   <p style={{ margin: "0.2rem 0 0 0", fontSize: "0.85rem", color: "#64748b" }}>
-                    Evidence-derived analysis for underperforming areas. Formulated using associated factors and observed patterns.
+                    {t("outcomes.analytical_diagnosis_subtitle", "Evidence-derived analysis for underperforming areas. Formulated using associated factors and observed patterns.")}
                   </p>
                 </div>
                 <span style={{ fontSize: "0.75rem", background: "#eff6ff", color: "#1d4ed8", padding: "4px 9px", borderRadius: "6px", fontWeight: 700 }}>
-                  Policy Evidence Base
+                  {t("outcomes.policy_evidence_base", "Policy Evidence Base")}
                 </span>
               </div>
 
@@ -686,7 +688,7 @@ export default function Outcomes() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
                       <div>
                         <span style={{ fontSize: "0.7rem", fontWeight: 800, color: "#2563eb", textTransform: "uppercase" }}>
-                          PROGRAMME EVALUATION DIAGNOSIS
+                          {t("outcomes.programme_eval_diagnosis", "PROGRAMME EVALUATION DIAGNOSIS")}
                         </span>
                         <h4 style={{ margin: "0.2rem 0 0 0", fontSize: "1.1rem", color: "#0f172a" }}>
                           {diag.area}
@@ -705,12 +707,12 @@ export default function Outcomes() {
                     </div>
 
                     <div style={{ fontSize: "0.85rem", color: "#334155", marginBottom: "0.75rem", background: "white", padding: "0.6rem 0.85rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                      <strong>Observed Metric:</strong> {diag.observation}
+                      <strong>{t("outcomes.observed_metric", "Observed Metric:")}</strong> {diag.observation}
                     </div>
 
                     <div style={{ marginBottom: "0.75rem" }}>
                       <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#475569", textTransform: "uppercase" }}>
-                        Key Associated Factors:
+                        {t("outcomes.key_associated_factors", "Key Associated Factors:")}
                       </span>
                       <ul style={{ margin: "0.3rem 0 0 0", paddingLeft: "1.2rem", fontSize: "0.8rem", color: "#334155" }}>
                         {diag.associated_factors.map((af, i) => (
@@ -720,8 +722,8 @@ export default function Outcomes() {
                     </div>
 
                     <div style={{ fontSize: "0.78rem", color: "#475569", lineHeight: 1.4, borderTop: "1px solid #e2e8f0", paddingTop: "0.6rem" }}>
-                      <div><strong>Observed Pattern:</strong> {diag.observed_pattern}</div>
-                      <div style={{ marginTop: "0.25rem" }}><strong>Potential Contributing Factor:</strong> {diag.potential_contributing_factors}</div>
+                      <div><strong>{t("outcomes.observed_pattern", "Observed Pattern:")}</strong> {diag.observed_pattern}</div>
+                      <div style={{ marginTop: "0.25rem" }}><strong>{t("outcomes.potential_contributing_factor", "Potential Contributing Factor:")}</strong> {diag.potential_contributing_factors}</div>
                     </div>
                   </div>
                 ))}

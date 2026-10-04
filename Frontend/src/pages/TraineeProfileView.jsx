@@ -11,8 +11,10 @@ import CountUp from "../components/common/CountUp";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function TraineeProfileView() {
+  const { t } = useLanguage();
   const { traineeId } = useParams();
   const navigate = useNavigate();
   const store = usePlatformStore();
@@ -68,7 +70,7 @@ export default function TraineeProfileView() {
           marginBottom: "1.25rem"
         }}
       >
-        <ArrowLeft size={16} /> Back to Trainee Directory
+        <ArrowLeft size={16} /> {t("trainee_profile_view.btn_back", "Back to Trainee Directory")}
       </button>
 
       <DataStateWrapper
@@ -77,7 +79,7 @@ export default function TraineeProfileView() {
         data={trainee}
         onRetry={loadTrainee}
         isDataAvailable={(d) => Boolean(d)}
-        isEmptyDetails={`No profile found for ID: ${traineeId}`}
+        isEmptyDetails={`${t("trainee_profile_view.empty_profile", "No profile found for ID:")} ${traineeId}`}
       >
         {trainee && (
           <>

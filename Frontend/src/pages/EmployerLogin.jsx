@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Building2, ShieldCheck, ArrowRight, CheckCircle2, Clock, Lock, Mail, Phone, MapPin, FileText, AlertCircle } from "lucide-react";
 import { mockStore } from "../services/mockStore";
 import { platformService } from "../services/platformService";
+import { useLanguage } from "../context/LanguageContext";
 
 const ACTIVE_DEMO_EMPLOYERS = [
   { id: "EMP-DEMO-001", name: "Tata Consultancy Services", sector: "Information Technology", rep: "Rohit Sharma", status: "Verified" },
@@ -14,6 +15,7 @@ const ACTIVE_DEMO_EMPLOYERS = [
 ];
 
 export default function EmployerLogin() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [authMode, setAuthMode] = useState("login"); // "login" | "register"
   const [selectedEmployerId, setSelectedEmployerId] = useState("EMP-DEMO-001");
@@ -130,17 +132,17 @@ export default function EmployerLogin() {
           </div>
           <div>
             <h1 style={{ fontSize: "1.1rem", fontWeight: 800, margin: 0, letterSpacing: "-0.3px", color: "white" }}>
-              Skilling Outcomes Intelligence Platform
+              {t("auth_login.portal_title", "Skilling Outcomes Intelligence Platform")}
             </h1>
             <span style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-              Authorised Organisation & Employer Gateway
+              {t("nav.organisation_portal", "Authorised Organisation & Employer Gateway")}
             </span>
           </div>
         </div>
 
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <Link to="/login" style={{ color: "#94a3b8", fontSize: "0.85rem", textDecoration: "none", display: "flex", alignItems: "center", gap: "0.35rem" }}>
-            ← All Portals Login
+            ← {t("auth_login.btn_login", "All Portals Login")}
           </Link>
         </div>
       </div>
@@ -169,7 +171,7 @@ export default function EmployerLogin() {
                 gap: "0.5rem"
               }}
             >
-              <ShieldCheck size={18} /> Authorised Organisation Login
+              <ShieldCheck size={18} /> {t("auth_login.btn_login", "Authorised Organisation Login")}
             </button>
 
             <button
@@ -190,7 +192,7 @@ export default function EmployerLogin() {
                 gap: "0.5rem"
               }}
             >
-              <Building2 size={18} /> Register New Organisation
+              <Building2 size={18} /> {t("auth_login.btn_register", "Register New Organisation")}
             </button>
           </div>
 
@@ -215,10 +217,10 @@ export default function EmployerLogin() {
               {/* Quick Persona Picker */}
               <div>
                 <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                  Deterministic Demo Orgs
+                  {t("auth_login.demo_quick_fill", "Deterministic Demo Orgs")}
                 </span>
                 <h2 style={{ fontSize: "1.3rem", fontWeight: 800, margin: "0.25rem 0 0.75rem 0", color: "#f1f5f9" }}>
-                  Select Demonstration Organisation
+                  {t("auth_login.org_id_label", "Select Demonstration Organisation")}
                 </h2>
                 <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: "0 0 1.25rem 0" }}>
                   Each organization maintains strict multi-tenant data boundaries. Employer A never accesses records from Employer B.
@@ -298,7 +300,7 @@ export default function EmployerLogin() {
               <div style={{ background: "rgba(15, 23, 42, 0.6)", padding: "1.5rem", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                 <div>
                   <h3 style={{ fontSize: "1.1rem", fontWeight: 700, margin: "0 0 0.5rem 0", color: "white" }}>
-                    Authorised Access Sign In
+                    {t("auth_login.btn_login", "Authorised Access Sign In")}
                   </h3>
                   <p style={{ fontSize: "0.8rem", color: "#94a3b8", margin: "0 0 1.25rem 0" }}>
                     Selected: <strong>{mockStore.getEmployer(selectedEmployerId)?.name}</strong>
@@ -307,7 +309,7 @@ export default function EmployerLogin() {
                   <form onSubmit={handleManualLogin} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <div>
                       <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#cbd5e1", marginBottom: "0.35rem" }}>
-                        Organisation Unique Identifier
+                        {t("auth_login.org_id_label", "Organisation Unique Identifier")}
                       </label>
                       <input
                         type="text"
@@ -319,7 +321,7 @@ export default function EmployerLogin() {
 
                     <div>
                       <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#cbd5e1", marginBottom: "0.35rem" }}>
-                        Authorised Representative Email
+                        {t("auth_login.email_label", "Authorised Representative Email")}
                       </label>
                       <div style={{ position: "relative" }}>
                         <Mail size={16} color="#64748b" style={{ position: "absolute", left: "10px", top: "11px" }} />
@@ -335,7 +337,7 @@ export default function EmployerLogin() {
 
                     <div>
                       <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#cbd5e1", marginBottom: "0.35rem" }}>
-                        Enterprise Credentials / Password
+                        {t("auth_login.password_label", "Enterprise Credentials / Password")}
                       </label>
                       <div style={{ position: "relative" }}>
                         <Lock size={16} color="#64748b" style={{ position: "absolute", left: "10px", top: "11px" }} />
@@ -363,7 +365,7 @@ export default function EmployerLogin() {
                         marginTop: "0.5rem"
                       }}
                     >
-                      Authenticate & Access Organisation Portal
+                      {t("auth_login.btn_login", "Authenticate & Access Organisation Portal")}
                     </button>
                   </form>
                 </div>
@@ -382,10 +384,10 @@ export default function EmployerLogin() {
             <div style={{ padding: "2rem" }}>
               <div style={{ marginBottom: "1.5rem" }}>
                 <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                  Organisation Onboarding
+                  {t("auth_login.btn_register", "Organisation Onboarding")}
                 </span>
                 <h2 style={{ fontSize: "1.3rem", fontWeight: 800, margin: "0.25rem 0 0.4rem 0", color: "#f1f5f9" }}>
-                  Register Organisation for Outcome Verification
+                  {t("auth_login.btn_register", "Register Organisation for Outcome Verification")}
                 </h2>
                 <p style={{ fontSize: "0.85rem", color: "#94a3b8", margin: 0 }}>
                   Enter authoritative corporate registration details. Once submitted, your profile enters the <strong>"Pending"</strong> state until verified by a State Skilling Administrator.

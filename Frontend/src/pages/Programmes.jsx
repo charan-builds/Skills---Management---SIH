@@ -7,8 +7,10 @@ import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import { usePlatformStore, platformService } from "../services/platformService";
 import { useFilters } from "../context/FilterContext";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Programmes() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const store = usePlatformStore();
   const { filters } = useFilters();
@@ -25,12 +27,12 @@ export default function Programmes() {
     const allTrainees = store.trainees || [];
 
     return rawProgrammes.map(p => {
-      const pTrainees = allTrainees.filter(t => t.programme_id === p.id || t.programme_name === p.name);
+      const pTrainees = allTrainees.filter(tItem => tItem.programme_id === p.id || tItem.programme_name === p.name);
       const total = pTrainees.length;
-      const completed = pTrainees.filter(t => t.training_status === "Completed").length;
-      const placed = pTrainees.filter(t => t.employment?.status === "EMPLOYED" || t.employment?.status === "APPRENTICESHIP").length;
-      const retained6M = pTrainees.filter(t => t.retention?.retention_6m === "Retained").length;
-      const eligibleRetention = pTrainees.filter(t => t.retention?.retention_6m).length || 1;
+      const completed = pTrainees.filter(tItem => tItem.training_status === "Completed").length;
+      const placed = pTrainees.filter(tItem => tItem.employment?.status === "EMPLOYED" || tItem.employment?.status === "APPRENTICESHIP").length;
+      const retained6M = pTrainees.filter(tItem => tItem.retention?.retention_6m === "Retained").length;
+      const eligibleRetention = pTrainees.filter(tItem => tItem.retention?.retention_6m).length || 1;
 
       // Find primary provider and district for this programme
       const primaryProvider = pTrainees[0]?.provider_name || "TATA STRIVE";
@@ -103,14 +105,14 @@ export default function Programmes() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <GraduationCap size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            VOCATIONAL CURRICULUM PORTFOLIO
+            {t("programmes.admin_badge", "VOCATIONAL CURRICULUM PORTFOLIO")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          State Skilling Programmes
+          {t("programmes.page_title", "State Skilling Programmes")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Evaluate accredited training curricula, enrollment volumes, placement velocity, and long-term retention. Click any programme to view in-depth evaluation.
+          {t("programmes.page_subtitle", "Evaluate accredited training curricula, enrollment volumes, placement velocity, and long-term retention. Click any programme to view in-depth evaluation.")}
         </p>
       </div>
 
@@ -125,7 +127,7 @@ export default function Programmes() {
             <Search size={16} color="#94a3b8" style={{ position: "absolute", left: "12px", top: "10px" }} />
             <input
               type="text"
-              placeholder="Search programme, ID, or provider..."
+              placeholder={t("programmes.search_placeholder", "Search programme, ID, or provider...")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               style={{ width: "100%", padding: "0.5rem 1rem 0.5rem 2.25rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
@@ -137,7 +139,7 @@ export default function Programmes() {
             onChange={(e) => setDistrictFilter(e.target.value)}
             style={{ padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "white" }}
           >
-            <option value="All Districts">All Districts</option>
+            <option value="All Districts">{t("common.all_districts", "All Districts")}</option>
             <option value="Mumbai">Mumbai</option>
             <option value="Pune">Pune</option>
             <option value="Nagpur">Nagpur</option>
@@ -150,8 +152,8 @@ export default function Programmes() {
             onChange={(e) => setSortBy(e.target.value)}
             style={{ padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.85rem", background: "white" }}
           >
-            <option value="employment_desc">Sort: Highest Placement</option>
-            <option value="enrolled_desc">Sort: Most Enrolled</option>
+            <option value="employment_desc">{t("programmes.sort_highest_placement", "Sort: Highest Placement")}</option>
+            <option value="enrolled_desc">{t("programmes.sort_most_enrolled", "Sort: Most Enrolled")}</option>
           </select>
 
           {(search || districtFilter !== "All Districts") && (
@@ -159,7 +161,7 @@ export default function Programmes() {
               onClick={handleClearFilters}
               style={{ display: "flex", alignItems: "center", gap: "0.3rem", padding: "0.5rem 0.75rem", background: "#f1f5f9", border: "none", borderRadius: "8px", fontSize: "0.8rem", color: "#475569", cursor: "pointer" }}
             >
-              <RotateCcw size={14} /> Clear
+              <RotateCcw size={14} /> {t("common.clear", "Clear")}
             </button>
           )}
         </div>
@@ -178,7 +180,7 @@ export default function Programmes() {
               cursor: "pointer"
             }}
           >
-            Cards View
+            {t("programmes.cards_view", "Cards View")}
           </button>
           <button
             onClick={() => setViewMode("table")}
@@ -193,7 +195,7 @@ export default function Programmes() {
               cursor: "pointer"
             }}
           >
-            Table View
+            {t("programmes.table_view", "Table View")}
           </button>
         </div>
       </div>
@@ -204,7 +206,7 @@ export default function Programmes() {
         data={filteredProgrammes}
         onRetry={() => setLoading(false)}
         isDataAvailable={(d) => d && d.length > 0}
-        isEmptyDetails="No skilling programmes match the current search or district filter."
+        isEmptyDetails={t("programmes.empty_details", "No skilling programmes match the current search or district filter.")}
       >
         {viewMode === "cards" ? (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "1.5rem" }}>
@@ -238,7 +240,7 @@ export default function Programmes() {
                       background: prog.status === "HIGH_PERFORMER" ? "#dcfce7" : "#eff6ff",
                       color: prog.status === "HIGH_PERFORMER" ? "#166534" : "#1d4ed8"
                     }}>
-                      {prog.status === "HIGH_PERFORMER" ? "High Performer" : "Optimal"}
+                      {prog.status === "HIGH_PERFORMER" ? t("programmes.high_performer", "High Performer") : t("programmes.optimal", "Optimal")}
                     </span>
                   </div>
 
@@ -246,16 +248,16 @@ export default function Programmes() {
                     {prog.name}
                   </h3>
                   <div style={{ fontSize: "0.8rem", color: "#64748b", marginBottom: "1rem" }}>
-                    Sector: <strong>{prog.sector}</strong> • {prog.duration_weeks} Weeks
+                    {t("common.sector", "Sector")}: <strong>{prog.sector}</strong> • {prog.duration_weeks} {t("programmes.weeks", "Weeks")}
                   </div>
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", background: "#f8fafc", padding: "0.85rem", borderRadius: "8px", marginBottom: "1.25rem" }}>
                     <div>
-                      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Enrolled in Scope</span>
+                      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("programmes.enrolled_in_scope", "Enrolled in Scope")}</span>
                       <div style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a" }}>{prog.enrolled}</div>
                     </div>
                     <div>
-                      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Placement Rate</span>
+                      <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("programmes.placement_rate", "Placement Rate")}</span>
                       <div style={{ fontSize: "1.3rem", fontWeight: 800, color: "#16a34a" }}>{prog.employment_rate}</div>
                     </div>
                   </div>
@@ -279,7 +281,7 @@ export default function Programmes() {
                     gap: "0.4rem"
                   }}
                 >
-                  View Programme Evaluation <ArrowRight size={15} />
+                  {t("programmes.view_evaluation", "View Programme Evaluation")} <ArrowRight size={15} />
                 </button>
               </div>
             ))}
@@ -288,21 +290,21 @@ export default function Programmes() {
           <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
             <DataTable
               columns={[
-                { key: "id", label: "ID", render: (r) => <strong>{r.id}</strong> },
-                { key: "name", label: "Programme", render: (r) => <strong style={{ color: "#0f172a" }}>{r.name}</strong> },
-                { key: "sector", label: "Sector", render: (r) => r.sector },
-                { key: "enrolled", label: "Enrolled", render: (r) => r.enrolled },
-                { key: "employment_rate", label: "Placement Rate", render: (r) => <strong style={{ color: "#16a34a" }}>{r.employment_rate}</strong> },
-                { key: "retention_12m", label: "6M Retention", render: (r) => r.retention_12m },
+                { key: "id", label: t("programmes.col_id", "ID"), render: (r) => <strong>{r.id}</strong> },
+                { key: "name", label: t("programmes.col_programme", "Programme"), render: (r) => <strong style={{ color: "#0f172a" }}>{r.name}</strong> },
+                { key: "sector", label: t("common.sector", "Sector"), render: (r) => r.sector },
+                { key: "enrolled", label: t("programmes.col_enrolled", "Enrolled"), render: (r) => r.enrolled },
+                { key: "employment_rate", label: t("programmes.col_placement", "Placement Rate"), render: (r) => <strong style={{ color: "#16a34a" }}>{r.employment_rate}</strong> },
+                { key: "retention_12m", label: t("programmes.col_retention", "6M Retention"), render: (r) => r.retention_12m },
                 {
                   key: "actions",
-                  label: "Action",
+                  label: t("common.actions", "Action"),
                   render: (r) => (
                     <button
                       onClick={() => navigate(`/admin/programmes/${r.id}`)}
                       style={{ padding: "4px 10px", background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
                     >
-                      Evaluate
+                      {t("programmes.evaluate", "Evaluate")}
                     </button>
                   )
                 }

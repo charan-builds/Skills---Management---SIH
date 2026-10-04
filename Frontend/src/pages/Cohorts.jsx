@@ -5,11 +5,13 @@ import { useFilters } from "../context/FilterContext";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import DataTable from "../components/common/DataTable";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
 
 export default function Cohorts() {
+  const { t } = useLanguage();
   const { filters, updateFilter } = useFilters();
   const store = usePlatformStore();
   const [data, setData] = useState(null);
@@ -57,14 +59,14 @@ export default function Cohorts() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Users2 size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            LONGITUDINAL PERFORMANCE BENCHMARKING
+            {t("cohorts.admin_badge", "LONGITUDINAL PERFORMANCE BENCHMARKING")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Quarterly Cohort Analysis & Progression
+          {t("cohorts.page_title", "Quarterly Cohort Analysis & Progression")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Compare skilling cohorts across graduation quarters to analyze completion trajectories, placement velocity, and wage retention derived from relational records.
+          {t("cohorts.page_subtitle", "Compare skilling cohorts across graduation quarters to analyze completion trajectories, placement velocity, and wage retention derived from relational records.")}
         </p>
       </div>
 
@@ -74,13 +76,13 @@ export default function Cohorts() {
         data={cohorts}
         onRetry={loadData}
         isDataAvailable={(d) => d && d.length > 0}
-        isEmptyDetails="No cohort performance records found matching the active global filters."
+        isEmptyDetails={t("cohorts.empty_details", "No cohort performance records found matching the active global filters.")}
       >
         {activeCohort && (
           <>
             {/* Cohort Selector Pills */}
             <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem", flexWrap: "wrap", alignItems: "center" }}>
-              <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#475569" }}>Select Focus Cohort:</span>
+              <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "#475569" }}>{t("cohorts.select_cohort", "Select Focus Cohort:")}</span>
               {cohorts.map((c) => (
                 <button
                   key={c.cohort}
@@ -100,7 +102,7 @@ export default function Cohorts() {
                     gap: "0.4rem"
                   }}
                 >
-                  <span>Cohort {c.cohort}</span>
+                  <span>{t("cohorts.cohort_label", "Cohort")} {c.cohort}</span>
                   {selectedCohort === c.cohort && <CheckCircle2 size={14} color="#2563eb" />}
                 </button>
               ))}
@@ -109,43 +111,43 @@ export default function Cohorts() {
             {/* Active Cohort Highlight Metrics */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Trained in Scope</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("cohorts.trained_in_scope", "Trained in Scope")}</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
                   <CountUp value={activeCohort.trained} />
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#2563eb", fontWeight: 600 }}>Cohort {activeCohort.cohort}</span>
+                <span style={{ fontSize: "0.75rem", color: "#2563eb", fontWeight: 600 }}>{t("cohorts.cohort_label", "Cohort")} {activeCohort.cohort}</span>
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Completion Rate</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("cohorts.completion_rate", "Completion Rate")}</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
                   <CountUp value={activeCohort.completion_rate} />
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Passed assessments</span>
+                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>{t("cohorts.passed_assessments", "Passed assessments")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Placement Velocity</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("cohorts.placement_velocity", "Placement Velocity")}</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#2563eb", marginTop: "0.2rem" }}>
                   <CountUp value={activeCohort.placement_rate} />
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Formal employment</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("cohorts.formal_employment", "Formal employment")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>6M Retention Benchmark</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("cohorts.retention_benchmark", "6M Retention Benchmark")}</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#0f172a", marginTop: "0.2rem" }}>
                   <CountUp value={activeCohort.retention_6m} />
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Sustained in role</span>
+                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>{t("cohorts.sustained_in_role", "Sustained in role")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Wage Growth</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("cohorts.wage_growth", "Wage Growth")}</span>
                 <div style={{ fontSize: "1.75rem", fontWeight: 800, color: "#16a34a", marginTop: "0.2rem" }}>
                   <CountUp value={activeCohort.wage_growth} />
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>Appraisal delta</span>
+                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>{t("cohorts.appraisal_delta", "Appraisal delta")}</span>
               </div>
             </div>
 
@@ -153,10 +155,10 @@ export default function Cohorts() {
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem", marginBottom: "2rem" }}>
               <div style={{ marginBottom: "1.25rem" }}>
                 <h3 style={{ margin: "0 0 0.25rem 0", fontSize: "1.2rem", color: "#0f172a" }}>
-                  Quarterly Cohort Benchmark Comparison (Chart View)
+                  {t("cohorts.chart_title", "Quarterly Cohort Benchmark Comparison (Chart View)")}
                 </h3>
                 <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
-                  Visual comparison of placement velocity and 6-month retention rates across intakes.
+                  {t("cohorts.chart_subtitle", "Visual comparison of placement velocity and 6-month retention rates across intakes.")}
                 </p>
               </div>
 
@@ -171,9 +173,9 @@ export default function Cohorts() {
                       contentStyle={{ borderRadius: "8px", border: "1px solid #cbd5e1" }}
                     />
                     <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
-                    <Bar dataKey="placementRate" name="Placement Rate %" fill="#2563eb" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="retentionRate" name="6M Retention %" fill="#16a34a" radius={[6, 6, 0, 0]} />
-                    <Bar dataKey="completionRate" name="Completion Rate %" fill="#93c5fd" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="placementRate" name={t("cohorts.placement_rate_legend", "Placement Rate %")} fill="#2563eb" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="retentionRate" name={t("cohorts.retention_rate_legend", "6M Retention %")} fill="#16a34a" radius={[6, 6, 0, 0]} />
+                    <Bar dataKey="completionRate" name={t("cohorts.completion_rate_legend", "Completion Rate %")} fill="#93c5fd" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -183,7 +185,7 @@ export default function Cohorts() {
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
               <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc" }}>
                 <h3 style={{ margin: 0, fontSize: "1.1rem", color: "#0f172a" }}>
-                  Cohort Cross-Comparison Matrix
+                  {t("cohorts.matrix_title", "Cohort Cross-Comparison Matrix")}
                 </h3>
               </div>
 
@@ -192,13 +194,13 @@ export default function Cohorts() {
                   columns={[
                     {
                       key: "cohort",
-                      label: "Intake Cohort",
+                      label: t("cohorts.col_intake", "Intake Cohort"),
                       render: (row) => (
                         <div>
                           <strong style={{ color: "#0f172a" }}>{row.cohort}</strong>
                           {row.cohort === selectedCohort && (
                             <span style={{ marginLeft: "0.5rem", fontSize: "0.7rem", background: "#eff6ff", color: "#1d4ed8", padding: "2px 6px", borderRadius: "4px", fontWeight: 700 }}>
-                              Selected Focus
+                              {t("cohorts.selected_focus", "Selected Focus")}
                             </span>
                           )}
                         </div>
@@ -206,17 +208,17 @@ export default function Cohorts() {
                     },
                     {
                       key: "trained",
-                      label: "Trained Candidates",
+                      label: t("cohorts.col_trained", "Trained Candidates"),
                       render: (row) => <span>{row.trained}</span>
                     },
                     {
                       key: "completion_rate",
-                      label: "Completion %",
+                      label: t("cohorts.col_completion", "Completion %"),
                       render: (row) => <strong>{row.completion_rate}</strong>
                     },
                     {
                       key: "placement_rate",
-                      label: "Placement %",
+                      label: t("cohorts.col_placement", "Placement %"),
                       render: (row) => (
                         <span style={{ color: "#2563eb", fontWeight: 700 }}>
                           {row.placement_rate}
@@ -225,18 +227,18 @@ export default function Cohorts() {
                     },
                     {
                       key: "retention_6m",
-                      label: "6M Retention",
+                      label: t("cohorts.col_retention", "6M Retention"),
                       render: (row) => <strong>{row.retention_6m}</strong>
                     },
                     {
                       key: "wage_growth",
-                      label: "Wage Growth",
+                      label: t("cohorts.col_wage", "Wage Growth"),
                       render: (row) => <span style={{ color: "#16a34a", fontWeight: 700 }}>{row.wage_growth}</span>
                     },
                     {
                       key: "top_gap",
-                      label: "Primary Identified Gap",
-                      render: (row) => <span style={{ color: "#475569" }}>{row.top_gap}</span>
+                      label: t("cohorts.col_gap", "Primary Identified Gap"),
+                      render: (row) => <span style={{ color: "#475569" }}>{row.top_gap ? t(row.top_gap, row.top_gap) : "—"}</span>
                     }
                   ]}
                   data={cohorts}

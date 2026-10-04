@@ -4,10 +4,12 @@ import {
   Building2, Layers, ArrowRight, ShieldCheck, Clock, AlertCircle, Sparkles 
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 
 export default function Feedback() {
+  const { t } = useLanguage();
   const location = useLocation();
   const isEmployer = location.pathname.includes("/employer") || localStorage.getItem("userRole") === "employer";
   const store = usePlatformStore();
@@ -162,16 +164,16 @@ export default function Feedback() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <MessageSquare size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            {isEmployer ? "EMPLOYER FEEDBACK & CURRICULUM INPUT" : "TRAINEE SKILL RELEVANCE & FEEDBACK INTELLIGENCE"}
+            {isEmployer ? t("feedback.employer_badge", "EMPLOYER FEEDBACK & CURRICULUM INPUT") : t("feedback.trainee_badge", "TRAINEE SKILL RELEVANCE & FEEDBACK INTELLIGENCE")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          {isEmployer ? "Employer Competency & Curriculum Feedback" : "My Training Relevance & Skill Feedback"}
+          {isEmployer ? t("feedback.employer_title", "Employer Competency & Curriculum Feedback") : t("feedback.trainee_title", "My Training Relevance & Skill Feedback")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
           {isEmployer
-            ? "Your feedback directly influences state curriculum revisions and identifies emerging industry skill requirements."
-            : "Report training relevance and missing workplace skills. Your reports feed Skill Intelligence as trainee-perceived evidence without overwriting verified credentials."}
+            ? t("feedback.employer_subtitle", "Your feedback directly influences state curriculum revisions and identifies emerging industry skill requirements.")
+            : t("feedback.trainee_subtitle", "Report training relevance and missing workplace skills. Your reports feed Skill Intelligence as trainee-perceived evidence without overwriting verified credentials.")}
         </p>
       </div>
 
@@ -181,14 +183,14 @@ export default function Feedback() {
             <CheckCircle2 size={36} />
           </div>
           <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.5rem" }}>
-            Feedback Successfully Recorded & Synthesized
+            {t("feedback.success_title", "Feedback Successfully Recorded & Synthesized")}
           </h2>
           <p style={{ color: "#475569", maxWidth: "560px", margin: "0 auto 1.5rem auto", lineHeight: 1.6, fontSize: "0.95rem" }}>
-            Your feedback has been stored as a <strong>Trainee-Perceived Skill Gap</strong> and integrated into the Skill Intelligence Engine. It now correlates with employer demand to prioritize upskilling recommendations.
+            {t("feedback.success_desc", "Your feedback has been stored as a Trainee-Perceived Skill Gap and integrated into the Skill Intelligence Engine. It now correlates with employer demand to prioritize upskilling recommendations.")}
           </p>
 
           <div style={{ display: "inline-flex", gap: "0.75rem", background: "#f8fafc", padding: "0.5rem 1rem", borderRadius: "8px", border: "1px solid #e2e8f0", marginBottom: "2rem", fontSize: "0.85rem", color: "#2563eb", fontWeight: 700 }}>
-            Status: Included in Skill Intelligence ✓
+            {t("feedback.status_included", "Status: Included in Skill Intelligence ✓")}
           </div>
 
           <div>
@@ -199,7 +201,7 @@ export default function Feedback() {
               }}
               style={{ padding: "0.75rem 1.75rem", background: "#2563eb", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, cursor: "pointer" }}
             >
-              Submit Another Skill Observation
+              {t("feedback.btn_submit_another", "Submit Another Skill Observation")}
             </button>
           </div>
         </div>
@@ -208,7 +210,7 @@ export default function Feedback() {
         <form onSubmit={handleSubmitEmployerFeedback} style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "2rem" }}>
           <div style={{ marginBottom: "1.5rem" }}>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-              Target Skilling Programme
+              {t("feedback.employer_prog_label", "Target Skilling Programme")}
             </label>
             <select
               value={programmeId}
@@ -223,7 +225,7 @@ export default function Feedback() {
 
           <div style={{ marginBottom: "1.5rem" }}>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-              Curriculum Relevance Rating (1 to 5 Stars)
+              {t("feedback.employer_relevance_label", "Curriculum Relevance Rating (1 to 5 Stars)")}
             </label>
             <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
               {[1, 2, 3, 4, 5].map((star) => (
@@ -250,7 +252,7 @@ export default function Feedback() {
 
           <div style={{ marginBottom: "1.5rem" }}>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-              Key Competency Deficits Observed During Onboarding
+              {t("feedback.employer_deficits_label", "Key Competency Deficits Observed During Onboarding")}
             </label>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "0.75rem" }}>
               {commonSkillTags.map((tag) => {
@@ -280,13 +282,13 @@ export default function Feedback() {
 
           <div style={{ marginBottom: "2rem" }}>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-              Detailed Feedback & Recommendations for Training Providers
+              {t("feedback.employer_detailed_label", "Detailed Feedback & Recommendations for Training Providers")}
             </label>
             <textarea
               value={employerComments}
               onChange={(e) => setEmployerComments(e.target.value)}
               rows={4}
-              placeholder="e.g. Candidates demonstrated solid Linux fundamentals, but had difficulties with real-time Kubernetes cluster monitoring."
+              placeholder={t("feedback.employer_detailed_placeholder", "e.g. Candidates demonstrated solid Linux fundamentals, but had difficulties with real-time Kubernetes cluster monitoring.")}
               style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
             />
           </div>
@@ -298,7 +300,7 @@ export default function Feedback() {
               style={{ padding: "0.8rem 2rem", background: "#2563eb", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: "0.95rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}
             >
               <Send size={18} />
-              {submitting ? "Submitting..." : "Submit Employer Feedback"}
+              {submitting ? "Submitting..." : t("feedback.btn_submit_employer", "Submit Employer Feedback")}
             </button>
           </div>
         </form>
@@ -311,35 +313,35 @@ export default function Feedback() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
               <Layers size={20} color="#2563eb" />
               <h3 style={{ margin: 0, fontSize: "1.15rem", color: "#0f172a" }}>
-                How Your Feedback Feeds Skill Intelligence
+                {t("feedback.synthesis_callout_title", "How Your Feedback Feeds Skill Intelligence")}
               </h3>
             </div>
             <p style={{ margin: "0 0 1.25rem 0", fontSize: "0.85rem", color: "#64748b" }}>
-              We synthesize three independent evidence sources to determine upskilling priorities without altering your verified credentials.
+              {t("feedback.synthesis_callout_desc", "We synthesize three independent evidence sources to determine upskilling priorities without altering your verified credentials.")}
             </p>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
               <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#2563eb" }}>STEP 1: TRAINEE</div>
-                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginTop: "0.2rem" }}>Reports Missing Skill</div>
+                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#2563eb" }}>{t("feedback.step1_badge", "STEP 1: TRAINEE")}</div>
+                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginTop: "0.2rem" }}>{t("feedback.step1_title", "Reports Missing Skill")}</div>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>e.g. &ldquo;Missing Kubernetes&rdquo;</span>
               </div>
 
               <div style={{ textAlign: "center", borderLeft: "1px dashed #cbd5e1", paddingLeft: "0.5rem" }}>
-                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#9333ea" }}>STEP 2: EMPLOYER</div>
-                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginTop: "0.2rem" }}>Observes Deficit</div>
+                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#9333ea" }}>{t("feedback.step2_badge", "STEP 2: EMPLOYER")}</div>
+                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginTop: "0.2rem" }}>{t("feedback.step2_title", "Observes Deficit")}</div>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>e.g. &ldquo;Kubernetes needed&rdquo;</span>
               </div>
 
               <div style={{ textAlign: "center", borderLeft: "1px dashed #cbd5e1", paddingLeft: "0.5rem" }}>
-                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#f59e0b" }}>STEP 3: BENCHMARK</div>
-                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginTop: "0.2rem" }}>Target Role Confirms</div>
+                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#f59e0b" }}>{t("feedback.step3_badge", "STEP 3: BENCHMARK")}</div>
+                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#0f172a", marginTop: "0.2rem" }}>{t("feedback.step3_title", "Target Role Confirms")}</div>
                 <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Required for Cloud Engineer</span>
               </div>
 
               <div style={{ textAlign: "center", borderLeft: "1px dashed #cbd5e1", paddingLeft: "0.5rem" }}>
-                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#16a34a" }}>RESULT: INTELLIGENCE</div>
-                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#15803d", marginTop: "0.2rem" }}>High-Priority Gap</div>
+                <div style={{ fontSize: "0.75rem", fontWeight: 800, color: "#16a34a" }}>{t("feedback.result_badge", "RESULT: INTELLIGENCE")}</div>
+                <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#15803d", marginTop: "0.2rem" }}>{t("feedback.result_title", "High-Priority Gap")}</div>
                 <span style={{ fontSize: "0.75rem", color: "#166534" }}>Recommends Module</span>
               </div>
             </div>
@@ -348,13 +350,13 @@ export default function Feedback() {
           {/* Feedback Form */}
           <form onSubmit={handleSubmitTraineeFeedback} style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "2rem" }}>
             <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: "0 0 1.25rem 0" }}>
-              Submit Training Relevance &amp; Skill Observations
+              {t("feedback.trainee_form_title", "Submit Training Relevance & Skill Observations")}
             </h3>
 
             {/* Question 1: Was Training Relevant? (Section 37) - 5-Star Relevance Rating */}
             <div style={{ marginBottom: "1.75rem" }}>
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.5rem" }}>
-                1. Was your training programme relevant to your actual workplace tasks?
+                {t("feedback.q1_relevance_label", "1. Was your training programme relevant to your actual workplace tasks?")}
               </label>
               <div style={{ background: "#f8fafc", padding: "1.25rem 1.5rem", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.75rem" }}>
@@ -430,7 +432,7 @@ export default function Feedback() {
                       fontWeight: 600
                     }}
                   >
-                    Numerical Score: {hoverRating || traineeRelevanceRating} / 5
+                    {t("feedback.numerical_score_label", "Numerical Score:")} {hoverRating || traineeRelevanceRating} / 5
                   </span>
                 </div>
               </div>
@@ -439,7 +441,7 @@ export default function Feedback() {
             {/* Question 2: What was missing? (Section 27) */}
             <div style={{ marginBottom: "1.5rem" }}>
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                2. Which technical skill did you feel was missing or needed deeper coverage?
+                {t("feedback.q2_missing_label", "2. Which technical skill did you feel was missing or needed deeper coverage?")}
               </label>
               <input
                 type="text"
@@ -450,44 +452,44 @@ export default function Feedback() {
                 style={{ width: "100%", padding: "0.65rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.95rem", fontWeight: 600 }}
               />
               <span style={{ fontSize: "0.75rem", color: "#64748b", marginTop: "0.25rem", display: "block" }}>
-                Quick suggestions: Cloud Deployment • Production Docker • Advanced SQL • Microservices • CAN Protocols
+                {t("feedback.quick_suggestions", "Quick suggestions: Cloud Deployment • Production Docker • Advanced SQL • Microservices • CAN Protocols")}
               </span>
             </div>
 
             {/* Question 3: Gap Category */}
             <div style={{ marginBottom: "1.5rem" }}>
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                3. Nature of this Skill Gap:
+                {t("feedback.q3_nature_label", "3. Nature of this Skill Gap:")}
               </label>
               <select
                 value={gapType}
                 onChange={(e) => setGapType(e.target.value)}
                 style={{ width: "100%", padding: "0.65rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
               >
-                <option value="Missing from curriculum">Missing entirely from coursework syllabus</option>
-                <option value="Outdated tooling">Curriculum taught older tooling version</option>
-                <option value="Insufficient hands-on lab time">Theory covered, but lacked practical production labs</option>
-                <option value="Advanced topic needed in workplace">Required for senior/specialist workplace tasks</option>
+                <option value="Missing from curriculum">{t("feedback.gap_missing_curriculum", "Missing entirely from coursework syllabus")}</option>
+                <option value="Outdated tooling">{t("feedback.gap_outdated_tooling", "Curriculum taught older tooling version")}</option>
+                <option value="Insufficient hands-on lab time">{t("feedback.gap_insufficient_labs", "Theory covered, but lacked practical production labs")}</option>
+                <option value="Advanced topic needed in workplace">{t("feedback.gap_advanced_topic", "Required for senior/specialist workplace tasks")}</option>
               </select>
             </div>
 
             {/* Question 4: Comments */}
             <div style={{ marginBottom: "2rem" }}>
               <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.4rem" }}>
-                4. Detailed Observations / Interview Experience:
+                {t("feedback.q4_observations_label", "4. Detailed Observations / Interview Experience:")}
               </label>
               <textarea
                 value={traineeComments}
                 onChange={(e) => setTraineeComments(e.target.value)}
                 rows={3}
-                placeholder="e.g. In technical interviews and onboarding, hiring managers specifically looked for experience deploying containers to cloud clusters."
+                placeholder={t("feedback.observations_placeholder", "e.g. In technical interviews and onboarding, hiring managers specifically looked for experience deploying containers to cloud clusters.")}
                 style={{ width: "100%", padding: "0.75rem", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
               />
             </div>
 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ fontSize: "0.75rem", color: "#64748b" }}>
-                Stored as Trainee-Perceived Skill Gap • Never overwrites verified assessment records.
+                {t("feedback.trainee_disclaimer", "Stored as Trainee-Perceived Skill Gap • Never overwrites verified assessment records.")}
               </span>
               <button
                 type="submit"
@@ -495,7 +497,7 @@ export default function Feedback() {
                 style={{ padding: "0.75rem 2rem", background: "#2563eb", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: "0.95rem", cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem" }}
               >
                 <Send size={18} />
-                {submitting ? "Synthesizing..." : "Submit Skill Observation"}
+                {submitting ? t("feedback.btn_synthesizing", "Synthesizing...") : t("feedback.btn_submit_observation", "Submit Skill Observation")}
               </button>
             </div>
           </form>
@@ -504,7 +506,7 @@ export default function Feedback() {
           {recentFeedbackList.length > 0 && (
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
               <h3 style={{ fontSize: "1.15rem", fontWeight: 800, color: "#0f172a", margin: "0 0 1rem 0" }}>
-                My Submitted Feedback &amp; Processing Status
+                {t("feedback.my_history_title", "My Submitted Feedback & Processing Status")}
               </h3>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
@@ -513,7 +515,7 @@ export default function Feedback() {
                     <div>
                       <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>{fb.skill}</strong>
                       <span style={{ fontSize: "0.8rem", color: "#64748b", display: "block" }}>
-                        Category: {fb.gap_type} • Recorded on {fb.timestamp?.split("T")[0] || "Recent"}
+                        {t("feedback.category_label", "Category:")} {fb.gap_type} • Recorded on {fb.timestamp?.split("T")[0] || "Recent"}
                       </span>
                     </div>
 

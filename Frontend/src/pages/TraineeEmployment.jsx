@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { Briefcase, Building2, Calendar, MapPin, CheckCircle, Clock, Send, AlertTriangle } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 
 export default function TraineeEmployment() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const traineeId = localStorage.getItem("traineeId") || "TR-0001";
   const [trainee, setTrainee] = useState(null);
@@ -206,14 +208,14 @@ export default function TraineeEmployment() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Briefcase size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            EMPLOYMENT & OUTCOME REPORTING
+            {t("trainee_employment.badge", "EMPLOYMENT & OUTCOME REPORTING")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Employment Status Declaration
+          {t("trainee_employment.title", "Employment Status Declaration")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Declare your placement, self-employment venture, or apprenticeship. Submissions trigger automated employer verification.
+          {t("trainee_employment.subtitle", "Declare your placement, self-employment venture, or apprenticeship. Submissions trigger automated employer verification.")}
         </p>
       </div>
 
@@ -222,13 +224,13 @@ export default function TraineeEmployment() {
         data={trainee}
         onRetry={loadData}
         isDataAvailable={(d) => Boolean(d)}
-        isEmptyDetails="No trainee profile found."
+        isEmptyDetails={t("trainee_employment.empty_profile", "No trainee profile found.")}
       >
         {/* Current Active Status Card */}
         {currentEmp && (
           <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", padding: "1.5rem", marginBottom: "1.75rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
             <div>
-              <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Active Declared Status:</span>
+              <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("trainee_employment.active_declared_status", "Active Declared Status:")}</span>
               <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.25rem" }}>
                 <strong style={{ fontSize: "1.2rem", color: "#0f172a" }}>
                   {currentEmp.status.replace("_", " ")}
@@ -239,14 +241,14 @@ export default function TraineeEmployment() {
               </div>
               {(currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason) && (
                 <div style={{ marginTop: "0.4rem", fontSize: "0.85rem", color: "#475569", background: "#f8fafc", padding: "0.4rem 0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                  <span style={{ fontWeight: 600, color: "#334155" }}>Recorded Context / Reason: </span>
+                  <span style={{ fontWeight: 600, color: "#334155" }}>{t("trainee_employment.recorded_context", "Recorded Context / Reason: ")}</span>
                   <span style={{ fontStyle: "italic" }}>"{currentEmp.status_reason || currentEmp.comments || currentEmp.unemployment_reason}"</span>
                 </div>
               )}
             </div>
 
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Verification State:</span>
+              <span style={{ fontSize: "0.8rem", color: "#64748b" }}>{t("trainee_employment.verification_state", "Verification State:")}</span>
               <span
                 style={{
                   background: currentEmp.verification_status === "Verified" ? "#dcfce7" : currentEmp.verification_status === "Correction Requested" ? "#fef3c7" : currentEmp.verification_status === "Rejected" ? "#fee2e2" : "#eff6ff",
@@ -269,16 +271,16 @@ export default function TraineeEmployment() {
             <AlertTriangle size={22} color="#b45309" style={{ flexShrink: 0, marginTop: "2px" }} />
             <div style={{ flex: 1 }}>
               <strong style={{ color: "#92400e", fontSize: "0.95rem", display: "block", marginBottom: "0.25rem" }}>
-                Employer Requested Information Correction
+                {t("trainee_employment.correction_requested_title", "Employer Requested Information Correction")}
               </strong>
               <p style={{ margin: "0 0 0.5rem 0", fontSize: "0.85rem", color: "#78350f" }}>
-                The employer review desk at <strong>{currentEmp.employer_name}</strong> reviewed your claim and requested the following adjustment:
+                {t("trainee_employment.correction_requested_desc", "The employer review desk at {name} reviewed your claim and requested the following adjustment:").replace("{name}", currentEmp.employer_name)}
               </p>
               <div style={{ background: "white", padding: "0.75rem 1rem", borderRadius: "6px", border: "1px solid #fcd34d", fontStyle: "italic", fontSize: "0.85rem", color: "#b45309", marginBottom: "0.5rem" }}>
                 "{currentEmp.employer_remarks || "Please verify your official job title or joining date."}"
               </div>
               <span style={{ fontSize: "0.8rem", color: "#92400e", fontWeight: 600 }}>
-                Please adjust the details in the form below and click "Submit Employment Record" to dispatch the corrected claim back to the employer.
+                {t("trainee_employment.correction_requested_instruction", "Please adjust the details in the form below and click \"Submit Employment Record\" to dispatch the corrected claim back to the employer.")}
               </span>
             </div>
           </div>
@@ -296,15 +298,15 @@ export default function TraineeEmployment() {
           {/* C4 Status Tabs */}
           <div style={{ marginBottom: "2rem" }}>
             <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, color: "#334155", marginBottom: "0.5rem" }}>
-              Select Your Current Outcome Status
+              {t("trainee_employment.select_outcome_status", "Select Your Current Outcome Status")}
             </label>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.75rem" }}>
               {[
-                { key: "EMPLOYED", label: "Employed" },
-                { key: "SELF_EMPLOYED", label: "Self-Employed" },
-                { key: "APPRENTICESHIP", label: "Apprentice" },
-                { key: "UNEMPLOYED", label: "Seeking Job" },
-                { key: "STUDYING_FURTHER", label: "Studying Further" }
+                { key: "EMPLOYED", label: t("trainee_employment.status_employed", "Employed") },
+                { key: "SELF_EMPLOYED", label: t("trainee_employment.status_self_employed", "Self-Employed") },
+                { key: "APPRENTICESHIP", label: t("trainee_employment.status_apprentice", "Apprentice") },
+                { key: "UNEMPLOYED", label: t("trainee_employment.status_seeking_job", "Seeking Job") },
+                { key: "STUDYING_FURTHER", label: t("trainee_employment.status_studying_further", "Studying Further") }
               ].map((s) => (
                 <button
                   type="button"
@@ -335,7 +337,7 @@ export default function TraineeEmployment() {
                 {getStatusReasonConfig(status).label}
               </label>
               <span style={{ fontSize: "0.75rem", color: "#2563eb", background: "#eff6ff", padding: "2px 8px", borderRadius: "12px", border: "1px solid #bfdbfe", fontWeight: 600 }}>
-                {status === "UNEMPLOYED" ? "Key context for placement cell" : "Self-reported explanation"}
+                {status === "UNEMPLOYED" ? t("trainee_employment.key_context_placement", "Key context for placement cell") : t("trainee_employment.self_reported_explanation", "Self-reported explanation")}
               </span>
             </div>
             <p style={{ margin: "0 0 0.75rem 0", fontSize: "0.8rem", color: "#64748b" }}>
@@ -370,7 +372,7 @@ export default function TraineeEmployment() {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Employer Organization Name
+                    {t("trainee_employment.employer_org_label", "Employer Organization Name")}
                   </label>
                   <input
                     type="text"
@@ -384,7 +386,7 @@ export default function TraineeEmployment() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Job Role / Title
+                    {t("trainee_employment.job_role_title_label", "Job Role / Title")}
                   </label>
                   <input
                     type="text"
@@ -398,7 +400,7 @@ export default function TraineeEmployment() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Official Joining Date
+                    {t("trainee_employment.official_joining_date", "Official Joining Date")}
                   </label>
                   <input
                     type="date"
@@ -411,7 +413,7 @@ export default function TraineeEmployment() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Monthly Starting Gross Wage (₹)
+                    {t("trainee_employment.monthly_starting_wage", "Monthly Starting Gross Wage (₹)")}
                   </label>
                   <input
                     type="number"
@@ -425,7 +427,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Work Location / City
+                  {t("trainee_employment.work_location_city", "Work Location / City")}
                 </label>
                 <input
                   type="text"
@@ -443,7 +445,7 @@ export default function TraineeEmployment() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Business / Micro-Enterprise Name
+                  {t("trainee_employment.business_name_label", "Business / Micro-Enterprise Name")}
                 </label>
                 <input
                   type="text"
@@ -457,7 +459,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Business Type / Domain
+                  {t("trainee_employment.business_type_label", "Business Type / Domain")}
                 </label>
                 <input
                   type="text"
@@ -470,7 +472,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Commencement Date
+                  {t("trainee_employment.commencement_date", "Commencement Date")}
                 </label>
                 <input
                   type="date"
@@ -483,7 +485,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Estimated Monthly Earnings (₹)
+                  {t("trainee_employment.estimated_monthly_earnings", "Estimated Monthly Earnings (₹)")}
                 </label>
                 <input
                   type="number"
@@ -501,7 +503,7 @@ export default function TraineeEmployment() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Host Organization / Industry
+                  {t("trainee_employment.host_org_label", "Host Organization / Industry")}
                 </label>
                 <input
                   type="text"
@@ -515,7 +517,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Apprenticeship Role
+                  {t("trainee_employment.apprenticeship_role_label", "Apprenticeship Role")}
                 </label>
                 <input
                   type="text"
@@ -529,7 +531,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Contract Start Date
+                  {t("trainee_employment.contract_start_date", "Contract Start Date")}
                 </label>
                 <input
                   type="date"
@@ -542,7 +544,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Monthly Stipend (₹)
+                  {t("trainee_employment.monthly_stipend_label", "Monthly Stipend (₹)")}
                 </label>
                 <input
                   type="number"
@@ -560,7 +562,7 @@ export default function TraineeEmployment() {
             <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Primary Non-Placement Reason
+                  {t("trainee_employment.primary_nonplacement_reason", "Primary Non-Placement Reason")}
                 </label>
                 <select
                   value={unemploymentReason}
@@ -579,7 +581,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Comments / Support Requested from Placement Cell
+                  {t("trainee_employment.comments_support_requested", "Comments / Support Requested from Placement Cell")}
                 </label>
                 <textarea
                   value={unemploymentComments || statusReason}
@@ -588,7 +590,7 @@ export default function TraineeEmployment() {
                     setStatusReason(e.target.value);
                   }}
                   rows={3}
-                  placeholder="Describe your current job search and if you require refocused competency training."
+                  placeholder={t("trainee_employment.unemployed_comments_placeholder", "Describe your current job search and if you require refocused competency training.")}
                   style={{ width: "100%", padding: "0.65rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }}
                 />
               </div>
@@ -600,7 +602,7 @@ export default function TraineeEmployment() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  College / University / Higher Institute
+                  {t("trainee_employment.college_university_label", "College / University / Higher Institute")}
                 </label>
                 <input
                   type="text"
@@ -613,7 +615,7 @@ export default function TraineeEmployment() {
 
               <div>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Programme of Study
+                  {t("trainee_employment.programme_study_label", "Programme of Study")}
                 </label>
                 <input
                   type="text"
@@ -646,7 +648,7 @@ export default function TraineeEmployment() {
               }}
             >
               <Send size={18} />
-              {submitting ? "Submitting Declaration..." : "Submit Employment Status"}
+              {submitting ? t("trainee_employment.btn_submitting_declaration", "Submitting Declaration...") : t("trainee_employment.btn_submit_employment", "Submit Employment Status")}
             </button>
           </div>
         </form>

@@ -9,8 +9,10 @@ import EmployerNav from "./Employer/EmployerNav";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { mockStore } from "../services/mockStore";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmployerIntegrations() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const location = useLocation();
   const navigate = useNavigate();
@@ -149,7 +151,6 @@ export default function EmployerIntegrations() {
   const autoVerifiedCount = summary.automatically_verified || 42;
   const manualReviewCount = summary.manual_review_required || 6;
   const totalRecords = autoVerifiedCount + manualReviewCount;
-  const autoAngle = totalRecords > 0 ? (autoVerifiedCount / totalRecords) * 360 : 280;
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
@@ -162,14 +163,14 @@ export default function EmployerIntegrations() {
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
               <GitBranch size={18} color="#2563eb" />
               <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-                EMPLOYMENT DATA INTEGRATION
+                {t("employer_integrations.badge", "EMPLOYMENT DATA INTEGRATION")}
               </span>
             </div>
             <h1 style={{ fontSize: "1.95rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Employment Data Integration
+              {t("employer_integrations.title", "Employment Data Integration")}
             </h1>
             <p style={{ color: "#64748b", margin: 0, fontSize: "0.95rem" }}>
-              Automated reconciliation of candidate declarations against <strong>{organizationName}</strong> HR/ATS records.
+              {t("employer_integrations.subtitle", "Automated reconciliation of candidate declarations against HR/ATS records.")}
             </p>
           </div>
 
@@ -194,7 +195,7 @@ export default function EmployerIntegrations() {
               }}
             >
               <RefreshCw size={15} style={{ animation: isSyncing ? "spin 1s linear infinite" : "none" }} />
-              {isSyncing ? "Syncing Feed..." : "Sync Now"}
+              {isSyncing ? t("employer_integrations.btn_syncing", "Syncing Feed...") : t("employer_integrations.btn_sync_now", "Sync Now")}
             </button>
           </div>
         </div>
@@ -204,11 +205,11 @@ export default function EmployerIntegrations() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <ShieldCheck size={18} color="#0284c7" />
             <span style={{ fontSize: "0.85rem", color: "#0369a1", fontWeight: 600 }}>
-              <strong>Simulation / Demo Integration:</strong> Demonstrating deterministic 5-point automated matching between trainee declarations and enterprise HR feeds without live third-party ATS network dependencies.
+              <strong>{t("employer_integrations.simulation_banner_bold", "Simulation / Demo Integration:")}</strong> {t("employer_integrations.simulation_banner_text", "Demonstrating deterministic 5-point automated matching between trainee declarations and enterprise HR feeds without live third-party ATS network dependencies.")}
             </span>
           </div>
           <span style={{ fontSize: "0.75rem", background: "#e0f2fe", color: "#0369a1", padding: "2px 8px", borderRadius: "12px", fontWeight: 700 }}>
-            Deterministic Engine Active
+            {t("employer_integrations.deterministic_engine_active", "Deterministic Engine Active")}
           </span>
         </div>
 
@@ -223,10 +224,10 @@ export default function EmployerIntegrations() {
         {/* Navigation Tabs */}
         <div style={{ display: "flex", gap: "0.5rem", borderBottom: "1px solid #e2e8f0", paddingBottom: "0.5rem", marginBottom: "1.75rem" }}>
           {[
-            { key: "overview", label: "Overview & Connected Systems" },
-            { key: "matching", label: `Automated Matching Engine (${matchingRecords.length})` },
-            { key: "exceptions", label: `Verification Exceptions (${exceptions.length})` },
-            { key: "activity", label: `Sync Activity Log (${activityLog.length})` }
+            { key: "overview", label: t("employer_integrations.tab_overview", "Overview & Connected Systems") },
+            { key: "matching", label: `${t("employer_integrations.tab_matching", "Automated Matching Engine")} (${matchingRecords.length})` },
+            { key: "exceptions", label: `${t("employer_integrations.tab_exceptions", "Verification Exceptions")} (${exceptions.length})` },
+            { key: "activity", label: `${t("employer_integrations.tab_activity", "Sync Activity Log")} (${activityLog.length})` }
           ].map(tab => (
             <button
               key={tab.key}
@@ -256,12 +257,12 @@ export default function EmployerIntegrations() {
         {activeTab === "overview" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             
-            {/* Section 26: Integration Summary KPI Grid */}
+            {/* KPI Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1rem" }}>
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Connected Systems</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_integrations.kpi_connected_systems", "Connected Systems")}</span>
                 <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", marginTop: "0.25rem" }}>
-                  {systems.length > 0 ? `${systems.length} Active` : "No integration connected"}
+                  {systems.length > 0 ? `${systems.length} ${t("employer_integrations.active_suffix", "Active")}` : t("employer_integrations.no_integration", "No integration connected")}
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>
                   {systems[0]?.name || "Workday Enterprise"}
@@ -269,47 +270,47 @@ export default function EmployerIntegrations() {
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Records Received</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_integrations.kpi_records_received", "Records Received")}</span>
                 <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#2563eb", marginTop: "0.25rem" }}>
                   {summary.total_records_received}
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Reconciled batch count</span>
+                <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("employer_integrations.reconciled_batch_count", "Reconciled batch count")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Automatically Verified</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_integrations.kpi_auto_verified", "Automatically Verified")}</span>
                 <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#16a34a", marginTop: "0.25rem" }}>
                   {summary.automatically_verified}
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>5-point deterministic match</span>
+                <span style={{ fontSize: "0.75rem", color: "#16a34a", fontWeight: 600 }}>{t("employer_integrations.five_point_match", "5-point deterministic match")}</span>
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Manual Review Exceptions</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_integrations.kpi_manual_review", "Manual Review Exceptions")}</span>
                 <div style={{ fontSize: "1.85rem", fontWeight: 800, color: summary.manual_review_required > 0 ? "#b45309" : "#64748b", marginTop: "0.25rem" }}>
                   {summary.manual_review_required}
                 </div>
                 <span style={{ fontSize: "0.75rem", color: summary.manual_review_required > 0 ? "#b45309" : "#64748b", fontWeight: 600 }}>
-                  Requires HR decision
+                  {t("employer_integrations.requires_hr_decision", "Requires HR decision")}
                 </span>
               </div>
 
               <div style={{ background: "white", padding: "1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>Auto Verification %</span>
+                <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: 600 }}>{t("employer_integrations.kpi_auto_percent", "Auto Verification %")}</span>
                 <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#7c3aed", marginTop: "0.25rem" }}>
                   {summary.auto_verification_rate}
                 </div>
-                <span style={{ fontSize: "0.75rem", color: "#7c3aed", fontWeight: 600 }}>Match success ratio</span>
+                <span style={{ fontSize: "0.75rem", color: "#7c3aed", fontWeight: 600 }}>{t("employer_integrations.match_success_ratio", "Match success ratio")}</span>
               </div>
             </div>
 
-            {/* Section 28: Today's Verification Activity Visualization */}
+            {/* Verification Activity Donut */}
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
               <h3 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-                Today's Verification Activity
+                {t("employer_integrations.activity_chart_title", "Today's Verification Activity")}
               </h3>
               <p style={{ fontSize: "0.85rem", color: "#64748b", margin: "0 0 1.5rem 0" }}>
-                Proportional breakdown of incoming records processed through the automated correlation pipeline.
+                {t("employer_integrations.activity_chart_desc", "Proportional breakdown of incoming records processed through the automated correlation pipeline.")}
               </p>
 
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "2rem", alignItems: "center" }}>
@@ -317,7 +318,6 @@ export default function EmployerIntegrations() {
                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", position: "relative" }}>
                   <svg width="220" height="220" viewBox="0 0 220 220">
                     <circle cx="110" cy="110" r="80" fill="transparent" stroke="#f1f5f9" strokeWidth="24" />
-                    {/* Auto verified slice */}
                     <circle
                       cx="110"
                       cy="110"
@@ -325,12 +325,11 @@ export default function EmployerIntegrations() {
                       fill="transparent"
                       stroke="#16a34a"
                       strokeWidth="24"
-                      strokeDasharray={`${(autoVerifiedCount / totalRecords) * 502} 502`}
+                      strokeDasharray={`${(autoVerifiedCount / (totalRecords || 1)) * 502} 502`}
                       strokeDashoffset="0"
                       transform="rotate(-90 110 110)"
                       style={{ transition: "all 0.5s ease" }}
                     />
-                    {/* Manual review slice */}
                     <circle
                       cx="110"
                       cy="110"
@@ -338,8 +337,8 @@ export default function EmployerIntegrations() {
                       fill="transparent"
                       stroke="#d97706"
                       strokeWidth="24"
-                      strokeDasharray={`${(manualReviewCount / totalRecords) * 502} 502`}
-                      strokeDashoffset={`-${(autoVerifiedCount / totalRecords) * 502}`}
+                      strokeDasharray={`${(manualReviewCount / (totalRecords || 1)) * 502} 502`}
+                      strokeDashoffset={`-${(autoVerifiedCount / (totalRecords || 1)) * 502}`}
                       transform="rotate(-90 110 110)"
                       style={{ transition: "all 0.5s ease" }}
                     />
@@ -348,7 +347,7 @@ export default function EmployerIntegrations() {
                     <div style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a" }}>
                       {totalRecords}
                     </div>
-                    <span style={{ fontSize: "0.75rem", color: "#64748b" }}>Total Records</span>
+                    <span style={{ fontSize: "0.75rem", color: "#64748b" }}>{t("employer_integrations.total_records", "Total Records")}</span>
                   </div>
                 </div>
 
@@ -357,38 +356,38 @@ export default function EmployerIntegrations() {
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.75rem 1rem", background: "#f0fdf4", borderRadius: "8px", border: "1px solid #bbf7d0" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                       <div style={{ width: "12px", height: "12px", borderRadius: "3px", background: "#16a34a" }} />
-                      <strong style={{ fontSize: "0.9rem", color: "#166534" }}>Automatically Verified</strong>
+                      <strong style={{ fontSize: "0.9rem", color: "#166534" }}>{t("employer_integrations.auto_verified_legend", "Automatically Verified")}</strong>
                     </div>
                     <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#166534" }}>
-                      {autoVerifiedCount} ({Math.round((autoVerifiedCount / totalRecords) * 100)}%)
+                      {autoVerifiedCount} ({Math.round((autoVerifiedCount / (totalRecords || 1)) * 100)}%)
                     </span>
                   </div>
 
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.75rem 1rem", background: "#fffbeb", borderRadius: "8px", border: "1px solid #fde68a" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                       <div style={{ width: "12px", height: "12px", borderRadius: "3px", background: "#d97706" }} />
-                      <strong style={{ fontSize: "0.9rem", color: "#92400e" }}>Manual Review Required</strong>
+                      <strong style={{ fontSize: "0.9rem", color: "#92400e" }}>{t("employer_integrations.manual_review_legend", "Manual Review Required")}</strong>
                     </div>
                     <span style={{ fontSize: "0.95rem", fontWeight: 800, color: "#92400e" }}>
-                      {manualReviewCount} ({Math.round((manualReviewCount / totalRecords) * 100)}%)
+                      {manualReviewCount} ({Math.round((manualReviewCount / (totalRecords || 1)) * 100)}%)
                     </span>
                   </div>
 
                   <div style={{ fontSize: "0.8rem", color: "#64748b", lineHeight: 1.4 }}>
-                    Deterministic matching rules: If all 5 criteria (ID, Employer, Name, Status, Date) match perfectly $\rightarrow$ Auto Verified. Any field conflict immediately routes to Manual Review.
+                    {t("employer_integrations.matching_rules_hint", "Deterministic matching rules: If all 5 criteria (ID, Employer, Name, Status, Date) match perfectly -> Auto Verified. Any field conflict immediately routes to Manual Review.")}
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Section 27: Connected Systems Table */}
+            {/* Connected Systems Table */}
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
               <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0" }}>
                 <h3 style={{ margin: "0 0 0.2rem 0", fontSize: "1.1rem", color: "#0f172a" }}>
-                  Connected Systems & Gateways
+                  {t("employer_integrations.connected_systems_title", "Connected Systems & Gateways")}
                 </h3>
                 <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                  Active integration endpoints configured for outcome synchronization.
+                  {t("employer_integrations.connected_systems_desc", "Active integration endpoints configured for outcome synchronization.")}
                 </p>
               </div>
 
@@ -396,11 +395,11 @@ export default function EmployerIntegrations() {
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
                   <thead>
                     <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left", color: "#475569" }}>
-                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Employer System</th>
-                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Integration Type</th>
-                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Connection Status</th>
-                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Last Sync</th>
-                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700, textAlign: "right" }}>Action</th>
+                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_employer_system", "Employer System")}</th>
+                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_integration_type", "Integration Type")}</th>
+                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_connection_status", "Connection Status")}</th>
+                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_last_sync", "Last Sync")}</th>
+                      <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700, textAlign: "right" }}>{t("employer_integrations.col_action", "Action")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -440,7 +439,7 @@ export default function EmployerIntegrations() {
                               cursor: "pointer"
                             }}
                           >
-                            Re-sync Feed
+                            {t("employer_integrations.btn_resync_feed", "Re-sync Feed")}
                           </button>
                         </td>
                       </tr>
@@ -450,7 +449,7 @@ export default function EmployerIntegrations() {
               </div>
             </div>
 
-            {/* Section 35: API Configuration (Collapsible) */}
+            {/* API Configuration */}
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
               <button
                 onClick={() => setShowConfig(!showConfig)}
@@ -469,7 +468,7 @@ export default function EmployerIntegrations() {
                 <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <KeyRound size={18} color="#2563eb" />
                   <strong style={{ fontSize: "1rem", color: "#0f172a" }}>
-                    Integration Settings & API Configuration
+                    {t("employer_integrations.api_config_title", "Integration Settings & API Configuration")}
                   </strong>
                 </div>
                 {showConfig ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -478,19 +477,19 @@ export default function EmployerIntegrations() {
               {showConfig && (
                 <div style={{ padding: "1.75rem" }}>
                   <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "0.75rem 1rem", borderRadius: "8px", marginBottom: "1.25rem", fontSize: "0.8rem", color: "#475569" }}>
-                    <strong>Security Notice:</strong> API credentials and webhook signing keys are encrypted at rest and permanently masked. Sensitive secrets are never exposed in user logs or reports.
+                    {t("employer_integrations.security_notice", "Security Notice: API credentials and webhook signing keys are encrypted at rest and permanently masked. Sensitive secrets are never exposed in user logs or reports.")}
                   </div>
 
                   {configSaved && (
                     <div style={{ background: "#dcfce7", color: "#166534", padding: "0.75rem", borderRadius: "6px", marginBottom: "1rem", fontSize: "0.85rem" }}>
-                      Configuration successfully updated!
+                      {t("employer_integrations.config_saved_msg", "Configuration successfully updated!")}
                     </div>
                   )}
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem", marginBottom: "1.25rem" }}>
                     <div>
                       <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        API Base URL
+                        {t("employer_integrations.api_base_url", "API Base URL")}
                       </label>
                       <input
                         type="text"
@@ -502,7 +501,7 @@ export default function EmployerIntegrations() {
 
                     <div>
                       <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        Client Application ID
+                        {t("employer_integrations.client_app_id", "Client Application ID")}
                       </label>
                       <input
                         type="text"
@@ -514,7 +513,7 @@ export default function EmployerIntegrations() {
 
                     <div>
                       <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        API Secret Key (Masked)
+                        {t("employer_integrations.api_secret_key", "API Secret Key (Masked)")}
                       </label>
                       <input
                         type="password"
@@ -526,7 +525,7 @@ export default function EmployerIntegrations() {
 
                     <div>
                       <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                        Webhook Endpoint
+                        {t("employer_integrations.webhook_endpoint", "Webhook Endpoint")}
                       </label>
                       <input
                         type="text"
@@ -546,7 +545,7 @@ export default function EmployerIntegrations() {
                       background: testResult === "testing" ? "#eff6ff" : "#dcfce7",
                       color: testResult === "testing" ? "#1e40af" : "#166534"
                     }}>
-                      {testResult === "testing" ? "Testing connection handshake to ATS..." : testResult.message}
+                      {testResult === "testing" ? t("employer_integrations.testing_handshake", "Testing connection handshake to ATS...") : testResult.message}
                     </div>
                   )}
 
@@ -555,7 +554,7 @@ export default function EmployerIntegrations() {
                       onClick={handleTestConnection}
                       style={{ padding: "0.6rem 1.25rem", background: "#f1f5f9", color: "#334155", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer" }}
                     >
-                      Test Connection
+                      {t("employer_integrations.btn_test_connection", "Test Connection")}
                     </button>
                     <button
                       onClick={() => {
@@ -564,7 +563,7 @@ export default function EmployerIntegrations() {
                       }}
                       style={{ padding: "0.6rem 1.5rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer" }}
                     >
-                      Save Configuration
+                      {t("employer_integrations.btn_save_config", "Save Configuration")}
                     </button>
                   </div>
                 </div>
@@ -574,24 +573,24 @@ export default function EmployerIntegrations() {
           </div>
         )}
 
-        {/* 2. AUTOMATED MATCHING ENGINE TAB (SECTIONS 29 & 30) */}
+        {/* 2. AUTOMATED MATCHING ENGINE TAB */}
         {activeTab === "matching" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
               <h3 style={{ fontSize: "1.15rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-                5-Point Deterministic Matching Criteria
+                {t("employer_integrations.matching_criteria_title", "5-Point Deterministic Matching Criteria")}
               </h3>
               <p style={{ fontSize: "0.85rem", color: "#64748b", margin: "0 0 1.5rem 0" }}>
-                Incoming trainee declarations are evaluated against organizational HR/ATS data using five strict criteria:
+                {t("employer_integrations.matching_criteria_desc", "Incoming trainee declarations are evaluated against organizational HR/ATS data using five strict criteria:")}
               </p>
 
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
                 {[
-                  { title: "1. Trainee ID", desc: "Matches State Skilling Unique Trainee ID (TR-XXXX)" },
-                  { title: "2. Corporate Employer", desc: "Matches Authorised Employer Entity & GSTIN" },
-                  { title: "3. Candidate Name", desc: "Exact token match on full legal name" },
-                  { title: "4. Employment Status", desc: "Active full-time or apprentice employment flag" },
-                  { title: "5. Joining Date", desc: "Joining date matches HR offer acceptance threshold" }
+                  { title: t("employer_integrations.crit_1_title", "1. Trainee ID"), desc: t("employer_integrations.crit_1_desc", "Matches State Skilling Unique Trainee ID (TR-XXXX)") },
+                  { title: t("employer_integrations.crit_2_title", "2. Corporate Employer"), desc: t("employer_integrations.crit_2_desc", "Matches Authorised Employer Entity & GSTIN") },
+                  { title: t("employer_integrations.crit_3_title", "3. Candidate Name"), desc: t("employer_integrations.crit_3_desc", "Exact token match on full legal name") },
+                  { title: t("employer_integrations.crit_4_title", "4. Employment Status"), desc: t("employer_integrations.crit_4_desc", "Active full-time or apprentice employment flag") },
+                  { title: t("employer_integrations.crit_5_title", "5. Joining Date"), desc: t("employer_integrations.crit_5_desc", "Joining date matches HR offer acceptance threshold") }
                 ].map(r => (
                   <div key={r.title} style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
                     <strong style={{ fontSize: "0.85rem", color: "#0f172a", display: "block", marginBottom: "0.25rem" }}>
@@ -602,20 +601,20 @@ export default function EmployerIntegrations() {
                 ))}
               </div>
 
-              {/* Matching Records Table (Section 30) */}
+              {/* Matching Records Table */}
               <h4 style={{ fontSize: "1rem", fontWeight: 700, color: "#0f172a", margin: "0 0 0.75rem 0" }}>
-                Matching Results Evaluation
+                {t("employer_integrations.matching_results_title", "Matching Results Evaluation")}
               </h4>
 
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
                   <thead>
                     <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left", color: "#475569" }}>
-                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>Trainee / Candidate</th>
-                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>Claimed vs System Data</th>
-                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>5-Field Evaluation</th>
-                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>Engine Result</th>
-                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700, textAlign: "right" }}>Action</th>
+                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>{t("employer_integrations.col_trainee_candidate", "Trainee / Candidate")}</th>
+                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>{t("employer_integrations.col_claimed_vs_system", "Claimed vs System Data")}</th>
+                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>{t("employer_integrations.col_five_field_eval", "5-Field Evaluation")}</th>
+                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700 }}>{t("employer_integrations.col_engine_result", "Engine Result")}</th>
+                      <th style={{ padding: "0.75rem 1rem", fontWeight: 700, textAlign: "right" }}>{t("employer_integrations.col_action", "Action")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -645,11 +644,11 @@ export default function EmployerIntegrations() {
                           <td style={{ padding: "1rem" }}>
                             {isMatch ? (
                               <span style={{ background: "#dcfce7", color: "#166534", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                                MATCH ✓ (Auto Verified)
+                                {t("employer_integrations.match_auto_verified", "MATCH ✓ (Auto Verified)")}
                               </span>
                             ) : (
                               <span style={{ background: "#fee2e2", color: "#b91c1c", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 700 }}>
-                                MISMATCH (Manual Review)
+                                {t("employer_integrations.mismatch_manual_review", "MISMATCH (Manual Review)")}
                               </span>
                             )}
                           </td>
@@ -659,7 +658,7 @@ export default function EmployerIntegrations() {
                                 onClick={() => setSelectedException(m)}
                                 style={{ padding: "0.4rem 0.75rem", background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
                               >
-                                Review Discrepancy →
+                                {t("employer_integrations.btn_review_discrepancy", "Review Discrepancy →")}
                               </button>
                             )}
                           </td>
@@ -673,20 +672,20 @@ export default function EmployerIntegrations() {
           </div>
         )}
 
-        {/* 3. VERIFICATION EXCEPTIONS TAB (SECTION 31) */}
+        {/* 3. VERIFICATION EXCEPTIONS TAB */}
         {activeTab === "exceptions" && (
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", padding: "1.75rem" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
               <div>
                 <h3 style={{ margin: "0 0 0.2rem 0", fontSize: "1.15rem", color: "#0f172a" }}>
-                  Verification Exceptions & Mismatches
+                  {t("employer_integrations.exceptions_title", "Verification Exceptions & Mismatches")}
                 </h3>
                 <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                  Mismatches detected between candidate claims and <strong>{organizationName}</strong> HR/ATS records.
+                  {t("employer_integrations.exceptions_desc", "Mismatches detected between candidate claims and enterprise HR/ATS records.")}
                 </p>
               </div>
               <span style={{ background: exceptions.length > 0 ? "#fef3c7" : "#dcfce7", color: exceptions.length > 0 ? "#b45309" : "#15803d", padding: "4px 10px", borderRadius: "12px", fontSize: "0.8rem", fontWeight: 700 }}>
-                {exceptions.length} Pending Actions
+                {exceptions.length} {t("employer_integrations.pending_actions_suffix", "Pending Actions")}
               </span>
             </div>
 
@@ -714,13 +713,13 @@ export default function EmployerIntegrations() {
                           {exc.name} ({exc.trainee_id})
                         </strong>
                         <span style={{ background: "#fee2e2", color: "#b91c1c", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem", fontWeight: 700 }}>
-                          Field Mismatch: {exc.discrepancy_field}
+                          {t("employer_integrations.field_mismatch_prefix", "Field Mismatch:")} {exc.discrepancy_field}
                         </span>
                       </div>
 
                       <div style={{ fontSize: "0.85rem", color: "#7f1d1d", display: "flex", gap: "1.5rem" }}>
-                        <div>Claimed Value: <strong>{exc.claimed_value}</strong></div>
-                        <div>Employer System Value: <strong>{exc.system_value}</strong></div>
+                        <div>{t("employer_integrations.claimed_value_label", "Claimed Value:")} <strong>{exc.claimed_value}</strong></div>
+                        <div>{t("employer_integrations.employer_system_value_label", "Employer System Value:")} <strong>{exc.system_value}</strong></div>
                       </div>
                     </div>
 
@@ -741,7 +740,7 @@ export default function EmployerIntegrations() {
                           gap: "0.3rem"
                         }}
                       >
-                        <Eye size={14} /> Review & Resolve
+                        <Eye size={14} /> {t("employer_integrations.btn_review_resolve", "Review & Resolve")}
                       </button>
                     </div>
                   </div>
@@ -750,21 +749,21 @@ export default function EmployerIntegrations() {
             ) : (
               <div style={{ background: "#f8fafc", padding: "2rem", borderRadius: "8px", textAlign: "center", color: "#64748b" }}>
                 <CheckCircle2 size={28} color="#16a34a" style={{ display: "inline-block", marginBottom: "0.5rem" }} />
-                <p style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600 }}>All exceptions resolved! No pending mismatches.</p>
+                <p style={{ margin: 0, fontSize: "0.95rem", fontWeight: 600 }}>{t("employer_integrations.all_exceptions_resolved", "All exceptions resolved! No pending mismatches.")}</p>
               </div>
             )}
           </div>
         )}
 
-        {/* 4. SYNC ACTIVITY LOG TAB (SECTION 36) */}
+        {/* 4. SYNC ACTIVITY LOG TAB */}
         {activeTab === "activity" && (
           <div style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
             <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0" }}>
               <h3 style={{ margin: "0 0 0.2rem 0", fontSize: "1.1rem", color: "#0f172a" }}>
-                Integration Synchronization Activity Log
+                {t("employer_integrations.activity_log_title", "Integration Synchronization Activity Log")}
               </h3>
               <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b" }}>
-                Chronological audit record of automated batch jobs, webhook triggers, and reconciliation events.
+                {t("employer_integrations.activity_log_desc", "Chronological audit record of automated batch jobs, webhook triggers, and reconciliation events.")}
               </p>
             </div>
 
@@ -772,11 +771,11 @@ export default function EmployerIntegrations() {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
                 <thead>
                   <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left", color: "#475569" }}>
-                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Timestamp</th>
-                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Operation</th>
-                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Records Processed</th>
-                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Status</th>
-                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>Exceptions</th>
+                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_timestamp", "Timestamp")}</th>
+                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_operation", "Operation")}</th>
+                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_records_processed", "Records Processed")}</th>
+                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_status", "Status")}</th>
+                    <th style={{ padding: "0.75rem 1.25rem", fontWeight: 700 }}>{t("employer_integrations.col_exceptions", "Exceptions")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -802,7 +801,7 @@ export default function EmployerIntegrations() {
                         </span>
                       </td>
                       <td style={{ padding: "1rem 1.25rem", color: log.issues > 0 ? "#b45309" : "#16a34a", fontWeight: 700 }}>
-                        {log.issues > 0 ? `${log.issues} issues` : "0 issues"}
+                        {log.issues > 0 ? `${log.issues} ${t("employer_integrations.issues_suffix", "issues")}` : `0 ${t("employer_integrations.issues_suffix", "issues")}`}
                       </td>
                     </tr>
                   ))}
@@ -812,7 +811,7 @@ export default function EmployerIntegrations() {
           </div>
         )}
 
-        {/* 5. EXCEPTION RESOLUTION DRAWER / MODAL (SECTION 31) */}
+        {/* 5. EXCEPTION RESOLUTION DRAWER / MODAL */}
         {selectedException && (
           <div style={{
             position: "fixed",
@@ -831,29 +830,29 @@ export default function EmployerIntegrations() {
             <div style={{ background: "white", borderRadius: "14px", maxWidth: "520px", width: "100%", padding: "2rem", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.15)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                 <h3 style={{ margin: 0, fontSize: "1.2rem", color: "#0f172a" }}>
-                  Resolve Verification Exception
+                  {t("employer_integrations.modal_resolve_title", "Resolve Verification Exception")}
                 </h3>
                 <button onClick={() => setSelectedException(null)} style={{ background: "none", border: "none", fontSize: "1rem", color: "#64748b", cursor: "pointer" }}>✕</button>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem", fontSize: "0.85rem", marginBottom: "1.5rem" }}>
                 <div>
-                  <span style={{ color: "#64748b", display: "block" }}>Trainee Candidate:</span>
+                  <span style={{ color: "#64748b", display: "block" }}>{t("employer_integrations.col_trainee_candidate", "Trainee Candidate")}:</span>
                   <strong style={{ color: "#0f172a", fontSize: "1rem" }}>{selectedException.name} ({selectedException.trainee_id})</strong>
                 </div>
 
                 {/* Discrepancy Highlight */}
                 <div style={{ background: "#fef2f2", border: "1px solid #fecaca", padding: "1rem", borderRadius: "8px" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "#991b1b", fontWeight: 700, marginBottom: "0.5rem" }}>
-                    <AlertTriangle size={16} /> Discrepancy Detected: {selectedException.discrepancy_field}
+                    <AlertTriangle size={16} /> {t("employer_integrations.field_mismatch_prefix", "Discrepancy Detected:")} {selectedException.discrepancy_field}
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                     <div>
-                      <span style={{ color: "#7f1d1d", fontSize: "0.75rem", display: "block" }}>Candidate Declared</span>
+                      <span style={{ color: "#7f1d1d", fontSize: "0.75rem", display: "block" }}>{t("employer_integrations.candidate_declared", "Candidate Declared")}</span>
                       <strong style={{ color: "#991b1b" }}>{selectedException.claimed_value}</strong>
                     </div>
                     <div>
-                      <span style={{ color: "#7f1d1d", fontSize: "0.75rem", display: "block" }}>Employer System Record</span>
+                      <span style={{ color: "#7f1d1d", fontSize: "0.75rem", display: "block" }}>{t("employer_integrations.employer_system_record", "Employer System Record")}</span>
                       <strong style={{ color: "#991b1b" }}>{selectedException.system_value}</strong>
                     </div>
                   </div>
@@ -861,11 +860,11 @@ export default function EmployerIntegrations() {
 
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Employer Correction Note (if requesting candidate revision)
+                    {t("employer_integrations.employer_correction_note", "Employer Correction Note (if requesting candidate revision)")}
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Please update joining date to match corporate offer acceptance."
+                    placeholder={t("employer_integrations.correction_note_placeholder", "e.g. Please update joining date to match corporate offer acceptance.")}
                     value={correctionNote}
                     onChange={(e) => setCorrectionNote(e.target.value)}
                     style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
@@ -878,19 +877,19 @@ export default function EmployerIntegrations() {
                   onClick={() => handleResolveException(selectedException, "reject")}
                   style={{ padding: "0.65rem", background: "#ef4444", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer", fontSize: "0.8rem" }}
                 >
-                  Reject Claim
+                  {t("employer_integrations.btn_reject_claim", "Reject Claim")}
                 </button>
                 <button
                   onClick={() => handleResolveException(selectedException, "request_correction")}
                   style={{ padding: "0.65rem", background: "#f59e0b", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer", fontSize: "0.8rem" }}
                 >
-                  Request Correction
+                  {t("employer_integrations.btn_request_correction", "Request Correction")}
                 </button>
                 <button
                   onClick={() => handleResolveException(selectedException, "confirm")}
                   style={{ padding: "0.65rem", background: "#16a34a", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer", fontSize: "0.8rem" }}
                 >
-                  Confirm / Override
+                  {t("employer_integrations.btn_confirm_override", "Confirm / Override")}
                 </button>
               </div>
             </div>

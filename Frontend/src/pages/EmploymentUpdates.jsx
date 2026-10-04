@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { Activity, CheckCircle, AlertCircle, Clock, ShieldCheck, UserCheck, Search } from "lucide-react";
 import { platformService, usePlatformStore } from "../services/platformService";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmploymentUpdates() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const [outcomes, setOutcomes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,14 +83,14 @@ export default function EmploymentUpdates() {
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
           <Activity size={18} color="#2563eb" />
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            EMPLOYMENT LIFECYCLE & RETENTION ATTESTATION
+            {t("employer_updates.badge", "EMPLOYMENT LIFECYCLE & RETENTION ATTESTATION")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          Employment Status & Wage Updates
+          {t("employer_updates.title", "Employment Status & Wage Updates")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Confirm ongoing employment, update wage progression milestones, and verify apprentice contracts.
+          {t("employer_updates.subtitle", "Confirm ongoing employment, update wage progression milestones, and verify apprentice contracts.")}
         </p>
       </div>
 
@@ -98,14 +100,14 @@ export default function EmploymentUpdates() {
         data={outcomes}
         onRetry={loadData}
         isDataAvailable={(d) => d && d.length > 0}
-        isEmptyDetails="No active trainee records registered under this employer."
+        isEmptyDetails={t("employer_updates.empty_trainees", "No active trainee records registered under this employer.")}
       >
         <div style={{ display: "grid", gridTemplateColumns: "380px 1fr", gap: "1.5rem" }}>
           {/* Employee List */}
           <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
             <div style={{ padding: "1.25rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc" }}>
               <h3 style={{ margin: 0, fontSize: "1.05rem", color: "#0f172a" }}>
-                Select Employee ({outcomes.length})
+                {t("employer_updates.select_employee", "Select Employee")} ({outcomes.length})
               </h3>
             </div>
 
@@ -136,11 +138,11 @@ export default function EmploymentUpdates() {
                           fontWeight: 700
                         }}
                       >
-                        {isApprentice ? "Apprentice" : "Employed"}
+                        {isApprentice ? t("employer_updates.apprentice", "Apprentice") : t("employer_updates.employed", "Employed")}
                       </span>
                     </div>
                     <div style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                      {o.job_role} • Joined {o.joining_date}
+                      {o.job_role} • {t("employer_updates.joined", "Joined")} {o.joining_date}
                     </div>
                   </div>
                 );
@@ -154,7 +156,7 @@ export default function EmploymentUpdates() {
               {actionSuccess && (
                 <div style={{ background: "#dcfce7", border: "1px solid #86efac", color: "#166534", padding: "0.75rem 1rem", borderRadius: "8px", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
                   <CheckCircle size={18} />
-                  <span>Employment & wage update recorded and synchronized with Admin analytics.</span>
+                  <span>{t("employer_updates.sync_success", "Employment & wage update recorded and synchronized with Admin analytics.")}</span>
                 </div>
               )}
 
@@ -165,11 +167,11 @@ export default function EmploymentUpdates() {
                       {selectedOutcome.trainee_name}
                     </h2>
                     <p style={{ margin: 0, color: "#64748b", fontSize: "0.85rem" }}>
-                      Trainee ID: {selectedOutcome.trainee_id} • Programme: {selectedOutcome.programme_name}
+                      {t("employer_updates.trainee_id", "Trainee ID:")} {selectedOutcome.trainee_id} • {t("employer_updates.programme", "Programme:")} {selectedOutcome.programme_name}
                     </p>
                   </div>
                   <span style={{ background: "#f1f5f9", color: "#334155", padding: "4px 10px", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 600 }}>
-                    Verification Status: {selectedOutcome.status}
+                    {t("employer_updates.verification_status", "Verification Status:")} {selectedOutcome.status}
                   </span>
                 </div>
               </div>
@@ -179,49 +181,49 @@ export default function EmploymentUpdates() {
                 {/* B7: Employment Status */}
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Current Employment Status
+                    {t("employer_updates.current_status_label", "Current Employment Status")}
                   </label>
                   <select
                     value={statusAction}
                     onChange={(e) => setStatusAction(e.target.value)}
                     style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   >
-                    <option value="Currently Employed">Currently Employed (Active)</option>
-                    <option value="Resigned">Resigned / Voluntarily Left</option>
-                    <option value="Terminated">Terminated / Involuntary</option>
-                    <option value="Contract Completed">Contract / Apprenticeship Completed</option>
+                    <option value="Currently Employed">{t("employer_updates.status_employed_active", "Currently Employed (Active)")}</option>
+                    <option value="Resigned">{t("employer_updates.status_resigned", "Resigned / Voluntarily Left")}</option>
+                    <option value="Terminated">{t("employer_updates.status_terminated", "Terminated / Involuntary")}</option>
+                    <option value="Contract Completed">{t("employer_updates.status_contract_completed", "Contract / Apprenticeship Completed")}</option>
                   </select>
                 </div>
 
                 {/* B9: Role Confirmation */}
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Job Role Confirmation
+                    {t("employer_updates.role_confirmation_label", "Job Role Confirmation")}
                   </label>
                   <select
                     value={roleConfirmation}
                     onChange={(e) => setRoleConfirmation(e.target.value)}
                     style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   >
-                    <option value="Confirmed">Confirmed: {selectedOutcome.job_role}</option>
-                    <option value="Role Changed / Promoted">Role Changed / Promoted</option>
-                    <option value="Role Disputed">Role Disputed</option>
+                    <option value="Confirmed">{t("employer_updates.role_confirmed", "Confirmed:")} {selectedOutcome.job_role}</option>
+                    <option value="Role Changed / Promoted">{t("employer_updates.role_changed_promoted", "Role Changed / Promoted")}</option>
+                    <option value="Role Disputed">{t("employer_updates.role_disputed", "Role Disputed")}</option>
                   </select>
                 </div>
 
                 {/* B8: Wage Confirmation */}
                 <div>
                   <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                    Wage Confirmation
+                    {t("employer_updates.wage_confirmation_label", "Wage Confirmation")}
                   </label>
                   <select
                     value={wageConfirmation}
                     onChange={(e) => setWageConfirmation(e.target.value)}
                     style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                   >
-                    <option value="Confirmed">Confirmed (₹{selectedOutcome.salary?.toLocaleString() || "Not Disclosed"})</option>
-                    <option value="Different">Different Amount</option>
-                    <option value="Cannot Disclose">Cannot Disclose (Confidentiality)</option>
+                    <option value="Confirmed">{t("employer_updates.wage_confirmed_amount", "Confirmed")} (₹{selectedOutcome.salary?.toLocaleString() || "Not Disclosed"})</option>
+                    <option value="Different">{t("employer_updates.wage_different", "Different Amount")}</option>
+                    <option value="Cannot Disclose">{t("employer_updates.wage_cannot_disclose", "Cannot Disclose (Confidentiality)")}</option>
                   </select>
                 </div>
 
@@ -229,7 +231,7 @@ export default function EmploymentUpdates() {
                 {wageConfirmation === "Different" && (
                   <div>
                     <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                      Updated Monthly Compensation (₹)
+                      {t("employer_updates.updated_salary_label", "Updated Monthly Compensation (₹)")}
                     </label>
                     <input
                       type="number"
@@ -245,13 +247,13 @@ export default function EmploymentUpdates() {
               {/* Remarks */}
               <div style={{ marginBottom: "1.5rem" }}>
                 <label style={{ display: "block", fontSize: "0.8rem", fontWeight: 700, color: "#334155", marginBottom: "0.35rem" }}>
-                  Employer Attestation Notes / Reason
+                  {t("employer_updates.attestation_notes_label", "Employer Attestation Notes / Reason")}
                 </label>
                 <textarea
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
                   rows={3}
-                  placeholder="e.g. Performance appraisal raise approved; continuing full-time role."
+                  placeholder={t("employer_updates.attestation_notes_placeholder", "e.g. Performance appraisal raise approved; continuing full-time role.")}
                   style={{ width: "100%", padding: "0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.85rem" }}
                 />
               </div>
@@ -276,7 +278,7 @@ export default function EmploymentUpdates() {
                   }}
                 >
                   <ShieldCheck size={18} />
-                  {saving ? "Saving Attestation..." : "Confirm & Save Update"}
+                  {saving ? t("employer_updates.btn_saving", "Saving Attestation...") : t("employer_updates.btn_confirm_save", "Confirm & Save Update")}
                 </button>
               </div>
             </div>

@@ -5,8 +5,10 @@ import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
 import { platformService, usePlatformStore } from "../services/platformService";
 import CountUp from "../components/common/CountUp";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function Districts() {
+  const { t } = useLanguage();
   const { filters, updateFilter } = useFilters();
   const storeState = usePlatformStore();
   const [districts, setDistricts] = useState([]);
@@ -88,14 +90,14 @@ export default function Districts() {
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
             <Map size={18} color="#2563eb" />
             <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-              GEOGRAPHIC OUTCOME INTELLIGENCE
+              {t("districts.admin_badge", "GEOGRAPHIC OUTCOME INTELLIGENCE")}
             </span>
           </div>
           <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-            District-Level Skilling Analytics
+            {t("districts.page_title", "District-Level Skilling Analytics")}
           </h1>
           <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-            Regional performance indices, employment placement ratios, 6-month retention, and localized skill-gap priorities across districts. Click any district to inspect detail.
+            {t("districts.page_subtitle", "Regional performance indices, employment placement ratios, 6-month retention, and localized skill-gap priorities across districts. Click any district to inspect detail.")}
           </p>
         </div>
 
@@ -103,7 +105,7 @@ export default function Districts() {
           <Search size={16} color="#94a3b8" style={{ position: "absolute", left: "12px", top: "12px" }} />
           <input
             type="text"
-            placeholder="Search district or skill gap..."
+            placeholder={t("districts.search_placeholder", "Search district or skill gap...")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -144,16 +146,16 @@ export default function Districts() {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", margin: "0.75rem 0" }}>
               <div>
-                <span style={{ fontSize: "0.72rem", color: "#64748b" }}>Trained</span>
+                <span style={{ fontSize: "0.72rem", color: "#64748b" }}>{t("districts.trained", "Trained")}</span>
                 <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a" }}><CountUp value={d.trainees} /></div>
               </div>
               <div>
-                <span style={{ fontSize: "0.72rem", color: "#64748b" }}>Employment</span>
+                <span style={{ fontSize: "0.72rem", color: "#64748b" }}>{t("districts.employment", "Employment")}</span>
                 <div style={{ fontSize: "1.25rem", fontWeight: 800, color: "#16a34a" }}><CountUp value={d.employment_rate} /></div>
               </div>
             </div>
             <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
-              Top Deficit: <strong style={{ color: "#334155" }}>{d.top_skill_gap}</strong>
+              {t("districts.top_deficit", "Top Deficit:")} <strong style={{ color: "#334155" }}>{d.top_skill_gap ? t(d.top_skill_gap, d.top_skill_gap) : "—"}</strong>
             </div>
           </div>
         ))}
@@ -162,10 +164,10 @@ export default function Districts() {
       <div style={{ background: "white", borderRadius: "12px", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.02)", overflow: "hidden" }}>
         <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h3 style={{ margin: 0, display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1.15rem", color: "#0f172a" }}>
-            <Map size={20} color="#0284c7" /> Regional Performance Index
+            <Map size={20} color="#0284c7" /> {t("districts.table_title", "Regional Performance Index")}
           </h3>
           <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-            Showing {filteredDistricts.length} districts in active scope
+            {t("districts.showing", "Showing")} {filteredDistricts.length} {t("districts.in_scope", "districts in active scope")}
           </span>
         </div>
 
@@ -176,13 +178,13 @@ export default function Districts() {
             data={filteredDistricts}
             onRetry={loadData}
             isDataAvailable={(d) => d && d.length > 0}
-            isEmptyDetails="No District Data Meets Privacy Threshold for the selected filter."
+            isEmptyDetails={t("districts.empty_details", "No District Data Meets Privacy Threshold for the selected filter.")}
           >
             <DataTable 
               columns={[
                 { 
                   key: "district", 
-                  label: "District", 
+                  label: t("districts.col_district", "District"), 
                   render: (d) => (
                     <button
                       onClick={() => setSelectedDistrict(d)}
@@ -194,14 +196,14 @@ export default function Districts() {
                 },
                 { 
                   key: "tier", 
-                  label: "Tier", 
+                  label: t("districts.col_tier", "Tier"), 
                   render: (d) => <span style={{ color: "#64748b" }}>{d.tier}</span> 
                 },
                 { 
                   key: "trainees", 
                   label: (
                     <div onClick={() => handleSort("trainees")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Trained <ArrowUpDown size={12} />
+                      {t("districts.col_trained", "Trained")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (d) => <strong><CountUp value={d.trainees} /></strong> 
@@ -210,7 +212,7 @@ export default function Districts() {
                   key: "employment_rate", 
                   label: (
                     <div onClick={() => handleSort("employment_rate")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      Employment % <ArrowUpDown size={12} />
+                      {t("districts.col_employment_pct", "Employment %")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (d) => (
@@ -229,19 +231,19 @@ export default function Districts() {
                   key: "retention_6m", 
                   label: (
                     <div onClick={() => handleSort("retention_6m")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "0.3rem" }}>
-                      6M Retention % <ArrowUpDown size={12} />
+                      {t("districts.col_retention_pct", "6M Retention %")} <ArrowUpDown size={12} />
                     </div>
                   ),
                   render: (d) => <strong>{d.retention_6m}</strong> 
                 },
                 { 
                   key: "top_skill_gap", 
-                  label: "Top Reported Deficit", 
-                  render: (d) => <span style={{ color: "#475569" }}>{d.top_skill_gap}</span> 
+                  label: t("districts.col_deficit", "Top Reported Deficit"), 
+                  render: (d) => <span style={{ color: "#475569" }}>{d.top_skill_gap ? t(d.top_skill_gap, d.top_skill_gap) : "—"}</span> 
                 },
                 { 
                   key: "status", 
-                  label: "Status", 
+                  label: t("common.status", "Status"), 
                   render: (d) => (
                     <span style={{ 
                       background: d.status === "High Impact" ? "#dcfce7" : d.status === "Optimal" ? "#eff6ff" : "#fee2e2", 
@@ -251,7 +253,7 @@ export default function Districts() {
                       fontSize: "0.75rem", 
                       fontWeight: 700 
                     }}>
-                      {d.status}
+                      {d.status ? t(d.status, d.status) : "—"}
                     </span>
                   ) 
                 }
@@ -291,13 +293,13 @@ export default function Districts() {
             <div style={{ padding: "1.25rem 1.5rem", borderBottom: "1px solid #e2e8f0", background: "#f8fafc", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
                 <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase" }}>
-                  DISTRICT AUDIT DOSSIER
+                  {t("districts.dossier_badge", "DISTRICT AUDIT DOSSIER")}
                 </span>
                 <h3 style={{ margin: "0.2rem 0 0 0", fontSize: "1.25rem", color: "#0f172a" }}>
                   {selectedDistrict.district} ({selectedDistrict.tier})
                 </h3>
                 <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
-                  Employment: {selectedDistrict.employment_rate} • 6M Retention: {selectedDistrict.retention_6m} • Top Deficit: {selectedDistrict.top_skill_gap}
+                  {t("districts.employment", "Employment")}: {selectedDistrict.employment_rate} • {t("districts.col_retention_pct", "6M Retention")}: {selectedDistrict.retention_6m} • {t("districts.top_deficit", "Top Deficit")}: {selectedDistrict.top_skill_gap ? t(selectedDistrict.top_skill_gap, selectedDistrict.top_skill_gap) : "—"}
                 </span>
               </div>
               <button
@@ -311,7 +313,7 @@ export default function Districts() {
             <div style={{ padding: "1.25rem 1.5rem", overflowY: "auto", flex: 1 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                 <strong style={{ fontSize: "0.95rem", color: "#0f172a" }}>
-                  District Trainee Roster ({districtTrainees.length} in Active Scope)
+                  {t("districts.roster_title", "District Trainee Roster")} ({districtTrainees.length} {t("districts.in_active_scope", "in Active Scope")})
                 </strong>
                 <button
                   onClick={() => {
@@ -320,27 +322,27 @@ export default function Districts() {
                   }}
                   style={{ background: "#eff6ff", color: "#1d4ed8", border: "1px solid #bfdbfe", padding: "4px 10px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
                 >
-                  Set as Global Filter Scope
+                  {t("districts.set_scope", "Set as Global Filter Scope")}
                 </button>
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                {districtTrainees.slice(0, 15).map(t => (
-                  <div key={t.id} style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderRadius: "6px", border: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                {districtTrainees.slice(0, 15).map(trainee => (
+                  <div key={trainee.id} style={{ background: "#f8fafc", padding: "0.75rem 1rem", borderRadius: "6px", border: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <div>
-                      <strong style={{ color: "#0f172a", fontSize: "0.85rem" }}>{t.name}</strong>
-                      <span style={{ fontSize: "0.75rem", color: "#64748b", marginLeft: "0.4rem" }}>({t.id})</span>
-                      <div style={{ fontSize: "0.75rem", color: "#475569" }}>{t.programme_name} • Provider: {t.provider_name}</div>
+                      <strong style={{ color: "#0f172a", fontSize: "0.85rem" }}>{trainee.name}</strong>
+                      <span style={{ fontSize: "0.75rem", color: "#64748b", marginLeft: "0.4rem" }}>({trainee.id})</span>
+                      <div style={{ fontSize: "0.75rem", color: "#475569" }}>{trainee.programme_name} • {t("districts.provider", "Provider")}: {trainee.provider_name}</div>
                     </div>
                     <span style={{
                       fontSize: "0.7rem",
                       fontWeight: 700,
                       padding: "2px 8px",
                       borderRadius: "10px",
-                      background: t.employment?.status === "EMPLOYED" ? "#dcfce7" : "#fee2e2",
-                      color: t.employment?.status === "EMPLOYED" ? "#166534" : "#991b1b"
+                      background: trainee.employment?.status === "EMPLOYED" ? "#dcfce7" : "#fee2e2",
+                      color: trainee.employment?.status === "EMPLOYED" ? "#166534" : "#991b1b"
                     }}>
-                      {t.employment?.status || "ENROLLED"}
+                      {trainee.employment?.status ? t(`status.${trainee.employment.status.toLowerCase()}`, trainee.employment.status) : t("status.enrolled", "ENROLLED")}
                     </span>
                   </div>
                 ))}
@@ -352,7 +354,7 @@ export default function Districts() {
                 onClick={() => setSelectedDistrict(null)}
                 style={{ padding: "0.5rem 1.25rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontSize: "0.85rem", fontWeight: 700, cursor: "pointer" }}
               >
-                Close Dossier
+                {t("districts.close_dossier", "Close Dossier")}
               </button>
             </div>
           </div>

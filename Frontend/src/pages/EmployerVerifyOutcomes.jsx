@@ -7,8 +7,10 @@ import { platformService, usePlatformStore } from "../services/platformService";
 import CountUp from "../components/common/CountUp";
 import DataTable from "../components/common/DataTable";
 import { DataStateWrapper } from "../components/common/DataStateComponents";
+import { useLanguage } from "../context/LanguageContext";
 
 export default function EmployerVerifyOutcomes() {
+  const { t } = useLanguage();
   const store = usePlatformStore();
   const [employers, setEmployers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -101,14 +103,14 @@ export default function EmployerVerifyOutcomes() {
             <ShieldCheck size={20} color="#2563eb" />
           </div>
           <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#2563eb", textTransform: "uppercase", letterSpacing: "0.5px" }}>
-            EMPLOYMENT VERIFICATION & CREDENTIAL OVERSIGHT
+            {t("employer_verify.badge", "EMPLOYMENT VERIFICATION & CREDENTIAL OVERSIGHT")}
           </span>
         </div>
         <h1 style={{ fontSize: "1.85rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-          3-Tier Employment Verification Oversight
+          {t("employer_verify.title", "3-Tier Employment Verification Oversight")}
         </h1>
         <p style={{ margin: 0, color: "#64748b", fontSize: "0.95rem" }}>
-          Automated multi-tier verification engine linking statutory EPFO government records, corporate HRIS feeds, and 2-tap employer requests.
+          {t("employer_verify.subtitle", "Automated multi-tier verification engine linking statutory EPFO government records, corporate HRIS feeds, and 2-tap employer requests.")}
         </p>
       </div>
 
@@ -138,14 +140,14 @@ export default function EmployerVerifyOutcomes() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.25rem" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 800, padding: "0.2rem 0.65rem", borderRadius: "12px", background: "#dbeafe", color: "#1e40af" }}>
-                AUTOMATED VERIFICATION PIPELINE
+                {t("employer_verify.auto_pipeline", "AUTOMATED VERIFICATION PIPELINE")}
               </span>
               <span style={{ fontSize: "0.78rem", fontWeight: 700, color: "#64748b" }}>
-                Multi-Layered Verification Architecture
+                {t("employer_verify.multi_layered_arch", "Multi-Layered Verification Architecture")}
               </span>
             </div>
             <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-              Live 3-Tier Verification Check Engine
+              {t("employer_verify.check_engine_title", "Live 3-Tier Verification Check Engine")}
             </h2>
           </div>
 
@@ -171,12 +173,12 @@ export default function EmployerVerifyOutcomes() {
               {isRunningCheck ? (
                 <>
                   <div className="spinner" style={{ width: "16px", height: "16px", border: "2px solid white", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                  <span>Evaluating 3 Tiers...</span>
+                  <span>{t("employer_verify.evaluating_3_tiers", "Evaluating 3 Tiers...")}</span>
                 </>
               ) : (
                 <>
                   <Play size={18} fill="white" />
-                  <span>Run Verification Check</span>
+                  <span>{t("employer_verify.run_verification_check", "Run Verification Check")}</span>
                 </>
               )}
             </button>
@@ -198,7 +200,7 @@ export default function EmployerVerifyOutcomes() {
               }}
             >
               <RotateCcw size={16} />
-              <span>Reset Claims</span>
+              <span>{t("employer_verify.reset_claims", "Reset Claims")}</span>
             </button>
           </div>
         </div>
@@ -210,19 +212,19 @@ export default function EmployerVerifyOutcomes() {
           <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #cbd5e1", borderLeft: "4px solid #16a34a" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#166534", padding: "0.2rem 0.5rem", borderRadius: "4px", background: "#dcfce7" }}>
-                TIER 1 (PRIMARY)
+                {t("employer_verify.tier1_primary", "TIER 1 (PRIMARY)")}
               </span>
               <ShieldCheck size={20} color="#16a34a" />
             </div>
             <h4 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              EPFO Government DB Check
+              {t("employer_verify.tier1_title", "EPFO Government DB Check")}
             </h4>
             <p style={{ fontSize: "0.82rem", color: "#475569", margin: "0 0 0.75rem 0", lineHeight: "1.45" }}>
-              Instant zero-touch verification via Employees' Provident Fund Organisation statutory data. Covers all formal firms (20+ staff) automatically without partnerships.
+              {t("employer_verify.tier1_desc", "Instant zero-touch verification via Employees' Provident Fund Organisation statutory data. Covers all formal firms (20+ staff) automatically without partnerships.")}
             </p>
             {checkSummary && (
               <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#15803d" }}>
-                ✓ <CountUp value={checkSummary.tier1_epfo} /> Candidate(s) Verified via EPFO
+                ✓ <CountUp value={checkSummary.tier1_epfo} /> {t("employer_verify.tier1_verified_suffix", "Candidate(s) Verified via EPFO")}
               </div>
             )}
           </div>
@@ -231,19 +233,19 @@ export default function EmployerVerifyOutcomes() {
           <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #cbd5e1", borderLeft: "4px solid #2563eb" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#1e40af", padding: "0.2rem 0.5rem", borderRadius: "4px", background: "#dbeafe" }}>
-                TIER 3 (FAST LANE)
+                {t("employer_verify.tier3_fastlane", "TIER 3 (FAST LANE)")}
               </span>
               <Zap size={20} color="#2563eb" />
             </div>
             <h4 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Partner HRIS API Integration
+              {t("employer_verify.tier3_title", "Partner HRIS API Integration")}
             </h4>
             <p style={{ fontSize: "0.82rem", color: "#475569", margin: "0 0 0.75rem 0", lineHeight: "1.45" }}>
-              Real-time API reconciliation with connected placement partners (Workday HCM, BambooHR, Darwinbox). Eliminates 30-day EPFO reporting lag for active partners.
+              {t("employer_verify.tier3_desc", "Real-time API reconciliation with connected placement partners (Workday HCM, BambooHR, Darwinbox). Eliminates 30-day EPFO reporting lag for active partners.")}
             </p>
             {checkSummary && (
               <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#1d4ed8" }}>
-                ✓ <CountUp value={checkSummary.tier3_hris} /> Candidate(s) Verified via HRIS
+                ✓ <CountUp value={checkSummary.tier3_hris} /> {t("employer_verify.tier3_verified_suffix", "Candidate(s) Verified via HRIS")}
               </div>
             )}
           </div>
@@ -252,19 +254,19 @@ export default function EmployerVerifyOutcomes() {
           <div style={{ background: "#f8fafc", padding: "1.25rem", borderRadius: "10px", border: "1px solid #cbd5e1", borderLeft: "4px solid #b45309" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
               <span style={{ fontSize: "0.75rem", fontWeight: 800, color: "#92400e", padding: "0.2rem 0.5rem", borderRadius: "4px", background: "#fef3c7" }}>
-                TIER 2 (SAFETY NET)
+                {t("employer_verify.tier2_safetynet", "TIER 2 (SAFETY NET)")}
               </span>
               <Mail size={20} color="#b45309" />
             </div>
             <h4 style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a", margin: "0 0 0.35rem 0" }}>
-              Direct Employer Confirmation
+              {t("employer_verify.tier2_title", "Direct Employer Confirmation")}
             </h4>
             <p style={{ fontSize: "0.82rem", color: "#475569", margin: "0 0 0.75rem 0", lineHeight: "1.45" }}>
-              Universal fallback sending a direct 2-tap confirmation link to employer HR. Guarantees 100% verification coverage for small businesses (under 20 staff) and unintegrated employers.
+              {t("employer_verify.tier2_desc", "Universal fallback sending a direct 2-tap confirmation link to employer HR. Guarantees 100% verification coverage for small businesses (under 20 staff) and unintegrated employers.")}
             </p>
             {checkSummary && (
               <div style={{ fontSize: "0.85rem", fontWeight: 800, color: "#b45309" }}>
-                ⌛ {checkSummary.tier2_manual} Candidate(s) Awaiting Confirmation
+                ⌛ {checkSummary.tier2_manual} {t("employer_verify.tier2_awaiting_suffix", "Candidate(s) Awaiting Confirmation")}
               </div>
             )}
           </div>
@@ -275,32 +277,32 @@ export default function EmployerVerifyOutcomes() {
         <div>
           <h4 style={{ fontSize: "1rem", fontWeight: 800, color: "#0f172a", marginBottom: "0.75rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <Layers size={18} color="#2563eb" />
-            Live Verification Claims & Tier Resolution Status
+            {t("employer_verify.claims_table_title", "Live Verification Claims & Tier Resolution Status")}
           </h4>
 
           <div style={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "8px" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.88rem" }}>
               <thead>
                 <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>Candidate Name</th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>Master-ID (Aadhaar Hash)</th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>Claimed Employer</th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>Verification Pathway</th>
-                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>Status & Resolution Notes</th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>{t("employer_verify.col_candidate_name", "Candidate Name")}</th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>{t("employer_verify.col_master_id", "Master-ID (Aadhaar Hash)")}</th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>{t("employer_verify.col_claimed_employer", "Claimed Employer")}</th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>{t("employer_verify.col_verification_path", "Verification Pathway")}</th>
+                  <th style={{ padding: "0.75rem 1rem", fontWeight: 800, color: "#475569" }}>{t("employer_verify.col_status_notes", "Status & Resolution Notes")}</th>
                 </tr>
               </thead>
               <tbody>
-                {demoTrainees.map(t => (
-                  <tr key={t.id} style={{ borderBottom: "1px solid #e2e8f0" }}>
+                {demoTrainees.map(t_item => (
+                  <tr key={t_item.id} style={{ borderBottom: "1px solid #e2e8f0" }}>
                     <td style={{ padding: "0.85rem 1rem", fontWeight: 800, color: "#0f172a" }}>
-                      {t.full_name}
-                      <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b", fontWeight: 500 }}>ID: {t.id}</span>
+                      {t_item.full_name}
+                      <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b", fontWeight: 500 }}>ID: {t_item.id}</span>
                     </td>
                     <td style={{ padding: "0.85rem 1rem", fontFamily: "monospace", fontSize: "0.8rem", color: "#334155" }}>
-                      •••• •••• {t.aadhaar_number.slice(-4)}
+                      •••• •••• {t_item.aadhaar_number.slice(-4)}
                     </td>
                     <td style={{ padding: "0.85rem 1rem", fontWeight: 700, color: "#1e293b" }}>
-                      {t.claimed_employer}
+                      {t_item.claimed_employer}
                     </td>
                     <td style={{ padding: "0.85rem 1rem" }}>
                       <span style={{
@@ -308,14 +310,14 @@ export default function EmployerVerifyOutcomes() {
                         borderRadius: "20px",
                         fontSize: "0.78rem",
                         fontWeight: 800,
-                        background: t.verification_tier === "EPFO" ? "#dcfce7" : t.verification_tier === "HRIS" ? "#dbeafe" : t.verification_tier === "MANUAL_REQUEST" ? "#fef3c7" : "#f1f5f9",
-                        color: t.verification_tier === "EPFO" ? "#15803d" : t.verification_tier === "HRIS" ? "#1d4ed8" : t.verification_tier === "MANUAL_REQUEST" ? "#b45309" : "#475569"
+                        background: t_item.verification_tier === "EPFO" ? "#dcfce7" : t_item.verification_tier === "HRIS" ? "#dbeafe" : t_item.verification_tier === "MANUAL_REQUEST" ? "#fef3c7" : "#f1f5f9",
+                        color: t_item.verification_tier === "EPFO" ? "#15803d" : t_item.verification_tier === "HRIS" ? "#1d4ed8" : t_item.verification_tier === "MANUAL_REQUEST" ? "#b45309" : "#475569"
                       }}>
-                        {t.verification_badge}
+                        {t_item.verification_badge}
                       </span>
                     </td>
                     <td style={{ padding: "0.85rem 1rem", fontSize: "0.82rem", color: "#475569", lineHeight: "1.4" }}>
-                      {t.notes || "Pending verification run."}
+                      {t_item.notes || t("employer_verify.pending_verification_run", "Pending verification run.")}
                     </td>
                   </tr>
                 ))}
@@ -328,42 +330,47 @@ export default function EmployerVerifyOutcomes() {
       {/* ── REGISTERED CORPORATE EMPLOYERS LIST ── */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>
         <h2 style={{ fontSize: "1.2rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
-          Registered Employers & Corporate Partners
+          {t("employer_verify.registered_employers_title", "Registered Employers & Corporate Partners")}
         </h2>
 
         {/* KPI Badges */}
         <div style={{ display: "flex", gap: "0.75rem" }}>
           <span style={{ fontSize: "0.8rem", padding: "0.3rem 0.75rem", borderRadius: "6px", background: "white", border: "1px solid #cbd5e1", fontWeight: 700, color: "#475569" }}>
-            Total Employers: {employers.length}
+            {t("employer_verify.total_employers", "Total Employers:")} {employers.length}
           </span>
           <span style={{ fontSize: "0.8rem", padding: "0.3rem 0.75rem", borderRadius: "6px", background: "#fef3c7", border: "1px solid #fde68a", fontWeight: 800, color: "#b45309" }}>
-            Pending Approval: {pendingCount}
+            {t("employer_verify.pending_approval", "Pending Approval:")} {pendingCount}
           </span>
           <span style={{ fontSize: "0.8rem", padding: "0.3rem 0.75rem", borderRadius: "6px", background: "#dcfce7", border: "1px solid #86efac", fontWeight: 800, color: "#15803d" }}>
-            Verified Partners: {verifiedCount}
+            {t("employer_verify.verified_partners", "Verified Partners:")} {verifiedCount}
           </span>
         </div>
       </div>
 
       {/* Status Filter Tabs */}
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.25rem" }}>
-        {["all", "Pending", "Verified", "Rejected"].map(tab => (
+        {[
+          { key: "all", label: t("employer_verify.all_employers", "All Employers") },
+          { key: "Pending", label: t("employer_verify.pending_employers", "Pending Employers") },
+          { key: "Verified", label: t("employer_verify.verified_employers", "Verified Employers") },
+          { key: "Rejected", label: t("employer_verify.rejected_employers", "Rejected Employers") }
+        ].map(tab => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+            key={tab.key}
+            onClick={() => setActiveTab(tab.key)}
             style={{
               padding: "0.5rem 1rem",
               borderRadius: "8px",
-              border: activeTab === tab ? "2px solid #2563eb" : "1px solid #cbd5e1",
-              background: activeTab === tab ? "#eff6ff" : "white",
-              color: activeTab === tab ? "#1d4ed8" : "#475569",
+              border: activeTab === tab.key ? "2px solid #2563eb" : "1px solid #cbd5e1",
+              background: activeTab === tab.key ? "#eff6ff" : "white",
+              color: activeTab === tab.key ? "#1d4ed8" : "#475569",
               fontSize: "0.85rem",
               fontWeight: 700,
               cursor: "pointer"
             }}
           >
-            {tab === "all" ? "All Employers" : `${tab} Employers`}
-            {tab === "Pending" && pendingCount > 0 && ` (${pendingCount})`}
+            {tab.label}
+            {tab.key === "Pending" && pendingCount > 0 && ` (${pendingCount})`}
           </button>
         ))}
       </div>
@@ -376,13 +383,13 @@ export default function EmployerVerifyOutcomes() {
           data={filteredEmployers}
           onRetry={loadData}
           isDataAvailable={(d) => d && d.length > 0}
-          isEmptyDetails="No employers match the selected filter category."
+          isEmptyDetails={t("employer_verify.empty_employers", "No employers match the selected filter category.")}
         >
           {filteredEmployers && (
             <DataTable
               columns={[
                 {
-                  header: "Employer / Corporate Partner",
+                  header: t("employer_verify.col_employer_partner", "Employer / Corporate Partner"),
                   accessor: "name",
                   render: (row) => (
                     <div>
@@ -392,17 +399,17 @@ export default function EmployerVerifyOutcomes() {
                   )
                 },
                 {
-                  header: "Industry Sector",
+                  header: t("employer_verify.col_industry_sector", "Industry Sector"),
                   accessor: "sector",
                   render: (row) => <span style={{ fontWeight: 600, color: "#334155" }}>{row.sector || "IT & Technology"}</span>
                 },
                 {
-                  header: "Location / District",
+                  header: t("employer_verify.col_location_district", "Location / District"),
                   accessor: "district",
                   render: (row) => <span style={{ color: "#475569" }}>{row.district || "Pune"}</span>
                 },
                 {
-                  header: "HRIS System",
+                  header: t("employer_verify.col_hris_system", "HRIS System"),
                   accessor: "hris_system",
                   render: (row) => (
                     <span style={{ fontSize: "0.8rem", fontWeight: 700, padding: "0.2rem 0.6rem", borderRadius: "4px", background: "#f1f5f9", color: "#334155" }}>
@@ -411,7 +418,7 @@ export default function EmployerVerifyOutcomes() {
                   )
                 },
                 {
-                  header: "Status",
+                  header: t("employer_verify.col_status", "Status"),
                   accessor: "status",
                   render: (row) => (
                     <span style={{
@@ -427,7 +434,7 @@ export default function EmployerVerifyOutcomes() {
                   )
                 },
                 {
-                  header: "Actions",
+                  header: t("employer_verify.col_actions", "Actions"),
                   accessor: "actions",
                   render: (row) => (
                     <div style={{ display: "flex", gap: "0.4rem" }}>
@@ -435,7 +442,7 @@ export default function EmployerVerifyOutcomes() {
                         onClick={() => setReviewEmployer(row)}
                         style={{ padding: "0.35rem 0.65rem", background: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: "6px", fontSize: "0.78rem", fontWeight: 700, cursor: "pointer" }}
                       >
-                        Details
+                        {t("employer_verify.btn_details", "Details")}
                       </button>
                       {row.status === "Pending" && (
                         <>
@@ -443,13 +450,13 @@ export default function EmployerVerifyOutcomes() {
                             onClick={() => setConfirmModal({ employer: row, action: "Verified" })}
                             style={{ padding: "0.35rem 0.65rem", background: "#dcfce7", color: "#15803d", border: "1px solid #86efac", borderRadius: "6px", fontSize: "0.78rem", fontWeight: 800, cursor: "pointer" }}
                           >
-                            Approve
+                            {t("employer_verify.btn_approve", "Approve")}
                           </button>
                           <button
                             onClick={() => setConfirmModal({ employer: row, action: "Rejected" })}
                             style={{ padding: "0.35rem 0.65rem", background: "#fee2e2", color: "#dc2626", border: "1px solid #fecaca", borderRadius: "6px", fontSize: "0.78rem", fontWeight: 800, cursor: "pointer" }}
                           >
-                            Reject
+                            {t("employer_verify.btn_reject", "Reject")}
                           </button>
                         </>
                       )}
@@ -468,19 +475,19 @@ export default function EmployerVerifyOutcomes() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ background: "white", borderRadius: "14px", padding: "2rem", maxWidth: "600px", width: "90%", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.2)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-              <h3 style={{ margin: 0, fontSize: "1.25rem", color: "#0f172a" }}>Employer Profile & Integration Details</h3>
+              <h3 style={{ margin: 0, fontSize: "1.25rem", color: "#0f172a" }}>{t("employer_verify.modal_details_title", "Employer Profile & Integration Details")}</h3>
               <button onClick={() => setReviewEmployer(null)} style={{ border: "none", background: "none", cursor: "pointer" }}><X size={20} /></button>
             </div>
             <div style={{ fontSize: "0.9rem", color: "#334155", lineHeight: "1.6" }}>
-              <p><strong>Company Name:</strong> {reviewEmployer.name}</p>
-              <p><strong>Employer ID:</strong> {reviewEmployer.id}</p>
-              <p><strong>Sector:</strong> {reviewEmployer.sector}</p>
-              <p><strong>GST Number:</strong> {reviewEmployer.gst_number || "GST27AABC1234F"}</p>
-              <p><strong>Verification Status:</strong> {reviewEmployer.status}</p>
-              <p><strong>Registered Email:</strong> hr@{reviewEmployer.name.toLowerCase().replace(/\s+/g, '')}.com</p>
+              <p><strong>{t("employer_verify.company_name", "Company Name:")}</strong> {reviewEmployer.name}</p>
+              <p><strong>{t("employer_verify.employer_id", "Employer ID:")}</strong> {reviewEmployer.id}</p>
+              <p><strong>{t("employer_verify.sector", "Sector:")}</strong> {reviewEmployer.sector}</p>
+              <p><strong>{t("employer_verify.gst_number", "GST Number:")}</strong> {reviewEmployer.gst_number || "GST27AABC1234F"}</p>
+              <p><strong>{t("employer_verify.verification_status", "Verification Status:")}</strong> {reviewEmployer.status}</p>
+              <p><strong>{t("employer_verify.registered_email", "Registered Email:")}</strong> hr@{reviewEmployer.name.toLowerCase().replace(/\s+/g, '')}.com</p>
             </div>
             <div style={{ marginTop: "1.5rem", textAlign: "right" }}>
-              <button onClick={() => setReviewEmployer(null)} style={{ padding: "0.6rem 1.25rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}>Close</button>
+              <button onClick={() => setReviewEmployer(null)} style={{ padding: "0.6rem 1.25rem", background: "#2563eb", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}>{t("employer_verify.btn_close", "Close")}</button>
             </div>
           </div>
         </div>
@@ -490,13 +497,13 @@ export default function EmployerVerifyOutcomes() {
       {confirmModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <div style={{ background: "white", borderRadius: "14px", padding: "1.75rem", maxWidth: "450px", width: "90%" }}>
-            <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.15rem", color: "#0f172a" }}>Confirm Action</h3>
+            <h3 style={{ margin: "0 0 0.5rem 0", fontSize: "1.15rem", color: "#0f172a" }}>{t("employer_verify.modal_confirm_title", "Confirm Action")}</h3>
             <p style={{ fontSize: "0.9rem", color: "#475569" }}>
-              Are you sure you want to mark <strong>{confirmModal.employer.name}</strong> as <strong>{confirmModal.action}</strong>?
+              {t("employer_verify.modal_confirm_text", "Are you sure you want to mark")} <strong>{confirmModal.employer.name}</strong> {t("employer_verify.as", "as")} <strong>{confirmModal.action}</strong>?
             </p>
             <div style={{ display: "flex", gap: "0.75rem", justifyContent: "flex-end", marginTop: "1.5rem" }}>
-              <button onClick={() => setConfirmModal(null)} style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", background: "white", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}>Cancel</button>
-              <button onClick={() => handleConfirmAction(confirmModal.employer.id, confirmModal.action)} style={{ padding: "0.5rem 1rem", background: confirmModal.action === "Verified" ? "#16a34a" : "#dc2626", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}>Confirm</button>
+              <button onClick={() => setConfirmModal(null)} style={{ padding: "0.5rem 1rem", border: "1px solid #cbd5e1", background: "white", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}>{t("employer_verify.btn_cancel", "Cancel")}</button>
+              <button onClick={() => handleConfirmAction(confirmModal.employer.id, confirmModal.action)} style={{ padding: "0.5rem 1rem", background: confirmModal.action === "Verified" ? "#16a34a" : "#dc2626", color: "white", border: "none", borderRadius: "6px", fontWeight: 700, cursor: "pointer" }}>{t("employer_verify.btn_confirm", "Confirm")}</button>
             </div>
           </div>
         </div>
