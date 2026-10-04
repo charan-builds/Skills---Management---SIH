@@ -7,6 +7,14 @@ import { DICTIONARY } from "../locales/dictionary";
 
 const translations = { en, hi, mr };
 
+// Build lowercase map for resilient O(1) dictionary matching across all casings
+const LOWER_DICTIONARY = {};
+if (DICTIONARY) {
+  for (const [key, val] of Object.entries(DICTIONARY)) {
+    LOWER_DICTIONARY[key.toLowerCase().trim()] = val;
+  }
+}
+
 export const LANGUAGES = [
   { code: "en", name: "English", nativeName: "English" },
   { code: "hi", name: "Hindi", nativeName: "हिंदी" },
@@ -46,10 +54,11 @@ export function LanguageProvider({ children }) {
   /**
    * Core translation function — Angular-style i18n & dictionary lookup:
    * 1. Direct dictionary phrase match (e.g., t("View Profile"))
-   * 2. Dot-notation lookup in current language JSON (e.g., t("trainees.directory_title"))
-   * 3. Fallback phrase dictionary match (e.g., t("trainees.title", "Trainee Directory"))
-   * 4. Dot-notation lookup in en.json
-   * 5. Explicit fallback argument or path
+   * 2. Case-insensitive dictionary phrase match
+   * 3. Dot-notation lookup in current language JSON (e.g., t("trainees.directory_title"))
+   * 4. Fallback phrase dictionary match (e.g., t("trainees.title", "Trainee Directory"))
+   * 5. Dot-notation lookup in en.json
+   * 6. Explicit fallback argument or path
    */
   const t = useCallback((path, fallback) => {
     if (!path || typeof path !== "string") return fallback ?? "";
@@ -57,6 +66,12 @@ export function LanguageProvider({ children }) {
     // 1. Direct phrase lookup in dictionary
     if (DICTIONARY && DICTIONARY[path]?.[language]) {
       return DICTIONARY[path][language];
+    }
+
+    // 2. Case-insensitive lookup in dictionary
+    const lowerKey = path.toLowerCase().trim();
+    if (LOWER_DICTIONARY[lowerKey]?.[language]) {
+      return LOWER_DICTIONARY[lowerKey][language];
     }
 
     // Dot-notation resolver for JSON files
@@ -73,23 +88,29 @@ export function LanguageProvider({ children }) {
       return typeof current === "string" ? current : undefined;
     };
 
-    // 2. Current language JSON lookup
+    // 3. Current language JSON lookup
     const currentTrans = translations[language];
     let result = resolve(currentTrans, path);
     if (result !== undefined) return result;
 
-    // 3. Fallback phrase lookup in dictionary
-    if (fallback && typeof fallback === "string" && DICTIONARY && DICTIONARY[fallback]?.[language]) {
-      return DICTIONARY[fallback][language];
+    // 4. Fallback phrase lookup in dictionary
+    if (fallback && typeof fallback === "string") {
+      if (DICTIONARY && DICTIONARY[fallback]?.[language]) {
+        return DICTIONARY[fallback][language];
+      }
+      const lowerFallback = fallback.toLowerCase().trim();
+      if (LOWER_DICTIONARY[lowerFallback]?.[language]) {
+        return LOWER_DICTIONARY[lowerFallback][language];
+      }
     }
 
-    // 4. English fallback (for missing translations in JSON)
+    // 5. English fallback (for missing translations in JSON)
     if (language !== "en") {
       result = resolve(translations.en, path);
       if (result !== undefined) return result;
     }
 
-    // 5. Explicit fallback string or key itself
+    // 6. Explicit fallback string or key itself
     return fallback !== undefined ? fallback : path;
   }, [language]);
 
