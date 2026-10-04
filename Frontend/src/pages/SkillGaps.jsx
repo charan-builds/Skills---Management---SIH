@@ -220,7 +220,7 @@ export default function SkillGaps() {
                           onClick={() => setSelectedSkill(row)}
                           style={{ background: "none", border: "none", color: "#2563eb", fontWeight: 700, cursor: "pointer", textAlign: "left", padding: 0 }}
                         >
-                          {row.skill}
+                          {t(row.skill, row.skill)}
                         </button>
                       )
                     },
@@ -246,7 +246,7 @@ export default function SkillGaps() {
                       label: t("skill_gaps.col_programmes", "Programmes"),
                       render: (row) => (
                         <span style={{ fontSize: "0.8rem", color: "#475569" }}>
-                          {row.affected_programmes?.join(", ") || t("common.all", "All")}
+                          {row.affected_programmes?.map(p => t(p, p)).join(", ") || t("common.all", "All")}
                         </span>
                       )
                     }
@@ -264,7 +264,7 @@ export default function SkillGaps() {
                         {t("skill_gaps.drilldown_badge", "SKILL DEFICIT DRILLDOWN")}
                       </span>
                       <h3 style={{ margin: "0.2rem 0 0 0", fontSize: "1.2rem", color: "#0f172a" }}>
-                        {selectedSkill.skill}
+                        {t(selectedSkill.skill, selectedSkill.skill)}
                       </h3>
                       <span style={{ fontSize: "0.8rem", color: "#64748b" }}>
                         {selectedSkill.affected_trainees} {t("skill_gaps.citations", "Citations")} ({selectedSkill.percentage}% {t("skill_gaps.of_cohort", "of cohort")})
@@ -285,7 +285,7 @@ export default function SkillGaps() {
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
                       {(selectedSkill.affected_programmes || []).map(p => (
                         <span key={p} style={{ background: "#eff6ff", color: "#1d4ed8", padding: "3px 8px", borderRadius: "12px", fontSize: "0.75rem", fontWeight: 600 }}>
-                          {p}
+                          {t(p, p)}
                         </span>
                       ))}
                     </div>
@@ -312,7 +312,7 @@ export default function SkillGaps() {
                       {(selectedSkill.sample_trainees || []).map(tr => (
                         <div key={tr.id} style={{ background: "#f8fafc", padding: "0.6rem 0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", fontSize: "0.8rem" }}>
                           <strong style={{ color: "#0f172a" }}>{tr.name}</strong> ({tr.id})
-                          <div style={{ color: "#64748b", fontSize: "0.75rem" }}>{tr.programme} • {tr.district}</div>
+                          <div style={{ color: "#64748b", fontSize: "0.75rem" }}>{t(tr.programme, tr.programme)} • {t(tr.district, tr.district)}</div>
                         </div>
                       ))}
                     </div>
@@ -340,12 +340,12 @@ export default function SkillGaps() {
                 {
                   key: "skill",
                   label: t("skill_gaps.col_competency_domain", "Competency Domain"),
-                  render: (row) => <strong style={{ color: "#0f172a" }}>{row.skill}</strong>
+                  render: (row) => <strong style={{ color: "#0f172a" }}>{t(row.skill, row.skill)}</strong>
                 },
                 {
                   key: "sector",
                   label: t("skill_gaps.col_industry_sector", "Industry Sector"),
-                  render: (row) => <span style={{ color: "#475569" }}>{row.sector}</span>
+                  render: (row) => <span style={{ color: "#475569" }}>{t(row.sector, row.sector)}</span>
                 },
                 {
                   key: "training_supply",

@@ -264,16 +264,16 @@ export default function Dashboard() {
                 onMouseLeave={(e) => { e.currentTarget.style.transform = "none"; }}
               >
                 <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.25rem" }}>
-                  Stage {idx + 1}
+                  {t(`Stage ${idx + 1}`, `${t("Stage", "Stage")} ${idx + 1}`)}
                 </span>
                 <strong style={{ fontSize: "0.92rem", color: "#0f172a", display: "block", marginBottom: "0.5rem", minHeight: "2.4rem" }}>
-                  {stage.label}
+                  {t(stage.label, stage.label)}
                 </strong>
                 <div className="funnel-step-count" style={{ fontSize: "1.75rem", fontWeight: 800, color: stage.color, marginBottom: "0.25rem" }}>
                   <CountUp value={stage.count} />
                 </div>
                 <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>
-                  <CountUp value={stage.percentage} suffix="%" /> of cohort
+                  <CountUp value={stage.percentage} suffix="%" /> {t("of cohort", "of cohort")}
                 </span>
               </div>
             ))}
@@ -289,10 +289,10 @@ export default function Dashboard() {
               </div>
               <div>
                 <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1e40af", textTransform: "uppercase" }}>
-                  System Priority Insight • {dashboardData.priority_insight.programme}
+                  {t("System Priority Insight", "System Priority Insight")} • {t(dashboardData.priority_insight.programme, dashboardData.priority_insight.programme)}
                 </span>
                 <h4 style={{ margin: "0.2rem 0", fontSize: "1rem", color: "#1e3a8a" }}>
-                  {dashboardData.priority_insight.message}
+                  {t(dashboardData.priority_insight.message, dashboardData.priority_insight.message)}
                 </h4>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function Dashboard() {
                 gap: "0.4rem"
               }}
             >
-              {dashboardData.priority_insight.action} <ChevronRight size={16} />
+              {t(dashboardData.priority_insight.action, "Review Policy Interventions")} <ChevronRight size={16} />
             </Link>
           </div>
         )}

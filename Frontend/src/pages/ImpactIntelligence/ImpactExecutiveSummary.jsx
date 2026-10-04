@@ -1,6 +1,9 @@
 
 import CountUp from "../../components/common/CountUp";
+import { useLanguage } from "../../context/LanguageContext";
+
 export default function ImpactExecutiveSummary({ dashboardData }) {
+  const { t } = useLanguage();
   if (!dashboardData) return null;
 
   // Dashboard API returns stats as an array of {title, value, icon}
@@ -27,7 +30,7 @@ export default function ImpactExecutiveSummary({ dashboardData }) {
     <div className="exec-summary-grid">
       {stats.map(s => (
         <div key={s.label} className="exec-stat">
-          <span>{s.label}</span>
+          <span>{t(s.label, s.label)}</span>
           <strong><CountUp value={s.value} /></strong>
         </div>
       ))}

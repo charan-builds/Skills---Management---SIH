@@ -1,8 +1,10 @@
 import React from "react";
 import { ArrowRight, Filter } from "lucide-react";
 import CountUp from "../../components/common/CountUp";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function ImpactEmploymentFunnel({ traineesData }) {
+  const { t } = useLanguage();
   if (!traineesData || traineesData.length === 0) return null;
 
   const total = traineesData.length;
@@ -18,14 +20,14 @@ export default function ImpactEmploymentFunnel({ traineesData }) {
   });
 
   const funnelStages = [
-    { label: "Enrolled", value: total },
-    { label: "Assessed", value: assessed },
-    { label: "Employed", value: employed }
+    { label: t("admin_dashboard.enrolled", "Enrolled"), value: total },
+    { label: t("admin_dashboard.assessed", "Assessed"), value: assessed },
+    { label: t("admin_dashboard.employed", "Employed"), value: employed }
   ];
 
   return (
     <div className="impact-card">
-      <h2><Filter size={20} /> Employment Funnel</h2>
+      <h2><Filter size={20} /> {t("admin_dashboard.longitudinal_funnel", "Employment Funnel")}</h2>
       
       <div className="funnel-container">
         {funnelStages.map((stage, idx) => (

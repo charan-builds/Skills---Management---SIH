@@ -691,7 +691,7 @@ export default function Outcomes() {
                           {t("outcomes.programme_eval_diagnosis", "PROGRAMME EVALUATION DIAGNOSIS")}
                         </span>
                         <h4 style={{ margin: "0.2rem 0 0 0", fontSize: "1.1rem", color: "#0f172a" }}>
-                          {diag.area}
+                          {t(diag.area, diag.area)}
                         </h4>
                       </div>
                       <span style={{
@@ -702,12 +702,12 @@ export default function Outcomes() {
                         background: diag.severity === "High Priority" ? "#fee2e2" : "#fef3c7",
                         color: diag.severity === "High Priority" ? "#b91c1c" : "#b45309"
                       }}>
-                        {diag.severity}
+                        {t(diag.severity, diag.severity)}
                       </span>
                     </div>
 
                     <div style={{ fontSize: "0.85rem", color: "#334155", marginBottom: "0.75rem", background: "white", padding: "0.6rem 0.85rem", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                      <strong>{t("outcomes.observed_metric", "Observed Metric:")}</strong> {diag.observation}
+                      <strong>{t("outcomes.observed_metric", "Observed Metric:")}</strong> {t(diag.observation, diag.observation)}
                     </div>
 
                     <div style={{ marginBottom: "0.75rem" }}>
@@ -716,14 +716,14 @@ export default function Outcomes() {
                       </span>
                       <ul style={{ margin: "0.3rem 0 0 0", paddingLeft: "1.2rem", fontSize: "0.8rem", color: "#334155" }}>
                         {diag.associated_factors.map((af, i) => (
-                          <li key={i} style={{ marginBottom: "0.25rem" }}>{af}</li>
+                          <li key={i} style={{ marginBottom: "0.25rem" }}>{t(af, af)}</li>
                         ))}
                       </ul>
                     </div>
 
                     <div style={{ fontSize: "0.78rem", color: "#475569", lineHeight: 1.4, borderTop: "1px solid #e2e8f0", paddingTop: "0.6rem" }}>
-                      <div><strong>{t("outcomes.observed_pattern", "Observed Pattern:")}</strong> {diag.observed_pattern}</div>
-                      <div style={{ marginTop: "0.25rem" }}><strong>{t("outcomes.potential_contributing_factor", "Potential Contributing Factor:")}</strong> {diag.potential_contributing_factors}</div>
+                      <div><strong>{t("outcomes.observed_pattern", "Observed Pattern:")}</strong> {t(diag.observed_pattern, diag.observed_pattern)}</div>
+                      <div style={{ marginTop: "0.25rem" }}><strong>{t("outcomes.potential_contributing_factor", "Potential Contributing Factor:")}</strong> {t(diag.potential_contributing_factors, diag.potential_contributing_factors)}</div>
                     </div>
                   </div>
                 ))}

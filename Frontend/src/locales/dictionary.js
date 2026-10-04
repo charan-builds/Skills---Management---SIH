@@ -1131,4 +1131,104 @@ export const DICTIONARY = {
   "of": { hi: "का", mr: "पैकी" },
   "SC": { hi: "एससी", mr: "अनुसूचित जाती" },
   "ST": { hi: "एसटी", mr: "अनुसूचित जमाती" },
+
+  // Longitudinal Funnel & Cohort Stages
+  "Stage": { hi: "चरण", mr: "टप्पा" },
+  "Stage 1": { hi: "चरण 1", mr: "टप्पा १" },
+  "Stage 2": { hi: "चरण 2", mr: "टप्पा २" },
+  "Stage 3": { hi: "चरण 3", mr: "टप्पा ३" },
+  "Stage 4": { hi: "चरण 4", mr: "टप्पा ४" },
+  "Stage 5": { hi: "चरण 5", mr: "टप्पा ५" },
+  "Stage 6": { hi: "चरण 6", mr: "टप्पा ६" },
+  "Trained & Enrolled": { hi: "प्रशिक्षित और नामांकित", mr: "प्रशिक्षित आणि नोंदणीकृत" },
+  "Certified": { hi: "प्रमाणित", mr: "प्रमाणित" },
+  "Placed (Formal Job)": { hi: "नियुक्त (औपचारिक नौकरी)", mr: "नोकरी मिळाली (औपचारिक)" },
+  "Self-Employed": { hi: "स्व-नियोजित", mr: "स्वयंरोजगार" },
+  "Apprenticeship": { hi: "शिक्षुता (अप्रेंटिसशिप)", mr: "शिकाऊ उमेदवारी" },
+  "Unemployed / Searching": { hi: "बेरोज़गार / तलाश में", mr: "बेरोजगार / शोधत असलेले" },
+  "of cohort": { hi: "कोहोर्ट का", mr: "गटाचे" },
+  "of Cohort": { hi: "कोहोर्ट का", mr: "गटाचे" },
+  "% of cohort": { hi: "% कोहोर्ट का", mr: "% गटाचे" },
+  "System Priority Insight": { hi: "सिस्टम प्राथमिकता अंतर्दृष्टि", mr: "प्रणाली प्राधान्य अंतर्दृष्टी" },
+  "SYSTEM PRIORITY INSIGHT": { hi: "सिस्टम प्राथमिकता अंतर्दृष्टि", mr: "प्रणाली प्राधान्य अंतर्दृष्टी" },
+  "STATE SKILLING PROGRAMS": { hi: "राज्य कौशल कार्यक्रम", mr: "राज्य कौशल्य कार्यक्रम" },
+  "Review Policy Interventions": { hi: "नीति हस्तक्षेपों की समीक्षा करें", mr: "धोरण हस्तक्षेपांचे पुनरावलोकन करा" },
+  "Review Policy Interventions >": { hi: "नीति हस्तक्षेपों की समीक्षा करें >", mr: "धोरण हस्तक्षेपांचे पुनरावलोकन करा >" },
+  "28% seeking placement. Top missing competency identified: \"CNC Calibration\".": {
+    hi: "28% प्लेसमेंट की तलाश में हैं। शीर्ष अनुपलब्ध दक्षता: \"सीएनसी कैलिब्रेशन\" पाई गई।",
+    mr: "२८% प्लेसमेंट शोधत आहेत. शीर्ष गहाळ क्षमता: \"CNC कॅलिब्रेशन\" ओळखली गेली."
+  },
+  "28% seeking placement. Top missing competency identified: CNC Calibration.": {
+    hi: "28% प्लेसमेंट की तलाश में हैं। शीर्ष अनुपलब्ध दक्षता: सीएनसी कैलिब्रेशन पाई गई।",
+    mr: "२८% प्लेसमेंट शोधत आहेत. शीर्ष गहाळ क्षमता: CNC कॅलिब्रेशन ओळखली गेली."
+  },
+
+  // Outcome Diagnosis & Areas
+  "Cloud Infrastructure & DevOps": { hi: "क्लाउड इन्फ्रास्ट्रक्चर और देवऑप्स", mr: "क्लाउड इन्फ्रास्ट्रक्चर आणि डेव्हऑप्स" },
+  "Automotive Precision & EV Systems": { hi: "ऑटोमोटिव प्रिसिजन और ईवी सिस्टम", mr: "ऑटोमोटिव्ह प्रिसिजन आणि ईव्ही सिस्टीम्स" },
+  "Solar PV & Smart Grid Tech": { hi: "सोलर पीवी और स्मार्ट ग्रिड तकनीक", mr: "सोलर पीव्ही आणि स्मार्ट ग्रिड तंत्रज्ञान" },
+  "Healthcare Assistance & Diagnostics": { hi: "स्वास्थ्य सेवा सहायता और निदान", mr: "आरोग्य सेवा साहाय्य आणि निदान" },
+  "Retail Sales & Customer Ops": { hi: "रिटेल बिक्री और ग्राहक संचालन", mr: "किरकोळ विक्री आणि ग्राहक ऑपरेशन्स" },
+  "Moderate Priority": { hi: "मध्यम प्राथमिकता", mr: "मध्यम प्राधान्य" },
+  "Low Priority": { hi: "निम्न प्राथमिकता", mr: "कमी प्राधान्य" },
+  "Placement at 74% with elevated skill gap reports in Container Orchestration.": {
+    hi: "कंटेनर ऑर्केस्ट्रेशन में उच्च कौशल अंतराल रिपोर्ट के साथ 74% पर प्लेसमेंट।",
+    mr: "कंटेनर ऑर्केस्ट्रेशनमध्ये वाढलेल्या कौशल्य अंतर अहवालांसह ७४% वर प्लेसमेंट."
+  },
+  "Curriculum deficit of -16% in hands-on Docker & Kubernetes evaluation": {
+    hi: "हैंड्स-ऑन डॉकर और कुबेरनेट्स मूल्यांकन में -16% का पाठ्यक्रम घाटा",
+    mr: "हँड्स-ऑन डॉकर आणि कुबर्नेट्स मूल्यमापनात -१६% अभ्यासक्रम तूट"
+  },
+  "TCS & Wipro feedback cited candidates struggle in day-1 Helm chart automation": {
+    hi: "टीसीएस और विप्रो की प्रतिक्रिया में कहा गया कि उम्मीदवार दिन-1 हेक्स चार्ट ऑटोमेशन में संघर्ष करते हैं",
+    mr: "टीसीएस आणि विप्रो अभिप्रायात नमूद केले की उमेदवार डे-१ हेल्म चार्ट ऑटोमेशनमध्ये संघर्ष करतात"
+  },
+  "Salary offers in non-metro centers 22% lower than candidate expectations": {
+    hi: "गैर-मेट्रो केंद्रों में वेतन प्रस्ताव उम्मीदवारों की अपेक्षाओं से 22% कम",
+    mr: "गैर-मेट्रो केंद्रांमधील पगाराच्या ऑफर उमेदवारांच्या अपेक्षेपेक्षा २२% कमी"
+  },
+  "Concentrated in Tier-2 districts (Nagpur, Nashik) where corporate lab infrastructure is constrained.": {
+    hi: "टियर-2 जिलों (नागपुर, नासिक) में केंद्रित जहां कॉर्पोरेट लैब बुनियादी ढांचा सीमित है।",
+    mr: "टियर-२ जिल्ह्यांमध्ये (नागपूर, नाशिक) केंद्रित जेथे कॉर्पोरेट लॅब पायाभूत सुविधा मर्यादित आहेत."
+  },
+  "Lack of cloud sandbox credits during initial 8 weeks of instruction.": {
+    hi: "निर्देश के शुरुआती 8 हफ्तों के दौरान क्लाउड सैंडबॉक्स क्रेडिट की कमी।",
+    mr: "शिक्षणाच्या सुरुवातीच्या ८ आठवड्यांत क्लाउड सँडबॉक्स क्रेडिट्सचा अभाव."
+  },
+  "Initial 3M retention at 82%, dropping to 71% at 6 months due to compensation resistance.": {
+    hi: "शुरुआती 3 महीने का प्रतिधारण 82% पर, मुआवजे के प्रतिरोध के कारण 6 महीने में गिरकर 71% हो गया।",
+    mr: "सुरुवातीची ३ महिन्यांची टिकवण ८२% वर, मोबदल्याच्या प्रतिकारामुळे ६ महिन्यांत ७१% पर्यंत घसरली."
+  },
+  "High voltage CAN-bus telemetry gaps noted by Mahindra & Tata Motors": {
+    hi: "महिंद्रा और टाटा मोटर्स द्वारा उच्च वोल्टेज CAN-बस टेलीमेट्री अंतराल नोट किए गए",
+    mr: "महिंद्रा आणि टाटा मोटर्सने हाय व्होल्टेज CAN-बस टेलिमेट्री अंतर नोंदवले"
+  },
+  "Entry-level apprentice stipends lagging rising living costs in Pune industrial zones": {
+    hi: "पुणे औद्योगिक क्षेत्रों में बढ़ती जीवन लागत से पीछे छूटते प्रवेश-स्तर के प्रशिक्षु वजीफे",
+    mr: "पुणे औद्योगिक क्षेत्रातील वाढत्या जीवनखर्चापेक्षा प्रवेश-पातळीवरील शिकाऊ विद्यावेतन कमी पडत आहे"
+  },
+  "64% of exiting candidates transitioned to higher-paying lateral assembly roles": {
+    hi: "छोड़ने वाले 64% उम्मीदवार उच्च वेतन वाली पार्श्व असेंबली भूमिकाओं में स्थानांतरित हो गए",
+    mr: "बाहेर पडणाऱ्या ६४% उमेदवारांनी जास्त पगाराच्या असेंब्ली भूमिकांमध्ये संक्रमण केले"
+  },
+  "Early attrition accelerates at month 4 when apprentice overtime begins.": {
+    hi: "शुरुआती एट्रिशन चौथे महीने में तेज हो जाता है जब अपरेंटिस ओवरटाइम शुरू होता है।",
+    mr: "महिन्या ४ मध्ये जेव्हा शिकाऊ ओव्हरटाईम सुरू होतो तेव्हा सुरुवातीची गळती वाढते."
+  },
+  "Disparity between subsidized apprenticeship stipend and market technician wages.": {
+    hi: "सब्सिडी वाले शिक्षुता वजीफे और बाजार तकनीशियन वेतन के बीच असमानता।",
+    mr: "अनुदानित शिकाऊ विद्यावेतन आणि बाजार तंत्रज्ञ वेतनातील तफावत."
+  },
+  "PROGRAMME EVALUATION DIAGNOSIS": {
+    hi: "कार्यक्रम मूल्यांकन निदान",
+    mr: "कार्यक्रम मूल्यांकन निदान"
+  },
+  "Policy Evidence Base": {
+    hi: "नीति साक्ष्य आधार",
+    mr: "धोरण पुरावा आधार"
+  },
+  "CNC Calibration": {
+    hi: "सीएनसी कैलिब्रेशन",
+    mr: "CNC कॅलिब्रेशन"
+  }
 };

@@ -1,7 +1,9 @@
 import { AlertOctagon } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function ImpactHighRiskTrainees({ traineesData }) {
+  const { t } = useLanguage();
   if (!traineesData || traineesData.length === 0) return null;
 
   // Filter trainees that have no employment history and have a low assessment average (or just unemployed)
@@ -14,25 +16,25 @@ export default function ImpactHighRiskTrainees({ traineesData }) {
   if (highRisk.length === 0) {
     return (
       <div className="impact-card">
-        <h2><AlertOctagon size={20} /> High-Risk Trainees</h2>
-        <p style={{color: "#64748b"}}>No high-risk trainees identified.</p>
+        <h2><AlertOctagon size={20} /> {t("High-Risk Trainees", "High-Risk Trainees")}</h2>
+        <p style={{color: "#64748b"}}>{t("No high-risk trainees identified.")}</p>
       </div>
     );
   }
 
   return (
     <div className="impact-card">
-      <h2><AlertOctagon size={20} /> High-Risk Trainees</h2>
+      <h2><AlertOctagon size={20} /> {t("High-Risk Trainees", "High-Risk Trainees")}</h2>
       
       <div className="risk-list">
-        {highRisk.map(t => (
-          <div key={t.id} className="risk-row">
+        {highRisk.map(trainee => (
+          <div key={trainee.id} className="risk-row">
             <div className="risk-info">
-              <strong>{t.name || t.id}</strong>
-              <span>Unemployed post-programme</span>
+              <strong>{trainee.name || trainee.id}</strong>
+              <span>{t("Unemployed post-programme", "Unemployed post-programme")}</span>
             </div>
-            <Link to={`/trainees/${t.id}`} className="status-badge critical" style={{textDecoration: "none"}}>
-              View Profile
+            <Link to={`/admin/trainees/${trainee.id}`} className="status-badge critical" style={{textDecoration: "none"}}>
+              {t("common.view_details", "View Profile")}
             </Link>
           </div>
         ))}
