@@ -384,28 +384,28 @@ export default function Interventions() {
                 <div>
                   <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("3. Verified Employer Feedback", "3. Verified Employer Feedback")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#334155", fontStyle: "italic", lineHeight: 1.4 }}>
-                    "{selectedInsight.evidence_details?.employer_reports}"
+                    "{t(selectedInsight.evidence_details?.employer_reports, selectedInsight.evidence_details?.employer_reports)}"
                   </div>
                 </div>
 
                 <div>
                   <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("4. Candidate Survey Signals", "4. Candidate Survey Signals")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#334155", lineHeight: 1.4 }}>
-                    {selectedInsight.evidence_details?.trainee_reports}
+                    {t(selectedInsight.evidence_details?.trainee_reports, selectedInsight.evidence_details?.trainee_reports)}
                   </div>
                 </div>
 
                 <div>
                   <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("5. Curriculum vs Target Audit", "5. Curriculum vs Target Audit")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#0f172a", fontWeight: 600 }}>
-                    {selectedInsight.evidence_details?.curriculum_coverage}
+                    {t(selectedInsight.evidence_details?.curriculum_coverage, selectedInsight.evidence_details?.curriculum_coverage)}
                   </div>
                 </div>
 
                 <div>
                   <span style={{ color: "#64748b", fontWeight: 600, display: "block", marginBottom: "0.2rem" }}>{t("6. Demand vs Supply Matrix", "6. Demand vs Supply Matrix")}</span>
                   <div style={{ background: "#f8fafc", padding: "0.75rem", borderRadius: "6px", border: "1px solid #e2e8f0", color: "#0f172a" }}>
-                    {selectedInsight.evidence_details?.demand_vs_supply}
+                    {t(selectedInsight.evidence_details?.demand_vs_supply, selectedInsight.evidence_details?.demand_vs_supply)}
                   </div>
                 </div>
               </div>

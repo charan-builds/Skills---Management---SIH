@@ -1618,3 +1618,83 @@ export const DICTIONARY = {
   "Coursework In Progress": { hi: "कोर्सवर्क प्रगति पर है", mr: "अभ्यासक्रम सुरू आहे" },
   "Digital Attestation Notice:": { hi: "डिजिटल साक्ष्यांकन सूचना:", mr: "डिजिटल प्रमाणीकरण सूचना:" }
 };
+
+// ── LandingPage valueProps card titles & descriptions ─────────────────────────
+DICTIONARY["landing.triangulated"] = { hi: "त्रि-स्रोत सत्यापित", mr: "त्रि-स्रोत सत्यापित" };
+DICTIONARY["landing.triangulated_desc"] = { hi: "नियोक्ता + प्रशिक्षु + सत्यापित पाठ्यक्रम", mr: "नियोक्ता + प्रशिक्षणार्थी + सत्यापित अभ्यासक्रम" };
+DICTIONARY["landing.simulation_driven"] = { hi: "सिमुलेशन-संचालित", mr: "सिम्युलेशन-चालित" };
+DICTIONARY["landing.action_driven"] = { hi: "कार्रवाई-उन्मुख", mr: "कृती-केंद्रित" };
+DICTIONARY["landing.action_driven_desc"] = { hi: "अंतर्दृष्टि → कार्रवाई → प्रभाव", mr: "अंतर्दृष्टी → कृती → प्रभाव" };
+
+// ── Interventions page — insight type badges ───────────────────────────────────
+DICTIONARY["Placement concern"] = { hi: "नियुक्ति चिंता", mr: "नियुक्ती चिंता" };
+DICTIONARY["Retention concern"] = { hi: "प्रतिधारण चिंता", mr: "टिकाव चिंता" };
+DICTIONARY["Skill shortage"] = { hi: "कौशल की कमी", mr: "कौशल्य कमतरता" };
+DICTIONARY["District gap"] = { hi: "जिला अंतर", mr: "जिल्हा तफावत" };
+DICTIONARY["Wage improvement"] = { hi: "वेतन सुधार", mr: "वेतन सुधारणा" };
+
+// ── Interventions — priority badges ───────────────────────────────────────────
+DICTIONARY["High Priority"] = { hi: "उच्च प्राथमिकता", mr: "उच्च प्राधान्य" };
+DICTIONARY["Medium Priority"] = { hi: "मध्यम प्राथमिकता", mr: "मध्यम प्राधान्य" };
+DICTIONARY["Optimal Impact"] = { hi: "इष्टतम प्रभाव", mr: "इष्टतम प्रभाव" };
+
+// ── Interventions — status badges ─────────────────────────────────────────────
+DICTIONARY["Proposed"] = { hi: "प्रस्तावित", mr: "प्रस्तावित" };
+DICTIONARY["Under Review"] = { hi: "समीक्षाधीन", mr: "समीक्षेखाली" };
+DICTIONARY["Adopted"] = { hi: "अपनाया गया", mr: "स्वीकारले" };
+DICTIONARY["Action Adopted"] = { hi: "कार्रवाई अपनाई", mr: "कृती स्वीकारली" };
+DICTIONARY["Adopt Action"] = { hi: "कार्रवाई अपनाएं", mr: "कृती स्वीकारा" };
+
+// ── Interventions — card labels ────────────────────────────────────────────────
+DICTIONARY["Observed Metric:"] = { hi: "अवलोकित मेट्रिक:", mr: "निरीक्षित मेट्रिक:" };
+DICTIONARY["Comparison / Baseline:"] = { hi: "तुलना / आधार रेखा:", mr: "तुलना / आधारभूत रेषा:" };
+DICTIONARY["Evidence:"] = { hi: "साक्ष्य / प्रमाण:", mr: "पुरावा:" };
+DICTIONARY["Affected Scope:"] = { hi: "प्रभावित क्षेत्र:", mr: "प्रभावित व्याप्ती:" };
+DICTIONARY["Recommended Policy / Investigation:"] = { hi: "अनुशंसित नीति / जांच:", mr: "शिफारस केलेली नीती / तपास:" };
+DICTIONARY["View Traceable Evidence"] = { hi: "ट्रेसेबल साक्ष्य देखें", mr: "ट्रेसेबल पुरावे पाहा" };
+DICTIONARY["Active Insight Cards:"] = { hi: "सक्रिय अंतर्दृष्टि कार्ड:", mr: "सक्रिय अंतर्दृष्टी कार्ड:" };
+
+// ── Interventions — evidence dossier panel labels ─────────────────────────────
+DICTIONARY["INSIGHT TRACEABILITY AUDIT"] = { hi: "अंतर्दृष्टि ट्रेसबिलिटी ऑडिट", mr: "अंतर्दृष्टी ट्रेसबिलिटी ऑडिट" };
+DICTIONARY["Evidence Dossier:"] = { hi: "साक्ष्य डोजियर:", mr: "पुरावा डोजिए:" };
+DICTIONARY["1. Reported Gap Frequency"] = { hi: "1. सूचित अंतराल आवृत्ति", mr: "1. नोंदवलेली अंतर वारंवारता" };
+DICTIONARY["candidates flagged this competency deficit"] = { hi: "उम्मीदवारों ने इस क्षमता की कमी को चिह्नित किया", mr: "उमेदवारांनी ही क्षमता कमतरता नोंदवली" };
+DICTIONARY["2. Affected Programmes"] = { hi: "2. प्रभावित कार्यक्रम", mr: "2. प्रभावित कार्यक्रम" };
+DICTIONARY["3. Verified Employer Feedback"] = { hi: "3. सत्यापित नियोक्ता प्रतिक्रिया", mr: "3. सत्यापित नियोक्त्याचा अभिप्राय" };
+DICTIONARY["4. Candidate Survey Signals"] = { hi: "4. उम्मीदवार सर्वेक्षण संकेत", mr: "4. उमेदवार सर्वेक्षण संकेत" };
+DICTIONARY["5. Curriculum vs Target Audit"] = { hi: "5. पाठ्यक्रम बनाम लक्ष्य ऑडिट", mr: "5. अभ्यासक्रम विरुद्ध लक्ष्य ऑडिट" };
+DICTIONARY["6. Demand vs Supply Matrix"] = { hi: "6. मांग बनाम आपूर्ति मैट्रिक्स", mr: "6. मागणी विरुद्ध पुरवठा मॅट्रिक्स" };
+
+// ── Interventions — page header labels ────────────────────────────────────────
+DICTIONARY["EVIDENCE-BASED OUTCOME INTELLIGENCE & POLICY RECOMMENDATIONS"] = { hi: "साक्ष्य-आधारित परिणाम बुद्धिमत्ता एवं नीति अनुशंसाएं", mr: "पुरावा-आधारित परिणाम बुद्धिमत्ता आणि धोरण शिफारसी" };
+DICTIONARY["Key Findings & Insights"] = { hi: "मुख्य निष्कर्ष एवं अंतर्दृष्टि", mr: "मुख्य निष्कर्ष आणि अंतर्दृष्टी" };
+DICTIONARY["Evidence-derived analytical findings with measurable baselines, affected scopes, and traceable audit data."] = { hi: "मापने योग्य आधार रेखाओं, प्रभावित क्षेत्रों और ट्रेसेबल ऑडिट डेटा के साथ साक्ष्य-व्युत्पन्न विश्लेषणात्मक निष्कर्ष।", mr: "मोजता येण्याजोग्या आधार रेषा, प्रभावित व्याप्ती आणि ट्रेसेबल ऑडिट डेटासह पुराव्यावर आधारित विश्लेषणात्मक निष्कर्ष." };
+
+// ── Interventions — INS insight titles ────────────────────────────────────────
+DICTIONARY["Technical Interview Deficit in Cloud Infrastructure"] = { hi: "क्लाउड इन्फ्रास्ट्रक्चर में तकनीकी साक्षात्कार की कमी", mr: "क्लाउड इन्फ्रास्ट्रक्चरमध्ये तांत्रिक मुलाखतीची कमतरता" };
+DICTIONARY["Early Month-4 Attrition in EV Automotive Assembly"] = { hi: "ईवी ऑटोमोटिव असेम्बली में शुरुआती चौथे महीने में एट्रिशन", mr: "ईव्ही ऑटोमोटिव असेंब्लीमध्ये सुरुवातीच्या चौथ्या महिन्यात खंड" };
+DICTIONARY["Critical Shortage of Clinical ICU & Triage Staff"] = { hi: "क्लिनिकल ICU और ट्राइएज स्टाफ की गंभीर कमी", mr: "क्लिनिकल ICU आणि ट्रायज कर्मचाऱ्यांची गंभीर कमतरता" };
+DICTIONARY["Tier-2 Location Mismatch in Guntur & Nagpur"] = { hi: "गुंटूर और नागपुर में टियर-2 स्थान बेमेल", mr: "गुंटूर आणि नागपूरमध्ये टियर-2 स्थान जुळवणी समस्या" };
+DICTIONARY["Above-Average Wage Growth in Full Stack Engineering"] = { hi: "फुल स्टैक इंजीनियरिंग में औसत से अधिक वेतन वृद्धि", mr: "फुल स्टॅक इंजिनिअरिंगमध्ये सरासरीपेक्षा जास्त वेतन वाढ" };
+
+// ── Interventions — INS metrics ───────────────────────────────────────────────
+DICTIONARY["28% Unplaced Post-Certification"] = { hi: "28% प्रमाणन के बाद अनियुक्त", mr: "28% प्रमाणपत्रानंतर न नियुक्त" };
+DICTIONARY["6M Retention Dropped to 71%"] = { hi: "6 माह प्रतिधारण 71% तक गिरा", mr: "6 महिने टिकाव 71% वर घसरले" };
+DICTIONARY["94% Clinical Demand Unfulfilled"] = { hi: "94% क्लिनिकल मांग अपूर्ण", mr: "94% क्लिनिकल मागणी अपूर्ण" };
+DICTIONARY["44% Relocation Constraint Non-Placement"] = { hi: "44% स्थानांतरण बाधा के कारण अनियुक्त", mr: "44% स्थलांतर अडचणीमुळे न नियुक्त" };
+DICTIONARY["+28% Mean Wage Increment at 12M"] = { hi: "+28% 12 माह में औसत वेतन वृद्धि", mr: "+28% 12 महिन्यात सरासरी वेतन वाढ" };
+
+// ── Interventions — INS comparisons ──────────────────────────────────────────
+DICTIONARY["State benchmark is 18% (10% higher non-placement)"] = { hi: "राज्य बेंचमार्क 18% है (10% अधिक अनियुक्त)", mr: "राज्य बेंचमार्क 18% आहे (10% जास्त न नियुक्त)" };
+DICTIONARY["Initial 3M was 84% (13% attrition drop)"] = { hi: "प्रारंभिक 3M 84% था (13% एट्रिशन गिरावट)", mr: "सुरुवातीचे 3M 84% होते (13% खंड घट)" };
+DICTIONARY["Healthcare sector demand expanded +34% YoY"] = { hi: "स्वास्थ्य क्षेत्र की मांग +34% YoY बढ़ी", mr: "आरोग्य क्षेत्राची मागणी +34% वर्षावर्ष वाढली" };
+DICTIONARY["Metro centers report only 12% relocation friction"] = { hi: "महानगर केंद्रों में केवल 12% स्थानांतरण बाधा", mr: "महानगर केंद्रांमध्ये फक्त 12% स्थलांतर अडचण" };
+DICTIONARY["Outperforming platform benchmark (+18%) by 10%"] = { hi: "प्लेटफार्म बेंचमार्क (+18%) से 10% आगे", mr: "प्लॅटफॉर्म बेंचमार्क (+18%) पेक्षा 10% पुढे" };
+
+// ── Interventions — recommended actions ──────────────────────────────────────
+DICTIONARY["Introduce 40 hours mandatory live cloud lab simulator before certification."] = { hi: "प्रमाणन से पहले 40 घंटे अनिवार्य लाइव क्लाउड लैब सिमुलेटर शुरू करें।", mr: "प्रमाणपत्रापूर्वी 40 तास अनिवार्य लाइव क्लाउड लॅब सिम्युलेटर सुरू करा." };
+DICTIONARY["Establish a ₹3,000/mo regional state apprentice stipend top-up for EV technicians."] = { hi: "EV तकनीशियनों के लिए ₹3,000/माह क्षेत्रीय राज्य प्रशिक्षु वजीफा टॉप-अप स्थापित करें।", mr: "EV तंत्रज्ञांसाठी ₹3,000/महिना प्रादेशिक राज्य शिकाऊ भत्ता टॉप-अप स्थापित करा." };
+DICTIONARY["Mandate 120 hours hospital ward internship rotation prior to state credentialing."] = { hi: "राज्य प्रत्यायन से पहले 120 घंटे अस्पताल वार्ड इंटर्नशिप रोटेशन अनिवार्य करें।", mr: "राज्य प्रमाणीकरणापूर्वी 120 तास रुग्णालय वार्ड इंटर्नशिप रोटेशन अनिवार्य करा." };
+DICTIONARY["Partner with regional MSMEs to anchor local tech parks and provide transit allowances."] = { hi: "स्थानीय टेक पार्क स्थापित करने और ट्रांजिट भत्ता प्रदान करने के लिए क्षेत्रीय MSMEs के साथ साझेदारी करें।", mr: "स्थानिक टेक पार्क उभारण्यासाठी आणि प्रवास भत्ता देण्यासाठी प्रादेशिक MSME सोबत भागीदारी करा." };
+DICTIONARY["Scale Full Stack cohort intake by 35% in upcoming 2024 cycles."] = { hi: "आगामी 2024 चक्रों में फुल स्टैक कोहोर्ट सेवन 35% बढ़ाएं।", mr: "येणाऱ्या 2024 चक्रांमध्ये फुल स्टॅक कोहोर्ट प्रवेश 35% वाढवा." };
+

@@ -45,9 +45,9 @@ export default function LandingPage() {
 
   const valueProps = [
     [ShieldCheck, t("landing.why_label", "Confidence-Aware"), t("landing.step_01_desc", "Multi-tier verification")],
-    [Users, "Triangulated", t("landing.dash_text", "Employer + Trainee + Verified Syllabus")],
-    [Sparkles, "Simulation-Driven", t("landing.sim_desc", "Simulate policy impact before action")],
-    [TrendingUp, "Action-Driven", "Insights → Action → Impact"],
+    [Users, t("landing.triangulated", "Triangulated"), t("landing.triangulated_desc", "Employer + Trainee + Verified Syllabus")],
+    [Sparkles, t("landing.simulation_driven", "Simulation-Driven"), t("landing.sim_desc", "Simulate policy impact before action")],
+    [TrendingUp, t("landing.action_driven", "Action-Driven"), t("landing.action_driven_desc", "Insights → Action → Impact")],
   ];
 
   const scroll = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
